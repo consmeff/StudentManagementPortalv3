@@ -22,6 +22,7 @@ export class OtpPageComponent implements OnInit {
   complete = false;
   otpForm!: FormGroup;
   email: string = '';
+  isPasswordResetFlow = false;
 
   get box1(): AbstractControl { return this.otpForm.controls['box1']; }
   get box2(): AbstractControl { return this.otpForm.controls['box2']; }
@@ -38,6 +39,7 @@ export class OtpPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.email = sessionStorage.getItem('profile_email') || 'your email';
+    this.isPasswordResetFlow = sessionStorage.getItem('auth_flow') === 'password_reset';
     
     this.otpForm = new FormGroup({
       box1: new FormControl('', [Validators.required, Validators.pattern(/^\d$/)]),
@@ -136,18 +138,24 @@ export class OtpPageComponent implements OnInit {
         if (result) {
           this.messageService.add({
             severity: 'success',
-            summary: 'Login',
+            summary: 'OTP Verification',
             detail: 'OTP Verified',
             life: 3000
           });
           
           setTimeout(() => {
-            this.router.navigateByUrl('/auth/login');
+            if (this.isPasswordResetFlow) {
+              sessionStorage.setItem('forgot_otp', otp);
+              this.router.navigateByUrl('/auth/passwordreset');
+            } else {
+              sessionStorage.removeItem('auth_flow');
+              this.router.navigateByUrl('/auth/login');
+            }
           }, 1000);
         } else {
           this.messageService.add({
             severity: 'error',
-            summary: 'Login',
+            summary: 'OTP Verification',
             detail: 'OTP verification failed',
             life: 5000
           });

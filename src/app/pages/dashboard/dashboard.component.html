@@ -247,7 +247,7 @@
     </p-dialog>
 
     <p-dialog 
-        header="APPLICATION GUIDELINE" 
+        [header]="guidelineContent.title" 
         [(visible)]="guidelineVisible" 
         [modal]="true"
         [closable]="true"
@@ -255,38 +255,16 @@
         styleClass="guidelines-dialog">
         <div class="guidelines-wrapper">
             <div class="guidelines-intro">
-                Kindly read the Application Guideline carefully before you proceed with the application. It is very important to understand and follow the guideline to avoid error in your application.
+                {{ guidelineContent.intro }}
             </div>
             
             <div class="guidelines-scroll-area">
                 <ol class="guidelines-list">
-                    <li class="guideline-item">
-                        Candidates for admission into the Basic Midwifery Programme must possess the Senior Secondary School Certificate (SSCE) or its equivalent at credit level in the following five (5) subjects at not more than two (2) sittings:
-                        <ul class="subjects-list">
-                            <li>Physics</li>
-                            <li>Chemistry</li>
-                            <li>Biology</li>
-                            <li>English</li>
-                            <li>Mathematics</li>
+                    <li class="guideline-item" *ngFor="let section of guidelineContent.sections">
+                        {{ section.heading }}
+                        <ul class="subjects-list" *ngIf="section.items.length > 0">
+                            <li *ngFor="let point of section.items">{{ point }}</li>
                         </ul>
-                    </li>
-                    
-                    <li class="guideline-item">
-                        Candidates are required to upload the following documents in addition to other relevant documents:
-                        <ul class="subjects-list">
-                            <li>Certificate of Birth</li>
-                            <li>O' Level (SSCE) Certificates</li>
-                            <li>Certificate of Origin</li>
-                            <li>Passport Photograph</li>
-                        </ul>
-                    </li>
-                    
-                    <li class="guideline-item">
-                        Candidates are required to make payment of a non-refundable sum of Fifteen Thousand Naira Only (NGN15,000.00) as application fee.
-                    </li>
-                    
-                    <li class="guideline-item">
-                        Candidate must have a minimum JAMB score of 150 and must have chosen the institution as first choice in the 2024 UTME registration. Moreover, candidates who did not select CONSMMEFS as their first choice can change institution on the JAMB Portal.
                     </li>
                 </ol>
                 

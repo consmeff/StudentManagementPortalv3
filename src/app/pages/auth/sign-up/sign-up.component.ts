@@ -163,6 +163,7 @@ toggleDarkMode() {
         {
           next: (resp: ProfileSuccessResponse) => {
             sessionStorage.setItem("profile_email", resp.email);
+            sessionStorage.setItem("auth_flow", "signup_verification");
             
             this.messageService.add({ severity: 'success', summary: 'Profile Creation', detail: resp.message });
   

@@ -20,7 +20,6 @@ export class PasswordresetComponent {
   busy = false;
   isDarkMode = false;
   visible = false;
-  email = '';
 
   validationCheck: validationCheckDTO[] = [
     { title: "Minimum of 8 characters", status: false },
@@ -30,23 +29,19 @@ export class PasswordresetComponent {
     { title: "At least one number", status: false }
   ];
 
-  otpForm = new FormGroup({
-    otp: new FormControl('', [Validators.required, Validators.maxLength(6), Validators.pattern(/^\d+$/)]),
+  resetForm = new FormGroup({
     password: new FormControl('', [Validators.required, passwordStrength()]),
     cpassword: new FormControl('', Validators.required)
   });
 
-  get otp(): AbstractControl { return this.otpForm.controls.otp; }
-  get password(): AbstractControl { return this.otpForm.controls.password; }
-  get cpassword(): AbstractControl { return this.otpForm.controls.cpassword; }
+  get password(): AbstractControl { return this.resetForm.controls.password; }
+  get cpassword(): AbstractControl { return this.resetForm.controls.cpassword; }
 
   constructor(
     private authService: AuthService,
     private messageService: MessageService,
     private router: Router
   ) {
-    this.email = sessionStorage.getItem('profile_email') || 'your email';
-    
     this.password.valueChanges.subscribe((val: string | null) => {
       if (val) {
         this.updateValidationStatus(val);
@@ -79,9 +74,9 @@ export class PasswordresetComponent {
   }
 
   resetPass() {
-    if (this.otpForm.invalid) return;
+    if (this.resetForm.invalid) return;
 
-    if (this.otpForm.controls.password.value !== this.otpForm.controls.cpassword.value) {
+    if (this.resetForm.controls.password.value !== this.resetForm.controls.cpassword.value) {
       this.messageService.add({
         severity: 'error',
         summary: 'Password Mismatch',
@@ -91,16 +86,30 @@ export class PasswordresetComponent {
       return;
     }
 
+    const otp = sessionStorage.getItem('forgot_otp');
+    if (!otp) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Password Reset',
+        detail: 'OTP session missing. Please verify OTP again.',
+        life: 5000
+      });
+      this.router.navigateByUrl('/auth/otp-page');
+      return;
+    }
+
     this.busy = true;
     const payload = {
       email: sessionStorage.getItem('profile_email'),
-      password: this.otpForm.controls.password.value,
-      otp: this.otpForm.controls.otp.value
+      password: this.resetForm.controls.password.value,
+      otp
     };
 
     this.authService.updatePassword(payload).subscribe({
       next: (data: any) => {
         this.busy = false;
+        sessionStorage.removeItem('forgot_otp');
+        sessionStorage.removeItem('auth_flow');
         this.messageService.add({
           severity: 'success',
           summary: 'Password Reset',

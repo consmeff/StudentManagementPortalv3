@@ -7,12 +7,13 @@ import { JwtService } from '../../services/jwt.service';
 import { Router } from '@angular/router';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { Program } from '../../data/application/admission.dto';
-import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ProgrammeComponent } from '../../widgets/admission/programme/programme.component';
 import { firstValueFrom } from 'rxjs';
 import { ApplicationService } from '../../services/application.service';
 import { RegStoreService } from '../../services/regstore.service';
 import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
+import { APPLICATION_GUIDELINE_CONTENT } from '../../data/dashboard/application-guideline.data';
 
 interface TimelineStage {
     title: string;
@@ -46,11 +47,9 @@ export class Dashboard {
     user: string = "user";
     visible: boolean = false;
     guidelinesAccepted = false;
+    readonly guidelineContent = APPLICATION_GUIDELINE_CONTENT;
 
     backendProgramme: Program | undefined;
-    guideLineForm: FormGroup = new FormGroup({
-        acceptguide: new FormControl()
-    });
     guidelineVisible: boolean = false;
     selectedCourse: string = "";
     title: string = "Choose the programme you are applying for";
@@ -257,9 +256,12 @@ export class Dashboard {
         }, 400);
     }
 
+    private isPaymentCompleted(): boolean {
+        return (sessionStorage.getItem("PAYMENT_STATUS") || "") === "Paid";
+    }
+
     showDialog() {
-        let p_status = sessionStorage.getItem("PAYMENT_STATUS") || "";
-        if (p_status == "Paid") {
+        if (this.isPaymentCompleted()) {
             this.router.navigateByUrl("/pages/admissionform")
             return;
         }
@@ -291,6 +293,7 @@ export class Dashboard {
 
     showGuideline(event: boolean) {
         this.visible = !event;
+        this.guidelinesAccepted = false;
         setTimeout(() => {
             this.guidelineVisible = event;
         }, 500);

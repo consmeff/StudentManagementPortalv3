@@ -53,10 +53,12 @@ export class RequestPasswordresetComponent {
         });
         
         sessionStorage.setItem('profile_email', this.resetForm.controls.email.value!.trim());
+        sessionStorage.setItem('auth_flow', 'password_reset');
+        sessionStorage.removeItem('forgot_otp');
         
         // Navigate after showing message
         setTimeout(() => {
-          this.router.navigateByUrl('/auth/passwordreset');
+          this.router.navigateByUrl('/auth/otp-page');
         }, 1000);
       },
       error: () => {
