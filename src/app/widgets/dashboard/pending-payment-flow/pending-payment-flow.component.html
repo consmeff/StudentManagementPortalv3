@@ -84,8 +84,14 @@
     </label>
 
     <div class="dialog-actions">
-      <button pButton type="button" class="continue-btn" [disabled]="!guidelinesAccepted()" (click)="proceedToPayment()">
-        Continue to Payment
+      <button
+        pButton
+        type="button"
+        class="continue-btn"
+        [disabled]="!guidelinesAccepted() || initializingApplication()"
+        (click)="proceedToPayment()"
+      >
+        {{ initializingApplication() ? "Please wait..." : "Continue to Payment" }}
       </button>
     </div>
   </p-dialog>

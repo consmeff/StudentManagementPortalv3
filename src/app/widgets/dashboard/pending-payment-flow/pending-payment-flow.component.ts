@@ -90,6 +90,23 @@ export class PendingPaymentFlowComponent implements OnInit {
     if (!this.selectedApplicationId()) {
       return;
     }
+    this.showProgrammeDialog.set(false);
+    this.guidelinesAccepted.set(false);
+    this.showGuidelineDialog.set(true);
+  }
+
+  async proceedToPayment(): Promise<void> {
+    if (!this.guidelinesAccepted()) {
+      return;
+    }
+    if (!this.selectedApplicationId()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Programme',
+        detail: 'Please select a programme before continuing.',
+      });
+      return;
+    }
 
     this.initializingApplication.set(true);
     try {
@@ -98,30 +115,26 @@ export class PendingPaymentFlowComponent implements OnInit {
       );
       const applicationNo = initResp?.data?.application_no ?? '';
 
-      if (applicationNo) {
-        sessionStorage.setItem('APP_NO', applicationNo);
+      if (!applicationNo) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Application',
+          detail: 'Unable to continue because application number was not returned.',
+        });
+        return;
       }
 
-      this.showProgrammeDialog.set(false);
-      this.guidelinesAccepted.set(false);
-      this.showGuidelineDialog.set(true);
+      sessionStorage.setItem('APP_NO', applicationNo);
+      this.showGuidelineDialog.set(false);
+      this.router.navigateByUrl('/pages/payment');
     } catch {
       this.messageService.add({
         severity: 'error',
         summary: 'Application',
-        detail:
-          'Unable to initialize application with selected programme. Please verify programme setup and try again.',
+        detail: 'Unable to initialize your application for payment. Please try again.',
       });
     } finally {
       this.initializingApplication.set(false);
     }
-  }
-
-  proceedToPayment(): void {
-    if (!this.guidelinesAccepted()) {
-      return;
-    }
-    this.showGuidelineDialog.set(false);
-    this.router.navigateByUrl('/pages/payment');
   }
 }
