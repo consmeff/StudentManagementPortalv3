@@ -8,11 +8,12 @@ import { Datum, OpenApplicationDTO } from '../../../data/application/admission.d
 import { APPLICATION_GUIDELINE_CONTENT } from '../../../data/dashboard/application-guideline.data';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 import { firstValueFrom } from 'rxjs';
+import { ApplicationGuidelineModalComponent } from '../application-guideline-modal/application-guideline-modal.component';
 
 @Component({
   selector: 'app-pending-payment-flow',
   standalone: true,
-  imports: [CommonModule, TraceabilityModule],
+  imports: [CommonModule, TraceabilityModule, ApplicationGuidelineModalComponent],
   templateUrl: './pending-payment-flow.component.html',
   styleUrl: './pending-payment-flow.component.scss',
   providers: [MessageService],
@@ -110,8 +111,12 @@ export class PendingPaymentFlowComponent implements OnInit {
 
     this.initializingApplication.set(true);
     try {
+      const selectedOption = this.applicationOptions().find((item) => item.id === this.selectedApplicationId());
       const initResp = await firstValueFrom(
-        this.appService.initializeApplication({ application_id: this.selectedApplicationId() })
+        this.appService.initializeApplication({
+          application_id: this.selectedApplicationId(),
+          department_id: selectedOption?.program?.id ?? 0,
+        })
       );
       const applicationNo = initResp?.data?.application_no ?? '';
 

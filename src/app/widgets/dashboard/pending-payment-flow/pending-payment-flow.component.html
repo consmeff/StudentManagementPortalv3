@@ -60,39 +60,14 @@
     </div>
   </p-dialog>
 
-  <p-dialog
-    [header]="guidelineContent.title"
-    [modal]="true"
-    [closable]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [style]="{ width: '560px', maxHeight: '90vh' }"
-    [(visible)]="showGuidelineDialog"
-  >
-    <div class="guideline-intro">{{ guidelineContent.intro }}</div>
-    <ol class="guideline-list">
-      <li *ngFor="let section of guidelineContent.sections">
-        {{ section.heading }}
-        <ul *ngIf="section.items.length > 0">
-          <li *ngFor="let item of section.items">{{ item }}</li>
-        </ul>
-      </li>
-    </ol>
-    <label class="accept-wrap">
-      <input type="checkbox" [checked]="guidelinesAccepted()" (change)="guidelinesAccepted.set(!guidelinesAccepted())" />
-      <span>I have read and understand the guideline</span>
-    </label>
-
-    <div class="dialog-actions">
-      <button
-        pButton
-        type="button"
-        class="continue-btn"
-        [disabled]="!guidelinesAccepted() || initializingApplication()"
-        (click)="proceedToPayment()"
-      >
-        {{ initializingApplication() ? "Please wait..." : "Continue to Payment" }}
-      </button>
-    </div>
-  </p-dialog>
+  <app-application-guideline-modal
+    [content]="guidelineContent"
+    [visible]="showGuidelineDialog()"
+    [accepted]="guidelinesAccepted()"
+    [loading]="initializingApplication()"
+    continueLabel="Continue to Payment"
+    (visibleChange)="showGuidelineDialog.set($event)"
+    (acceptedChange)="guidelinesAccepted.set($event)"
+    (continueClicked)="proceedToPayment()"
+  ></app-application-guideline-modal>
 </div>

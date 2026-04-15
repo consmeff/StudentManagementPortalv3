@@ -104,36 +104,6 @@
   color: #64748b;
 }
 
-.guideline-intro {
-  margin-bottom: 0.8rem;
-  color: #475569;
-}
-
-.guideline-list {
-  padding-left: 1rem;
-  max-height: 320px;
-  overflow: auto;
-}
-
-.guideline-list li {
-  margin-bottom: 0.65rem;
-  color: #334155;
-}
-
-.accept-wrap {
-  margin-top: 0.8rem;
-  display: flex;
-  gap: 0.45rem;
-  align-items: center;
-  color: #0f172a;
-}
-
-.dialog-actions {
-  margin-top: 0.9rem;
-  display: flex;
-  justify-content: center;
-}
-
 @media (max-width: 900px) {
   .pending-flow-page {
     padding: 1rem;
