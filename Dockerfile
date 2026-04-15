@@ -11,7 +11,7 @@ RUN npm run build
 FROM nginx:1.27-alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist/consmmefadmin /tmp/dist
+COPY --from=build /app/dist/consmeff /tmp/dist
 RUN set -eux; \
 	if [ -d /tmp/dist/browser ]; then \
 		cp -r /tmp/dist/browser/. /usr/share/nginx/html/; \
