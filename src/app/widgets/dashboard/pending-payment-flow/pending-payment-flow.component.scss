@@ -1,0 +1,154 @@
+.pending-flow-page {
+  padding: 1.5rem;
+}
+
+.welcome-line {
+  color: #64748b;
+  font-size: 1.05rem;
+}
+
+.applicant-name {
+  margin: 0.2rem 0 1.2rem;
+  color: #0f172a;
+  font-size: 2.1rem;
+  font-weight: 700;
+}
+
+.pending-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.2rem;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #edf2fb;
+  border-radius: 14px;
+  padding: 1.2rem 1.3rem;
+}
+
+.pending-card.paid {
+  grid-template-columns: 1fr auto;
+}
+
+.progress-wrap {
+  width: 90px;
+  height: 90px;
+}
+
+.progress-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 10px solid #edf2fb;
+  border-top-color: #000080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pending-text {
+  font-size: 1.15rem;
+  color: #334155;
+}
+
+.continue-btn {
+  min-width: 122px;
+  border-radius: 8px;
+  background: #000080;
+  border-color: #000080;
+}
+
+.error-hint {
+  margin-top: 0.7rem;
+  display: block;
+  color: #dc2626;
+}
+
+.programme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.programme-option {
+  display: flex;
+  gap: 0.55rem;
+  border: 1px solid #dbe6ff;
+  border-radius: 8px;
+  padding: 0.65rem;
+  cursor: pointer;
+}
+
+.programme-option:has(input:checked) {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.14);
+}
+
+.programme-content {
+  min-width: 0;
+}
+
+.programme-name {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.programme-meta {
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.guideline-intro {
+  margin-bottom: 0.8rem;
+  color: #475569;
+}
+
+.guideline-list {
+  padding-left: 1rem;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.guideline-list li {
+  margin-bottom: 0.65rem;
+  color: #334155;
+}
+
+.accept-wrap {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  color: #0f172a;
+}
+
+.dialog-actions {
+  margin-top: 0.9rem;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .pending-flow-page {
+    padding: 1rem;
+  }
+
+  .applicant-name {
+    font-size: 1.6rem;
+  }
+
+  .pending-card {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .programme-grid {
+    grid-template-columns: 1fr;
+  }
+}

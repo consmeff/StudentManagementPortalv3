@@ -1,0 +1,92 @@
+<div class="pending-flow-page">
+  <div class="welcome-line">Welcome,</div>
+  <h1 class="applicant-name">{{ dashboardName() }}</h1>
+
+  <div class="pending-card" *ngIf="isPaymentPending; else paidTemplate">
+    <div class="progress-wrap">
+      <div class="progress-ring">
+        <div class="progress-value">20%</div>
+      </div>
+    </div>
+    <div class="pending-text">You have an incomplete application</div>
+    <button pButton type="button" class="continue-btn" (click)="continueFlow()" [disabled]="loadingApplications()">
+      {{ loadingApplications() ? "Loading..." : "Continue" }}
+    </button>
+  </div>
+
+  <ng-template #paidTemplate>
+    <div class="pending-card paid">
+      <div class="pending-text">Payment completed. Continue your admission form.</div>
+      <button pButton type="button" class="continue-btn" routerLink="/pages/admissionform">Continue</button>
+    </div>
+  </ng-template>
+
+  <small class="error-hint" *ngIf="loadingError()">{{ loadingError() }}</small>
+
+  <p-dialog
+    header="Choose the programme you are applying for"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '540px' }"
+    [(visible)]="showProgrammeDialog"
+  >
+    <div class="programme-grid">
+      <label class="programme-option" *ngFor="let app of applicationOptions()">
+        <input
+          type="radio"
+          name="applicationOption"
+          [checked]="selectedApplicationId() === app.id"
+          (change)="selectApplication(app.id)"
+        />
+        <div class="programme-content">
+          <div class="programme-name">{{ app.program.name }}</div>
+          <div class="programme-meta">{{ app.level.name }} • {{ app.session.name }}</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        pButton
+        type="button"
+        class="continue-btn"
+        [disabled]="!selectedApplicationId() || initializingApplication()"
+        (click)="proceedFromProgramme()"
+      >
+        {{ initializingApplication() ? "Please wait..." : "Continue" }}
+      </button>
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    [header]="guidelineContent.title"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '560px', maxHeight: '90vh' }"
+    [(visible)]="showGuidelineDialog"
+  >
+    <div class="guideline-intro">{{ guidelineContent.intro }}</div>
+    <ol class="guideline-list">
+      <li *ngFor="let section of guidelineContent.sections">
+        {{ section.heading }}
+        <ul *ngIf="section.items.length > 0">
+          <li *ngFor="let item of section.items">{{ item }}</li>
+        </ul>
+      </li>
+    </ol>
+    <label class="accept-wrap">
+      <input type="checkbox" [checked]="guidelinesAccepted()" (change)="guidelinesAccepted.set(!guidelinesAccepted())" />
+      <span>I have read and understand the guideline</span>
+    </label>
+
+    <div class="dialog-actions">
+      <button pButton type="button" class="continue-btn" [disabled]="!guidelinesAccepted()" (click)="proceedToPayment()">
+        Continue to Payment
+      </button>
+    </div>
+  </p-dialog>
+</div>

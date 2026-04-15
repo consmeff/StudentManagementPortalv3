@@ -6,6 +6,8 @@ import { AppMenuitem } from './app.menuitem';
 import { ALL_ROLES, PermissionService } from '../../services/permission.service';
 import { RegStoreService } from '../../services/regstore.service';
 import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
+import { Router } from '@angular/router';
+import { NavigationAccessService, ProtectedPageFeature } from '../../services/navigation-access.service';
 
 @Component({
     selector: 'app-menu',
@@ -21,98 +23,71 @@ import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
 export class AppMenu {
     model: MenuItem[] = [];
 
-
-    constructor(private permission: PermissionService, private regstore: RegStoreService,) { }
+    constructor(
+        private permission: PermissionService,
+        private regstore: RegStoreService,
+        private router: Router,
+        private navigationAccess: NavigationAccessService
+    ) {}
 
     ngOnInit() {
-        const fullTree: MenuItem[] = [
-            {
-                label: 'Home',
-                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/pages/dashboard'] }]
-            },
-
-            {
-                label: 'Application',
-                icon: '',
-                items: [
-                    {
-                        label: 'Registration',
-                        icon: 'pi pi-fw pi-user',
-                        items: [
-                            {
-                                label: 'New Registration',
-                                icon: 'pi pi-fw pi-sign-out',
-                                routerLink: ['/pages/admissionform']
-                            },
-                            {
-                                label: 'Registration Summary',
-                                icon: 'pi pi-fw pi-file',
-                                routerLink: ['/pages/summarypage']
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                label: 'Access',
-                icon: '',
-                items: [
-                    {
-                        label: 'Auth',
-                        icon: 'pi pi-fw pi-user',
-                        items: [
-                            {
-                                label: 'LoginOut',
-                                icon: 'pi pi-fw pi-sign-out',
-                                routerLink: ['/auth/logout']
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                label: 'Setting',
-                icon: '',
-                items: [
-
-                    {
-                        label: 'Settings',
-                        icon: 'pi pi-cog',
-                        routerLink: ['/setting/settings']
-                    }
-                ],
-                data: { roles: ['can_view_settings'] }
-
-
-            },
-        ];
-
-        this.model = this.filterMenu(fullTree);
+        this.buildMenu();
         this.regstore.regData$.subscribe((data) => {
             this.setRegistrationStage(data);
+            this.buildMenu();
         });
 
     }
 
     setRegistrationStage(data: RegistrantDataDTO|null) {
-        let _data = data?.data;
-        if (_data != undefined && _data != null) {
-            if (
-                _data.residential_address != null &&
-                _data.primary_parent_or_guardian != null &&
-                _data.academic_history != null &&
-                _data.o_level_result != null &&
-                _data.utme_result != null &&
-                _data.certificate_of_birth != null &&
-                _data.passport_photo != null
-            ) {
-                this.model[1]?.items?.[0]?.items?.[0] && (this.model[1].items[0].items[0].visible = false);
-            } else {
-                this.model[1]?.items?.[0]?.items?.[1] && (this.model[1].items[0].items[1].visible = false);
-            }
-
-
+        const _data = data?.data;
+        if (!_data) {
+            return;
         }
+
+        const registrationComplete = !!(
+            _data.residential_address &&
+            _data.primary_parent_or_guardian &&
+            _data.academic_history &&
+            _data.o_level_result &&
+            _data.utme_result &&
+            _data.certificate_of_birth &&
+            _data.passport_photo
+        );
+
+        sessionStorage.setItem('REGISTRATION_COMPLETE', registrationComplete ? 'true' : 'false');
+    }
+
+    private buildMenu() {
+        this.model = this.filterMenu([
+            this.createNavItem('Dashboard', 'pi pi-th-large', '/pages/dashboard', 'dashboard'),
+            this.createNavItem('Profile', 'pi pi-user', '/pages/profile', 'profile'),
+            this.createNavItem('Admission', 'pi pi-book', '/pages/admissionform', 'admissionform'),
+            this.createNavItem('Payments', 'pi pi-credit-card', '/pages/payment', 'payment'),
+            {
+                label: 'Log Out',
+                icon: 'pi pi-sign-out',
+                styleClass: 'menu-item-logout',
+                command: () => this.logOut()
+            }
+        ]);
+    }
+
+    private createNavItem(label: string, icon: string, route: string, feature: ProtectedPageFeature): MenuItem {
+        const disabled = !this.navigationAccess.canAccess(feature);
+        return {
+            label,
+            icon,
+            routerLink: [route],
+            disabled,
+            styleClass: disabled ? 'menu-item-disabled' : ''
+        };
+    }
+
+    private logOut() {
+        sessionStorage.clear();
+        localStorage.removeItem('theme');
+        this.router.navigateByUrl('/auth/login');
     }
 
     private filterMenu(items: MenuItem[]): MenuItem[] {
@@ -127,6 +102,6 @@ export class AppMenu {
                 if (n.items?.length) n.items = this.filterMenu(n.items);
                 return n;
             })
-            .filter(n => (n.items?.length || n.routerLink));           // prune empty
+            .filter(n => (n.items?.length || n.routerLink || n.command || n.url));           // prune empty
     }
 }

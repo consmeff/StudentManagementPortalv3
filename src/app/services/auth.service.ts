@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ProfilePayload, ProfileSuccessResponse } from '../data/auth/auth.data';
+import { LoginResponse, ProfilePayload, ProfileSuccessResponse } from '../data/auth/auth.data';
 
 
 
@@ -21,19 +21,15 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(user: { username: string, password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiRoot}/api/v1/auth/login`, user)
+  login(user: { username: string, password: string }): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiRoot}/api/v1/auth/login`, user)
     .pipe(
       tap(tokens => {
         this.doLoginUser(user.username, tokens);
         console.log(tokens);
       }),
-      // mapTo(true),
-      map(()=>true),
-      catchError(error => {
-        throw error;
-        return of(false);
-      }));
+      map((tokens) => tokens),
+      catchError((error) => throwError(() => error)));
 
   }
 

@@ -5,6 +5,7 @@ import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms'
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'primeng/api';
+import { AuthSessionStore } from '../../../store/auth-session.store';
 
 import { TraceabilityModule } from '../../../shared/traceability.module';
 
@@ -31,6 +32,7 @@ export class ConsmeffLoginComponent implements OnInit {
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private authSessionStore = inject(AuthSessionStore);
 
   constructor(private authService: AuthService,private messageService: MessageService,) {
     const savedDarkMode = localStorage.getItem('darkMode');
@@ -42,6 +44,7 @@ export class ConsmeffLoginComponent implements OnInit {
   }
   ngOnInit(): void {
     sessionStorage.clear();
+    this.authSessionStore.clear();
     this.loginForm = new FormGroup({
       email: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),
@@ -68,6 +71,7 @@ export class ConsmeffLoginComponent implements OnInit {
 
     this.authService.login(payload).subscribe({
       next: (result) => {
+        this.authSessionStore.setSessionFromLogin(result);
         this.messageService.add({ severity: 'success', summary: 'Login', detail: 'Login Successful' });
         this.isLoading.set(false);
         this.router.navigateByUrl("/pages/dashboard")

@@ -125,10 +125,10 @@ export class AdmissionformComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    var paid = (sessionStorage.getItem("PAYMENT_STATUS") || "") == "Paid";
-    if(!paid){
-      this.router.navigateByUrl("/pages/dashboard");
-    }
+    var paid = (sessionStorage.getItem("PAYMENT_STATUS") || "") === "Paid";
+    // if(!paid){
+    //   this.router.navigateByUrl("/pages/dashboard");
+    // }
 
 
     this._appservice.registrationData().subscribe({

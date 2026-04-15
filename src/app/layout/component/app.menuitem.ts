@@ -14,16 +14,24 @@ import { LayoutService } from '../service/layout.service';
     imports: [CommonModule, RouterModule, RippleModule],
     template: `
         <ng-container>
-            <div *ngIf="root && item.visible !== false" class="layout-menuitem-root-text">{{ item.label }}</div>
-            <a *ngIf="(!item.routerLink || item.items) && item.visible !== false" [attr.href]="item.url" (click)="itemClick($event)" [ngClass]="item.styleClass" [attr.target]="item.target" tabindex="0" pRipple>
+            <div *ngIf="root && item.visible !== false && item.items?.length" class="layout-menuitem-root-text">{{ item.label }}</div>
+            <a
+                *ngIf="(!item.routerLink || item.items) && item.visible !== false"
+                [attr.href]="item.url"
+                (click)="itemClick($event)"
+                [ngClass]="[item.styleClass, item.disabled ? 'menu-item-disabled' : '']"
+                [attr.target]="item.target"
+                tabindex="0"
+                pRipple
+            >
                 <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
                 <span class="layout-menuitem-text">{{ item.label }}</span>
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
             </a>
             <a
-                *ngIf="item.routerLink && !item.items && item.visible !== false"
+                *ngIf="item.routerLink && !item.items && item.visible !== false && !item.disabled"
                 (click)="itemClick($event)"
-                [ngClass]="item.styleClass"
+                [ngClass]="[item.styleClass]"
                 [routerLink]="item.routerLink"
                 routerLinkActive="active-route"
                 [routerLinkActiveOptions]="item.routerLinkActiveOptions || { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
@@ -36,6 +44,18 @@ import { LayoutService } from '../service/layout.service';
                 [queryParams]="item.queryParams"
                 [attr.target]="item.target"
                 tabindex="0"
+                pRipple
+            >
+                <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
+                <span class="layout-menuitem-text">{{ item.label }}</span>
+                <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
+            </a>
+            <a
+                *ngIf="item.routerLink && !item.items && item.visible !== false && item.disabled"
+                (click)="itemClick($event)"
+                [ngClass]="[item.styleClass, 'menu-item-disabled']"
+                [attr.aria-disabled]="true"
+                tabindex="-1"
                 pRipple
             >
                 <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>

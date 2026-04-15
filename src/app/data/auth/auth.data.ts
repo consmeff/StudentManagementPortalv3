@@ -21,3 +21,16 @@ export interface ProfileSuccessResponse {
 export interface ProfileFailResponse {
   non_field_errors: string[];
 }
+
+export interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+  name: string;
+  roles: string[];
+  permissions: string[];
+  user_type: string;
+  password_reset_required: boolean;
+  matriculation_no: string;
+  application_no: string;
+  payment_status: string;
+}
