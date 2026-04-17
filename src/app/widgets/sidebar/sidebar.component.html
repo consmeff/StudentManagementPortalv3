@@ -14,46 +14,14 @@
 
   <ng-template pTemplate="content">
     <div class="sidebar-menu">
-      <!-- Dashboard -->
-      <a routerLink="/pages/dashboard" routerLinkActive="active-menu-item" class="menu-item">
-        <i class="pi pi-th-large"></i>
-        <span>Dashboard</span>
-      </a>
-
-      <!-- Profile -->
-      <a routerLink="/pages/profile" routerLinkActive="active-menu-item" class="menu-item">
-        <i class="pi pi-user"></i>
-        <span>Profile</span>
-      </a>
-
-      <!-- Admission -->
-      <a routerLink="/pages/admissionform" routerLinkActive="active-menu-item" class="menu-item">
-        <i class="pi pi-book"></i>
-        <span>Admission</span>
-      </a>
-
-      <!-- Payments -->
-      <a routerLink="/pages/payment" routerLinkActive="active-menu-item" class="menu-item">
-        <i class="pi pi-credit-card"></i>
-        <span>Payments</span>
-      </a>
-
-      <!-- Results -->
-      <a routerLink="/pages/results" routerLinkActive="active-menu-item" class="menu-item">
-        <i class="pi pi-chart-bar"></i>
-        <span>Results</span>
-      </a>
-
-      <!-- Documents -->
-      <a routerLink="/pages/documents" routerLinkActive="active-menu-item" class="menu-item">
-        <i class="pi pi-file"></i>
-        <span>Documents</span>
-      </a>
-
-      <!-- Support -->
-      <a routerLink="/pages/support" routerLinkActive="active-menu-item" class="menu-item">
-        <i class="pi pi-question-circle"></i>
-        <span>Support</span>
+      <a
+        *ngFor="let item of menuItems"
+        [routerLink]="item.route"
+        routerLinkActive="active-menu-item"
+        class="menu-item"
+      >
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
       </a>
     </div>
   </ng-template>

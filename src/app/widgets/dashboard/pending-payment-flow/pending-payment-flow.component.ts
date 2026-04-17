@@ -9,6 +9,7 @@ import { APPLICATION_GUIDELINE_CONTENT } from '../../../data/dashboard/applicati
 import { AuthSessionStore } from '../../../store/auth-session.store';
 import { firstValueFrom } from 'rxjs';
 import { ApplicationGuidelineModalComponent } from '../application-guideline-modal/application-guideline-modal.component';
+import { PaymentWorkflowService } from '../../../services/payment-workflow.service';
 
 @Component({
   selector: 'app-pending-payment-flow',
@@ -23,6 +24,7 @@ export class PendingPaymentFlowComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly router = inject(Router);
   private readonly authSessionStore = inject(AuthSessionStore);
+  private readonly paymentWorkflow = inject(PaymentWorkflowService);
 
   readonly guidelineContent = APPLICATION_GUIDELINE_CONTENT;
   readonly loadingApplications = signal(false);
@@ -131,7 +133,13 @@ export class PendingPaymentFlowComponent implements OnInit {
 
       sessionStorage.setItem('APP_NO', applicationNo);
       this.showGuidelineDialog.set(false);
-      this.router.navigateByUrl('/pages/payment');
+      await this.paymentWorkflow.startForApplication(applicationNo, {
+        onProcessingChange: (state) => this.initializingApplication.set(state),
+        onVerifyingChange: (state) => this.initializingApplication.set(state),
+        onSuccess: (title, message) => this.messageService.add({ severity: 'success', summary: title, detail: message }),
+        onError: (title, message) => this.messageService.add({ severity: 'error', summary: title, detail: message }),
+        onWarning: (title, message) => this.messageService.add({ severity: 'warn', summary: title, detail: message }),
+      });
     } catch {
       this.messageService.add({
         severity: 'error',

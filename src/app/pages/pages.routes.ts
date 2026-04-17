@@ -9,6 +9,7 @@ import { featureAccessGuard } from '../services/feature-access.guard';
 export default [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Add this
     { path: 'dashboard', component: Dashboard, canActivate: [featureAccessGuard], data: { feature: 'dashboard' } },
+    { path: 'profile', redirectTo: 'admissionform', pathMatch: 'full' },
     { path: 'payment', component: PaymentComponent, canActivate: [featureAccessGuard], data: { feature: 'payment' } },
     { path: 'admissionform', component: AdmissionformComponent, canActivate: [featureAccessGuard], data: { feature: 'admissionform' } },
     { path: 'summarypage', component: ApplicationsummaryComponent, canActivate: [featureAccessGuard], data: { feature: 'summarypage' } },

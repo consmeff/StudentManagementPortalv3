@@ -4,6 +4,11 @@ import { WidgetsService } from '../services/widgets.service';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { TraceabilityModule } from '../../shared/traceability.module';
 
+type SidebarMenuItem = {
+  label: string;
+  icon: string;
+  route: string;
+};
 
 @Component({
   selector: 'app-sidebar',
@@ -13,6 +18,15 @@ import { TraceabilityModule } from '../../shared/traceability.module';
 })
 export class SidebarComponent {
   sidebarVisible = false;
+  readonly menuItems: SidebarMenuItem[] = [
+    { label: 'Dashboard', icon: 'pi pi-th-large', route: '/pages/dashboard' },
+    { label: 'Profile', icon: 'pi pi-user', route: '/pages/profile' },
+    { label: 'Admission', icon: 'pi pi-book', route: '/pages/admissionform' },
+    { label: 'Payments', icon: 'pi pi-credit-card', route: '/pages/payment' },
+    { label: 'Results', icon: 'pi pi-chart-bar', route: '/pages/results' },
+    { label: 'Documents', icon: 'pi pi-file', route: '/pages/documents' },
+    { label: 'Support', icon: 'pi pi-question-circle', route: '/pages/support' },
+  ];
   
   _widgetService = inject(WidgetsService);
   router = inject(Router);

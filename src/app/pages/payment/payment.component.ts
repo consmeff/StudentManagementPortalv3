@@ -21,12 +21,7 @@ import { ApplicationService } from '../../services/application.service';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { CertificateOfBirth, RegistrantData } from '../../data/application/registrantdatadto';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
-import { PaymentRefResponse } from '../../data/dashboard/payment.data';
-
-
-
-
-declare let PaystackPop: any;
+import { PaymentWorkflowService } from '../../services/payment-workflow.service';
 
 @Component({
   selector: 'app-payment',
@@ -63,7 +58,8 @@ export class PaymentComponent {
   constructor(
     private router: Router,
     private appService: ApplicationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private paymentWorkflow: PaymentWorkflowService
   ) {
     this._widgetService.sidebarState$.subscribe((state: sidebarStateDTO) => {
       this.sidebarVisible = state.isvisible;
@@ -162,68 +158,21 @@ export class PaymentComponent {
 
   getPaymentRef() {
     const app_no = sessionStorage.getItem("APP_NO") || "";
-
-    if (!app_no) {
-      this.showError('Error', 'Application number not found');
-      return;
-    }
-
-    this.paymentProcessing = true;
-
-    this.appService.getPaymentRef({ application_no: app_no })
-      .subscribe({
-        next: (data) => {
-          this.paymentProcessing = false;
-          if (data && data.ref_id) {
-            this.makePayment(data);
-          }
-        },
-        error: (err) => {
-          this.paymentProcessing = false;
-          this.showError('Payment Error', 'Unable to initialize payment. Please try again.');
-        }
-      });
-  }
-
-  makePayment(ref: PaymentRefResponse) {
-    const app_no = sessionStorage.getItem("APP_NO") || "";
-    
-    const handler = PaystackPop.setup({
-      key: 'pk_test_3303a8dc18ea2a4b2728543b34813870ba6f8bd6',
-      email: ref.email || "solixzdev@gmail.com",
-      amount: +ref.amount * 100,
-      currency: 'NGN',
-      ref: ref.ref_id,
-      callback: (response: any) => {
-        const reference = response.reference;
-        sessionStorage.setItem("paymentref", reference);
-
-        this.isLoading = true;
-        
-        this.appService.verifyPayment({ ref_id: reference })
-          .subscribe({
-            next: (data) => {
-              this.isLoading = false;
-              this.showSuccess('Payment Successful', 'Your payment has been verified successfully, login to continue.');
-              this.btnState = 1;
-              this.canMove = true;
-              
-              setTimeout(() => {
-                this.router.navigateByUrl("/auth/login");
-              }, 1500);
-            },
-            error: (err) => {
-              this.isLoading = false;
-              this.showError('Verification Failed', 'Payment verification failed. Please contact support.');
-            }
-          });
+    this.paymentWorkflow.startForApplication(app_no, {
+      onProcessingChange: (state) => (this.paymentProcessing = state),
+      onVerifyingChange: (state) => (this.isLoading = state),
+      onSuccess: (title, message) => {
+        this.showSuccess(title, message);
+        this.btnState = 1;
+        this.canMove = true;
       },
-      onClose: () => {
-        this.showWarning('Payment Cancelled', 'Transaction was not completed');
-      },
+      onError: (title, message) => this.showError(title, message),
+      onWarning: (title, message) => this.showWarning(title, message),
+      onVerified: () => {
+        this.btnState = 1;
+        this.canMove = true;
+      }
     });
-    
-    handler.openIframe();
   }
 
   copyToClipboard(text: string) {

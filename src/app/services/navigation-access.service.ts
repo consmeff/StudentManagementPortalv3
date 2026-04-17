@@ -7,24 +7,13 @@ export class NavigationAccessService {
   canAccess(feature: ProtectedPageFeature): boolean {
     switch (feature) {
       case 'dashboard':
-        return true;
       case 'profile':
-        return false;
       case 'payment':
-        return this.hasApplicationNumber();
       case 'admissionform':
       case 'summarypage':
-        return this.isPaymentCompleted();
+        return true;
       default:
         return false;
     }
-  }
-
-  private hasApplicationNumber(): boolean {
-    return !!(sessionStorage.getItem('APP_NO') || '').trim();
-  }
-
-  private isPaymentCompleted(): boolean {
-    return (sessionStorage.getItem('PAYMENT_STATUS') || '') === 'Paid';
   }
 }
