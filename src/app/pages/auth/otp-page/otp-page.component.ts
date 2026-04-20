@@ -1,10 +1,13 @@
-import { Component, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChildren, QueryList, ElementRef, inject } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../services/auth.service';
 import { TraceabilityModule } from '../../../shared/traceability.module';
+import { ThemeService } from '../../../services/theme.service';
+import { AuthSessionStore } from '../../../store/auth-session.store';
 
 @Component({
   selector: 'app-otp-page',
@@ -13,7 +16,7 @@ import { TraceabilityModule } from '../../../shared/traceability.module';
   imports:[TraceabilityModule],
   providers: [MessageService]
 })
-export class OtpPageComponent implements OnInit {
+export class OtpPageComponent implements OnInit, OnDestroy {
   @ViewChildren('box1Input, box2Input, box3Input, box4Input, box5Input, box6Input')
   inputElements!: QueryList<ElementRef>;
 
@@ -23,6 +26,8 @@ export class OtpPageComponent implements OnInit {
   otpForm!: FormGroup;
   email: string = '';
   isPasswordResetFlow = false;
+  private themeSub?: Subscription;
+  private authSessionStore = inject(AuthSessionStore);
 
   get box1(): AbstractControl { return this.otpForm.controls['box1']; }
   get box2(): AbstractControl { return this.otpForm.controls['box2']; }
@@ -34,12 +39,13 @@ export class OtpPageComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
-    this.email = sessionStorage.getItem('profile_email') || 'your email';
-    this.isPasswordResetFlow = sessionStorage.getItem('auth_flow') === 'password_reset';
+    this.email = this.authSessionStore.profileEmail() || 'your email';
+    this.isPasswordResetFlow = this.authSessionStore.authFlow() === 'password_reset';
     
     this.otpForm = new FormGroup({
       box1: new FormControl('', [Validators.required, Validators.pattern(/^\d$/)]),
@@ -53,11 +59,14 @@ export class OtpPageComponent implements OnInit {
     this.otpForm.valueChanges.subscribe(() => {
       this.complete = this.otpForm.valid;
     });
+
+    this.themeSub = this.themeService.darkMode$.subscribe((isDark) => {
+      this.isDarkMode = isDark;
+    });
   }
 
   toggleDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
-    document.body.classList.toggle('dark');
+    this.themeService.toggle();
   }
 
   onInput(event: Event, nextBox: number): void {
@@ -128,7 +137,7 @@ export class OtpPageComponent implements OnInit {
     this.busy = true;
     const otp = `${this.box1.value}${this.box2.value}${this.box3.value}${this.box4.value}${this.box5.value}${this.box6.value}`;
     const otpObj = { 
-      email: sessionStorage.getItem('profile_email'), 
+      email: this.authSessionStore.profileEmail(), 
       otp: otp 
     };
 
@@ -145,10 +154,10 @@ export class OtpPageComponent implements OnInit {
           
           setTimeout(() => {
             if (this.isPasswordResetFlow) {
-              sessionStorage.setItem('forgot_otp', otp);
+              this.authSessionStore.setForgotOtp(otp);
               this.router.navigateByUrl('/auth/passwordreset');
             } else {
-              sessionStorage.removeItem('auth_flow');
+              this.authSessionStore.clearAuthFlow();
               this.router.navigateByUrl('/auth/login');
             }
           }, 1000);
@@ -181,5 +190,9 @@ export class OtpPageComponent implements OnInit {
         });
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.themeSub?.unsubscribe();
   }
 }

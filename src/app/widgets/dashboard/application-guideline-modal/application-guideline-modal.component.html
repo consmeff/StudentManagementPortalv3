@@ -5,6 +5,7 @@
   [draggable]="false"
   [resizable]="false"
   [style]="{ width: '560px', maxHeight: '90vh' }"
+  styleClass="guideline-dialog"
   [visible]="visible"
   (visibleChange)="onVisibleChange($event)"
 >
@@ -18,13 +19,8 @@
     </li>
   </ol>
 
-  <label class="accept-wrap">
-    <input type="checkbox" [checked]="accepted" (change)="onAcceptedToggle($event)" />
-    <span>I have read and understand the guideline</span>
-  </label>
-
   <div class="dialog-actions">
-    <button pButton type="button" class="continue-btn" [disabled]="!accepted || loading" (click)="onContinue()">
+    <button pButton type="button" class="continue-btn" [disabled]="loading" (click)="onContinue()">
       {{ loading ? "Please wait..." : continueLabel }}
     </button>
   </div>

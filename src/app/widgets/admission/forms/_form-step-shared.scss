@@ -1,0 +1,105 @@
+.admission-form-card {
+  width: 100%;
+  background: #fcfdff;
+  border: 1px solid #edf2fb;
+  border-radius: 10px;
+  padding: 1rem 1rem 1.15rem;
+}
+
+.admission-form-section {
+  margin-bottom: 1.2rem;
+}
+
+.admission-form-section:last-child {
+  margin-bottom: 0;
+}
+
+.admission-section-title {
+  margin: 0 0 0.95rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.admission-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admission-row {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.85rem;
+  row-gap: 0.2rem;
+  max-width: 537px;
+}
+
+.admission-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+.admission-label .required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.admission-error {
+  grid-column: 2;
+  color: #dc2626;
+  font-size: 0.7rem;
+  margin-top: -0.05rem;
+}
+
+.admission-info {
+  grid-column: 2;
+  color: #94a3b8;
+  font-size: 0.7rem;
+  margin-top: -0.05rem;
+}
+
+.admission-radio-group {
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.admission-radio-options {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.admission-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.admission-radio-label {
+  font-size: 0.78rem;
+  color: #1e293b;
+  cursor: pointer;
+  user-select: none;
+}
+
+@media (max-width: 992px) {
+  .admission-row {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+
+  .admission-error,
+  .admission-info {
+    grid-column: 1;
+  }
+
+  .admission-radio-options {
+    flex-wrap: wrap;
+    gap: 0.75rem 1.15rem;
+  }
+}

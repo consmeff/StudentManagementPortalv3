@@ -30,7 +30,7 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
     RadioButtonModule
   ],
   templateUrl: './nextofkin.component.html',
-  styleUrl: './nextofkin.component.scss'
+  styleUrls: ['./nextofkin.component.scss']
 })
 export class NextofkinComponent {
   _formStepService = inject(FormService);
@@ -103,6 +103,10 @@ export class NextofkinComponent {
           label: rel,
           value: rel
         }));
+
+        if (Array.isArray(data.gender) && data.gender.length > 0) {
+          this.genderOptions = data.gender;
+        }
       }
     });
 
@@ -133,7 +137,7 @@ export class NextofkinComponent {
       occupation: [data?.occupation ?? '', Validators.required],
       phonenumber: [data?.phone_number ?? '', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
       email: [data?.email ?? '', [Validators.email]],
-      nationality: [data?.nationality ?? null, Validators.required],
+      nationality: [data?.nationality ?? 'Nigeria', Validators.required],
       stateOfOrigin: [null, Validators.required],
       localGovernment: [null, Validators.required],
       houseNumber: ['', Validators.required],
@@ -223,7 +227,7 @@ export class NextofkinComponent {
 
   getStateIDByName(val: string): number | null {
     if (val && this.stateOptions) {
-      const state = this.stateOptions.find(s => s.name === val);
+      const state = this.stateOptions.find(s => s.name.toLowerCase() === val.toLowerCase());
       return state?.id ?? null;
     }
     return null;
@@ -231,7 +235,7 @@ export class NextofkinComponent {
 
   getLocalGovtIDByName(val: string): number | null {
     if (val && this.localGovOptions) {
-      const lga = this.localGovOptions.find(l => l.name === val);
+      const lga = this.localGovOptions.find(l => l.name.toLowerCase() === val.toLowerCase());
       return lga?.id ?? null;
     }
     return null;

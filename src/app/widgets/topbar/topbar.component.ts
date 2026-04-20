@@ -1,8 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { MenuItem } from 'primeng/api';
 import { WidgetsService } from '../services/widgets.service';
 import { TraceabilityModule } from '../../shared/traceability.module';
+import { ThemeService } from '../../services/theme.service';
+import { AuthSessionStore } from '../../store/auth-session.store';
 
 @Component({
   selector: 'app-topbar',
@@ -10,8 +13,11 @@ import { TraceabilityModule } from '../../shared/traceability.module';
   imports: [TraceabilityModule],
   styleUrl: './topbar.component.scss'
 })
-export class TopbarComponent {
+export class TopbarComponent implements OnDestroy {
   _widgetService = inject(WidgetsService);
+  private readonly themeService = inject(ThemeService);
+  private readonly authSessionStore = inject(AuthSessionStore);
+  private themeSub?: Subscription;
   
   isDarkMode = false;
   username = '';
@@ -72,15 +78,12 @@ export class TopbarComponent {
   ];
 
   constructor() {
-    this.username = sessionStorage.getItem('user_name') || 'User';
+    this.username = this.authSessionStore.name() || 'User';
     this.userInitials = this.getInitials(this.username);
-    
-    // Check for saved theme preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      this.isDarkMode = true;
-      document.body.classList.add('dark');
-    }
+
+    this.themeSub = this.themeService.darkMode$.subscribe((isDark) => {
+      this.isDarkMode = isDark;
+    });
   }
 
   toggleSidebar() {
@@ -88,9 +91,7 @@ export class TopbarComponent {
   }
 
   toggleDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
-    document.body.classList.toggle('dark');
-    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+    this.themeService.toggle();
   }
 
   getInitials(name: string): string {
@@ -116,8 +117,11 @@ export class TopbarComponent {
   }
 
   logout() {
-    sessionStorage.clear();
-    localStorage.removeItem('theme');
+    this.authSessionStore.clear();
     window.location.href = '/auth/login';
+  }
+
+  ngOnDestroy(): void {
+    this.themeSub?.unsubscribe();
   }
 }

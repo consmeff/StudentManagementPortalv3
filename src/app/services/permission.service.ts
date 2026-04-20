@@ -1,6 +1,7 @@
 // core/permission.service.ts
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';          // npm i jwt-decode
+import { AuthSessionStore } from '../store/auth-session.store';
 
 export type RoleId =
   | 'can_generate_sgtin'
@@ -35,6 +36,7 @@ interface UserToken {
 
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
+    private authSessionStore = inject(AuthSessionStore);
 
     private _roles = signal<RoleId[]>(this.readRolesFromJWT());
 
@@ -58,7 +60,7 @@ export class PermissionService {
 
     private readRolesFromJWT(): RoleId[] {
         console.log('Reading roles from JWT...');
-        const raw = sessionStorage.getItem('key');
+        const raw = this.authSessionStore.jwtToken();
         if (!raw) return [];
 
         try {

@@ -69,11 +69,11 @@ export class AcademichistoryComponent {
 
   constructor(private fb: FormBuilder) {
     this.academicHistoryOtherQualificationForm = this.fb.group({
-      qualifications: this.fb.array([this.createQualification()])
+      qualifications: this.fb.array([this.createQualificationGroup()])
     });
 
     this.academicHistoryExamsForm = this.fb.group({
-      examattemptcount: this.fb.array([this.createAcademicHistory()])
+      examattemptcount: this.fb.array([this.createAcademicHistoryGroup()])
     });
 
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
@@ -115,7 +115,6 @@ export class AcademichistoryComponent {
     this.regstore.regData$.subscribe(data => {
       if (data != null) {
         this.backendRegistrationData = data;
-        console.log(this.backendRegistrationData);
       }
     });
   }
@@ -136,14 +135,14 @@ export class AcademichistoryComponent {
 
     this.academicHistoryPrimaryForm = this.fb.group({
       name: [_primary?.institution ?? '', Validators.required],
-      qualificationType: [_primary?.certificate_type ?? null, Validators.required],
+      qualificationType: [_primary?.certificate_type ?? "Primary School Leaving Certificate", Validators.required],
       datestarted: [_primary?.from_date ? new Date(_primary.from_date) : null, Validators.required],
       datecompleted: [_primary?.to_date ? new Date(_primary.to_date) : null, Validators.required]
     });
 
     this.academicHistorySecondaryForm = this.fb.group({
       name: [_sec?.institution ?? '', Validators.required],
-      qualificationType: [_sec?.certificate_type ?? null, Validators.required],
+      qualificationType: [_sec?.certificate_type ?? "SSSCE", Validators.required],
       datestarted: [_sec?.from_date ? new Date(_sec.from_date) : null, Validators.required],
       datecompleted: [_sec?.to_date ? new Date(_sec.to_date) : null, Validators.required]
     });
@@ -151,11 +150,13 @@ export class AcademichistoryComponent {
     let _exams = this.backendRegistrationData?.data?.o_level_result;
     if (_exams != undefined && _exams.length > 0 && _exams[0].subjects != undefined) {
       this.clearExamAttempt();
-      this.addExamAttempt(_exams);
+      _exams.forEach((exam) => this.addExamAttempt(exam));
+      this.examnumform.get('attempt')?.setValue(`${Math.min(_exams.length, 2)}`);
     }
 
     if (_more != null && _more.length > 0) {
-      this.addQualification(_more);
+      this.qualifications.clear();
+      _more.forEach((item) => this.addQualification(item));
     }
 
     this.setupListeners();
@@ -190,9 +191,13 @@ export class AcademichistoryComponent {
   }
 
   validateAndUpdate() {
+    const dateRangesValid = this.areDateRangesValid();
+    const optionalQualificationsValid = this.areOptionalQualificationsValid();
     if (this.academicHistoryPrimaryForm.valid && 
         this.academicHistorySecondaryForm.valid && 
-        this.academicHistoryExamsForm.valid) {
+        this.academicHistoryExamsForm.valid &&
+        dateRangesValid &&
+        optionalQualificationsValid) {
       this.formStepStatus.academicValid = true;
       this.preparePayload();
       this._formStepService.setFormSteps(this.formStepStatus);
@@ -233,7 +238,8 @@ export class AcademichistoryComponent {
       }
     ];
 
-    this.academicHistoryOtherQualificationForm.value.qualifications.forEach((element: any) => {
+    const validOptionalQualifications = this.getValidOptionalQualifications();
+    validOptionalQualifications.forEach((element: any) => {
       ah.push({
         institution: element.name,
         certificate_type: element.qualificationType,
@@ -243,8 +249,6 @@ export class AcademichistoryComponent {
     });
 
     this._formStepService.setAcademicHistoryFormData(ah);
-    console.log(ex);
-    console.log(ah);
   }
 
   formatDate(date: Date | string | null): string {
@@ -261,28 +265,17 @@ export class AcademichistoryComponent {
     return this.academicHistoryOtherQualificationForm.get('qualifications') as FormArray;
   }
 
-  createQualification(_more?: AcademicHistory[] | undefined): FormGroup | FormArray {
-    if (!_more) {
-      return this.fb.group({
-        name: ['', Validators.required],
-        qualificationType: [null, Validators.required],
-        dateStarted: [null, Validators.required],
-        dateCompleted: [null, Validators.required],
-      });
-    } else {
-      return this.fb.array(
-        _more.map(item => this.fb.group({
-          name: [item.institution, Validators.required],
-          qualificationType: [item.certificate_type, Validators.required],
-          dateStarted: [item.from_date ? new Date(item.from_date) : null, Validators.required],
-          dateCompleted: [item.to_date ? new Date(item.to_date) : null, Validators.required],
-        }))
-      );
-    }
+  createQualificationGroup(item?: AcademicHistory): FormGroup {
+    return this.fb.group({
+      name: [item?.institution ?? ''],
+      qualificationType: [item?.certificate_type ?? null],
+      dateStarted: [item?.from_date ? new Date(item.from_date) : null],
+      dateCompleted: [item?.to_date ? new Date(item.to_date) : null],
+    });
   }
 
-  createAcademicHistory(_exams?: OLevelResult[] | undefined): FormGroup | FormArray {
-    if (_exams == undefined) {
+  createAcademicHistoryGroup(exam?: OLevelResult): FormGroup {
+    if (exam == undefined) {
       return this.fb.group({
         name: [null, Validators.required],
         year: [null, Validators.required],
@@ -294,27 +287,27 @@ export class AcademichistoryComponent {
       });
     } else {
       return this.fb.group({
-        name: [_exams[0].name.replace(/\/\d{4}/g, ""), Validators.required],
-        year: [extractLastYearFromText(_exams[0].name), Validators.required],
-        english: [_exams[0].subjects.find(f => f.subject.includes("english"))?.grade || null, Validators.required],
-        math: [_exams[0].subjects.find(f => f.subject.includes("math"))?.grade || null, Validators.required],
-        physics: [_exams[0].subjects.find(f => f.subject.includes("physic"))?.grade || null, Validators.required],
-        chemistry: [_exams[0].subjects.find(f => f.subject.includes("chemistry"))?.grade || null, Validators.required],
-        biology: [_exams[0].subjects.find(f => f.subject.includes("biology"))?.grade || null, Validators.required],
+        name: [exam.name.replace(/\/\d{4}/g, ""), Validators.required],
+        year: [extractLastYearFromText(exam.name), Validators.required],
+        english: [exam.subjects.find(f => f.subject.includes("english"))?.grade || null, Validators.required],
+        math: [exam.subjects.find(f => f.subject.includes("math"))?.grade || null, Validators.required],
+        physics: [exam.subjects.find(f => f.subject.includes("physic"))?.grade || null, Validators.required],
+        chemistry: [exam.subjects.find(f => f.subject.includes("chemistry"))?.grade || null, Validators.required],
+        biology: [exam.subjects.find(f => f.subject.includes("biology"))?.grade || null, Validators.required],
       });
     }
   }
 
-  addQualification(_more?: AcademicHistory[]): void {
-    this.qualifications.push(this.createQualification(_more));
+  addQualification(item?: AcademicHistory): void {
+    this.qualifications.push(this.createQualificationGroup(item));
   }
 
   removeQualification(index: number): void {
     this.qualifications.removeAt(index);
   }
 
-  addExamAttempt(_exams?: OLevelResult[]): void {
-    this.examattemptcount.push(this.createAcademicHistory(_exams));
+  addExamAttempt(exam?: OLevelResult): void {
+    this.examattemptcount.push(this.createAcademicHistoryGroup(exam));
   }
 
   clearExamAttempt() {
@@ -333,5 +326,69 @@ export class AcademichistoryComponent {
   isFieldInvalidArray(formArray: FormArray, index: number, fieldName: string): boolean {
     const field = formArray.at(index).get(fieldName);
     return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  isDateOrderInvalid(form: FormGroup): boolean {
+    const start = form.get('datestarted')?.value;
+    const end = form.get('datecompleted')?.value;
+    if (!start || !end) {
+      return false;
+    }
+    return new Date(end) < new Date(start);
+  }
+
+  isOptionalQualificationIncomplete(index: number): boolean {
+    const qualification = this.qualifications.at(index) as FormGroup;
+    const value = qualification.value;
+    const hasAnyValue = Object.values(value).some((v) => this.hasFilledValue(v));
+    const hasAllValue = Object.values(value).every((v) => this.hasFilledValue(v));
+    return hasAnyValue && !hasAllValue;
+  }
+
+  private areDateRangesValid(): boolean {
+    if (this.isDateOrderInvalid(this.academicHistoryPrimaryForm)) {
+      return false;
+    }
+    if (this.isDateOrderInvalid(this.academicHistorySecondaryForm)) {
+      return false;
+    }
+
+    return this.getValidOptionalQualifications().every((item) => {
+      const start = item.dateStarted;
+      const end = item.dateCompleted;
+      if (!start || !end) {
+        return false;
+      }
+      return new Date(end) >= new Date(start);
+    });
+  }
+
+  private areOptionalQualificationsValid(): boolean {
+    return this.qualifications.controls.every((group) => {
+      const value = (group as FormGroup).value;
+      const values = Object.values(value);
+      const hasAnyValue = values.some((v) => this.hasFilledValue(v));
+      const hasAllValue = values.every((v) => this.hasFilledValue(v));
+      return !hasAnyValue || hasAllValue;
+    });
+  }
+
+  private getValidOptionalQualifications(): any[] {
+    return this.qualifications.value.filter((item: any) =>
+      this.hasFilledValue(item?.name) &&
+      this.hasFilledValue(item?.qualificationType) &&
+      this.hasFilledValue(item?.dateStarted) &&
+      this.hasFilledValue(item?.dateCompleted)
+    );
+  }
+
+  private hasFilledValue(value: unknown): boolean {
+    if (value instanceof Date) {
+      return !Number.isNaN(value.getTime());
+    }
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
+    }
+    return value !== null && value !== undefined;
   }
 }

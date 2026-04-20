@@ -33,7 +33,7 @@ export class ApplicationGuidelineModalComponent {
   }
 
   onContinue(): void {
-    if (this.accepted && !this.loading) {
+    if (!this.loading) {
       this.continueClicked.emit();
     }
   }

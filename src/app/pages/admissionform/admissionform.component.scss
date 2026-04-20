@@ -1,526 +1,171 @@
 @import '../../../assets/demo/theme';
 
-// Content Wrapper - Responsive Layout
 .content-wrapper {
   width: 100%;
   min-height: 100vh;
-  padding: $spacing-6 $spacing-4;
-  background-color: $bg-secondary;
-  transition: $transition-base;
+  padding: 0rem;
+  // background: #f8fafc;
 
   @include responsive($breakpoint-lg) {
-    padding: $spacing-6 $spacing-10;
-    margin-left: 8.5rem;
-    width: calc(100vw - 8.5rem);
+    // margin-left: 8.5rem;
+    // width: calc(100vw - 8.5rem);
+    padding: 0rem;
   }
 
   &.sidebar-visible {
     @include responsive($breakpoint-lg) {
-      margin-left: 14rem;
-      width: calc(100vw - 14rem);
+      // margin-left: 14rem;
+      // width: calc(100vw - 14rem);
     }
   }
-
-  @include dark-mode {
-    background-color: $dark-bg-primary;
-  }
-}
-
-.content-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
 }
 
 .page-title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-semibold;
-  line-height: $line-height-tight;
-  color: $text-primary;
-  margin-bottom: $spacing-8;
-
-  @include responsive($breakpoint-md) {
-    font-size: $font-size-3xl;
-  }
-
-  @include dark-mode {
-    color: $dark-text-primary;
-  }
+  margin: 0 0 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-// Stepper Wrapper
 .stepper-wrapper {
-  background: $bg-primary;
-  border-radius: $radius-xl;
-  padding: $spacing-6;
-  box-shadow: $shadow-lg;
-  margin-bottom: $spacing-6;
-
-  @include responsive($breakpoint-md) {
-    padding: $spacing-10;
-  }
-
-  @include dark-mode {
-    background: $dark-bg-secondary;
-  }
+  padding: 0rem;
 }
 
-// Step Content
 .step-content {
-  min-height: 300px;
-  padding: $spacing-4 0;
-
-  @include responsive($breakpoint-md) {
-    padding: $spacing-6 0;
-  }
+  padding-top: 0.6rem;
 }
 
 .step-actions {
+  margin-top: 1rem;
   display: flex;
-  flex-direction: column;
-  gap: $spacing-3;
-  margin-top: $spacing-8;
-  padding-top: $spacing-6;
-  border-top: 2px solid $border-color;
-
-  @include responsive($breakpoint-sm) {
-    flex-direction: row;
-    justify-content: flex-end;
-  }
-
-  @include dark-mode {
-    border-top-color: $dark-border-color;
-  }
+  justify-content: flex-end;
+  gap: 0.6rem;
 }
 
 .step-label {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-
-  @include responsive($breakpoint-md) {
-    font-size: $font-size-base;
-  }
+  font-size: 0.73rem;
+  color: #64748b;
+  line-height: 1.2;
 }
 
-// PrimeNG Customization
 ::ng-deep {
-  // Stepper Customization
   .p-stepper {
-    .p-stepper-list {
-      flex-wrap: wrap;
-      gap: $spacing-2;
+    .p-stepper-nav {
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin-bottom: 0.8rem;
+    }
 
-      @include responsive($breakpoint-md) {
-        flex-wrap: nowrap;
-      }
+    .p-stepper-list {
+      gap: 0;
+    }
+
+    .p-step {
+      flex: 1;
+      min-width: 0;
     }
 
     .p-step-header {
-      padding: $spacing-2;
-      flex: 1;
-      min-width: 120px;
-      display: flex;
-      flex-direction: column !important;
-      align-items: center !important;
-      gap: $spacing-2 !important;
-
-      @include responsive($breakpoint-md) {
-        padding: $spacing-3;
-      }
+      width: 100%;
+      padding: 0;
+      justify-content: center;
+      gap: 0.35rem;
+      flex-direction: column;
     }
 
     .p-step-number {
-      width: 40px;
-      height: 40px;
-      font-size: $font-size-base;
-      font-weight: $font-weight-semibold;
-      background-color: $gray-200;
-      color: $text-secondary;
-      border-radius: $radius-full;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: $transition-all;
-      margin: 0 !important;
-
-      @include responsive($breakpoint-md) {
-        width: 48px;
-        height: 48px;
-        font-size: $font-size-lg;
-      }
-
-      @include dark-mode {
-        background-color: $gray-700;
-        color: $dark-text-secondary;
-      }
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border-radius: 999px;
+      border: 1px solid #dbe5f6;
+      background: #fff;
+      color: #334155;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin: 0;
     }
 
     .p-step-title {
-      color: $text-secondary;
-      font-size: $font-size-xs;
-      font-weight: $font-weight-normal;
-      text-align: center;
-      margin: 0 !important;
-      margin-top: $spacing-2 !important;
-
-      @include responsive($breakpoint-md) {
-        font-size: $font-size-sm;
-      }
-
-      @include dark-mode {
-        color: $dark-text-secondary;
-      }
-    }
-
-    // Active Step Styles
-    .p-step-active {
-      .p-step-number {
-        background-color: $secondary !important;
-        color: white !important;
-        box-shadow: $shadow-secondary;
-      }
-
-      .p-step-title {
-        color: $text-primary !important;
-        font-weight: $font-weight-semibold !important;
-
-        @include dark-mode {
-          color: $dark-text-primary !important;
-        }
-      }
-    }
-
-    // Completed Steps
-    .p-step:has(~ .p-step-active) {
-      .p-stepper-separator {
-        background: $secondary !important;
-      }
+      margin: 0;
+      font-size: 0.72rem;
+      color: #7d8ba5;
+      font-weight: 500;
     }
 
     .p-stepper-separator {
-      background: $gray-200;
       height: 2px;
-      flex: 1;
-      margin: 0 $spacing-2;
-      transition: $transition-base;
+      margin: 10px 0.4rem 0;
+      background: #e2e8f0;
+    }
 
-      @include dark-mode {
-        background: $gray-700;
+    .p-step-active {
+      .p-step-number {
+        background: #b34ba2;
+        border-color: #b34ba2;
+        color: #fff;
       }
+
+      .p-step-title {
+        color: #0f172a;
+        font-weight: 700;
+      }
+    }
+
+    .p-disabled {
+      opacity: 0.45;
+      pointer-events: none;
     }
 
     .p-stepper-panels {
+      background: transparent;
+      border: none;
       padding: 0;
-      margin-top: $spacing-6;
     }
   }
 
-  // Button Customization
   .primary-btn {
-    background: $primary !important;
-    border: none !important;
-    height: 48px !important;
-    padding: $spacing-2 $spacing-6 !important;
-    font-size: $font-size-base !important;
-    font-weight: $font-weight-semibold !important;
-    border-radius: $radius-md !important;
-    transition: $transition-all;
-    width: 100%;
-
-    @include responsive($breakpoint-sm) {
-      width: auto;
-      min-width: 200px;
-    }
-
-    &:enabled:hover {
-      background: $primary-dark !important;
-      transform: translateY(-2px);
-      box-shadow: $shadow-md;
-    }
-
-    &:enabled:active {
-      transform: translateY(0);
-    }
-
-    &:disabled {
-      background-color: $gray-300 !important;
-      cursor: not-allowed !important;
-      opacity: 0.6;
-    }
-
-    @include dark-mode {
-      background: $primary-light !important;
-
-      &:enabled:hover {
-        background: $primary !important;
-      }
-
-      &:disabled {
-        background-color: $gray-600 !important;
-      }
-    }
+    min-width: 140px;
+    height: 40px !important;
+    border-radius: 8px !important;
+    border: 1px solid #000080 !important;
+    background: #000080 !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
   }
 
   .secondary-btn {
-    border: 2px solid $primary !important;
-    background: transparent !important;
-    color: $primary !important;
-    height: 48px !important;
-    padding: $spacing-2 $spacing-6 !important;
-    font-size: $font-size-base !important;
-    font-weight: $font-weight-semibold !important;
-    border-radius: $radius-md !important;
-    transition: $transition-all;
-    width: 100%;
-
-    @include responsive($breakpoint-sm) {
-      width: auto;
-      min-width: 165px;
-    }
-
-    &:enabled:hover {
-      background: rgba($primary, 0.1) !important;
-      transform: translateY(-2px);
-    }
-
-    &:enabled:active {
-      transform: translateY(0);
-    }
-
-    @include dark-mode {
-      border-color: $primary-light !important;
-      color: $primary-light !important;
-
-      &:enabled:hover {
-        background: rgba($primary-light, 0.1) !important;
-      }
-    }
-  }
-
-  // Success Dialog Customization
-  .success-dialog {
-    border-radius: $radius-xl;
-    box-shadow: $shadow-2xl;
-    overflow: hidden;
-
-    .p-dialog-header {
-      background: $gradient-secondary;
-      color: white;
-      padding: $spacing-6;
-      border-bottom: none;
-
-      .dialog-header-content {
-        display: flex;
-        align-items: center;
-        gap: $spacing-3;
-        width: 100%;
-
-        .header-icon {
-          font-size: $font-size-2xl;
-        }
-
-        .dialog-title {
-          font-size: $font-size-xl;
-          font-weight: $font-weight-semibold;
-        }
-      }
-    }
-
-    .p-dialog-content {
-      padding: $spacing-8 $spacing-6;
-      background: $gradient-bg-light;
-
-      @include dark-mode {
-        background: $dark-bg-secondary;
-      }
-    }
-
-    .dialog-content {
-      text-align: center;
-
-      .success-icon {
-        font-size: 4rem;
-        color: $secondary;
-        margin-bottom: $spacing-6;
-        animation: scaleIn 0.5s ease;
-      }
-
-      .congrats-title {
-        font-size: $font-size-3xl;
-        color: $secondary;
-        margin-bottom: $spacing-4;
-        font-weight: $font-weight-bold;
-
-        @include dark-mode {
-          color: $secondary-light;
-        }
-      }
-
-      .congrats-message {
-        font-size: $font-size-lg;
-        color: $text-secondary;
-        margin-bottom: $spacing-8;
-        line-height: $line-height-relaxed;
-
-        @include dark-mode {
-          color: $dark-text-secondary;
-        }
-      }
-
-      .next-steps {
-        background: rgba($secondary, 0.1);
-        padding: $spacing-6;
-        border-radius: $radius-lg;
-        margin-bottom: $spacing-8;
-        border-left: 4px solid $secondary;
-        text-align: left;
-
-        .next-steps-title {
-          color: $secondary;
-          font-weight: $font-weight-semibold;
-          margin-bottom: $spacing-2;
-          font-size: $font-size-lg;
-        }
-
-        p {
-          color: $text-secondary;
-          margin: 0;
-          line-height: $line-height-normal;
-
-          @include dark-mode {
-            color: $dark-text-secondary;
-          }
-        }
-
-        @include dark-mode {
-          background: rgba($secondary-light, 0.1);
-          border-left-color: $secondary-light;
-
-          .next-steps-title {
-            color: $secondary-light;
-          }
-        }
-      }
-
-      .dialog-actions {
-        display: flex;
-        justify-content: center;
-      }
-
-      .success-button {
-        background: $gradient-secondary !important;
-        border: none !important;
-        padding: $spacing-3 $spacing-8 !important;
-        font-size: $font-size-lg !important;
-        border-radius: $radius-md !important;
-        color: white !important;
-        transition: $transition-all;
-        box-shadow: 0 4px 15px rgba($secondary, 0.3);
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba($secondary, 0.4);
-        }
-
-        &:active {
-          transform: translateY(0);
-        }
-      }
-    }
-
-    .p-dialog-header-icons {
-      .p-dialog-header-icon {
-        color: white !important;
-        transition: $transition-base;
-
-        &:hover {
-          color: rgba(white, 0.8) !important;
-          transform: scale(1.1);
-        }
-      }
-    }
-  }
-
-  // Toast Customization
-  .p-toast {
-    .p-toast-message {
-      border-radius: $radius-md;
-      box-shadow: $shadow-lg;
-      margin: $spacing-2;
-
-      &.p-toast-message-success {
-        background-color: $success;
-        border-left: 4px solid $success-dark;
-
-        .p-toast-message-icon,
-        .p-toast-summary,
-        .p-toast-detail {
-          color: white;
-        }
-      }
-
-      &.p-toast-message-error {
-        background-color: $danger;
-        border-left: 4px solid $danger-dark;
-
-        .p-toast-message-icon,
-        .p-toast-summary,
-        .p-toast-detail {
-          color: white;
-        }
-      }
-
-      &.p-toast-message-warn {
-        background-color: $warning;
-        border-left: 4px solid $warning-dark;
-
-        .p-toast-message-icon,
-        .p-toast-summary,
-        .p-toast-detail {
-          color: white;
-        }
-      }
-
-      &.p-toast-message-info {
-        background-color: $info;
-        border-left: 4px solid $info-dark;
-
-        .p-toast-message-icon,
-        .p-toast-summary,
-        .p-toast-detail {
-          color: white;
-        }
-      }
-    }
+    min-width: 90px;
+    height: 40px !important;
+    border-radius: 8px !important;
+    border: 1px solid #000080 !important;
+    background: #fff !important;
+    color: #000080 !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
   }
 }
 
-// Animations
-@keyframes scaleIn {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-// Responsive Adjustments
-@media (max-width: $breakpoint-sm) {
+@media (max-width: 992px) {
   .content-wrapper {
-    padding: $spacing-4 $spacing-2;
-  }
-
-  .stepper-wrapper {
-    padding: $spacing-4;
+    padding: 1rem 0.75rem;
   }
 
   .page-title {
-    font-size: $font-size-xl;
+    font-size: 1.45rem;
+  }
+
+  .stepper-wrapper {
+    padding: 0.85rem 0.7rem 1rem;
+  }
+
+  .step-actions {
+    flex-direction: column;
+  }
+
+  ::ng-deep .primary-btn,
+  ::ng-deep .secondary-btn {
+    width: 100%;
   }
 }

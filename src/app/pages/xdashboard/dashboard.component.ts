@@ -11,6 +11,7 @@ import { TraceabilityModule } from '../../shared/traceability.module';
 import { Sidebar } from 'primeng/sidebar';
 import { SidebarComponent } from '../../widgets/sidebar/sidebar.component';
 import { TopbarComponent } from '../../widgets/topbar/topbar.component';
+import { AuthSessionStore } from '../../store/auth-session.store';
 
 @Component({
   selector: 'app-dashboard',
@@ -65,6 +66,7 @@ export class xDashboardComponent implements OnInit {
   router = inject(Router);
   appService = inject(ApplicationService);
   regStore = inject(RegStoreService);
+  authSessionStore = inject(AuthSessionStore);
 
   constructor() {
     this._widgetService.sidebarState$.subscribe((state: sidebarStateDTO) => {
@@ -73,7 +75,7 @@ export class xDashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.name = sessionStorage.getItem('user_name') || '---';
+    this.name = this.authSessionStore.name() || '---';
     this.initChart();
     this.dataInitialization();
     this.loadPaymentStatus();
@@ -134,7 +136,7 @@ export class xDashboardComponent implements OnInit {
 
   async dataInitialization(): Promise<boolean> {
     let result = false;
-    const appNo = sessionStorage.getItem('APP_NO') || '';
+    const appNo = this.authSessionStore.applicationNo() || '';
     
     if (appNo !== '') {
       await firstValueFrom(this.appService.registratantData(appNo))
@@ -152,7 +154,7 @@ export class xDashboardComponent implements OnInit {
   }
 
   loadPaymentStatus() {
-    const pStatus = sessionStorage.getItem('PAYMENT_STATUS') || '';
+    const pStatus = this.authSessionStore.paymentStatus() || '';
     if (pStatus === 'Paid') {
       this.paymentStatus = 'Completed';
       this.paymentDate = 'Jan 20, 2025';
@@ -160,7 +162,7 @@ export class xDashboardComponent implements OnInit {
   }
 
   showDialog() {
-    const pStatus = sessionStorage.getItem('PAYMENT_STATUS') || '';
+    const pStatus = this.authSessionStore.paymentStatus() || '';
     if (pStatus === 'Paid') {
       this.router.navigateByUrl('/pages/admissionform');
       return;

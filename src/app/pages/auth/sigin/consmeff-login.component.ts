@@ -1,11 +1,13 @@
 
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { AuthSessionStore } from '../../../store/auth-session.store';
+import { Subscription } from 'rxjs';
+import { ThemeService } from '../../../services/theme.service';
 
 import { TraceabilityModule } from '../../../shared/traceability.module';
 
@@ -18,7 +20,7 @@ import { TraceabilityModule } from '../../../shared/traceability.module';
   styleUrls: ['./consmeff-login.component.scss'],
   providers: [MessageService]
 })
-export class ConsmeffLoginComponent implements OnInit {
+export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   email = '';
   password = '';
   
@@ -33,17 +35,15 @@ export class ConsmeffLoginComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private authSessionStore = inject(AuthSessionStore);
+  private themeService = inject(ThemeService);
+  private themeSub?: Subscription;
 
   constructor(private authService: AuthService,private messageService: MessageService,) {
-    const savedDarkMode = localStorage.getItem('darkMode');
-    if (savedDarkMode) {
-      this.isDarkMode.set(savedDarkMode === 'true');
-    } else {
-      this.isDarkMode.set(window.matchMedia('(prefers-color-scheme: dark)').matches);
-    }
+    this.themeSub = this.themeService.darkMode$.subscribe((isDark) => {
+      this.isDarkMode.set(isDark);
+    });
   }
   ngOnInit(): void {
-    sessionStorage.clear();
     this.authSessionStore.clear();
     this.loginForm = new FormGroup({
       email: new FormControl('', Validators.required),
@@ -57,8 +57,7 @@ export class ConsmeffLoginComponent implements OnInit {
   }
 
   toggleDarkMode() {
-    this.isDarkMode.update(value => !value);
-    localStorage.setItem('darkMode', this.isDarkMode().toString());
+    this.themeService.toggle();
   }
 
   async login() {
@@ -98,5 +97,9 @@ export class ConsmeffLoginComponent implements OnInit {
     })
 
 
+  }
+
+  ngOnDestroy(): void {
+    this.themeSub?.unsubscribe();
   }
 }

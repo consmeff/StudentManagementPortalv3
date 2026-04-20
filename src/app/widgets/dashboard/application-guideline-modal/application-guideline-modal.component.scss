@@ -1,29 +1,26 @@
 .guideline-intro {
   margin-bottom: 0.8rem;
   color: #475569;
+  font-size: 1rem;
+  line-height: 1.45;
 }
 
 .guideline-list {
-  padding-left: 1rem;
-  max-height: 320px;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  background: #f8fbff;
+  max-height: 340px;
   overflow: auto;
 }
 
 .guideline-list li {
   margin-bottom: 0.65rem;
   color: #334155;
-}
-
-.accept-wrap {
-  margin-top: 0.8rem;
-  display: flex;
-  gap: 0.45rem;
-  align-items: center;
-  color: #0f172a;
+  line-height: 1.4;
 }
 
 .dialog-actions {
-  margin-top: 0.9rem;
+  margin-top: 1rem;
   display: flex;
   justify-content: center;
 }
@@ -33,4 +30,12 @@
   border-radius: 8px;
   background: #000080;
   border-color: #000080;
+}
+
+::ng-deep .guideline-dialog {
+  .p-dialog-title {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #111827;
+  }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -8,6 +8,7 @@ import { RegStoreService } from '../../services/regstore.service';
 import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
 import { Router } from '@angular/router';
 import { NavigationAccessService, ProtectedPageFeature } from '../../services/navigation-access.service';
+import { AuthSessionStore } from '../../store/auth-session.store';
 
 @Component({
     selector: 'app-menu',
@@ -22,6 +23,7 @@ import { NavigationAccessService, ProtectedPageFeature } from '../../services/na
 })
 export class AppMenu {
     model: MenuItem[] = [];
+    private authSessionStore = inject(AuthSessionStore);
 
     constructor(
         private permission: PermissionService,
@@ -55,7 +57,7 @@ export class AppMenu {
             _data.passport_photo
         );
 
-        sessionStorage.setItem('REGISTRATION_COMPLETE', registrationComplete ? 'true' : 'false');
+        this.authSessionStore.setRegistrationComplete(registrationComplete);
     }
 
     private buildMenu() {
@@ -85,8 +87,7 @@ export class AppMenu {
     }
 
     private logOut() {
-        sessionStorage.clear();
-        localStorage.removeItem('theme');
+        this.authSessionStore.clear();
         this.router.navigateByUrl('/auth/login');
     }
 

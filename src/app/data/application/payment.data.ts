@@ -6,5 +6,6 @@ export interface PaymentRefResponse {
     status: 'Pending' | 'Completed' | 'Failed' | string;
     summary: string;
     email: string;
+    payment_url?: string;
   }
   

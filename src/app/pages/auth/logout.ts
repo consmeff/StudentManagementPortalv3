@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
 
 import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../shared/traceability.module';
+import { AuthSessionStore } from '../../store/auth-session.store';
 
 @Component({
     selector: 'app-logout',
@@ -28,13 +29,14 @@ export class Logout {
     
  
     route = inject(Router)
+    authSessionStore = inject(AuthSessionStore);
 
     constructor(private fb: FormBuilder) {
       
     }
 
     ngOnInit(): void {
-        sessionStorage.clear();
+        this.authSessionStore.clear();
         setTimeout(() => {
             this.route.navigate(['/auth/login']);
         }, 1000);

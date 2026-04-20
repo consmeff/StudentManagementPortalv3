@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 
@@ -13,6 +13,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { ApplicationService } from '../../../../services/application.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
+import { AuthSessionStore } from '../../../../store/auth-session.store';
 
 @Component({
   selector: 'app-applicationsummary',
@@ -35,7 +36,11 @@ export class ApplicationsummaryComponent implements OnInit {
   placeholder: string = "../../../../assets/doc.png";
   isLoading: boolean = true;
 
-  constructor(private appservice: ApplicationService) { }
+  private authSessionStore = inject(AuthSessionStore);
+
+  constructor(
+    private appservice: ApplicationService
+  ) { }
 
   ngOnInit(): void {
     this.dataIntitialization();
@@ -43,7 +48,7 @@ export class ApplicationsummaryComponent implements OnInit {
 
   async dataIntitialization(): Promise<boolean> {
     let result = false;
-    let app_no = sessionStorage.getItem("APP_NO") || "";
+    let app_no = this.authSessionStore.applicationNo() || "";
     
     if (app_no != "") {
       this.isLoading = true;

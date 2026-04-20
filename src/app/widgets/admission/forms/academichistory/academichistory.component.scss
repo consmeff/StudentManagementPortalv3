@@ -1,141 +1,97 @@
 @import '../../../../../assets/demo/theme';
+@import '../_form-step-shared';
 
 .academic-history-container {
-  width: 100%;
+  @extend .admission-form-card;
 }
 
-.academic-form {
+.academic-history-form {
   width: 100%;
-  margin-bottom: $spacing-8;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 }
 
 .form-section {
-  background-color: $bg-secondary;
-  border-radius: $radius-xl;
-  padding: $spacing-6;
-  margin-bottom: $spacing-6;
-
-  @include responsive($breakpoint-md) {
-    padding: $spacing-8;
-  }
-
-  @include dark-mode {
-    background-color: $dark-bg-secondary;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  @extend .admission-form-section;
 }
 
 .section-title {
-  font-family: $font-family-sans;
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  line-height: $line-height-tight;
-  color: $text-primary;
-  margin-bottom: $spacing-6;
-  padding-bottom: $spacing-3;
-  border-bottom: 2px solid $border-color;
+  @extend .admission-section-title;
+}
 
-  @include dark-mode {
-    color: $dark-text-primary;
-    border-bottom-color: $dark-border-color;
-  }
+.sub-section-title {
+  margin: 0.3rem 0 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-6;
-
-  @include responsive($breakpoint-md) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include responsive($breakpoint-lg) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  @extend .admission-grid;
 }
 
 .form-field {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-2;
-
-  &.full-width {
-    grid-column: 1 / -1;
-  }
+  @extend .admission-row;
 
   &.radio-group {
-    grid-column: 1 / -1;
+    @extend .admission-radio-group;
   }
 }
 
 .field-label {
-  font-family: $font-family-sans;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  line-height: $line-height-normal;
-  color: $text-primary;
-
-  @include dark-mode {
-    color: $dark-text-primary;
-  }
-
-  .required {
-    color: $danger;
-    margin-left: 2px;
-  }
+  @extend .admission-label;
 }
 
 .radio-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-6;
-  margin-top: $spacing-2;
+  @extend .admission-radio-options;
 }
 
 .radio-option {
-  display: flex;
-  align-items: center;
-  gap: $spacing-2;
+  @extend .admission-radio-option;
 }
 
 .radio-label {
-  font-size: $font-size-sm;
-  color: $text-primary;
-  cursor: pointer;
-  user-select: none;
+  @extend .admission-radio-label;
+}
 
-  @include dark-mode {
-    color: $dark-text-primary;
+small {
+  @extend .admission-info;
+
+  &.p-error {
+    @extend .admission-error;
   }
 }
 
-// Native Radio Button Styling (PrimeNG-like)
+.attempt-block + .attempt-block {
+  margin-top: 0.6rem;
+}
+
+.qualification-block + .qualification-block {
+  margin-top: 0.7rem;
+}
+
+.qualification-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.6rem;
+}
+
+.add-qualification-wrap {
+  margin-top: 0.9rem;
+}
+
 .p-radiobutton {
   position: relative;
   display: inline-flex;
-  cursor: pointer;
-  user-select: none;
-  vertical-align: bottom;
+  align-items: center;
+  justify-content: center;
 }
 
 .p-radiobutton-input {
   position: absolute;
   opacity: 0;
-  cursor: pointer;
   width: 100%;
   height: 100%;
-  top: 0;
-  left: 0;
   margin: 0;
-  padding: 0;
+  cursor: pointer;
   z-index: 1;
 }
 
@@ -143,326 +99,68 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 20px;
-  height: 20px;
-  border: 2px solid $input-border;
-  background: $bg-primary;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #cbd5e1;
   border-radius: 50%;
-  transition: $transition-all;
-
-  @include dark-mode {
-    background: $dark-input-bg;
-    border-color: $dark-input-border;
-  }
+  background: #fff;
 }
 
 .p-radiobutton-icon {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background-color: transparent;
-  transition: background-color 0.2s;
 }
 
-// Checked State
 .p-radiobutton-input:checked ~ .p-radiobutton-box {
-  border-color: $primary;
-  background: $bg-primary;
-
-  @include dark-mode {
-    border-color: $primary-light;
-    background: $dark-input-bg;
-  }
-
-  .p-radiobutton-icon {
-    background-color: $primary;
-
-    @include dark-mode {
-      background-color: $primary-light;
-    }
-  }
+  border-color: #000080;
 }
 
-// Hover State
-.p-radiobutton:hover .p-radiobutton-box {
-  border-color: $primary;
-
-  @include dark-mode {
-    border-color: $primary-light;
-  }
+.p-radiobutton-input:checked ~ .p-radiobutton-box .p-radiobutton-icon {
+  background: #000080;
 }
 
-// Focus State
-.p-radiobutton-input:focus ~ .p-radiobutton-box {
-  outline: 0 none;
-  outline-offset: 0;
-  box-shadow: $shadow-primary;
-  border-color: $primary;
-
-  @include dark-mode {
-    box-shadow: $shadow-primary-dark;
-    border-color: $primary-light;
-  }
-}
-
-// Disabled State
-.p-radiobutton-input:disabled ~ .p-radiobutton-box {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.p-radiobutton-input:disabled ~ .radio-label {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: $spacing-6;
-  gap: $spacing-3;
-
-  &.centered {
-    justify-content: center;
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    flex-direction: column;
-
-    ::ng-deep .p-button {
-      width: 100%;
-    }
-  }
-}
-
-// Small text styles
-small {
-  font-size: $font-size-xs;
-  margin-top: $spacing-1;
-  display: block;
-
-  &.p-error {
-    color: $danger;
-  }
-
-  &.p-info {
-    color: $text-secondary;
-
-    @include dark-mode {
-      color: $dark-text-secondary;
-    }
-  }
-}
-
-// PrimeNG Component Customization
 ::ng-deep {
   .academic-history-container {
-    // Input Text Styling
-    .p-inputtext {
+    .p-inputtext,
+    .p-dropdown,
+    .p-calendar .p-inputtext {
       width: 100%;
-      height: 48px !important;
-      padding: $spacing-3 $spacing-4;
-      font-size: $font-size-sm;
-      border: 1px solid $input-border;
-      border-radius: $radius-md;
-      background-color: $bg-primary;
-      color: $text-primary;
-      transition: $transition-all;
-
-      &::placeholder {
-        color: $text-tertiary;
-      }
-
-      &:enabled:focus {
-        border-color: $input-border-focus;
-        box-shadow: $shadow-primary;
-        outline: none;
-      }
-
-      &:enabled:hover {
-        border-color: $input-border-focus;
-      }
-
-      &.p-invalid {
-        border-color: $danger !important;
-
-        &:enabled:focus {
-          box-shadow: 0 0 0 3px rgba($danger, 0.1) !important;
-        }
-      }
-
-      @include dark-mode {
-        background-color: $dark-input-bg;
-        border-color: $dark-input-border;
-        color: $dark-text-primary;
-
-        &::placeholder {
-          color: $dark-text-tertiary;
-        }
-
-        &:enabled:focus {
-          border-color: $primary-light;
-          box-shadow: $shadow-primary-dark;
-        }
-      }
+      height: 32px !important;
+      border: 1px solid #c8dcff;
+      border-radius: 7px;
+      background: #fff;
+      font-size: 0.8rem;
     }
 
-    // Dropdown Styling
-    .p-dropdown {
-      width: 100%;
-      height: 48px !important;
-      border: 1px solid $input-border;
-      border-radius: $radius-md;
-      background-color: $bg-primary;
-      transition: $transition-all;
-
-      &:not(.p-disabled):hover {
-        border-color: $input-border-focus;
-      }
-
-      &:not(.p-disabled).p-focus {
-        border-color: $input-border-focus;
-        box-shadow: $shadow-primary;
-        outline: none;
-      }
-
-      &.p-invalid {
-        border-color: $danger !important;
-
-        &:not(.p-disabled).p-focus {
-          box-shadow: 0 0 0 3px rgba($danger, 0.1) !important;
-        }
-      }
-
-      .p-dropdown-label {
-        padding: $spacing-3 $spacing-4;
-        font-size: $font-size-sm;
-        color: $text-primary;
-        line-height: 1.5;
-
-        &.p-placeholder {
-          color: $text-tertiary;
-        }
-      }
-
-      .p-dropdown-trigger {
-        width: 48px;
-        color: $text-secondary;
-      }
-
-      @include dark-mode {
-        background-color: $dark-input-bg;
-        border-color: $dark-input-border;
-
-        .p-dropdown-label {
-          color: $dark-text-primary;
-
-          &.p-placeholder {
-            color: $dark-text-tertiary;
-          }
-        }
-
-        .p-dropdown-trigger {
-          color: $dark-text-secondary;
-        }
-
-        &:not(.p-disabled).p-focus {
-          border-color: $primary-light;
-          box-shadow: $shadow-primary-dark;
-        }
-      }
+    .p-inputtext,
+    .p-dropdown .p-dropdown-label {
+      padding: 0.35rem 0.6rem;
+      color: #0f172a;
     }
 
-    // Calendar Styling
-    .p-calendar {
-      width: 100%;
-
-      .p-inputtext {
-        width: 100%;
-        height: 48px !important;
-        padding-right: 48px;
-      }
-
-      .p-datepicker-trigger {
-        width: 48px;
-        height: 48px;
-        color: $text-secondary;
-
-        @include dark-mode {
-          color: $dark-text-secondary;
-        }
-      }
+    .p-dropdown .p-dropdown-label.p-placeholder,
+    .p-inputtext::placeholder {
+      color: #b4c0d6;
     }
 
-    // Button Styling
-    .p-button {
-      height: 48px !important;
-      padding: $spacing-3 $spacing-6 !important;
-      font-size: $font-size-sm !important;
-      font-weight: $font-weight-semibold !important;
-      border-radius: $radius-md !important;
-      transition: $transition-all;
-
-      &.p-button-outlined {
-        border: 2px solid $border-color !important;
-        color: $text-secondary !important;
-
-        &:enabled:hover {
-          background: $bg-secondary !important;
-          border-color: $border-color-dark !important;
-          color: $text-primary !important;
-        }
-
-        @include dark-mode {
-          border-color: $dark-border-color !important;
-          color: $dark-text-secondary !important;
-
-          &:enabled:hover {
-            background: $dark-bg-primary !important;
-            border-color: $dark-border-color-light !important;
-            color: $dark-text-primary !important;
-          }
-        }
-      }
-
-      &.p-button-danger {
-        &.p-button-outlined {
-          border-color: $danger !important;
-          color: $danger !important;
-
-          &:enabled:hover {
-            background: rgba($danger, 0.1) !important;
-            border-color: $danger-dark !important;
-          }
-        }
-      }
-
-      .p-button-icon {
-        font-size: $font-size-base;
-      }
+    .p-dropdown .p-dropdown-trigger,
+    .p-calendar .p-datepicker-trigger {
+      width: 30px;
+      color: #94a3b8;
     }
 
-    .add-button {
-      min-width: 200px;
-
-      @media (max-width: $breakpoint-sm) {
-        width: 100%;
-      }
+    .p-inputtext:enabled:focus,
+    .p-dropdown:not(.p-disabled).p-focus,
+    .p-calendar .p-inputtext:enabled:focus {
+      border-color: #2196f3 !important;
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1) !important;
+      outline: none;
     }
-  }
-}
 
-// Responsive Adjustments
-@media (max-width: $breakpoint-md) {
-  .form-section {
-    padding: $spacing-4;
-  }
-
-  .section-title {
-    font-size: $font-size-lg;
-  }
-
-  .form-grid {
-    gap: $spacing-4;
+    .p-inputtext.p-invalid,
+    .p-dropdown.p-invalid {
+      border-color: #dc2626 !important;
+    }
   }
 }

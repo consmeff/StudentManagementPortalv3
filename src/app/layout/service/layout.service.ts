@@ -62,7 +62,7 @@ export class LayoutService {
 
     overlayOpen$ = this.overlayOpen.asObservable();
 
-    theme = computed(() => (this.layoutConfig()?.darkTheme ? 'light' : 'dark'));
+    theme = computed(() => (this.layoutConfig()?.darkTheme ? 'dark' : 'light'));
 
     isSidebarActive = computed(() => this.layoutState().overlayMenuActive || this.layoutState().staticMenuMobileActive);
 
@@ -121,11 +121,9 @@ export class LayoutService {
 
     toggleDarkMode(config?: layoutConfig): void {
         const _config = config || this.layoutConfig();
-        if (_config.darkTheme) {
-            document.documentElement.classList.add('app-dark');
-        } else {
-            document.documentElement.classList.remove('app-dark');
-        }
+        const isDark = !!_config.darkTheme;
+        document.documentElement.classList.toggle('app-dark', isDark);
+        document.body.classList.toggle('dark', isDark);
     }
 
     private onTransitionEnd() {

@@ -2,26 +2,60 @@
   <div class="welcome-line">Welcome,</div>
   <h1 class="applicant-name">{{ dashboardName() }}</h1>
 
-  <div class="pending-card" *ngIf="isPaymentPending; else paidTemplate">
-    <div class="progress-wrap">
+  <div class="hero-card">
+    <div class="hero-progress">
       <div class="progress-ring">
-        <div class="progress-value">20%</div>
+        <div class="progress-value">{{ progressPercent() }}%</div>
       </div>
     </div>
-    <div class="pending-text">You have an incomplete application</div>
-    <button pButton type="button" class="continue-btn" (click)="continueFlow()" [disabled]="loadingApplications()">
-      {{ loadingApplications() ? "Loading..." : "Continue" }}
+    <div class="hero-copy">
+      <h2>{{ heroTitle() }}</h2>
+      <p>{{ heroDescription() }}</p>
+    </div>
+    <button pButton type="button" class="continue-btn" (click)="onPrimaryAction()" [disabled]="loadingApplications()">
+      {{ loadingApplications() ? "Loading..." : primaryActionLabel() }}
     </button>
   </div>
 
-  <ng-template #paidTemplate>
-    <div class="pending-card paid">
-      <div class="pending-text">Payment completed. Continue your admission form.</div>
-      <button pButton type="button" class="continue-btn" routerLink="/pages/admissionform">Continue</button>
-    </div>
-  </ng-template>
-
   <small class="error-hint" *ngIf="loadingError()">{{ loadingError() }}</small>
+
+  <section class="steps-section">
+    <h3>Application Steps</h3>
+
+    <div class="steps-list">
+      <div class="step-row" *ngFor="let step of applicationSteps(); let last = last">
+        <div class="step-marker">
+          <span class="marker-circle" [class]="step.status">
+            <i *ngIf="step.status === 'completed'" class="pi pi-check"></i>
+            <ng-container *ngIf="step.status !== 'completed'">{{ step.index }}</ng-container>
+          </span>
+          <span class="marker-line" *ngIf="!last"></span>
+        </div>
+
+        <div class="step-content" [class]="step.status">
+          <div class="step-title">{{ step.title }}</div>
+          <div class="step-description">{{ step.description }}</div>
+        </div>
+
+        <div class="step-action">
+          <div class="step-complete" *ngIf="step.status === 'completed'">
+            <span>Completed</span>
+            <i class="pi pi-check-circle"></i>
+          </div>
+          <button
+            *ngIf="step.actionLabel"
+            pButton
+            type="button"
+            class="continue-btn"
+            [disabled]="loadingApplications() || initializingApplication()"
+            (click)="onStepAction(step)"
+          >
+            {{ step.actionLabel }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <p-dialog
     header="Choose the programme you are applying for"
@@ -29,22 +63,25 @@
     [closable]="true"
     [draggable]="false"
     [resizable]="false"
-    [style]="{ width: '540px' }"
-    [(visible)]="showProgrammeDialog"
+    [style]="{ width: '620px' }"
+    styleClass="programme-dialog"
+    [visible]="showProgrammeDialog()"
+    (visibleChange)="onProgrammeDialogVisibilityChange($event)"
   >
     <div class="programme-grid">
-      <label class="programme-option" *ngFor="let app of applicationOptions()">
-        <input
-          type="radio"
-          name="applicationOption"
-          [checked]="selectedApplicationId() === app.id"
-          (change)="selectApplication(app.id)"
-        />
+      <button
+        type="button"
+        class="programme-option"
+        [class.selected]="selectedApplicationId() === app.id"
+        *ngFor="let app of applicationOptions()"
+        (click)="selectApplication(app.id)"
+      >
+        <span class="option-radio"></span>
         <div class="programme-content">
           <div class="programme-name">{{ app.program.name }}</div>
           <div class="programme-meta">{{ app.level.name }} • {{ app.session.name }}</div>
         </div>
-      </label>
+      </button>
     </div>
 
     <div class="dialog-actions">
@@ -65,9 +102,9 @@
     [visible]="showGuidelineDialog()"
     [accepted]="guidelinesAccepted()"
     [loading]="initializingApplication()"
-    continueLabel="Continue to Payment"
-    (visibleChange)="showGuidelineDialog.set($event)"
-    (acceptedChange)="guidelinesAccepted.set($event)"
+    [continueLabel]="actionLabels.continueToPayment"
+    (visibleChange)="onGuidelineDialogVisibilityChange($event)"
+    (acceptedChange)="onGuidelineAcceptedChange($event)"
     (continueClicked)="proceedToPayment()"
   ></app-application-guideline-modal>
 </div>

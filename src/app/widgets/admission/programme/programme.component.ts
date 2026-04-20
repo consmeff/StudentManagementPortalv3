@@ -9,6 +9,7 @@ import { FormService } from '../../services/form.service';
 import { RegistrantDataDTO } from '../../../data/application/registrantdatadto';
 import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../../shared/traceability.module';
+import { AuthSessionStore } from '../../../store/auth-session.store';
 
 @Component({
   selector: 'app-programme',
@@ -22,6 +23,7 @@ export class ProgrammeComponent implements OnInit {
   departments!: DepartmentsDTO;
   _formStepService = inject(FormService);
   regstore = inject(RegStoreService);
+  authSessionStore = inject(AuthSessionStore);
 
   courseForm: FormGroup = new FormGroup({
     midwifery: new FormControl(),
@@ -163,7 +165,7 @@ export class ProgrammeComponent implements OnInit {
           return;
         }
 
-        sessionStorage.setItem('APP_NO', app_no);
+        this.authSessionStore.setApplicationNo(app_no);
 
         const regPartial: RegistrantDataDTO = {
           data: {

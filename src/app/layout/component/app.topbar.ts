@@ -6,8 +6,8 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from './app.configurator';
 import { LayoutService } from '../service/layout.service';
 import { TooltipModule } from 'primeng/tooltip';
-import { jwtDecode } from 'jwt-decode';
 import { ThemeService } from '../../services/theme.service';
+import { AuthSessionStore } from '../../store/auth-session.store';
 
 @Component({
     selector: 'app-topbar',
@@ -78,19 +78,12 @@ export class AppTopbar {
     email = "";
     companyName = "";
     private theme = inject(ThemeService);
+    private authSessionStore = inject(AuthSessionStore);
 
     constructor(public layoutService: LayoutService) {
-        const raw = sessionStorage.getItem('key');
-        if (!raw) return;
-
-        try {
-            const { email } = jwtDecode<{ email?: string }>(raw);
-            this.email = email ?? '—';
-            const { orgname } = jwtDecode<{ orgname?: string }>(raw);
-            this.companyName = orgname ?? '';
-        } catch {
-            this.email = '—';
-        }
+        const name = this.authSessionStore.name();
+        this.email = name || '—';
+        this.companyName = this.authSessionStore.userType() || '';
     }
 
     toggleDarkMode() {

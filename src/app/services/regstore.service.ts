@@ -1,18 +1,20 @@
 import { BehaviorSubject, firstValueFrom, ReplaySubject } from "rxjs";
  
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
  
 import { ApplicationService } from "./application.service";
 import { RegistrantDataDTO } from "../data/application/registrantdatadto";
 import { PreRegistrationDataDTO } from "../data/application/preregistrationdatadto";
 import { CountryDTO, LGA, StatesDTO } from "../data/application/location.dto";
 import { TUploadFile } from "../data/application/transformer.dto";
+import { AuthSessionStore } from "../store/auth-session.store";
  
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegStoreService {
+  private authSessionStore = inject(AuthSessionStore);
 
   private readonly _regData = new BehaviorSubject<RegistrantDataDTO | null>(null);
   public regData$ = this._regData.asObservable();
@@ -34,7 +36,7 @@ export class RegStoreService {
   
 
 
-  constructor(private appservice:ApplicationService,) {
+  constructor(private appservice: ApplicationService) {
      this.dataIntitialization();
 
   }
@@ -86,7 +88,7 @@ export class RegStoreService {
   async dataIntitialization(): Promise<boolean> {
 
     let result = false;
-    let app_no = sessionStorage.getItem("APP_NO") || "";
+    let app_no = this.authSessionStore.applicationNo() || "";
     if (app_no != "") {
       await firstValueFrom(this.appservice.registratantData(app_no))
         .then(async (data) => {

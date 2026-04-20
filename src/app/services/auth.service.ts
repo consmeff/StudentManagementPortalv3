@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginResponse, ProfilePayload, ProfileSuccessResponse } from '../data/auth/auth.data';
+import { AuthSessionStore } from '../store/auth-session.store';
 
 
 
@@ -15,9 +16,8 @@ export class AuthService {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   });
-  private readonly JWT_TOKEN = 'JWT_TOKEN';
-  private readonly REFRESH_TOKEN = 'REFRESH_TOKEN';
   private loggedUser: string | null | undefined;
+  private readonly authSessionStore = inject(AuthSessionStore);
 
   constructor(private http: HttpClient) { }
 
@@ -40,7 +40,7 @@ export class AuthService {
   verifyOtp(otpObj: any): Observable<boolean> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/auth/signup/verify-otp`, otpObj)
       .pipe(
-        tap(responseObj => { let username = sessionStorage.getItem("profile_email"); this.storeTokenFromOTP(username!, responseObj) }),
+        tap(responseObj => { this.storeTokenFromOTP(this.authSessionStore.profileEmail(), responseObj); }),
         map(() => true),
         catchError(error => {
           // alert(error.error);
@@ -61,19 +61,18 @@ export class AuthService {
 
   storeTokenFromOTP(username: string, token: any) {
     this.loggedUser = username;
-    sessionStorage.setItem(this.JWT_TOKEN, token.jwt);
-    sessionStorage.setItem(this.REFRESH_TOKEN, token.refreshToken);
+    this.authSessionStore.setTokens(token.jwt ?? '', token.refreshToken ?? '');
   }
 
   storeAppNo(application_no: string) {
-    sessionStorage.setItem("APP_NO", application_no);
+    this.authSessionStore.setApplicationNo(application_no);
   }
   storeMatricNo(matric_no: string) {
-    sessionStorage.setItem("MATRIC_NO", matric_no);
+    this.authSessionStore.setMatriculationNo(matric_no);
   }
 
   storeRole(user_type: string) {
-    sessionStorage.setItem("USER_TYPE", user_type);
+    this.authSessionStore.setUserType(user_type);
   }
 
   refreshToken() {
@@ -85,25 +84,23 @@ export class AuthService {
   }
 
   private getRefreshToken() {
-    return sessionStorage.getItem(this.REFRESH_TOKEN);
+    return this.authSessionStore.refreshToken();
   }
 
   private storeJwtToken(jwt: string) {
-    sessionStorage.setItem(this.JWT_TOKEN, jwt);
+    this.authSessionStore.setJwtToken(jwt);
   }
 
   getJwtToken() {
-    return sessionStorage.getItem(this.JWT_TOKEN);
+    return this.authSessionStore.jwtToken();
   }
 
   private storeTokens(tokens: any) {
-    sessionStorage.setItem(this.JWT_TOKEN, tokens.access_token);
-    sessionStorage.setItem(this.REFRESH_TOKEN, tokens.refresh_token);
+    this.authSessionStore.setTokens(tokens.access_token ?? '', tokens.refresh_token ?? '');
   }
 
   private removeTokens() {
-    sessionStorage.removeItem(this.JWT_TOKEN);
-    sessionStorage.removeItem(this.REFRESH_TOKEN);
+    this.authSessionStore.setTokens('', '');
   }
 
   private doLoginUser(username: string, tokens: any) {
@@ -113,12 +110,12 @@ export class AuthService {
 
     if (tokens.application_no) {
       this.storeAppNo(tokens.application_no);
-      sessionStorage.setItem("user_name",tokens.name)
+      this.authSessionStore.setName(tokens.name ?? '');
     }
     if (tokens.matriculation_no) {
       this.storeMatricNo(tokens.matriculation_no);
     }
-    sessionStorage.setItem("PAYMENT_STATUS", tokens.payment_status);
+    this.authSessionStore.setPaymentStatus(tokens.payment_status ?? '');
 
   }
 }

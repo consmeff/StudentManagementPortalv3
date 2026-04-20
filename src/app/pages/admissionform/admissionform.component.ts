@@ -20,6 +20,7 @@ import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { States } from '../../data/application/location.dto';
 import { LGA } from '../../data/application/registrantdatadto';
 import { Address } from '../../data/application/personaldetailsdto';
+import { AuthSessionStore } from '../../store/auth-session.store';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { PersonaldetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
 import { NextofkinComponent } from '../../widgets/admission/forms/nextofkin/nextofkin.component';
@@ -65,6 +66,7 @@ export class AdmissionformComponent implements OnInit {
   cd = inject(ChangeDetectorRef);
   router = inject(Router);
   messageService = inject(MessageService);
+  authSessionStore = inject(AuthSessionStore);
 
   formStepStatus: formstepDTO = {
     academicValid: false,
@@ -125,7 +127,7 @@ export class AdmissionformComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    var paid = (sessionStorage.getItem("PAYMENT_STATUS") || "") === "Paid";
+    var paid = (this.authSessionStore.paymentStatus() || "") === "Paid";
     // if(!paid){
     //   this.router.navigateByUrl("/pages/dashboard");
     // }
@@ -182,14 +184,34 @@ export class AdmissionformComponent implements OnInit {
   }
 
   activateStep(step: number) {
+    if (!this.canNavigateToStep(step)) {
+      return;
+    }
     this.activeStepIndex = step;
+  }
+
+  canNavigateToStep(step: number): boolean {
+    switch (step) {
+      case 1:
+        return true;
+      case 2:
+        return this.formStepStatus.personalinfoValid;
+      case 3:
+        return this.formStepStatus.nextofkinValid;
+      case 4:
+        return this.formStepStatus.academicValid;
+      case 5:
+        return this.formStepStatus.docuplodValid;
+      default:
+        return false;
+    }
   }
 
   savePersonalDetails(): Promise<void> {
     this.isLoadingPersonal = true;
     let _pd = this.buildPersonalDetailObj();
     return new Promise((resolve, reject) => {
-      this.app_no = sessionStorage.getItem("APP_NO") || "";
+      this.app_no = this.authSessionStore.applicationNo() || "";
       firstValueFrom(this._appservice.personalDetails(this.app_no, _pd))
         .then((data) => {
           this.showSuccess("Personal Detail", "Saved Successfully");
@@ -209,7 +231,7 @@ export class AdmissionformComponent implements OnInit {
     this.isLoadingNextOfKin = true;
     let _nk = this.buildNextOfKinDetailObj();
     return new Promise((resolve, reject) => {
-      this.app_no = sessionStorage.getItem("APP_NO") || "";
+      this.app_no = this.authSessionStore.applicationNo() || "";
       firstValueFrom(this._appservice.personalDetails(this.app_no, { primary_parent_or_guardian: _nk }))
         .then((data) => {
           this.showSuccess("Next Of Kin Details", "Saved Successfully");
@@ -230,7 +252,7 @@ export class AdmissionformComponent implements OnInit {
     let _ad = this.buildAcademicDetailObj();
     let _ol = this.buildolevelDetailObj();
     return new Promise((resolve, reject) => {
-      this.app_no = sessionStorage.getItem("APP_NO") || "";
+      this.app_no = this.authSessionStore.applicationNo() || "";
       firstValueFrom(this._appservice.personalDetails(this.app_no, { academic_history: _ol, o_level_result: _ad }))
         .then((data) => {
           this.showSuccess("Academic Details", "Saved Successfully");
@@ -256,7 +278,7 @@ export class AdmissionformComponent implements OnInit {
     }
 
     return new Promise((resolve, reject) => {
-      this.app_no = sessionStorage.getItem("APP_NO") || "";
+      this.app_no = this.authSessionStore.applicationNo() || "";
       firstValueFrom(this._appservice.personalDetails(this.app_no, {
         certificate_of_birth: _up?.certificateofbirth,
         passport_photo: _up?.passport,

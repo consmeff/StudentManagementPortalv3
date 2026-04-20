@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { WidgetsService } from '../services/widgets.service';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { TraceabilityModule } from '../../shared/traceability.module';
+import { AuthSessionStore } from '../../store/auth-session.store';
 
 type SidebarMenuItem = {
   label: string;
@@ -30,6 +31,7 @@ export class SidebarComponent {
   
   _widgetService = inject(WidgetsService);
   router = inject(Router);
+  private readonly authSessionStore = inject(AuthSessionStore);
 
   constructor() {
     this._widgetService.sidebarState$.subscribe((state: sidebarStateDTO) => {
@@ -50,8 +52,7 @@ export class SidebarComponent {
   }
 
   logOut() {
-    sessionStorage.clear();
-    localStorage.removeItem('theme');
+    this.authSessionStore.clear();
     setTimeout(() => {
       this.router.navigateByUrl('/auth/login');
     }, 300);

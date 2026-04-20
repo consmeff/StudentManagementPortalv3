@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 
 import { Router, RouterModule } from '@angular/router';
 
@@ -8,10 +8,13 @@ import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'primeng/api';
 
 import { Subject, throttleTime } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ProfilePayload, ProfileSuccessResponse, validationCheckDTO } from '../../../data/auth/auth.data';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { passwordStrength } from '../../../utility/formvalidators';
 import { TraceabilityModule } from '../../../shared/traceability.module';
+import { ThemeService } from '../../../services/theme.service';
+import { AuthSessionStore } from '../../../store/auth-session.store';
 @Component({
   selector: 'app-sign-up',
   imports: [ AppFloatingConfigurator, TraceabilityModule],
@@ -19,7 +22,7 @@ import { TraceabilityModule } from '../../../shared/traceability.module';
   styleUrl: './sign-up.component.scss',
   providers: [MessageService],
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnDestroy {
     passToggle: boolean = false;
     passToggle2: boolean = false;
     busy: boolean = false;
@@ -50,10 +53,11 @@ export class SignUpComponent {
   
     ];
     isDarkMode = false;
+    private themeSub?: Subscription;
+    private authSessionStore = inject(AuthSessionStore);
 
 toggleDarkMode() {
-  this.isDarkMode = !this.isDarkMode;
-  document.body.classList.toggle('dark');
+  this.themeService.toggle();
 }
   
   
@@ -84,10 +88,14 @@ toggleDarkMode() {
       private authService: AuthService,
       private messageService: MessageService,
       private router: Router,
+      private themeService: ThemeService,
     //   private spinner: NgxSpinnerService,
       private cd: ChangeDetectorRef
   
     ) {
+      this.themeSub = this.themeService.darkMode$.subscribe((isDark) => {
+        this.isDarkMode = isDark;
+      });
       this.password.valueChanges.subscribe((val: string) => {
         this.updateValidationStatus(val);
       })
@@ -162,8 +170,7 @@ toggleDarkMode() {
       this.authService.create(profileObj).subscribe(
         {
           next: (resp: ProfileSuccessResponse) => {
-            sessionStorage.setItem("profile_email", resp.email);
-            sessionStorage.setItem("auth_flow", "signup_verification");
+            this.authSessionStore.startSignupVerificationFlow(resp.email);
             
             this.messageService.add({ severity: 'success', summary: 'Profile Creation', detail: resp.message });
   
@@ -212,6 +219,10 @@ toggleDarkMode() {
   
     destroyed(event: any) {
   
+    }
+
+    ngOnDestroy(): void {
+      this.themeSub?.unsubscribe();
     }
   
   }

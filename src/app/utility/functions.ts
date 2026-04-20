@@ -14,8 +14,8 @@ export function toYYYYMMDD(value: any): string {
   }
 
 
-  export function getEmail(){
-    const raw = sessionStorage.getItem('key');
+  export function getEmail(token?: string){
+    const raw = token ?? '';
     if (!raw) return;
 
     try {

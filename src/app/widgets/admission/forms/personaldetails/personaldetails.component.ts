@@ -107,6 +107,19 @@ export class PersonaldetailsComponent {
       }
     });
 
+    this.regstore.preRegData$.subscribe(data => {
+      if (!data) return;
+
+      this.maritalStatusOptions = data.marital_statuses.map((status) => ({
+        label: status,
+        value: status
+      }));
+
+      if (Array.isArray(data.gender) && data.gender.length > 0) {
+        this.genderOptions = data.gender;
+      }
+    });
+
     this.regstore.stateData$.subscribe(data => {
       if (data?.data) {
         this.stateOptions = data.data;
@@ -141,7 +154,7 @@ export class PersonaldetailsComponent {
       dateOfBirth: [data?.dob ? new Date(data.dob) : null, Validators.required],
       maritalStatus: [data?.marital_status ?? null, Validators.required],
       gender: [data?.gender ?? null, Validators.required],
-      nationality: [null, Validators.required],
+      nationality: [data?.nationality ?? 'Nigeria', Validators.required],
       stateOfOrigin: [null, Validators.required],
       localGovernment: [null, Validators.required],
       disability: [data?.disability?.toLowerCase().includes("no") ? 'No' : 'Yes', Validators.required],
@@ -184,8 +197,9 @@ export class PersonaldetailsComponent {
     const data = this.backendRegistrationData.data;
 
     // Set nationality
-    if (this.nationalityOptions && data?.nationality) {
-      const nationality = this.findNationalityByName(data.nationality);
+    if (this.nationalityOptions) {
+      const preferredNationality = data?.nationality || 'Nigeria';
+      const nationality = this.findNationalityByName(preferredNationality);
       if (nationality) {
         this.personalInfoForm.get('nationality')?.setValue(nationality.name);
       }
@@ -200,8 +214,14 @@ export class PersonaldetailsComponent {
     }
 
     // Set residential state and trigger LGA loading
-    if (this.stateOptions && data?.residential_address?.state?.id) {
-      this.personalInfoForm.get('residentialState')?.setValue(data.residential_address.state.id);
+    if (this.stateOptions && data?.residential_address?.state) {
+      const residentialStateName = data.residential_address.state.name;
+      const residentialStateId = residentialStateName
+        ? this.getStateIDByName(residentialStateName)
+        : data.residential_address.state.id;
+      if (residentialStateId) {
+        this.personalInfoForm.get('residentialState')?.setValue(residentialStateId);
+      }
     }
   }
 
@@ -251,7 +271,7 @@ export class PersonaldetailsComponent {
 
   getStateIDByName(val: string): number | null {
     if (val && this.stateOptions) {
-      const state = this.stateOptions.find(s => s.name === val);
+      const state = this.stateOptions.find(s => s.name.toLowerCase() === val.toLowerCase());
       return state?.id ?? null;
     }
     return null;
@@ -259,7 +279,7 @@ export class PersonaldetailsComponent {
 
   getLocalGovtIDByName(val: string): number | null {
     if (val && this.localGovOptions) {
-      const lga = this.localGovOptions.find(l => l.name === val);
+      const lga = this.localGovOptions.find(l => l.name.toLowerCase() === val.toLowerCase());
       return lga?.id ?? null;
     }
     return null;

@@ -1,11 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { validationCheckDTO } from '../../../data/auth/auth.data';
 import { passwordStrength } from '../../../utility/formvalidators';
 import { TraceabilityModule } from '../../../shared/traceability.module';
+import { ThemeService } from '../../../services/theme.service';
+import { AuthSessionStore } from '../../../store/auth-session.store';
 
 
 
@@ -16,10 +19,12 @@ import { TraceabilityModule } from '../../../shared/traceability.module';
   imports: [TraceabilityModule],
   providers: [MessageService]
 })
-export class PasswordresetComponent {
+export class PasswordresetComponent implements OnDestroy {
   busy = false;
   isDarkMode = false;
   visible = false;
+  private themeSub?: Subscription;
+  private authSessionStore = inject(AuthSessionStore);
 
   validationCheck: validationCheckDTO[] = [
     { title: "Minimum of 8 characters", status: false },
@@ -40,8 +45,12 @@ export class PasswordresetComponent {
   constructor(
     private authService: AuthService,
     private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService
   ) {
+    this.themeSub = this.themeService.darkMode$.subscribe((isDark) => {
+      this.isDarkMode = isDark;
+    });
     this.password.valueChanges.subscribe((val: string | null) => {
       if (val) {
         this.updateValidationStatus(val);
@@ -50,8 +59,7 @@ export class PasswordresetComponent {
   }
 
   toggleDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
-    document.body.classList.toggle('dark');
+    this.themeService.toggle();
   }
 
   updateValidationStatus(password: string) {
@@ -86,7 +94,7 @@ export class PasswordresetComponent {
       return;
     }
 
-    const otp = sessionStorage.getItem('forgot_otp');
+    const otp = this.authSessionStore.forgotOtp();
     if (!otp) {
       this.messageService.add({
         severity: 'error',
@@ -100,7 +108,7 @@ export class PasswordresetComponent {
 
     this.busy = true;
     const payload = {
-      email: sessionStorage.getItem('profile_email'),
+      email: this.authSessionStore.profileEmail(),
       password: this.resetForm.controls.password.value,
       otp
     };
@@ -108,8 +116,7 @@ export class PasswordresetComponent {
     this.authService.updatePassword(payload).subscribe({
       next: (data: any) => {
         this.busy = false;
-        sessionStorage.removeItem('forgot_otp');
-        sessionStorage.removeItem('auth_flow');
+        this.authSessionStore.clearAuthFlow();
         this.messageService.add({
           severity: 'success',
           summary: 'Password Reset',
@@ -139,5 +146,9 @@ export class PasswordresetComponent {
     setTimeout(() => {
       this.router.navigateByUrl('/auth/login');
     }, 300);
+  }
+
+  ngOnDestroy(): void {
+    this.themeSub?.unsubscribe();
   }
 }

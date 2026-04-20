@@ -22,6 +22,7 @@ import { TraceabilityModule } from '../../shared/traceability.module';
 import { CertificateOfBirth, RegistrantData } from '../../data/application/registrantdatadto';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { PaymentWorkflowService } from '../../services/payment-workflow.service';
+import { AuthSessionStore } from '../../store/auth-session.store';
 
 @Component({
   selector: 'app-payment',
@@ -36,6 +37,7 @@ import { PaymentWorkflowService } from '../../services/payment-workflow.service'
 export class PaymentComponent {
   sidebarVisible = false;
   _widgetService = inject(WidgetsService);
+  authSessionStore = inject(AuthSessionStore);
   
   uploadMsg = "Upload payment evidence";
   canpay: boolean = false;
@@ -103,7 +105,7 @@ export class PaymentComponent {
   }
 
   async paymentUploadSubmit() {
-    this.app_no = sessionStorage.getItem("APP_NO") || "";
+    this.app_no = this.authSessionStore.applicationNo() || "";
     
     if (!this.paymentFile) {
       this.showError('No File', 'Please select a file to upload');
@@ -157,7 +159,7 @@ export class PaymentComponent {
   }
 
   getPaymentRef() {
-    const app_no = sessionStorage.getItem("APP_NO") || "";
+    const app_no = this.authSessionStore.applicationNo() || "";
     this.paymentWorkflow.startForApplication(app_no, {
       onProcessingChange: (state) => (this.paymentProcessing = state),
       onVerifyingChange: (state) => (this.isLoading = state),

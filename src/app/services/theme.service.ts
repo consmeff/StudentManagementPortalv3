@@ -6,33 +6,44 @@ import { LayoutService } from '../layout/service/layout.service';
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   /* ---------- state ---------- */
-  private readonly STORAGE_KEY = 'darkTheme';
   private _dark = signal<boolean>(this.initialValue());
 
   /* ---------- public API ---------- */
   readonly darkMode$ = toObservable(this._dark);
 
   constructor(private layoutService: LayoutService) {
-    /* keep LayoutService in sync */
-    this.darkMode$.subscribe((isDark) =>
-      this.layoutService.layoutConfig.update((s) => ({ ...s, darkTheme: isDark }))
-    );
+    this.darkMode$.subscribe((isDark) => {
+      this.applyDomClasses(isDark);
+      this.layoutService.layoutConfig.update((s) => ({ ...s, darkTheme: isDark }));
+    });
   }
 
   /* manual toggle (called by header button) */
   toggle(): void {
-    const newValue = !this._dark();
-    this._dark.set(newValue);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(newValue));
+    this.setDarkMode(!this._dark());
+  }
+
+  setDarkMode(isDark: boolean): void {
+    this._dark.set(isDark);
+  }
+
+  get isDark(): boolean {
+    return this._dark();
   }
 
   /* ---------- helpers ---------- */
   private initialValue(): boolean {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
-    if (stored !== null) {
-      return JSON.parse(stored);          // user had chosen explicitly
+    if (typeof window === 'undefined') {
+      return false;
     }
-    // no stored choice → honour OS / browser
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  private applyDomClasses(isDark: boolean): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+    document.documentElement.classList.toggle('app-dark', isDark);
+    document.body.classList.toggle('dark', isDark);
   }
 }

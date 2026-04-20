@@ -6,8 +6,6 @@ import { AppState } from './appstate';
     providedIn: 'root'
 })
 export class AppConfigService {
-    private readonly STORAGE_KEY = 'appConfigState';
-
     appState = signal<AppState>({});
 
     designerActive = signal(false);
@@ -34,7 +32,6 @@ export class AppConfigService {
                 this.initialized = true;
                 return;
             }
-            this.saveAppState(state);
             this.handleDarkModeTransition(state);
         });
     }
@@ -104,12 +101,6 @@ export class AppConfigService {
     }
 
     private loadAppState(): any {
-        if (isPlatformBrowser(this.platformId)) {
-            const storedState = localStorage.getItem(this.STORAGE_KEY);
-            if (storedState) {
-                return JSON.parse(storedState);
-            }
-        }
         return {
             preset: 'Aura',
             primary: 'noir',
@@ -121,9 +112,4 @@ export class AppConfigService {
         };
     }
 
-    private saveAppState(state: any): void {
-        if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
-        }
-    }
 }

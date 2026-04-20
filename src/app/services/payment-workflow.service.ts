@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ApplicationService } from './application.service';
 import { PaymentRefResponse } from '../data/dashboard/payment.data';
+import { AuthSessionStore } from '../store/auth-session.store';
 
 declare let PaystackPop: any;
 
@@ -19,6 +20,7 @@ export interface PaymentWorkflowHooks {
 export class PaymentWorkflowService {
   private readonly appService = inject(ApplicationService);
   private readonly router = inject(Router);
+  private readonly authSessionStore = inject(AuthSessionStore);
 
   async startForApplication(applicationNo: string, hooks?: PaymentWorkflowHooks): Promise<void> {
     if (!applicationNo) {
@@ -36,11 +38,28 @@ export class PaymentWorkflowService {
         return;
       }
 
-      this.makePayment(ref, hooks);
+      const redirected = this.redirectToHostedPayment(ref, hooks);
+      if (!redirected) {
+        this.makePayment(ref, hooks);
+      }
     } catch {
       hooks?.onProcessingChange?.(false);
       hooks?.onError?.('Payment Error', 'Unable to initialize payment. Please try again.');
     }
+  }
+
+  private redirectToHostedPayment(ref: PaymentRefResponse, hooks?: PaymentWorkflowHooks): boolean {
+    const rawUrl = ref?.payment_url ?? '';
+    const sanitizedUrl = rawUrl.trim().replace(/^[`'"\s]+|[`'"\s]+$/g, '');
+
+    if (!sanitizedUrl || !/^https?:\/\//i.test(sanitizedUrl)) {
+      return false;
+    }
+
+    this.authSessionStore.setPaymentRef(ref.ref_id);
+    hooks?.onSuccess?.('Redirecting to Payment', 'Taking you to the secure payment page...');
+    window.location.assign(sanitizedUrl);
+    return true;
   }
 
   private makePayment(ref: PaymentRefResponse, hooks?: PaymentWorkflowHooks): void {
@@ -52,7 +71,7 @@ export class PaymentWorkflowService {
       ref: ref.ref_id,
       callback: async (response: any) => {
         const reference = response.reference;
-        sessionStorage.setItem('paymentref', reference);
+        this.authSessionStore.setPaymentRef(reference);
         hooks?.onVerifyingChange?.(true);
 
         try {

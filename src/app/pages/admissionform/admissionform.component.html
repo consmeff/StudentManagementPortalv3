@@ -1,7 +1,7 @@
 <p-toast position="top-right"></p-toast>
 
 <!-- Main Content -->
-<div  [class.sidebar-visible]="sidebarVisible">
+<div class="content-wrapper" [class.sidebar-visible]="sidebarVisible">
   
     
     <div class="page-title">Admission Form</div>
@@ -50,23 +50,23 @@
 
     <!-- Stepper Section -->
     <div class="stepper-wrapper">
-      <p-stepper [(value)]="activeStepIndex" [linear]="false">
+      <p-stepper [(value)]="activeStepIndex" [linear]="true">
         
         <p-step-list>
           <p-step [value]="1">
             <span class="step-label">Personal Details</span>
           </p-step>
-          <p-step [value]="2">
-            <span class="step-label">Next of Kin</span>
+          <p-step [value]="2" [disabled]="!canNavigateToStep(2)">
+            <span class="step-label">Next of Kin Details</span>
           </p-step>
-          <p-step [value]="3">
+          <p-step [value]="3" [disabled]="!canNavigateToStep(3)">
             <span class="step-label">Academic History</span>
           </p-step>
-          <p-step [value]="4">
-            <span class="step-label">Documents</span>
+          <p-step [value]="4" [disabled]="!canNavigateToStep(4)">
+            <span class="step-label">Document Upload</span>
           </p-step>
-          <p-step [value]="5">
-            <span class="step-label">Summary</span>
+          <p-step [value]="5" [disabled]="!canNavigateToStep(5)">
+            <span class="step-label">Application Summary</span>
           </p-step>
         </p-step-list>
 
@@ -101,7 +101,7 @@
                 <div class="step-actions">
                   <p-button 
                     label="Back" 
-                    (onClick)="activateCallback(1)"
+                    (onClick)="activateStep(1)"
                     styleClass="secondary-btn"
                     icon="pi pi-arrow-left"
                     [outlined]="true">
@@ -130,7 +130,7 @@
                 <div class="step-actions">
                   <p-button 
                     label="Back" 
-                    (onClick)="activateCallback(2)"
+                    (onClick)="activateStep(2)"
                     styleClass="secondary-btn"
                     icon="pi pi-arrow-left"
                     [outlined]="true">
@@ -159,7 +159,7 @@
                 <div class="step-actions">
                   <p-button 
                     label="Back" 
-                    (onClick)="activateCallback(3)"
+                    (onClick)="activateStep(3)"
                     styleClass="secondary-btn"
                     icon="pi pi-arrow-left"
                     [outlined]="true">
@@ -188,7 +188,7 @@
                 <div class="step-actions">
                   <p-button 
                     label="Back" 
-                    (onClick)="activateCallback(4)"
+                    (onClick)="activateStep(4)"
                     styleClass="secondary-btn"
                     icon="pi pi-arrow-left"
                     [outlined]="true">
