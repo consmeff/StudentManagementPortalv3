@@ -274,13 +274,11 @@ export class PendingPaymentFlowComponent implements OnInit {
   }
 
   private getEffectivePaymentStatus(): string {
-    console.log("first status rendering:",this.authSessionStore.paymentStatus())
     return this.authSessionStore.paymentStatus();
   }
 
   private isPaymentCompletedValue(status: string): boolean {
     const normalized = (status || '').toLowerCase().trim();
-    console.log("This is the staus:", normalized)
     if (!normalized) {
       return false;
     }
@@ -351,9 +349,20 @@ export class PendingPaymentFlowComponent implements OnInit {
       && !!data.o_level_result?.length;
   }
 
-  private computeIsSubmissionCompleted(data: RegistrantData | null): boolean {
+  private computeIsSubmissionCompleted(
+    data: RegistrantData | null,
+    formDone: boolean,
+    docsDone: boolean,
+    paymentDone: boolean
+  ): boolean {
     if (!data) {
       return false;
+    }
+
+    // Dashboard completion should not depend solely on back-office approval.
+    // Once applicant has paid and completed form + uploads, mark as submitted.
+    if (paymentDone && formDone && docsDone) {
+      return true;
     }
 
     const approval = (data.approval_status || '').toLowerCase();
@@ -398,7 +407,7 @@ export class PendingPaymentFlowComponent implements OnInit {
     const paymentDone = this.isPaymentCompleted();
     const formDone = this.computeIsFormSectionCompleted(registrant);
     const docsDone = this.computeAreDocumentsUploaded(registrant);
-    const submitDone = this.computeIsSubmissionCompleted(registrant);
+    const submitDone = this.computeIsSubmissionCompleted(registrant, formDone, docsDone, paymentDone);
     this.isApplicationCompleted.set(submitDone);
 
     this.completedApplication.set(
