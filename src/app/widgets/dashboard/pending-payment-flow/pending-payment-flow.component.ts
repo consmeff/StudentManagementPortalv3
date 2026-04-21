@@ -30,6 +30,12 @@ interface ApplicationStep {
   actionLabel?: string;
 }
 
+interface CompletedApplicationDetails {
+  applicationNo: string;
+  preferredProgramme: string;
+  applicationDate: string;
+}
+
 @Component({
   selector: 'app-pending-payment-flow',
   standalone: true,
@@ -60,6 +66,9 @@ export class PendingPaymentFlowComponent implements OnInit {
   readonly dashboardName = signal('');
   readonly dashboardPaymentStatus = signal('');
   readonly registrantData = signal<RegistrantData | null>(null);
+  readonly completedApplication = signal<CompletedApplicationDetails | null>(null);
+  readonly applicantPhotoUrl = signal('');
+  readonly isApplicationCompleted = signal(false);
   readonly isPaymentPending = signal(true);
   readonly progressPercent = signal(20);
   readonly heroTitle = signal<string>(HERO_CONTENT.pending.title);
@@ -77,6 +86,10 @@ export class PendingPaymentFlowComponent implements OnInit {
   }
 
   onPrimaryAction(): void {
+    if (this.isApplicationCompleted()) {
+      this.viewApplicationSummary();
+      return;
+    }
     if (this.isPaymentPending()) {
       this.continueFlow();
       return;
@@ -97,6 +110,10 @@ export class PendingPaymentFlowComponent implements OnInit {
       return;
     }
     this.navigateToRelevantFormStep();
+  }
+
+  viewApplicationSummary(): void {
+    this.router.navigateByUrl('/pages/summarypage');
   }
 
   async continueFlow(): Promise<void> {
@@ -382,6 +399,18 @@ export class PendingPaymentFlowComponent implements OnInit {
     const formDone = this.computeIsFormSectionCompleted(registrant);
     const docsDone = this.computeAreDocumentsUploaded(registrant);
     const submitDone = this.computeIsSubmissionCompleted(registrant);
+    this.isApplicationCompleted.set(submitDone);
+
+    this.completedApplication.set(
+      registrant
+        ? {
+            applicationNo: registrant.application_no || '—',
+            preferredProgramme: registrant.department?.name || registrant.program?.name || '—',
+            applicationDate: this.formatDisplayDate(registrant.created_at),
+          }
+        : null
+    );
+    this.applicantPhotoUrl.set(registrant?.passport_photo?.file_url || '');
 
     const steps: ApplicationStep[] = [
       {
@@ -423,7 +452,7 @@ export class PendingPaymentFlowComponent implements OnInit {
 
     const completedSteps = steps.filter((step) => step.status === 'completed').length;
     this.applicationSteps.set(steps);
-    this.progressPercent.set(Math.max(20, Math.min(100, completedSteps * 20)));
+    this.progressPercent.set(submitDone ? 100 : Math.max(20, Math.min(100, completedSteps * 20)));
 
     const pending = !paymentDone;
     this.isPaymentPending.set(pending);
@@ -434,8 +463,26 @@ export class PendingPaymentFlowComponent implements OnInit {
       return;
     }
 
+    if (submitDone) {
+      this.heroTitle.set('Awaiting Admission');
+      this.heroDescription.set('You have successfully completed your application. Now awaiting admission decision.');
+      this.primaryActionLabel.set('View Application Summary');
+      return;
+    }
+
     this.heroTitle.set(HERO_CONTENT.paid.title);
     this.heroDescription.set(HERO_CONTENT.paid.description);
     this.primaryActionLabel.set(HERO_CONTENT.paid.actionLabel);
+  }
+
+  private formatDisplayDate(value: string | Date | undefined): string {
+    if (!value) {
+      return '—';
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '—';
+    }
+    return date.toLocaleDateString('en-GB');
   }
 }

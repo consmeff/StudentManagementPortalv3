@@ -25,6 +25,106 @@
   background: #000b97;
 }
 
+.completed-hero-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.4rem;
+  align-items: center;
+  padding: 1.3rem 1.6rem;
+  border-radius: 1.25rem;
+  background: #f8fbff;
+}
+
+.progress-ring.completed {
+  border-color: #00158f;
+}
+
+.progress-ring.completed .progress-value {
+  color: #00158f;
+}
+
+.completed-copy h2 {
+  color: #0d1a4f;
+}
+
+.completed-copy p {
+  color: #7f93b0;
+}
+
+.applicant-photo-card {
+  background: #f8fbff;
+  border: 1px solid #e4ecf9;
+  border-radius: 1rem;
+  padding: 0.5rem;
+  width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.applicant-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 0.85rem;
+}
+
+.details-section {
+  margin-top: 1.5rem;
+}
+
+.details-section h3 {
+  margin: 0 0 0.75rem;
+  color: #2c3d60;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 1.15rem;
+}
+
+.details-card {
+  border: 1px solid #dbe7f9;
+  border-radius: 1rem;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #eef3fb;
+  color: #6b7b98;
+}
+
+.details-row strong {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: right;
+}
+
+.details-row:last-child {
+  border-bottom: none;
+}
+
+.summary-action {
+  margin-top: 1.7rem;
+  display: flex;
+  justify-content: center;
+}
+
+.summary-btn {
+  min-width: 260px;
+}
+
 .hero-progress {
   width: 150px;
   height: 150px;
@@ -324,6 +424,27 @@
   .hero-card {
     grid-template-columns: 1fr;
     border-radius: 1.2rem;
+  }
+
+  .completed-hero-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr;
+  }
+
+  .applicant-photo-card {
+    width: 120px;
+  }
+
+  .details-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .details-row strong {
+    text-align: left;
   }
 
   .hero-progress {

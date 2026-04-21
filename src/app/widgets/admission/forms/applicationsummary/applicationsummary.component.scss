@@ -2,6 +2,96 @@
 
 .summary-container {
   width: 100%;
+  padding: $spacing-4;
+}
+
+.rows-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.row-item {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: $spacing-4;
+  align-items: start;
+}
+
+.row-label {
+  font-family: $font-family-sans;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $text-secondary;
+}
+
+.row-value {
+  font-family: $font-family-sans;
+  font-size: $font-size-sm;
+  color: $text-primary;
+  word-break: break-word;
+}
+
+.documents-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.document-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 230px) 1fr auto;
+  gap: $spacing-4;
+  align-items: center;
+}
+
+.doc-label {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.doc-file {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+}
+
+.doc-file .pi-file {
+  color: $primary;
+  font-size: 1.3rem;
+}
+
+.doc-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-name {
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.doc-size {
+  color: $text-secondary;
+  font-size: $font-size-xs;
+}
+
+.view-doc-btn {
+  border: 1px solid $border-color;
+  background: transparent;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  color: $text-secondary;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.view-doc-btn:hover {
+  border-color: $primary;
+  color: $primary;
 }
 
 .loading-state {
@@ -323,6 +413,21 @@
 
 // Responsive Adjustments
 @media (max-width: $breakpoint-md) {
+  .summary-container {
+    padding: $spacing-2;
+  }
+
+  .row-item {
+    grid-template-columns: 1fr;
+    gap: $spacing-1;
+  }
+
+  .document-row {
+    grid-template-columns: 1fr;
+    gap: $spacing-2;
+    align-items: start;
+  }
+
   .summary-section {
     padding: $spacing-4;
   }
