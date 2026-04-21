@@ -27,7 +27,7 @@ export class ThemeService {
     this._dark.set(isDark);
   }
 
-  get isDark(): boolean {
+  isDark(): boolean {
     return this._dark();
   }
 

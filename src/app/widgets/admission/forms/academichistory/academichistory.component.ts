@@ -103,10 +103,10 @@ export class AcademichistoryComponent {
     }));
 
     this.examnumform.valueChanges.subscribe(val => {
-      if (+val.attempt == 1 && this.examattemptcount.length != 1) {
+      if (+val.attempt == 1 && this.examAttemptCountArray().length != 1) {
         this.removeExamAttempt(1);
       }
-      if (+val.attempt == 2 && this.examattemptcount.length != 2) {
+      if (+val.attempt == 2 && this.examAttemptCountArray().length != 2) {
         this.addExamAttempt();
       }
       this.cd.detectChanges();
@@ -155,7 +155,7 @@ export class AcademichistoryComponent {
     }
 
     if (_more != null && _more.length > 0) {
-      this.qualifications.clear();
+      this.qualificationsArray().clear();
       _more.forEach((item) => this.addQualification(item));
     }
 
@@ -175,7 +175,7 @@ export class AcademichistoryComponent {
       this.validateAndUpdate();
     });
 
-    this.examattemptcount.valueChanges.subscribe(() => {
+    this.examAttemptCountArray().valueChanges.subscribe(() => {
       this.validateAndUpdate();
     });
 
@@ -257,11 +257,11 @@ export class AcademichistoryComponent {
     return date.toISOString().split('T')[0];
   }
 
-  get examattemptcount(): FormArray {
+  examAttemptCountArray(): FormArray {
     return this.academicHistoryExamsForm.get('examattemptcount') as FormArray;
   }
 
-  get qualifications(): FormArray {
+  qualificationsArray(): FormArray {
     return this.academicHistoryOtherQualificationForm.get('qualifications') as FormArray;
   }
 
@@ -299,23 +299,23 @@ export class AcademichistoryComponent {
   }
 
   addQualification(item?: AcademicHistory): void {
-    this.qualifications.push(this.createQualificationGroup(item));
+    this.qualificationsArray().push(this.createQualificationGroup(item));
   }
 
   removeQualification(index: number): void {
-    this.qualifications.removeAt(index);
+    this.qualificationsArray().removeAt(index);
   }
 
   addExamAttempt(exam?: OLevelResult): void {
-    this.examattemptcount.push(this.createAcademicHistoryGroup(exam));
+    this.examAttemptCountArray().push(this.createAcademicHistoryGroup(exam));
   }
 
   clearExamAttempt() {
-    this.examattemptcount.clear();
+    this.examAttemptCountArray().clear();
   }
 
   removeExamAttempt(index: number): void {
-    this.examattemptcount.removeAt(index);
+    this.examAttemptCountArray().removeAt(index);
   }
 
   isFieldInvalid(form: FormGroup, fieldName: string): boolean {
@@ -338,7 +338,7 @@ export class AcademichistoryComponent {
   }
 
   isOptionalQualificationIncomplete(index: number): boolean {
-    const qualification = this.qualifications.at(index) as FormGroup;
+    const qualification = this.qualificationsArray().at(index) as FormGroup;
     const value = qualification.value;
     const hasAnyValue = Object.values(value).some((v) => this.hasFilledValue(v));
     const hasAllValue = Object.values(value).every((v) => this.hasFilledValue(v));
@@ -364,7 +364,7 @@ export class AcademichistoryComponent {
   }
 
   private areOptionalQualificationsValid(): boolean {
-    return this.qualifications.controls.every((group) => {
+    return this.qualificationsArray().controls.every((group) => {
       const value = (group as FormGroup).value;
       const values = Object.values(value);
       const hasAnyValue = values.some((v) => this.hasFilledValue(v));
@@ -374,7 +374,7 @@ export class AcademichistoryComponent {
   }
 
   private getValidOptionalQualifications(): any[] {
-    return this.qualifications.value.filter((item: any) =>
+    return this.qualificationsArray().value.filter((item: any) =>
       this.hasFilledValue(item?.name) &&
       this.hasFilledValue(item?.qualificationType) &&
       this.hasFilledValue(item?.dateStarted) &&

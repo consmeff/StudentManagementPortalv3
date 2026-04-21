@@ -39,8 +39,8 @@ export class PasswordresetComponent implements OnDestroy {
     cpassword: new FormControl('', Validators.required)
   });
 
-  get password(): AbstractControl { return this.resetForm.controls.password; }
-  get cpassword(): AbstractControl { return this.resetForm.controls.cpassword; }
+  readonly passwordControl: AbstractControl = this.resetForm.controls.password;
+  readonly cpasswordControl: AbstractControl = this.resetForm.controls.cpassword;
 
   constructor(
     private authService: AuthService,
@@ -51,7 +51,7 @@ export class PasswordresetComponent implements OnDestroy {
     this.themeSub = this.themeService.darkMode$.subscribe((isDark) => {
       this.isDarkMode = isDark;
     });
-    this.password.valueChanges.subscribe((val: string | null) => {
+    this.passwordControl.valueChanges.subscribe((val: string | null) => {
       if (val) {
         this.updateValidationStatus(val);
       }

@@ -26,10 +26,6 @@ export class RequestPasswordresetComponent implements OnDestroy {
     email: new FormControl('', [Validators.required, Validators.email])
   });
 
-  get email() {
-    return this.resetForm.controls.email;
-  }
-
   constructor(
     private authService: AuthService,
     private messageService: MessageService,

@@ -81,7 +81,7 @@ export class PendingPaymentFlowComponent implements OnInit {
       this.continueFlow();
       return;
     }
-    this.router.navigateByUrl(ROUTES.admissionForm);
+    this.navigateToRelevantFormStep();
   }
 
   onStepAction(step: ApplicationStep): void {
@@ -92,7 +92,11 @@ export class PendingPaymentFlowComponent implements OnInit {
       this.continueFlow();
       return;
     }
-    this.router.navigateByUrl(ROUTES.admissionForm);
+    if (step.index === 4) {
+      this.navigateToFormStep(4);
+      return;
+    }
+    this.navigateToRelevantFormStep();
   }
 
   async continueFlow(): Promise<void> {
@@ -293,6 +297,33 @@ export class PendingPaymentFlowComponent implements OnInit {
     return personalComplete && kinComplete && academicComplete;
   }
 
+  private computeIsPersonalSectionCompleted(data: RegistrantData | null): boolean {
+    if (!data) {
+      return false;
+    }
+
+    return this.hasValue(data.marital_status)
+      && this.hasValue(data.gender)
+      && this.hasValue(data.dob)
+      && this.hasValue(data.nationality)
+      && this.hasValue(data.state_of_origin)
+      && this.hasValue(data.lga);
+  }
+
+  private computeIsKinSectionCompleted(data: RegistrantData | null): boolean {
+    if (!data?.primary_parent_or_guardian) {
+      return false;
+    }
+
+    return this.hasValue(data.primary_parent_or_guardian.first_name)
+      && this.hasValue(data.primary_parent_or_guardian.last_name)
+      && this.hasValue(data.primary_parent_or_guardian.phone_number);
+  }
+
+  private computeIsAcademicSectionCompleted(data: RegistrantData | null): boolean {
+    return Array.isArray(data?.academic_history) && data.academic_history.length > 0;
+  }
+
   private computeAreDocumentsUploaded(data: RegistrantData | null): boolean {
     if (!data) {
       return false;
@@ -310,6 +341,39 @@ export class PendingPaymentFlowComponent implements OnInit {
 
     const approval = (data.approval_status || '').toLowerCase();
     return (STATUS_MATCHERS.submissionCompleted as readonly string[]).includes(approval);
+  }
+
+  private navigateToRelevantFormStep(): void {
+    const registrant = this.registrantData();
+    const personalDone = this.computeIsPersonalSectionCompleted(registrant);
+    const kinDone = this.computeIsKinSectionCompleted(registrant);
+    const academicDone = this.computeIsAcademicSectionCompleted(registrant);
+    const docsDone = this.computeAreDocumentsUploaded(registrant);
+
+    if (!personalDone) {
+      this.navigateToFormStep(1);
+      return;
+    }
+    if (!kinDone) {
+      this.navigateToFormStep(2);
+      return;
+    }
+    if (!academicDone) {
+      this.navigateToFormStep(3);
+      return;
+    }
+    if (!docsDone) {
+      this.navigateToFormStep(4);
+      return;
+    }
+
+    this.navigateToFormStep(5);
+  }
+
+  private navigateToFormStep(step: number): void {
+    this.router.navigate([ROUTES.admissionForm], {
+      queryParams: { step },
+    });
   }
 
   private recomputeDashboardState(): void {

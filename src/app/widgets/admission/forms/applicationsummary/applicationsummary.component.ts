@@ -33,6 +33,9 @@ import { AuthSessionStore } from '../../../../store/auth-session.store';
 export class ApplicationsummaryComponent implements OnInit {
 
   registrantData: RegistrantDataDTO = {};
+  personalInfoItems: Array<{ label: string; value: any }> = [];
+  nextOfKinItems: Array<{ label: string; value: any }> = [];
+  documentItems: Array<{ label: string; imageUrl: string | undefined }> = [];
   placeholder: string = "../../../../assets/doc.png";
   isLoading: boolean = true;
 
@@ -55,6 +58,7 @@ export class ApplicationsummaryComponent implements OnInit {
       await firstValueFrom(this.appservice.registratantData(app_no))
         .then(async (data) => {
           this.registrantData = data;
+          this.updateSummaryItems();
           result = true;
           this.isLoading = false;
         })
@@ -90,10 +94,9 @@ ${residential_address.country?.name || ''}
     return value || '—';
   }
 
-  // Personal Info items for cleaner template
-  get personalInfoItems() {
+  private updateSummaryItems(): void {
     const data = this.registrantData.data;
-    return [
+    this.personalInfoItems = [
       { label: 'First Name', value: data?.first_name },
       { label: 'Last Name', value: data?.last_name },
       { label: 'Middle Name', value: data?.other_names },
@@ -109,12 +112,9 @@ ${residential_address.country?.name || ''}
       { label: 'Do you live with a disability?', value: data?.disability },
       { label: 'Address', value: this.fullAddress(data?.residential_address) }
     ];
-  }
-
-  // Next of Kin items
-  get nextOfKinItems() {
+ 
     const nok = this.registrantData.data?.primary_parent_or_guardian;
-    return [
+    this.nextOfKinItems = [
       { label: 'Title', value: nok?.title },
       { label: 'First Name', value: nok?.first_name },
       { label: 'Last Name', value: nok?.last_name },
@@ -129,12 +129,8 @@ ${residential_address.country?.name || ''}
       { label: 'Local Government', value: nok?.lga },
       { label: 'Address', value: nok?.correspondence_address }
     ];
-  }
 
-  // Document items
-  get documentItems() {
-    const data = this.registrantData.data;
-    return [
+    this.documentItems = [
       { 
         label: 'Certificate of Birth', 
         imageUrl: data?.certificate_of_birth?.file_url 

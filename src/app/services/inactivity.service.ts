@@ -1,12 +1,12 @@
-import { Injectable, inject, OnDestroy } from '@angular/core';
+import { DestroyRef, Injectable, inject, OnDestroy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { fromEvent, merge, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, fromEvent, merge } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class InactivityService implements OnDestroy {
   private readonly router = inject(Router);
-  private readonly destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
   private readonly activity$ = merge(
     fromEvent(window, 'mousemove'),
     fromEvent(window, 'keydown'),
@@ -18,7 +18,7 @@ export class InactivityService implements OnDestroy {
   constructor() {
     this.reset();
     this.activity$
-      .pipe(debounceTime(500), takeUntil(this.destroy$))
+      .pipe(debounceTime(500), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.reset());
   }
 
@@ -34,7 +34,5 @@ export class InactivityService implements OnDestroy {
 
   ngOnDestroy(): void {
     clearTimeout(this.timer);
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

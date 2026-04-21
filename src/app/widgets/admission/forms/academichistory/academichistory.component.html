@@ -74,42 +74,42 @@
 
     <div class="form-section" [formGroup]="academicHistoryExamsForm">
       <div formArrayName="examattemptcount">
-        <div *ngFor="let item of examattemptcount.controls; let i = index" [formGroupName]="i" class="attempt-block">
+        <div *ngFor="let item of examAttemptCountArray().controls; let i = index" [formGroupName]="i" class="attempt-block">
           <h4 class="sub-section-title" *ngIf="i > 0">Second Sitting</h4>
           <div class="form-grid">
             <div class="form-field">
               <label [for]="'examName' + i" class="field-label">Examination Name <span class="required">*</span></label>
-              <p-dropdown [inputId]="'examName' + i" [options]="examDropdownOptions" formControlName="name" [class.p-invalid]="isFieldInvalidArray(examattemptcount, i, 'name')" styleClass="w-full"></p-dropdown>
+              <p-dropdown [inputId]="'examName' + i" [options]="examDropdownOptions" formControlName="name" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'name')" styleClass="w-full"></p-dropdown>
             </div>
 
             <div class="form-field">
               <label [for]="'examYear' + i" class="field-label">Examination Year <span class="required">*</span></label>
-              <p-dropdown [inputId]="'examYear' + i" [options]="yearDropdownOptions" formControlName="year" [class.p-invalid]="isFieldInvalidArray(examattemptcount, i, 'year')" styleClass="w-full"></p-dropdown>
+              <p-dropdown [inputId]="'examYear' + i" [options]="yearDropdownOptions" formControlName="year" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'year')" styleClass="w-full"></p-dropdown>
             </div>
 
             <div class="form-field">
               <label [for]="'english' + i" class="field-label">English Language <span class="required">*</span></label>
-              <p-dropdown [inputId]="'english' + i" [options]="gradeDropdownOptions" formControlName="english" [class.p-invalid]="isFieldInvalidArray(examattemptcount, i, 'english')" styleClass="w-full"></p-dropdown>
+              <p-dropdown [inputId]="'english' + i" [options]="gradeDropdownOptions" formControlName="english" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'english')" styleClass="w-full"></p-dropdown>
             </div>
 
             <div class="form-field">
               <label [for]="'math' + i" class="field-label">Mathematics <span class="required">*</span></label>
-              <p-dropdown [inputId]="'math' + i" [options]="gradeDropdownOptions" formControlName="math" [class.p-invalid]="isFieldInvalidArray(examattemptcount, i, 'math')" styleClass="w-full"></p-dropdown>
+              <p-dropdown [inputId]="'math' + i" [options]="gradeDropdownOptions" formControlName="math" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'math')" styleClass="w-full"></p-dropdown>
             </div>
 
             <div class="form-field">
               <label [for]="'physics' + i" class="field-label">Physics <span class="required">*</span></label>
-              <p-dropdown [inputId]="'physics' + i" [options]="gradeDropdownOptions" formControlName="physics" [class.p-invalid]="isFieldInvalidArray(examattemptcount, i, 'physics')" styleClass="w-full"></p-dropdown>
+              <p-dropdown [inputId]="'physics' + i" [options]="gradeDropdownOptions" formControlName="physics" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'physics')" styleClass="w-full"></p-dropdown>
             </div>
 
             <div class="form-field">
               <label [for]="'chemistry' + i" class="field-label">Chemistry <span class="required">*</span></label>
-              <p-dropdown [inputId]="'chemistry' + i" [options]="gradeDropdownOptions" formControlName="chemistry" [class.p-invalid]="isFieldInvalidArray(examattemptcount, i, 'chemistry')" styleClass="w-full"></p-dropdown>
+              <p-dropdown [inputId]="'chemistry' + i" [options]="gradeDropdownOptions" formControlName="chemistry" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'chemistry')" styleClass="w-full"></p-dropdown>
             </div>
 
             <div class="form-field">
               <label [for]="'biology' + i" class="field-label">Biology <span class="required">*</span></label>
-              <p-dropdown [inputId]="'biology' + i" [options]="gradeDropdownOptions" formControlName="biology" [class.p-invalid]="isFieldInvalidArray(examattemptcount, i, 'biology')" styleClass="w-full"></p-dropdown>
+              <p-dropdown [inputId]="'biology' + i" [options]="gradeDropdownOptions" formControlName="biology" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'biology')" styleClass="w-full"></p-dropdown>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@
     <div class="form-section" [formGroup]="academicHistoryOtherQualificationForm">
       <h3 class="section-title">Other Qualifications (Optional)</h3>
       <div formArrayName="qualifications">
-        <div *ngFor="let qualification of qualifications.controls; let i = index" [formGroupName]="i" class="qualification-block">
+        <div *ngFor="let qualification of qualificationsArray().controls; let i = index" [formGroupName]="i" class="qualification-block">
           <div class="form-grid">
             <div class="form-field">
               <label [for]="'qualName' + i" class="field-label">Name</label>
@@ -143,7 +143,7 @@
             </div>
           </div>
 
-          <div class="qualification-actions" *ngIf="qualifications.length > 1">
+          <div class="qualification-actions" *ngIf="qualificationsArray().length > 1">
             <button pButton type="button" [outlined]="true" icon="pi pi-trash" label="Remove" (click)="removeQualification(i)"></button>
           </div>
         </div>

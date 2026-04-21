@@ -7,10 +7,9 @@ import { AuthService } from '../../../services/auth.service';
 
 import { MessageService } from 'primeng/api';
 
-import { Subject, throttleTime } from 'rxjs';
 import { Subscription } from 'rxjs';
 import { ProfilePayload, ProfileSuccessResponse, validationCheckDTO } from '../../../data/auth/auth.data';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { passwordStrength } from '../../../utility/formvalidators';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ThemeService } from '../../../services/theme.service';
@@ -26,7 +25,7 @@ export class SignUpComponent implements OnDestroy {
     passToggle: boolean = false;
     passToggle2: boolean = false;
     busy: boolean = false;
-    private clickSubject = new Subject<void>();
+    private lastRegisterClickAt = 0;
   
     validationCheck: validationCheckDTO[] = [
       {
@@ -73,15 +72,14 @@ toggleDarkMode() {
       altphonenumber: new FormControl('')
     });
   
-    get email(): AbstractControl { return this.regForm.controls.email }
-  
-    get firstname(): AbstractControl { return this.regForm.controls.firstname }
-    get middlename(): AbstractControl { return this.regForm.controls.middlename }
-    get lastname(): AbstractControl { return this.regForm.controls.lastname }
-    get password(): AbstractControl { return this.regForm?.controls.password }
-    get cpassword(): AbstractControl { return this.regForm.controls.cpassword }
-    get phonenumber(): AbstractControl { return this.regForm.controls.phonenumber }
-    get altphonenumber(): AbstractControl { return this.regForm.controls.altphonenumber }
+    readonly emailControl = this.regForm.controls.email;
+    readonly firstnameControl = this.regForm.controls.firstname;
+    readonly middlenameControl = this.regForm.controls.middlename;
+    readonly lastnameControl = this.regForm.controls.lastname;
+    readonly passwordControl = this.regForm.controls.password;
+    readonly cpasswordControl = this.regForm.controls.cpassword;
+    readonly phonenumberControl = this.regForm.controls.phonenumber;
+    readonly altphonenumberControl = this.regForm.controls.altphonenumber;
   
   
     constructor(
@@ -96,17 +94,12 @@ toggleDarkMode() {
       this.themeSub = this.themeService.darkMode$.subscribe((isDark) => {
         this.isDarkMode = isDark;
       });
-      this.password.valueChanges.subscribe((val: string) => {
+      this.passwordControl.valueChanges.subscribe((val: string | null) => {
+        if (!val) {
+          return;
+        }
         this.updateValidationStatus(val);
-      })
-      this.clickSubject
-        .pipe(throttleTime(1000))
-        .subscribe(() => {
-          if (!this.busy) {
-            this.registering();
-          }
-  
-        });
+      });
     }
   
     updateValidationStatus(password: string) {
@@ -144,7 +137,12 @@ toggleDarkMode() {
     }
   
     register() {
-      this.clickSubject.next();
+      const now = Date.now();
+      if (now - this.lastRegisterClickAt < 1000 || this.busy) {
+        return;
+      }
+      this.lastRegisterClickAt = now;
+      this.registering();
     }
   
     registering() {
@@ -157,13 +155,13 @@ toggleDarkMode() {
       
       this.busy = true;
       const profileObj: ProfilePayload = {
-        alt_phone_number: this.altphonenumber.value,
-        email: this.email.value,
-        first_name: this.firstname.value,
-        other_names: this.middlename.value,
-        last_name: this.lastname.value,
-        password: this.password.value,
-        phone_number: this.phonenumber.value
+        alt_phone_number: this.altphonenumberControl.value ?? '',
+        email: this.emailControl.value ?? '',
+        first_name: this.firstnameControl.value ?? '',
+        other_names: this.middlenameControl.value ?? '',
+        last_name: this.lastnameControl.value ?? '',
+        password: this.passwordControl.value ?? '',
+        phone_number: this.phonenumberControl.value ?? ''
       };
   
   

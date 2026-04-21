@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoadingService } from '../services/loading.service';
 import { CommonModule } from '@angular/common';
 
@@ -86,22 +86,17 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class GlobalLoadingComponent implements OnInit, OnDestroy {
+export class GlobalLoadingComponent implements OnInit {
   isLoading = false;
-  private destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private loadingService: LoadingService) {}
 
   ngOnInit(): void {
     this.loadingService.loading$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(loading => {
         this.isLoading = loading;
       });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

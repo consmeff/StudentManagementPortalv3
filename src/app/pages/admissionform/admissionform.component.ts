@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 // PrimeNG
@@ -21,6 +21,7 @@ import { States } from '../../data/application/location.dto';
 import { LGA } from '../../data/application/registrantdatadto';
 import { Address } from '../../data/application/personaldetailsdto';
 import { AuthSessionStore } from '../../store/auth-session.store';
+import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { PersonaldetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
 import { NextofkinComponent } from '../../widgets/admission/forms/nextofkin/nextofkin.component';
@@ -65,6 +66,7 @@ export class AdmissionformComponent implements OnInit {
   _preRegData = inject(RegStoreService);
   cd = inject(ChangeDetectorRef);
   router = inject(Router);
+  route = inject(ActivatedRoute);
   messageService = inject(MessageService);
   authSessionStore = inject(AuthSessionStore);
 
@@ -127,11 +129,7 @@ export class AdmissionformComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    var paid = (this.authSessionStore.paymentStatus() || "") === "Paid";
-    // if(!paid){
-    //   this.router.navigateByUrl("/pages/dashboard");
-    // }
-
+    const requestedStep = Number(this.route.snapshot.queryParamMap.get('step'));
 
     this._appservice.registrationData().subscribe({
       next: (data) => {
@@ -171,6 +169,22 @@ export class AdmissionformComponent implements OnInit {
         this._lgas = data;
       }
     });
+
+    const appNo = this.authSessionStore.applicationNo() || '';
+    if (!appNo) {
+      return;
+    }
+
+    this._appservice.registratantData(appNo).subscribe({
+      next: (data: RegistrantDataDTO) => {
+        this._preRegData.setRegData(data);
+        this.hydrateFormStateFromRegistrantData(data);
+        this.setInitialStep(requestedStep);
+      },
+      error: () => {
+        this.setInitialStep(requestedStep);
+      },
+    });
   }
 
   saveAndMoveToStep(nextStep: number, saveFunction: () => Promise<void>) {
@@ -205,6 +219,73 @@ export class AdmissionformComponent implements OnInit {
       default:
         return false;
     }
+  }
+
+  private setInitialStep(requestedStep: number): void {
+    if (Number.isFinite(requestedStep) && requestedStep >= 1 && requestedStep <= 5) {
+      this.activateStep(requestedStep);
+      return;
+    }
+    this.activeStepIndex = this.resolveResumeStep(this.formStepStatus);
+  }
+
+  private resolveResumeStep(status: formstepDTO): number {
+    if (!status.personalinfoValid) {
+      return 1;
+    }
+    if (!status.nextofkinValid) {
+      return 2;
+    }
+    if (!status.academicValid) {
+      return 3;
+    }
+    if (!status.docuplodValid) {
+      return 4;
+    }
+    return 5;
+  }
+
+  private hydrateFormStateFromRegistrantData(payload: RegistrantDataDTO): void {
+    const data = payload?.data;
+    if (!data) {
+      return;
+    }
+
+    const personalDone = this.hasRegistrantValue(data.marital_status)
+      && this.hasRegistrantValue(data.gender)
+      && this.hasRegistrantValue(data.dob)
+      && this.hasRegistrantValue(data.nationality)
+      && this.hasRegistrantValue(data.state_of_origin)
+      && this.hasRegistrantValue(data.lga);
+
+    const nextOfKinDone = !!data.primary_parent_or_guardian
+      && this.hasRegistrantValue(data.primary_parent_or_guardian.first_name)
+      && this.hasRegistrantValue(data.primary_parent_or_guardian.last_name)
+      && this.hasRegistrantValue(data.primary_parent_or_guardian.phone_number);
+
+    const academicDone = Array.isArray(data.academic_history) && data.academic_history.length > 0;
+
+    const docsDone = !!data.certificate_of_birth?.file_url
+      && !!data.passport_photo?.file_url
+      && !!data.utme_result?.file?.file_url
+      && !!data.certificate_of_origin?.file_url
+      && !!data.o_level_result?.[0]?.file?.file_url;
+
+    const inferredStepStatus: formstepDTO = {
+      personalinfoValid: personalDone,
+      nextofkinValid: nextOfKinDone,
+      academicValid: academicDone,
+      docuplodValid: docsDone,
+    };
+    this.formStepStatus = inferredStepStatus;
+    this._formStepService.setFormSteps(inferredStepStatus);
+  }
+
+  private hasRegistrantValue(value: unknown): boolean {
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
+    }
+    return value !== null && value !== undefined;
   }
 
   savePersonalDetails(): Promise<void> {

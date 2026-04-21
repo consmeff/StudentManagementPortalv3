@@ -1,6 +1,7 @@
-import { BehaviorSubject, firstValueFrom, ReplaySubject } from "rxjs";
+import { firstValueFrom } from "rxjs";
  
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
  
 import { ApplicationService } from "./application.service";
 import { RegistrantDataDTO } from "../data/application/registrantdatadto";
@@ -16,23 +17,29 @@ import { AuthSessionStore } from "../store/auth-session.store";
 export class RegStoreService {
   private authSessionStore = inject(AuthSessionStore);
 
-  private readonly _regData = new BehaviorSubject<RegistrantDataDTO | null>(null);
-  public regData$ = this._regData.asObservable();
+  private readonly _regData = signal<RegistrantDataDTO | null>(null);
+  readonly regData = this._regData.asReadonly();
+  public regData$ = toObservable(this._regData);
 
-  private readonly _preRegData = new BehaviorSubject<PreRegistrationDataDTO | null>(null);
-  public preRegData$ = this._preRegData.asObservable();
+  private readonly _preRegData = signal<PreRegistrationDataDTO | null>(null);
+  readonly preRegData = this._preRegData.asReadonly();
+  public preRegData$ = toObservable(this._preRegData);
 
-  private readonly _countryData = new BehaviorSubject<CountryDTO | null>(null);
-  public countryData$ = this._countryData.asObservable();
+  private readonly _countryData = signal<CountryDTO | null>(null);
+  readonly countryData = this._countryData.asReadonly();
+  public countryData$ = toObservable(this._countryData);
 
-  private readonly _stateData = new BehaviorSubject<StatesDTO | null>(null);
-  public stateData$ = this._stateData.asObservable();
+  private readonly _stateData = signal<StatesDTO | null>(null);
+  readonly stateData = this._stateData.asReadonly();
+  public stateData$ = toObservable(this._stateData);
 
-  private readonly _lgaData = new BehaviorSubject<LGA[] | null>(null);
-  public lgaData$ = this._lgaData.asObservable();
+  private readonly _lgaData = signal<LGA[] | null>(null);
+  readonly lgaData = this._lgaData.asReadonly();
+  public lgaData$ = toObservable(this._lgaData);
 
-  private readonly _uploadFile = new BehaviorSubject<TUploadFile |null>(null);
-    public uploadFile$ = this._uploadFile.asObservable();
+  private readonly _uploadFile = signal<TUploadFile | null>(null);
+  readonly uploadFile = this._uploadFile.asReadonly();
+  public uploadFile$ = toObservable(this._uploadFile);
   
 
 
@@ -43,21 +50,21 @@ export class RegStoreService {
 
   setRegData(payload: RegistrantDataDTO) {
     this.setUploadFile(payload);
-    this._regData.next(payload)
+    this._regData.set(payload);
   }
   setpreRegData(payload: PreRegistrationDataDTO) {
     
-    this._preRegData.next(payload)
+    this._preRegData.set(payload);
   }
   setCountryData(payload: CountryDTO) {
-    this._countryData.next(payload)
+    this._countryData.set(payload);
   }
   setStateData(payload: StatesDTO) {
-    this._stateData.next(payload)
+    this._stateData.set(payload);
   }
 
   setLGAData(payload: LGA[]) {
-    this._lgaData.next(payload)
+    this._lgaData.set(payload);
   }
 
   // setUploadFile(payload:RegistrantDataDTO){
@@ -81,7 +88,7 @@ export class RegStoreService {
         origin: payload.data!.certificate_of_origin!,
         utme: payload.data!.utme_result?.file!
       };
-      this._uploadFile.next(_u);
+      this._uploadFile.set(_u);
     }
   }
 
@@ -96,6 +103,7 @@ export class RegStoreService {
           // console.log(data);
 
           this.setRegData(data);
+          result = true;
 
           
         })

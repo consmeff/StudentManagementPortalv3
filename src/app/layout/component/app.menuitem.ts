@@ -63,7 +63,7 @@ import { LayoutService } from '../service/layout.service';
                 <i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
             </a>
 
-            <ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation">
+            <ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation()">
                 <ng-template ngFor let-child let-i="index" [ngForOf]="item.items">
                     <li app-menuitem [item]="child" [index]="i" [parentKey]="key" [class]="child['badgeClass']"></li>
                 </ng-template>
@@ -100,6 +100,8 @@ export class AppMenuitem {
 
     active = false;
 
+    @HostBinding('class.active-menuitem') activeClass = false;
+
     menuSourceSubscription: Subscription;
 
     menuResetSubscription: Subscription;
@@ -114,9 +116,11 @@ export class AppMenuitem {
             Promise.resolve(null).then(() => {
                 if (value.routeEvent) {
                     this.active = value.key === this.key || value.key.startsWith(this.key + '-') ? true : false;
+                    this.syncActiveClass();
                 } else {
                     if (value.key !== this.key && !value.key.startsWith(this.key + '-')) {
                         this.active = false;
+                        this.syncActiveClass();
                     }
                 }
             });
@@ -124,6 +128,7 @@ export class AppMenuitem {
 
         this.menuResetSubscription = this.layoutService.resetSource$.subscribe(() => {
             this.active = false;
+            this.syncActiveClass();
         });
 
         this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((params) => {
@@ -164,18 +169,18 @@ export class AppMenuitem {
         // toggle active state
         if (this.item.items) {
             this.active = !this.active;
+            this.syncActiveClass();
         }
 
         this.layoutService.onMenuStateChange({ key: this.key });
     }
 
-    get submenuAnimation() {
+    submenuAnimation() {
         return this.root ? 'expanded' : this.active ? 'expanded' : 'collapsed';
     }
 
-    @HostBinding('class.active-menuitem')
-    get activeClass() {
-        return this.active && !this.root;
+    private syncActiveClass(): void {
+        this.activeClass = this.active && !this.root;
     }
 
     ngOnDestroy() {

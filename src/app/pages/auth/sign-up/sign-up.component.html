@@ -58,7 +58,7 @@
       </p-floatLabel>
       <small
         class="error-text"
-        *ngIf="cpassword.touched && cpassword.value !== password.value"
+        *ngIf="cpasswordControl.touched && cpasswordControl.value !== passwordControl.value"
       >
         Passwords do not match.
       </small>

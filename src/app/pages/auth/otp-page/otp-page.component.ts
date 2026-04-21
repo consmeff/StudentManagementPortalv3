@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChildren, QueryList, ElementRef, inject } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -28,13 +28,6 @@ export class OtpPageComponent implements OnInit, OnDestroy {
   isPasswordResetFlow = false;
   private themeSub?: Subscription;
   private authSessionStore = inject(AuthSessionStore);
-
-  get box1(): AbstractControl { return this.otpForm.controls['box1']; }
-  get box2(): AbstractControl { return this.otpForm.controls['box2']; }
-  get box3(): AbstractControl { return this.otpForm.controls['box3']; }
-  get box4(): AbstractControl { return this.otpForm.controls['box4']; }
-  get box5(): AbstractControl { return this.otpForm.controls['box5']; }
-  get box6(): AbstractControl { return this.otpForm.controls['box6']; }
 
   constructor(
     private authService: AuthService,
@@ -117,12 +110,12 @@ export class OtpPageComponent implements OnInit, OnDestroy {
 
     // Fill all boxes
     const digits = pastedData.trim().split('');
-    this.box1.setValue(digits[0]);
-    this.box2.setValue(digits[1]);
-    this.box3.setValue(digits[2]);
-    this.box4.setValue(digits[3]);
-    this.box5.setValue(digits[4]);
-    this.box6.setValue(digits[5]);
+    this.otpForm.controls['box1'].setValue(digits[0]);
+    this.otpForm.controls['box2'].setValue(digits[1]);
+    this.otpForm.controls['box3'].setValue(digits[2]);
+    this.otpForm.controls['box4'].setValue(digits[3]);
+    this.otpForm.controls['box5'].setValue(digits[4]);
+    this.otpForm.controls['box6'].setValue(digits[5]);
 
     // Focus last box
     const inputs = this.inputElements.toArray();
@@ -135,7 +128,7 @@ export class OtpPageComponent implements OnInit, OnDestroy {
     if (this.otpForm.invalid) return;
 
     this.busy = true;
-    const otp = `${this.box1.value}${this.box2.value}${this.box3.value}${this.box4.value}${this.box5.value}${this.box6.value}`;
+    const otp = `${this.otpForm.controls['box1'].value}${this.otpForm.controls['box2'].value}${this.otpForm.controls['box3'].value}${this.otpForm.controls['box4'].value}${this.otpForm.controls['box5'].value}${this.otpForm.controls['box6'].value}`;
     const otpObj = { 
       email: this.authSessionStore.profileEmail(), 
       otp: otp 
