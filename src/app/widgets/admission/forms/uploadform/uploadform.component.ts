@@ -32,6 +32,9 @@ import { formatFileSize } from '../../../../utility/yearutil';
   styleUrl: './uploadform.component.scss'
 })
 export class UploadformComponent implements AfterViewInit {
+  private readonly maxFileSizeBytes = 500 * 1024;
+  private readonly maxFileSizeLabel = '500KB';
+
   _formStepService = inject(FormService);
   _regService = inject(RegStoreService);
   messageService = inject(MessageService);
@@ -97,11 +100,27 @@ export class UploadformComponent implements AfterViewInit {
     }, 5000);
   }
 
-  async onCertificateUpload(event: Event) {
-    this.isLoadingCertificate = true;
+  private getValidatedFile(event: Event, documentName: string): File | null {
     const input = event.target as HTMLInputElement;
-    if (input?.files && input.files.length > 0) {
-      this.CertificateFile = input.files[0];
+    const file = input?.files?.[0];
+    if (!file) {
+      return null;
+    }
+
+    if (file.size > this.maxFileSizeBytes) {
+      this.showError('Document Upload', `${documentName} must not exceed ${this.maxFileSizeLabel}.`);
+      input.value = '';
+      return null;
+    }
+
+    return file;
+  }
+
+  async onCertificateUpload(event: Event) {
+    const selectedFile = this.getValidatedFile(event, 'Certificate of Birth');
+    if (selectedFile) {
+      this.isLoadingCertificate = true;
+      this.CertificateFile = selectedFile;
       if (this.CertificateFile != undefined) {
         var _ppFD = new FormData();
         _ppFD.append("file", this.CertificateFile);
@@ -126,10 +145,10 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onOlevelUpload(event: Event) {
-    this.isLoadingOlevel = true;
-    const input = event.target as HTMLInputElement;
-    if (input?.files && input.files.length > 0) {
-      this.ResultFile = input.files[0];
+    const selectedFile = this.getValidatedFile(event, "O' Level Result");
+    if (selectedFile) {
+      this.isLoadingOlevel = true;
+      this.ResultFile = selectedFile;
       if (this.ResultFile != undefined) {
         var _ppFD = new FormData();
         _ppFD.append("file", this.ResultFile);
@@ -157,10 +176,10 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onPassportUpload(event: Event) {
-    this.isLoadingPassport = true;
-    const input = event.target as HTMLInputElement;
-    if (input?.files && input.files.length > 0) {
-      this.PassportFile = input.files[0];
+    const selectedFile = this.getValidatedFile(event, 'Passport Photograph');
+    if (selectedFile) {
+      this.isLoadingPassport = true;
+      this.PassportFile = selectedFile;
       if (this.PassportFile != undefined) {
         var _ppFD = new FormData();
         _ppFD.append("file", this.PassportFile);
@@ -185,10 +204,10 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onOriginUpload(event: Event) {
-    this.isLoadingOrigin = true;
-    const input = event.target as HTMLInputElement;
-    if (input?.files && input.files.length > 0) {
-      this.OriginFile = input.files[0];
+    const selectedFile = this.getValidatedFile(event, 'Certificate of Origin');
+    if (selectedFile) {
+      this.isLoadingOrigin = true;
+      this.OriginFile = selectedFile;
       if (this.OriginFile != undefined) {
         var _ppFD = new FormData();
         _ppFD.append("file", this.OriginFile);
@@ -213,10 +232,10 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onUTMEUpload(event: Event) {
-    this.isLoadingUTME = true;
-    const input = event.target as HTMLInputElement;
-    if (input?.files && input.files.length > 0) {
-      this.UTMEFile = input.files[0];
+    const selectedFile = this.getValidatedFile(event, 'UTME Result');
+    if (selectedFile) {
+      this.isLoadingUTME = true;
+      this.UTMEFile = selectedFile;
       if (this.UTMEFile != undefined) {
         var _ppFD = new FormData();
         _ppFD.append("file", this.UTMEFile);

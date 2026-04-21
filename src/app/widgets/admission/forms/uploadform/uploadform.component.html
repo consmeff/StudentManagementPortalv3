@@ -12,7 +12,7 @@
       <div *ngIf="!CertificateFile && !fileObjects?.certificateofbirth?.file_url" class="upload-area" (click)="f1.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
-        <small class="upload-hint">PDF, JPG, PNG (Max 5MB)</small>
+        <small class="upload-hint">PDF, JPG, PNG (Max 500KB)</small>
       </div>
       <input #f1 (change)="onCertificateUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" />
 
@@ -41,7 +41,7 @@
       <div *ngIf="!ResultFile && !isOlevelFileAvailable()" class="upload-area" (click)="f2.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
-        <small class="upload-hint">PDF, JPG, PNG (Max 5MB)</small>
+        <small class="upload-hint">PDF, JPG, PNG (Max 500KB)</small>
       </div>
       <input #f2 (change)="onOlevelUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" />
 
@@ -70,7 +70,7 @@
       <div *ngIf="!PassportFile && !fileObjects?.passport?.file_url" class="upload-area" (click)="f3.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
-        <small class="upload-hint">JPG, PNG (Max 2MB)</small>
+        <small class="upload-hint">JPG, PNG (Max 500KB)</small>
       </div>
       <input #f3 (change)="onPassportUpload($event)" style="display: none" type="file" accept=".jpg,.jpeg,.png" />
 
@@ -99,7 +99,7 @@
       <div *ngIf="!UTMEFile && !fileObjects?.utme?.file_url" class="upload-area" (click)="f4.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
-        <small class="upload-hint">PDF, JPG, PNG (Max 5MB)</small>
+        <small class="upload-hint">PDF, JPG, PNG (Max 500KB)</small>
       </div>
       <input #f4 (change)="onUTMEUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" />
 
@@ -128,7 +128,7 @@
       <div *ngIf="!OriginFile && !fileObjects?.origin?.file_url" class="upload-area" (click)="f5.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
-        <small class="upload-hint">PDF, JPG, PNG (Max 5MB)</small>
+        <small class="upload-hint">PDF, JPG, PNG (Max 500KB)</small>
       </div>
       <input #f5 (change)="onOriginUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" />
 
