@@ -1,215 +1,138 @@
-import { Component, inject } from '@angular/core';
-import { SidebarComponent } from '../../widgets/sidebar/sidebar.component';
-import { TopbarComponent } from '../../widgets/topbar/topbar.component';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-// PrimeNG Imports
-import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { TooltipModule } from 'primeng/tooltip';
-import { BlockUIModule } from 'primeng/blockui';
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 
 // Services & DTOs
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { ApplicationService } from '../../services/application.service';
 import { TraceabilityModule } from '../../shared/traceability.module';
-import { CertificateOfBirth, RegistrantData } from '../../data/application/registrantdatadto';
+import { RegistrantData } from '../../data/application/registrantdatadto';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
-import { PaymentWorkflowService } from '../../services/payment-workflow.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
+
+type PaymentHistoryRow = {
+  date: string;
+  paymentType: string;
+  referenceNumber: string;
+  amount: string;
+  receiptUrl: string;
+};
 
 @Component({
   selector: 'app-payment',
   standalone: true,
   imports: [
-    TraceabilityModule,SidebarComponent,TopbarComponent,
+    TraceabilityModule
   ],
   providers: [MessageService],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss'
 })
-export class PaymentComponent {
+export class PaymentComponent implements OnInit {
   sidebarVisible = false;
   _widgetService = inject(WidgetsService);
   authSessionStore = inject(AuthSessionStore);
-  
-  uploadMsg = "Upload payment evidence";
-  canpay: boolean = false;
-  canupload: boolean = false;
-  regData: RegistrantData | undefined;
-  paymentFile: File | undefined;
-  btnState: number = 0;
-  canMove: boolean = false;
-  app_no: string | undefined;
-  paymentUploadResult: CertificateOfBirth | undefined;
-  uploadProgress: number = 0;
-  isLoading: boolean = false;
-  paymentProcessing: boolean = false;
-
-  paymentForm = new FormGroup({
-    pay: new FormControl(false),
-    payslip: new FormControl(false)
-  });
+  isLoading = false;
+  paymentHistory: PaymentHistoryRow[] = [];
+  regData: RegistrantData | null = null;
 
   constructor(
-    private router: Router,
     private appService: ApplicationService,
-    private messageService: MessageService,
-    private paymentWorkflow: PaymentWorkflowService
+    private messageService: MessageService
   ) {
     this._widgetService.sidebarState$.subscribe((state: sidebarStateDTO) => {
       this.sidebarVisible = state.isvisible;
     });
-
-    this.paymentForm.controls.pay.valueChanges.subscribe(val => {
-      this.canpay = val || false;
-    });
-
-    this.paymentForm.controls.payslip.valueChanges.subscribe(val => {
-      this.canupload = val || false;
-    });
   }
 
-  uploadPayment(e: any) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
-    if (!allowedTypes.includes(file.type)) {
-      this.showError('Invalid File', 'Please upload an image or PDF file');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      this.showError('File Too Large', 'File size should not exceed 5MB');
-      return;
-    }
-
-    this.uploadMsg = file.name;
-    this.paymentFile = file;
-    
-    // Simulate upload progress
-    this.uploadProgress = 10;
-    setTimeout(() => {
-      this.paymentUploadSubmit();
-    }, 500);
+  ngOnInit(): void {
+    void this.loadPaymentHistory();
   }
 
-  async paymentUploadSubmit() {
-    this.app_no = this.authSessionStore.applicationNo() || "";
-    
-    if (!this.paymentFile) {
-      this.showError('No File', 'Please select a file to upload');
-      return;
-    }
+  async loadPaymentHistory(): Promise<void> {
+    const appNo = this.authSessionStore.applicationNo() || '';
+    if (!appNo) return;
 
     this.isLoading = true;
-    this.uploadProgress = 30;
-    
-    let formData = new FormData();
-    formData.append("file", this.paymentFile);
-
     try {
-      // Upload file
-      this.uploadProgress = 50;
-      this.paymentUploadResult = await firstValueFrom(
-        this.appService.uploadFile(formData)
-      );
-
-      if (!this.paymentUploadResult || this.paymentUploadResult.file_size === 0) {
-        throw new Error('Upload failed');
-      }
-
-      this.uploadProgress = 70;
-
-      // Update payment slip
-      await firstValueFrom(
-        this.appService.personalDetails(this.app_no, { 
-          payment_slip: this.paymentUploadResult 
-        })
-      );
-
-      this.uploadProgress = 100;
-      this.btnState = 1;
-      this.canMove = true;
-      
-      this.showSuccess('Upload Successful', 'Payment evidence uploaded successfully');
-      
-      // Reset progress after a delay
-      setTimeout(() => {
-        this.uploadProgress = 0;
-      }, 2000);
-
-    } catch (err: any) {
-      this.uploadProgress = 0;
-      const errorMsg = err?.error?.non_field_errors?.[0] || 'Unable to upload payment evidence';
-      this.showError('Upload Failed', errorMsg);
+      const snapshot = await firstValueFrom(this.appService.registratantData(appNo));
+      this.regData = snapshot?.data ?? null;
+      this.paymentHistory = this.buildPaymentHistory(this.regData);
+    } catch {
+      this.showError('Payment History', 'Unable to load payment history');
     } finally {
       this.isLoading = false;
     }
   }
 
-  getPaymentRef() {
-    const app_no = this.authSessionStore.applicationNo() || "";
-    this.paymentWorkflow.startForApplication(app_no, {
-      onProcessingChange: (state) => (this.paymentProcessing = state),
-      onVerifyingChange: (state) => (this.isLoading = state),
-      onSuccess: (title, message) => {
-        this.showSuccess(title, message);
-        this.btnState = 1;
-        this.canMove = true;
-      },
-      onError: (title, message) => this.showError(title, message),
-      onWarning: (title, message) => this.showWarning(title, message),
-      onVerified: () => {
-        this.btnState = 1;
-        this.canMove = true;
-      }
-    });
+  private buildPaymentHistory(data: RegistrantData | null): PaymentHistoryRow[] {
+    if (!data) {
+      return [];
+    }
+    const hasPaid = this.isPaidStatus(data.payment_status || this.authSessionStore.paymentStatus() || '');
+    if (!hasPaid) {
+      return [];
+    }
+
+    return [{
+      date: this.formatDate(data.updated_at || data.created_at),
+      paymentType: 'Admission Application Fee',
+      referenceNumber: this.authSessionStore.paymentRef() || data.application_no || '—',
+      amount: '₦20,000',
+      receiptUrl: data.payment_slip?.file_url || ''
+    }];
   }
 
-  copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text).then(() => {
-      this.showSuccess('Copied!', 'Account number copied to clipboard');
-    }).catch(() => {
-      this.showError('Copy Failed', 'Unable to copy to clipboard');
-    });
+  private isPaidStatus(status: string): boolean {
+    const normalized = (status || '').toLowerCase().trim();
+    return !!normalized && (
+      normalized.includes('paid')
+      || normalized.includes('complete')
+      || normalized.includes('success')
+    );
+  }
+
+  private formatDate(value: string | Date | undefined): string {
+    if (!value) {
+      return '—';
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '—';
+    }
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  downloadReceipt(item: PaymentHistoryRow): void {
+    if (item.receiptUrl) {
+      window.open(item.receiptUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    const receiptText = [
+      'Payment Receipt',
+      `Date: ${item.date}`,
+      `Payment Type: ${item.paymentType}`,
+      `Reference Number: ${item.referenceNumber}`,
+      `Amount: ${item.amount}`,
+    ].join('\n');
+    const blob = new Blob([receiptText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `payment-receipt-${item.referenceNumber}.txt`;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 
   // Notification helpers
-  private showSuccess(title: string, message: string) {
-    this.messageService.add({
-      severity: 'success',
-      summary: title,
-      detail: message,
-      life: 3000
-    });
-  }
-
   private showError(title: string, message: string) {
     this.messageService.add({
       severity: 'error',
       summary: title,
       detail: message,
       life: 5000
-    });
-  }
-
-  private showWarning(title: string, message: string) {
-    this.messageService.add({
-      severity: 'warn',
-      summary: title,
-      detail: message,
-      life: 4000
     });
   }
 }

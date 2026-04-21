@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -30,7 +30,12 @@ export class AppMenu {
         private regstore: RegStoreService,
         private router: Router,
         private navigationAccess: NavigationAccessService
-    ) {}
+    ) {
+        effect(() => {
+            this.authSessionStore.paymentStatus();
+            this.buildMenu();
+        });
+    }
 
     ngOnInit() {
         this.buildMenu();
