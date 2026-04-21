@@ -9,6 +9,7 @@ import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
 import { Router } from '@angular/router';
 import { NavigationAccessService, ProtectedPageFeature } from '../../services/navigation-access.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
+import { UserPortalService } from '../../services/user-portal.service';
 
 @Component({
     selector: 'app-menu',
@@ -24,6 +25,7 @@ import { AuthSessionStore } from '../../store/auth-session.store';
 export class AppMenu {
     model: MenuItem[] = [];
     private authSessionStore = inject(AuthSessionStore);
+    private readonly userPortalService = inject(UserPortalService);
 
     constructor(
         private permission: PermissionService,
@@ -33,6 +35,8 @@ export class AppMenu {
     ) {
         effect(() => {
             this.authSessionStore.paymentStatus();
+            this.authSessionStore.userType();
+            this.authSessionStore.matriculationNo();
             this.buildMenu();
         });
     }
@@ -66,18 +70,24 @@ export class AppMenu {
     }
 
     private buildMenu() {
-        this.model = this.filterMenu([
-            this.createNavItem('Dashboard', 'pi pi-th-large', '/pages/dashboard', 'dashboard'),
-            this.createNavItem('Profile', 'pi pi-user', '/pages/profile', 'profile'),
-            this.createNavItem('Admission', 'pi pi-book', '/pages/admissionform', 'admissionform'),
-            this.createNavItem('Payments', 'pi pi-credit-card', '/pages/payment', 'payment'),
+        const baseUrl = this.userPortalService.buildUrl('');
+        const items: MenuItem[] = [
+            this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
+            this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile'),
+            this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment'),
             {
                 label: 'Log Out',
                 icon: 'pi pi-sign-out',
                 styleClass: 'menu-item-logout',
                 command: () => this.logOut()
             }
-        ]);
+        ];
+
+        if (this.userPortalService.isNewCandidatePortal()) {
+            items.splice(2, 0, this.createNavItem('Admission', 'pi pi-book', `${baseUrl}/admissionform`, 'admissionform'));
+        }
+
+        this.model = this.filterMenu(items);
     }
 
     private createNavItem(label: string, icon: string, route: string, feature: ProtectedPageFeature): MenuItem {

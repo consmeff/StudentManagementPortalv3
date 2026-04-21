@@ -8,6 +8,7 @@ import { MessageService } from 'primeng/api';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 import { Subscription } from 'rxjs';
 import { ThemeService } from '../../../services/theme.service';
+import { UserPortalService } from '../../../services/user-portal.service';
 
 import { TraceabilityModule } from '../../../shared/traceability.module';
 
@@ -36,6 +37,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private authSessionStore = inject(AuthSessionStore);
   private themeService = inject(ThemeService);
+  private userPortalService = inject(UserPortalService);
   private themeSub?: Subscription;
 
   constructor(private authService: AuthService,private messageService: MessageService,) {
@@ -73,7 +75,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
         this.authSessionStore.setSessionFromLogin(result);
         this.messageService.add({ severity: 'success', summary: 'Login', detail: 'Login Successful' });
         this.isLoading.set(false);
-        this.router.navigateByUrl("/pages/dashboard")
+        this.router.navigateByUrl(this.userPortalService.dashboardUrl());
       },
       error: (err) => {
         let erMsg = "Login Failed";
