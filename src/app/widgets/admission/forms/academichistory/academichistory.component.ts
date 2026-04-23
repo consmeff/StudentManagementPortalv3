@@ -49,6 +49,7 @@ export class AcademichistoryComponent {
 
   academicHistoryPrimaryForm!: FormGroup;
   academicHistorySecondaryForm!: FormGroup;
+  jambDetailsForm!: FormGroup;
   academicHistoryExamsForm!: FormGroup;
   academicHistoryOtherQualificationForm!: FormGroup;
 
@@ -147,6 +148,12 @@ export class AcademichistoryComponent {
       datecompleted: [_sec?.to_date ? new Date(_sec.to_date) : null, Validators.required]
     });
 
+    const utmeData = (this.backendRegistrationData?.data as any)?.utme_result;
+    this.jambDetailsForm = this.fb.group({
+      registrationNumber: [utmeData?.registration_number ?? ''],
+      score: [utmeData?.score ?? null]
+    });
+
     let _exams = this.backendRegistrationData?.data?.o_level_result;
     if (_exams != undefined && _exams.length > 0 && _exams[0].subjects != undefined) {
       this.clearExamAttempt();
@@ -172,6 +179,10 @@ export class AcademichistoryComponent {
     });
 
     this.academicHistoryExamsForm.valueChanges.subscribe(() => {
+      this.validateAndUpdate();
+    });
+
+    this.jambDetailsForm.valueChanges.subscribe(() => {
       this.validateAndUpdate();
     });
 

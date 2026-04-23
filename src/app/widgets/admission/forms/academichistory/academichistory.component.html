@@ -55,6 +55,21 @@
     </div>
 
     <div class="form-section exam-section" [formGroup]="examnumform">
+      <h3 class="section-title">JAMB Details</h3>
+      <div class="form-grid" [formGroup]="jambDetailsForm">
+        <div class="form-field">
+          <label for="jambRegistrationNumber" class="field-label">Registration Number</label>
+          <input pInputText id="jambRegistrationNumber" formControlName="registrationNumber" />
+        </div>
+
+        <div class="form-field">
+          <label for="jambScore" class="field-label">Score</label>
+          <input pInputText id="jambScore" type="number" min="0" max="400" formControlName="score" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section exam-section" [formGroup]="examnumform">
       <h3 class="section-title">Examination Details</h3>
       <div class="form-field radio-group">
         <label class="field-label">Number of Attempts <span class="required">*</span></label>
