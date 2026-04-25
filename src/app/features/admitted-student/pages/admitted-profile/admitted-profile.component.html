@@ -4,11 +4,11 @@
     Some of your documents from the application stage have been carried over. You are expected to upload the remaining ones.
   </p>
 
-  <ng-container *ngIf="!flow.isAcceptancePaid(); else unlockedVerification">
+  <ng-container *ngIf="!flow.canAccessProfileVerification(); else unlockedVerification">
     <div class="locked-state">
       <div class="lock-icon">🔒</div>
       <h2>Document Verification is locked</h2>
-      <p>You need to pay your acceptance fee before you verify your documents.</p>
+      <p>You need to make an in-app school fees payment before you verify your documents.</p>
       <button pButton type="button" class="primary-btn" (click)="goToPayment()">Make Payment</button>
     </div>
   </ng-container>

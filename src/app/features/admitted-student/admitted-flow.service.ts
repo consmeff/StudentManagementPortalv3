@@ -118,6 +118,8 @@ export class AdmittedFlowService {
   readonly canAddInstallment = computed(
     () => this.schoolFeePayments().length < this.maxInstallments && this.remainingSchoolFees() > 0
   );
+  readonly hasInternalPayment = computed(() => this.schoolFeePayments().length > 0);
+  readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
   readonly verificationDocuments = computed<VerificationDocument[]>(() => {
     const data = this.registrantData();
