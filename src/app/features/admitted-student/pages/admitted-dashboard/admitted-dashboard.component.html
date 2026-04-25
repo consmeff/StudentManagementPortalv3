@@ -1,0 +1,77 @@
+<div class="admitted-page">
+  <div class="welcome-line">Welcome,</div>
+  <h1 class="name-line">{{ flow.applicantName() }}</h1>
+
+  <section class="hero-card">
+    <div class="hero-icon">{{ flow.isAcceptancePaid() ? "✓" : "📄" }}</div>
+    <div class="hero-copy">
+      <h2>{{ flow.isAcceptancePaid() ? "Your place is secured" : "Congratulations - you've been offered admission" }}</h2>
+      <p *ngIf="!flow.isAcceptancePaid()">
+        We're thrilled to inform you that you've officially been offered a provisional admission into
+        the {{ flow.programmeName() }} programme for {{ flow.academicSession() }} academic session.
+      </p>
+      <p *ngIf="flow.isAcceptancePaid()">
+        Acceptance payment received and verified. Your admission status is now confirmed.
+        You can now access the student portal to complete your registration.
+      </p>
+    </div>
+    <div class="avatar-card">
+      <img [src]="flow.profilePhotoUrl() || 'assets/logo.png'" alt="Applicant profile photo" />
+    </div>
+  </section>
+
+  <section class="details-card" *ngIf="!flow.isAcceptancePaid(); else paymentSummary">
+    <h3>Admission Details</h3>
+    <div class="detail-row">
+      <span>Application Number:</span>
+      <strong>{{ flow.applicationNo() }}</strong>
+    </div>
+    <div class="detail-row">
+      <span>Programme Admitted to:</span>
+      <strong>{{ flow.programmeName() }}</strong>
+    </div>
+    <div class="detail-row">
+      <span>Admission Date:</span>
+      <strong>{{ flow.admissionDate() }}</strong>
+    </div>
+    <div class="detail-row">
+      <span>Academic Session:</span>
+      <strong>{{ flow.academicSession() }}</strong>
+    </div>
+  </section>
+
+  <ng-template #paymentSummary>
+    <section class="details-card">
+      <h3>Payment Details</h3>
+      <div class="detail-row">
+        <span>Transaction Reference:</span>
+        <strong>{{ flow.transactionReference() }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Amount Paid:</span>
+        <strong>{{ amountPaid() }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Date & Time:</span>
+        <strong>{{ flow.paymentDateTime() }}</strong>
+      </div>
+    </section>
+  </ng-template>
+
+  <div class="action-stack" *ngIf="!flow.isAcceptancePaid(); else postPaymentActions">
+    <button pButton type="button" class="primary-btn" (click)="goToAcceptancePayment()">
+      Pay Acceptance Fee - ₦30,000
+    </button>
+  </div>
+
+  <ng-template #postPaymentActions>
+    <div class="action-stack">
+      <button pButton type="button" class="primary-btn" (click)="goToProfileVerification()">
+        Upload Documents
+      </button>
+      <button pButton type="button" class="secondary-btn" (click)="downloadReceipt()">
+        Download Receipt
+      </button>
+    </div>
+  </ng-template>
+</div>

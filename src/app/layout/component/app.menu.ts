@@ -70,11 +70,13 @@ export class AppMenu {
     }
 
     private buildMenu() {
-        const baseUrl = this.userPortalService.buildUrl('');
+        const activePortal = this.resolveActivePortalSegment();
+        const baseUrl = `/${activePortal}`;
         const items: MenuItem[] = [
             this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
             this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile'),
             this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment'),
+            this.createNavItem('Courses', 'pi pi-book', `${baseUrl}/courses`, 'courses'),
             {
                 label: 'Log Out',
                 icon: 'pi pi-sign-out',
@@ -83,8 +85,9 @@ export class AppMenu {
             }
         ];
 
-        if (this.userPortalService.isNewCandidatePortal()) {
+        if (activePortal === 'new') {
             items.splice(2, 0, this.createNavItem('Admission', 'pi pi-book', `${baseUrl}/admissionform`, 'admissionform'));
+            items.splice(4, 1);
         }
 
         this.model = this.filterMenu(items);
@@ -104,6 +107,14 @@ export class AppMenu {
     private logOut() {
         this.authSessionStore.clear();
         this.router.navigateByUrl('/auth/login');
+    }
+
+    private resolveActivePortalSegment(): 'new' | 'admitted' | 'returning' {
+        const currentSegment = this.router.url.split('/').filter(Boolean)[0];
+        if (currentSegment === 'new' || currentSegment === 'admitted' || currentSegment === 'returning') {
+            return currentSegment;
+        }
+        return this.userPortalService.portalSegment();
     }
 
     private filterMenu(items: MenuItem[]): MenuItem[] {

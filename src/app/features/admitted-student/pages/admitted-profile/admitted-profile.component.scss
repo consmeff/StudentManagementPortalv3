@@ -1,0 +1,103 @@
+.profile-page {
+  padding: 1.5rem;
+}
+
+.profile-page h1 {
+  margin: 0;
+  color: #101f44;
+}
+
+.intro-copy {
+  margin: 0.5rem 0 1.2rem;
+  color: #7486a8;
+  max-width: 640px;
+}
+
+.locked-state {
+  margin-top: 2rem;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.lock-icon {
+  font-size: 3.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.locked-state h2 {
+  margin: 0;
+  color: #101f44;
+}
+
+.locked-state p {
+  color: #7486a8;
+}
+
+.primary-btn {
+  min-width: 190px;
+  border-radius: 0.55rem;
+  background: #000b97;
+  border-color: #000b97;
+}
+
+.docs-list {
+  margin-top: 1rem;
+  border: 1px solid #dce6f8;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.doc-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.8rem 0.95rem;
+  border-bottom: 1px solid #edf2fb;
+  align-items: center;
+}
+
+.doc-row:last-child {
+  border-bottom: none;
+}
+
+.doc-meta strong {
+  display: block;
+  color: #142550;
+}
+
+.doc-meta small {
+  color: #7486a8;
+}
+
+.doc-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.status-chip {
+  border-radius: 999px;
+  padding: 0.28rem 0.58rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.status-chip.verified {
+  background: #ebf8ef;
+  color: #0a8e49;
+}
+
+.status-chip.pending {
+  background: #fff4e6;
+  color: #d97706;
+}
+
+.view-btn {
+  border-radius: 0.45rem;
+}
+
+.continue-row {
+  margin-top: 1.1rem;
+  display: flex;
+  justify-content: center;
+}

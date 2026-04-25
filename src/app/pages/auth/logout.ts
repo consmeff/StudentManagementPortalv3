@@ -41,8 +41,4 @@ export class Logout {
             this.route.navigate(['/auth/login']);
         }, 1000);
     }
-
-   
-
-  
 }

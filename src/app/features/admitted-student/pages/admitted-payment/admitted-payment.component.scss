@@ -1,0 +1,171 @@
+.payment-page {
+  padding: 1.5rem;
+}
+
+.payment-page h1 {
+  margin: 0;
+  color: #111f45;
+}
+
+.page-copy {
+  margin: 0.4rem 0 1rem;
+  color: #7386a9;
+}
+
+.summary-card {
+  background: #000b97;
+  border-radius: 1.2rem;
+  color: #ffffff;
+  padding: 1rem 1.25rem;
+}
+
+.summary-top h3 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.summary-top p {
+  margin: 0.2rem 0 0;
+  opacity: 0.9;
+}
+
+.summary-amount {
+  margin-top: 0.7rem;
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.progress-track {
+  margin-top: 0.7rem;
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  overflow: hidden;
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  background: #ffffff;
+}
+
+.summary-bottom {
+  margin-top: 0.45rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.history-card {
+  margin-top: 1.1rem;
+  border: 1px solid #dce6f8;
+  border-radius: 0.9rem;
+  overflow: hidden;
+}
+
+.history-card h3 {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  color: #344870;
+  border-bottom: 1px solid #edf2fb;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #edf2fb;
+}
+
+.history-row:last-child {
+  border-bottom: none;
+}
+
+.left strong,
+.right strong {
+  display: block;
+  color: #1b2d58;
+}
+
+.left span,
+.right span {
+  color: #7a8bad;
+}
+
+.right {
+  text-align: right;
+}
+
+.icon-btn {
+  color: #00128e;
+}
+
+.payment-form {
+  margin-top: 1.25rem;
+}
+
+.payment-form h3 {
+  margin: 0 0 0.35rem;
+  color: #1f315d;
+}
+
+.payment-form label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #2c406a;
+}
+
+.amount-input {
+  display: flex;
+  border: 1px solid #d9e3f7;
+  border-radius: 0.55rem;
+  overflow: hidden;
+}
+
+.currency {
+  padding: 0.9rem;
+  background: #f2f5fc;
+  color: #223860;
+}
+
+.amount-input input {
+  border: none;
+  width: 100%;
+  box-shadow: none;
+}
+
+.amount-input input:focus {
+  box-shadow: none;
+}
+
+.hint {
+  display: block;
+  margin-top: 0.3rem;
+  color: #7284a7;
+}
+
+.actions {
+  margin-top: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.primary-btn {
+  min-width: 260px;
+  border-radius: 0.55rem;
+  background: #000b97;
+  border-color: #000b97;
+}
+
+.secondary-btn {
+  min-width: 260px;
+  border-radius: 0.55rem;
+  color: #00118b;
+  background: #ffffff;
+  border: 1px solid #dce6f8;
+}

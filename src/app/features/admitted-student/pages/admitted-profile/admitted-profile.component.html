@@ -1,0 +1,38 @@
+<div class="profile-page">
+  <h1>Document Verification</h1>
+  <p class="intro-copy">
+    Some of your documents from the application stage have been carried over. You are expected to upload the remaining ones.
+  </p>
+
+  <ng-container *ngIf="!flow.isAcceptancePaid(); else unlockedVerification">
+    <div class="locked-state">
+      <div class="lock-icon">🔒</div>
+      <h2>Document Verification is locked</h2>
+      <p>You need to pay your acceptance fee before you verify your documents.</p>
+      <button pButton type="button" class="primary-btn" (click)="goToPayment()">Make Payment</button>
+    </div>
+  </ng-container>
+
+  <ng-template #unlockedVerification>
+    <section class="docs-list">
+      <div class="doc-row" *ngFor="let item of flow.verificationDocuments()">
+        <div class="doc-meta">
+          <strong>{{ item.label }}</strong>
+          <small>{{ item.fileName || "No file uploaded yet" }}</small>
+        </div>
+        <div class="doc-actions">
+          <span [class]="item.uploaded ? 'status-chip verified' : 'status-chip pending'">
+            {{ item.uploaded ? "Verified" : "Pending Upload" }}
+          </span>
+          <button pButton type="button" class="view-btn" [disabled]="!item.uploaded">View</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="continue-row">
+      <button pButton type="button" class="primary-btn" (click)="continueToNextStep()">
+        Confirm and Proceed
+      </button>
+    </div>
+  </ng-template>
+</div>

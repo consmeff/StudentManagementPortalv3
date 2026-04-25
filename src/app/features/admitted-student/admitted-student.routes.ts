@@ -1,31 +1,35 @@
 import { Routes } from '@angular/router';
-import { PortalShellComponent } from '../shared/portal-shell.component';
+import { featureAccessGuard } from '../../services/feature-access.guard';
+import { AdmittedCoursesComponent } from './pages/admitted-courses/admitted-courses.component';
+import { AdmittedDashboardComponent } from './pages/admitted-dashboard/admitted-dashboard.component';
+import { AdmittedPaymentComponent } from './pages/admitted-payment/admitted-payment.component';
+import { AdmittedProfileComponent } from './pages/admitted-profile/admitted-profile.component';
 
 export default [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   {
     path: 'dashboard',
-    component: PortalShellComponent,
-    data: {
-      title: 'Admitted Student Dashboard',
-      description: 'This dashboard flow is reserved for admitted students and will host admission decision, acceptance, and onboarding steps.'
-    }
+    component: AdmittedDashboardComponent,
+    canActivate: [featureAccessGuard],
+    data: { feature: 'dashboard' }
   },
   {
     path: 'profile',
-    component: PortalShellComponent,
-    data: {
-      title: 'Admitted Student Profile',
-      description: 'Profile and student record management for admitted students will live here.'
-    }
+    component: AdmittedProfileComponent,
+    canActivate: [featureAccessGuard],
+    data: { feature: 'profile' }
   },
   {
     path: 'payment',
-    component: PortalShellComponent,
-    data: {
-      title: 'Admitted Student Payments',
-      description: 'Payment history and admitted-student payment actions will be configured in this section.'
-    }
+    component: AdmittedPaymentComponent,
+    canActivate: [featureAccessGuard],
+    data: { feature: 'payment' }
+  },
+  {
+    path: 'courses',
+    component: AdmittedCoursesComponent,
+    canActivate: [featureAccessGuard],
+    data: { feature: 'profile' }
   },
   { path: '**', redirectTo: 'dashboard' }
 ] as Routes;
