@@ -1,0 +1,98 @@
+<div class="courses-page">
+  <h1>Course Registration</h1>
+
+  <ng-container *ngIf="!flow.hasInternalPayment(); else unlockedCourses">
+    <section class="locked-state">
+      <div class="lock-icon">🔒</div>
+      <h2>Course registration is locked</h2>
+      <p>
+        You need to make your first school fees payment before registering courses. Minimum first payment is
+        ₦500,000.
+      </p>
+      <button pButton type="button" class="primary-btn" (click)="goToPayment()">Make Payment</button>
+    </section>
+  </ng-container>
+
+  <ng-template #unlockedCourses>
+    <ng-container *ngIf="!registrationSubmitted(); else courseSlip">
+      <section class="summary-card">
+        <div>
+          <strong>{{ selectedUnits() }}</strong>
+          <span>Total Units Selected</span>
+        </div>
+        <div>
+          <strong>{{ selectedCount() }}</strong>
+          <span>No. of courses</span>
+        </div>
+      </section>
+
+      <section class="course-list">
+        <label class="course-row" *ngFor="let course of courses()" [class.locked]="course.locked">
+          <input
+            type="checkbox"
+            [checked]="isChecked(course.code)"
+            [disabled]="course.locked || registrationSubmitted()"
+            (change)="toggleCourse(course, $any($event.target).checked)"
+          />
+          <div class="meta">
+            <strong>{{ course.code }}</strong>
+            <span>{{ course.title }}</span>
+            <small class="warn" *ngIf="course.locked">Prerequisite not met</small>
+          </div>
+          <div class="units">{{ course.units }}<span>Units</span></div>
+        </label>
+      </section>
+
+      <div class="action-row">
+        <button pButton type="button" class="primary-btn" [disabled]="!canSubmit()" (click)="submitRegistration()">
+          Submit Course Registration
+        </button>
+      </div>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #courseSlip>
+    <section class="slip">
+      <div class="slip-head">
+        <h2>Course Registration Slip</h2>
+        <p>{{ flow.academicSession() }}</p>
+      </div>
+      <div class="student-grid">
+        <div>
+          <small>Student Name</small>
+          <strong>{{ flow.applicantName() }}</strong>
+        </div>
+        <div>
+          <small>Matric Number</small>
+          <strong>{{ flow.applicationNo() }}</strong>
+        </div>
+        <div>
+          <small>Programme</small>
+          <strong>{{ flow.programmeName() }}</strong>
+        </div>
+      </div>
+      <div class="semesters">
+        <div class="semester">
+          <h3>First Semester</h3>
+          <div class="row" *ngFor="let course of firstSemesterSelected()">
+            <span>{{ course.code }} - {{ course.title }}</span>
+            <strong>{{ course.units }} Units</strong>
+          </div>
+        </div>
+        <div class="semester">
+          <h3>Second Semester</h3>
+          <div class="row" *ngFor="let course of secondSemesterSelected()">
+            <span>{{ course.code }} - {{ course.title }}</span>
+            <strong>{{ course.units }} Units</strong>
+          </div>
+        </div>
+      </div>
+      <div class="slip-footer">
+        <strong>Total: {{ selectedCount() }} courses / {{ selectedUnits() }} units</strong>
+      </div>
+      <div class="action-row">
+        <button pButton type="button" class="primary-btn" (click)="downloadCourseSlip()">Download Course Slip</button>
+      </div>
+    </section>
+  </ng-template>
+</div>

@@ -1,0 +1,197 @@
+.courses-page {
+  padding: 1.5rem;
+}
+
+.courses-page h1 {
+  margin: 0 0 1rem;
+  color: #10204c;
+}
+
+.locked-state {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.lock-icon {
+  font-size: 3rem;
+}
+
+.locked-state h2 {
+  margin: 0.6rem 0 0.4rem;
+  color: #11224f;
+}
+
+.locked-state p {
+  margin: 0 0 1rem;
+  max-width: 560px;
+  color: #7d8ead;
+}
+
+.summary-card {
+  background: #000b97;
+  color: #fff;
+  border-radius: 0.9rem;
+  padding: 1rem 1.1rem;
+  display: flex;
+  gap: 4rem;
+}
+
+.summary-card strong {
+  display: block;
+  font-size: 2rem;
+}
+
+.summary-card span {
+  opacity: 0.9;
+}
+
+.course-list {
+  margin-top: 1rem;
+  border: 1px solid #e4ecf9;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.course-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem;
+  border-bottom: 1px solid #edf2fb;
+}
+
+.course-row:last-child {
+  border-bottom: none;
+}
+
+.course-row.locked {
+  opacity: 0.45;
+}
+
+.meta strong {
+  display: block;
+  color: #142654;
+}
+
+.meta span {
+  color: #6e80a4;
+}
+
+.warn {
+  display: inline-block;
+  margin-top: 0.3rem;
+  color: #e55353;
+  font-weight: 600;
+}
+
+.units {
+  text-align: right;
+  color: #233765;
+  font-weight: 700;
+}
+
+.units span {
+  display: block;
+  color: #7487a7;
+  font-weight: 500;
+}
+
+.action-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.2rem;
+}
+
+.primary-btn {
+  min-width: 260px;
+  border-radius: 0.55rem;
+  background: #000b97;
+  border-color: #000b97;
+}
+
+.slip {
+  border: 1px solid #dfe8f8;
+  border-radius: 0.85rem;
+  overflow: hidden;
+}
+
+.slip-head {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #edf2fb;
+}
+
+.slip-head h2 {
+  margin: 0;
+  color: #10214b;
+}
+
+.slip-head p {
+  margin: 0.2rem 0 0;
+  color: #7486a9;
+}
+
+.student-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #edf2fb;
+}
+
+.student-grid small {
+  display: block;
+  color: #7e8ead;
+}
+
+.student-grid strong {
+  color: #1a2e59;
+}
+
+.semesters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 1px solid #edf2fb;
+}
+
+.semester:first-child {
+  border-right: 1px solid #edf2fb;
+}
+
+.semester h3 {
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+  color: #fff;
+  background: #000b97;
+  text-transform: uppercase;
+}
+
+.semester .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid #edf2fb;
+}
+
+.semester .row:last-child {
+  border-bottom: none;
+}
+
+.semester .row span {
+  color: #344d79;
+}
+
+.semester .row strong {
+  color: #11224f;
+}
+
+.slip-footer {
+  padding: 0.85rem 1rem;
+  color: #112450;
+}
