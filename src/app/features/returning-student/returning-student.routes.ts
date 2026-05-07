@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
 import { featureAccessGuard } from '../../services/feature-access.guard';
 import { PortalShellComponent } from '../shared/portal-shell.component';
+import { ReturningCgpaTrackerComponent } from './pages/returning-cgpa-tracker/returning-cgpa-tracker.component';
 import { ReturningCoursesComponent } from './pages/returning-courses/returning-courses.component';
 import { ReturningDashboardComponent } from './pages/returning-dashboard/returning-dashboard.component';
 import { ReturningPaymentComponent } from './pages/returning-payment/returning-payment.component';
+import { ReturningResultsComponent } from './pages/returning-results/returning-results.component';
 
 export default [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -21,22 +23,18 @@ export default [
   },
   {
     path: 'results',
-    component: PortalShellComponent,
+    component: ReturningResultsComponent,
     canActivate: [featureAccessGuard],
     data: {
-      feature: 'results',
-      title: 'My Results',
-      description: 'Semester and session result breakdown for returning students will display here.'
+      feature: 'results'
     }
   },
   {
     path: 'cgpa-tracker',
-    component: PortalShellComponent,
+    component: ReturningCgpaTrackerComponent,
     canActivate: [featureAccessGuard],
     data: {
-      feature: 'cgpaTracker',
-      title: 'CGPA Tracker',
-      description: 'Cumulative GPA history, trend analysis, and grade projections will be shown here.'
+      feature: 'cgpaTracker'
     }
   },
   {

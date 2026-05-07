@@ -1,0 +1,62 @@
+<div class="returning-results-page">
+  <div class="head-row">
+    <div>
+      <h1>Semester results</h1>
+      <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
+    </div>
+    <select [ngModel]="flow.selectedResultSemester()" (ngModelChange)="flow.setResultSemester($event)">
+      <option *ngFor="let option of flow.resultSemesterOptions()" [ngValue]="option">{{ option }}</option>
+    </select>
+  </div>
+
+  <section class="student-card">
+    <div class="meta-grid">
+      <div><small>Student Name</small><strong>{{ flow.studentName() }}</strong></div>
+      <div><small>Matric Number</small><strong>{{ flow.matricNo() }}</strong></div>
+      <div><small>Current Level</small><strong>{{ flow.level() }}</strong></div>
+      <div><small>Programme</small><strong>{{ flow.programme() }}</strong></div>
+      <div><small>Academic Session</small><strong>{{ flow.session() }}</strong></div>
+      <div><small>Semester</small><strong>First</strong></div>
+    </div>
+    <img src="assets/logo.png" alt="Student image" />
+  </section>
+
+  <section class="results-table-wrap">
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>COURSE CODE</th>
+          <th>COURSE TITLE</th>
+          <th>UNITS</th>
+          <th>C.A</th>
+          <th>EXAM</th>
+          <th>TOTAL</th>
+          <th>GRADE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of flow.semesterResultRows()">
+          <td>{{ row.code }}</td>
+          <td>{{ row.title }}</td>
+          <td>{{ row.units }}</td>
+          <td>{{ row.ca }}</td>
+          <td>{{ row.exam }}</td>
+          <td>{{ row.total }}</td>
+          <td>
+            <span class="grade-pill" [class.fail]="row.grade === 'F'">{{ row.grade }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="gpa-footer">
+    <span>Semester GPA: <strong>{{ flow.semesterResultGpa().toFixed(2) }}</strong></span>
+    <span>C.G.P.A: <strong>{{ flow.currentCgpa().toFixed(2) }}</strong></span>
+  </div>
+
+  <div class="action-row">
+    <app-button iconClass="pi pi-download" (buttonClick)="downloadResultSlip()">Download Result Slip</app-button>
+  </div>
+</div>
+

@@ -2,30 +2,116 @@
   padding: 1rem;
 }
 
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
 .returning-payment-page h1 {
   margin: 0;
   color: var(--app-text-primary);
 }
 
 .returning-payment-page p {
-  margin: 0.35rem 0 1rem;
+  margin: 0.35rem 0 0;
   color: var(--app-text-secondary);
 }
 
-.summary-card {
+.history-btn {
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.section-head {
+  margin: 1rem 0 0.6rem;
+  color: var(--app-text-primary);
+  font-size: 1.25rem;
+}
+
+.fee-table-wrap {
+  border: 1px solid var(--app-border);
+  border-radius: 0.95rem;
+  overflow: hidden;
+  background: var(--app-surface);
+}
+
+.fee-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fee-table th,
+.fee-table td {
+  padding: 0.75rem 0.8rem;
+  border-bottom: 1px solid var(--app-border);
+  text-align: left;
+}
+
+.fee-table th {
+  color: var(--app-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.fee-table td {
+  color: var(--app-text-primary);
+}
+
+.fee-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 0.23rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.status-chip.paid {
+  background: color-mix(in srgb, var(--app-success) 16%, transparent);
+  color: var(--app-success);
+}
+
+.status-chip.unpaid {
+  background: color-mix(in srgb, var(--app-danger) 14%, transparent);
+  color: var(--app-danger);
+}
+
+.status-chip.remaining {
+  background: color-mix(in srgb, var(--app-warning) 16%, transparent);
+  color: var(--app-warning);
+}
+
+.action-link {
+  border: none;
+  background: transparent;
+  color: var(--app-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0;
+}
+
+.quick-pay-box {
+  margin-top: 1rem;
+  border: 1px solid var(--app-border);
   border-radius: 1rem;
-  background: var(--app-primary);
-  color: var(--app-surface);
+  background: var(--app-surface);
   padding: 1rem;
 }
 
-.summary-card strong {
-  font-size: 2rem;
+.quick-pay-box label {
   display: block;
-}
-
-.summary-card span {
-  opacity: 0.9;
+  color: var(--app-text-primary);
+  margin-bottom: 0.35rem;
 }
 
 .progress-track {
@@ -43,17 +129,7 @@
 }
 
 .payment-box {
-  margin-top: 1rem;
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  background: var(--app-surface);
-  padding: 1rem;
-}
-
-.payment-box label {
-  display: block;
-  color: var(--app-text-primary);
-  margin-bottom: 0.35rem;
+  display: none;
 }
 
 .amount-input {
@@ -75,6 +151,11 @@
   width: 100%;
   border: none;
   box-shadow: none;
+}
+
+.quick-btn {
+  background: var(--app-primary);
+  border-color: var(--app-primary);
 }
 
 .history-card {
@@ -114,3 +195,13 @@
   color: var(--app-text-primary);
 }
 
+@media (max-width: 900px) {
+  .page-head {
+    flex-direction: column;
+  }
+  .fee-table th,
+  .fee-table td {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+}

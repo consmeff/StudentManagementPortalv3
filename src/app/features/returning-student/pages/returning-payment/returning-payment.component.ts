@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
-import { ReturningFlowService } from '../../returning-flow.service';
+import { FeeItem, ReturningFlowService } from '../../returning-flow.service';
 
 @Component({
   selector: 'app-returning-payment',
@@ -19,6 +19,8 @@ export class ReturningPaymentComponent {
   readonly isSubmitting = signal(false);
   readonly amount = signal(`${this.flow.suggestedAmount()}`);
   readonly history = computed(() => this.flow.paymentHistory());
+  readonly mandatoryFees = computed(() => this.flow.mandatoryFees());
+  readonly optionalFees = computed(() => this.flow.optionalFees());
 
   async recordPayment(): Promise<void> {
     const amount = this.parseAmount(this.amount());
@@ -39,9 +41,28 @@ export class ReturningPaymentComponent {
     this.messageService.add({ severity: 'success', summary: 'Payment', detail: result.message });
   }
 
+  async payFee(fee: FeeItem): Promise<void> {
+    this.isSubmitting.set(true);
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    const result = this.flow.payFee(fee.id);
+    this.isSubmitting.set(false);
+
+    this.messageService.add({
+      severity: result.ok ? 'success' : 'warn',
+      summary: 'Payment',
+      detail: result.message
+    });
+  }
+
+  statusLabel(fee: FeeItem): string {
+    if (fee.status === 'remaining') {
+      return `${this.flow.formatCurrency(fee.amount)} remaining`;
+    }
+    return fee.status === 'paid' ? 'Paid' : 'Unpaid';
+  }
+
   private parseAmount(value: string): number {
     const cleaned = (value || '').replace(/[^\d]/g, '');
     return cleaned ? Number(cleaned) : 0;
   }
 }
-

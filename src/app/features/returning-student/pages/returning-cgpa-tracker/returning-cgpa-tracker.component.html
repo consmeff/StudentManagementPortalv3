@@ -1,0 +1,59 @@
+<div class="returning-cgpa-page">
+  <h1>CGPA Tracker</h1>
+  <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
+
+  <section class="summary-grid">
+    <article class="metric-card">
+      <strong>{{ flow.currentCgpa().toFixed(2) }}</strong>
+      <span>Current C.G.P.A</span>
+      <small class="trend-chip">↑ Trending Up</small>
+    </article>
+    <article class="metric-card">
+      <strong>{{ flow.bestSemesterGpa().toFixed(2) }}</strong>
+      <span>Best Semester G.P.A</span>
+      <small>1st Semester OND 1</small>
+    </article>
+    <article class="metric-card">
+      <strong>{{ flow.lowestSemesterGpa().toFixed(2) }}</strong>
+      <span>Lowest Semester G.P.A</span>
+      <small>2nd Semester OND 1</small>
+    </article>
+    <article class="metric-card">
+      <strong>{{ flow.semestersCompleted() }}/{{ flow.semestersTotal() }}</strong>
+      <span>Semesters Completed</span>
+      <small>{{ flow.semestersTotal() - flow.semestersCompleted() }} remaining</small>
+    </article>
+  </section>
+
+  <section class="points-row">
+    <div class="point" *ngFor="let p of flow.semesterGpaPoints()">
+      <strong [class.empty]="!p.active">{{ p.value === null ? '—' : p.value.toFixed(2) }}</strong>
+      <span>{{ p.label }}</span>
+    </div>
+  </section>
+
+  <h2>Classification thresholds</h2>
+  <section class="threshold-table-wrap">
+    <table class="threshold-table">
+      <thead>
+        <tr>
+          <th>SCORE RANGE (%)</th>
+          <th>LETTER GRADE</th>
+          <th>GRADE POINT</th>
+          <th>CGPA RANGE</th>
+          <th>CLASS OF DEGREE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of flow.cgpaThresholds()" [class.highlight]="row.highlighted">
+          <td>{{ row.scoreRange }}</td>
+          <td>{{ row.letterGrade }}</td>
+          <td>{{ row.gradePoint }}</td>
+          <td>{{ row.cgpaRange }}</td>
+          <td>{{ row.classOfDegree }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+

@@ -1,23 +1,80 @@
 <div class="returning-payment-page">
-  <h1>School Fees Payment</h1>
-  <p>Make your installment payment in-app. First payment minimum is ₦500,000.</p>
-
-  <section class="summary-card">
-    <strong>{{ flow.formatCurrency(flow.outstandingAmount()) }}</strong>
-    <span>Outstanding • {{ flow.outstandingInstallmentLabel() }}</span>
-    <div class="progress-track">
-      <span class="progress-fill" [style.width.%]="flow.paymentProgressPercent()"></span>
+  <div class="page-head">
+    <div>
+      <h1>Payments</h1>
+      <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
     </div>
+    <button pButton type="button" class="history-btn">
+      <i class="pi pi-history"></i>
+      Payment History
+    </button>
+  </div>
+
+  <h2 class="section-head">Mandatory Fees</h2>
+  <section class="fee-table-wrap">
+    <table class="fee-table">
+      <thead>
+        <tr>
+          <th>PAYMENT TYPE</th>
+          <th>AMOUNT</th>
+          <th>STATUS</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fee of mandatoryFees()">
+          <td>{{ fee.name }}</td>
+          <td>{{ flow.formatCurrency(fee.amount) }}</td>
+          <td>
+            <span class="status-chip" [class.paid]="fee.status === 'paid'" [class.unpaid]="fee.status === 'unpaid'" [class.remaining]="fee.status === 'remaining'">
+              {{ statusLabel(fee) }}
+            </span>
+          </td>
+          <td>
+            <button pButton type="button" class="action-link" [disabled]="isSubmitting() || fee.status === 'paid'" (click)="payFee(fee)">
+              <i class="pi" [class.pi-credit-card]="fee.status !== 'paid'" [class.pi-download]="fee.status === 'paid'"></i>
+              {{ fee.status === 'paid' ? 'Download Receipt' : 'Make Payment' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </section>
 
-  <section class="payment-box">
-    <label for="amount">Amount to pay</label>
+  <h2 class="section-head">Optional Fees (only if applicable)</h2>
+  <section class="fee-table-wrap">
+    <table class="fee-table">
+      <thead>
+        <tr>
+          <th>PAYMENT TYPE</th>
+          <th>AMOUNT</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fee of optionalFees()">
+          <td>{{ fee.name }}</td>
+          <td>
+            {{ fee.id === 'exam-resit' ? flow.formatCurrency(fee.amount) + ' per course' : flow.formatCurrency(fee.amount) }}
+          </td>
+          <td>
+            <button pButton type="button" class="action-link" [disabled]="isSubmitting()" (click)="payFee(fee)">
+              <i class="pi pi-credit-card"></i>
+              Make Payment
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="quick-pay-box">
+    <label for="amount">Quick in-app payment</label>
     <div class="amount-input">
       <span>₦</span>
       <input id="amount" pInputText type="text" [ngModel]="amount()" (ngModelChange)="amount.set($event)" />
     </div>
-
-    <button pButton type="button" [disabled]="isSubmitting()" (click)="recordPayment()">
+    <button pButton type="button" class="quick-btn" [disabled]="isSubmitting()" (click)="recordPayment()">
       {{ isSubmitting() ? 'Please wait...' : 'Record Payment' }}
     </button>
   </section>
@@ -33,4 +90,3 @@
     </div>
   </section>
 </div>
-

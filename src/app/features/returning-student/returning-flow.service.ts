@@ -35,6 +35,33 @@ export type ResitCourse = {
   fee: number;
 };
 
+export type SemesterResultRow = {
+  code: string;
+  title: string;
+  units: number;
+  ca: number;
+  exam: number;
+  total: number;
+  grade: string;
+};
+
+export type CgpaThreshold = {
+  scoreRange: string;
+  letterGrade: string;
+  gradePoint: string;
+  cgpaRange?: string;
+  classOfDegree: string;
+  highlighted?: boolean;
+};
+
+export type FeeItem = {
+  id: string;
+  name: string;
+  amount: number;
+  status: 'paid' | 'unpaid' | 'remaining';
+  type: 'mandatory' | 'optional';
+};
+
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   readonly studentName = signal('ISHOLA, Hassan Gbadebo');
@@ -43,15 +70,31 @@ export class ReturningFlowService {
   readonly session = signal('2025/2026');
   readonly level = signal('OND 2');
   readonly semester = signal('1st Semester');
+  readonly selectedResultSemester = signal('OND 1 First Semester');
 
   readonly cumulativeGpa = signal(3.78);
   readonly gpaClass = signal('Second Class Upper');
   readonly gpaDelta = signal('from 3.68');
+  readonly currentCgpa = signal(3.67);
+  readonly bestSemesterGpa = signal(3.78);
+  readonly lowestSemesterGpa = signal(3.56);
+  readonly semestersCompleted = signal(2);
+  readonly semestersTotal = signal(4);
 
   readonly totalSchoolFees = 600000;
   readonly minimumFirstPayment = 500000;
   readonly maxInstallments = 3;
   readonly paymentHistory = signal<ReturningPaymentRecord[]>([]);
+  readonly fees = signal<FeeItem[]>([
+    { id: 'school-fees', name: 'School Fees', amount: 600000, status: 'remaining', type: 'mandatory' },
+    { id: 'faculty-charges', name: 'Faculty Charges', amount: 10000, status: 'paid', type: 'mandatory' },
+    { id: 'departmental-fees', name: 'Departmental Fees', amount: 5000, status: 'unpaid', type: 'mandatory' },
+    { id: 'medical-fees', name: 'Medical Fees', amount: 8000, status: 'paid', type: 'mandatory' },
+    { id: 'student-union-levy', name: 'Student Union Levy', amount: 2000, status: 'paid', type: 'mandatory' },
+    { id: 'late-registration', name: 'Late Registration', amount: 600000, status: 'unpaid', type: 'optional' },
+    { id: 'hostel', name: 'Hostel', amount: 10000, status: 'unpaid', type: 'optional' },
+    { id: 'exam-resit', name: 'Exam Resit', amount: 5000, status: 'unpaid', type: 'optional' }
+  ]);
 
   readonly announcementFeed = signal([
     {
@@ -116,6 +159,35 @@ export class ReturningFlowService {
     }
   ]);
 
+  readonly semesterResultRows = signal<SemesterResultRow[]>([
+    { code: 'NUR 211', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
+    { code: 'NUR 212', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
+    { code: 'NUR 213', title: 'Human Anatomy III', units: 3, ca: 20, exam: 15, total: 35, grade: 'F' },
+    { code: 'NUR 214', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
+    { code: 'NUR 215', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
+    { code: 'NUR 216', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
+    { code: 'NUR 217', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
+    { code: 'NUR 218', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' }
+  ]);
+
+  readonly resultSemesterOptions = signal(['OND 1 First Semester', 'HND 1 First Semester', 'OND 2 First Semester']);
+
+  readonly cgpaThresholds = signal<CgpaThreshold[]>([
+    { scoreRange: '70 - 100', letterGrade: 'A', gradePoint: '5', cgpaRange: '4.50 - 5.00', classOfDegree: 'First Class' },
+    { scoreRange: '60 - 69', letterGrade: 'B', gradePoint: '4', cgpaRange: '3.50 - 4.49', classOfDegree: 'Second Class Upper', highlighted: true },
+    { scoreRange: '50 - 59', letterGrade: 'C', gradePoint: '3', cgpaRange: '2.40 - 3.49', classOfDegree: 'Second Class Lower' },
+    { scoreRange: '45 - 49', letterGrade: 'D', gradePoint: '2', cgpaRange: '1.50 - 2.39', classOfDegree: 'Third Class' },
+    { scoreRange: '40 - 44', letterGrade: 'E', gradePoint: '1', cgpaRange: '1.00 - 1.49', classOfDegree: 'Pass' },
+    { scoreRange: '0 - 39', letterGrade: 'F', gradePoint: '0', cgpaRange: '0.00 - 0.99', classOfDegree: 'Fail' }
+  ]);
+
+  readonly semesterGpaPoints = signal([
+    { label: '1st Semester\nOND 1', value: 3.78, active: true },
+    { label: '2nd Semester\nOND 1', value: 3.56, active: true },
+    { label: '1st Semester\nOND 2', value: null, active: false },
+    { label: '2nd Semester\nOND 2', value: null, active: false }
+  ]);
+
   readonly selectedCourseCodes = signal<string[]>(
     this.coursePool()
       .filter((course) => course.selectedByDefault)
@@ -149,6 +221,10 @@ export class ReturningFlowService {
     this.coursePool().filter((course) => course.category === 'level')
   );
   readonly hasFailedCourse = computed(() => this.carryoverCourses().length > 0);
+  readonly mandatoryFees = computed(() => this.fees().filter((fee) => fee.type === 'mandatory'));
+  readonly optionalFees = computed(() => this.fees().filter((fee) => fee.type === 'optional'));
+
+  readonly semesterResultGpa = computed(() => 3.85);
 
   toggleCourseSelection(course: ReturningCourse, checked: boolean): void {
     if (course.locked || course.category === 'carryover') {
@@ -192,11 +268,35 @@ export class ReturningFlowService {
       referenceNo: `RET-${paidAt.getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
     };
     this.paymentHistory.set([...this.paymentHistory(), entry]);
+    this.markFeeAsPaidByPriority();
 
     if (this.courseReviewState() === 'locked') {
       this.courseReviewState.set('waiting');
     }
     return { ok: true, message: 'Payment recorded successfully.' };
+  }
+
+  payFee(feeId: string): { ok: boolean; message: string } {
+    const target = this.fees().find((fee) => fee.id === feeId);
+    if (!target) {
+      return { ok: false, message: 'Fee item not found.' };
+    }
+    if (target.status === 'paid') {
+      return { ok: false, message: 'Fee has already been paid.' };
+    }
+    const result = this.addDummyPayment(target.amount);
+    if (!result.ok) {
+      return result;
+    }
+    const updated = this.fees().map((fee) =>
+      fee.id === feeId ? { ...fee, status: 'paid' as const } : fee
+    );
+    this.fees.set(updated);
+    return { ok: true, message: `${target.name} payment recorded.` };
+  }
+
+  setResultSemester(value: string): void {
+    this.selectedResultSemester.set(value);
   }
 
   setCourseReviewState(state: CourseReviewState): void {
@@ -220,6 +320,19 @@ export class ReturningFlowService {
 
   formatCurrency(value: number): string {
     return `₦${value.toLocaleString('en-NG')}`;
+  }
+
+  private markFeeAsPaidByPriority(): void {
+    const target = this.fees().find((fee) => fee.status !== 'paid' && fee.type === 'mandatory')
+      ?? this.fees().find((fee) => fee.status !== 'paid');
+    if (!target) {
+      return;
+    }
+    this.fees.set(
+      this.fees().map((fee) =>
+        fee.id === target.id ? { ...fee, status: 'paid' as const } : fee
+      )
+    );
   }
 
   private ordinalSuffix(n: number): string {

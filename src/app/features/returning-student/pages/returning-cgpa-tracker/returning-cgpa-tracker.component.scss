@@ -1,0 +1,142 @@
+.returning-cgpa-page {
+  padding: 1rem;
+}
+
+.returning-cgpa-page h1 {
+  margin: 0;
+  color: var(--app-text-primary);
+}
+
+.returning-cgpa-page > p {
+  margin: 0.3rem 0 1rem;
+  color: var(--app-text-secondary);
+}
+
+.summary-grid {
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: var(--app-surface);
+  padding: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.metric-card {
+  border: 1px solid var(--app-border);
+  border-radius: 0.85rem;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.metric-card strong {
+  font-size: 2.6rem;
+  color: var(--app-text-primary);
+  display: block;
+  line-height: 1;
+}
+
+.metric-card span {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--app-text-secondary);
+}
+
+.metric-card small {
+  display: block;
+  margin-top: 0.6rem;
+  color: var(--app-text-secondary);
+}
+
+.trend-chip {
+  display: inline-block;
+  margin-top: 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-success) 15%, transparent);
+  color: var(--app-success);
+  font-weight: 700;
+  padding: 0.22rem 0.55rem;
+}
+
+.points-row {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.point {
+  text-align: center;
+}
+
+.point strong {
+  display: block;
+  color: var(--app-text-primary);
+}
+
+.point strong.empty {
+  color: var(--app-text-muted);
+}
+
+.point span {
+  white-space: pre-line;
+  color: var(--app-text-secondary);
+}
+
+.returning-cgpa-page h2 {
+  margin: 1rem 0 0.6rem;
+  color: var(--app-text-primary);
+}
+
+.threshold-table-wrap {
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--app-surface);
+}
+
+.threshold-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.threshold-table th,
+.threshold-table td {
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--app-border);
+  text-align: left;
+}
+
+.threshold-table th {
+  color: var(--app-text-secondary);
+  font-size: 0.82rem;
+}
+
+.threshold-table td {
+  color: var(--app-text-primary);
+}
+
+.threshold-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.threshold-table tr.highlight {
+  background: color-mix(in srgb, var(--app-success) 12%, transparent);
+}
+
+@media (max-width: 1100px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .points-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .summary-grid,
+  .points-row {
+    grid-template-columns: 1fr;
+  }
+}
+
