@@ -28,6 +28,11 @@
   gap: 0.35rem;
 }
 
+.mode-actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
 .section-head {
   margin: 1rem 0 0.6rem;
   color: var(--app-text-primary);
@@ -100,6 +105,108 @@
   padding: 0;
 }
 
+.invoice-layout {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.invoice-form label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--app-text-primary);
+  font-weight: 600;
+}
+
+.invoice-form label:not(:first-child) {
+  margin-top: 0.95rem;
+}
+
+.invoice-form select {
+  width: 100%;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-secondary);
+  border-radius: 0.65rem;
+  padding: 0.7rem;
+}
+
+.resit-select-wrap {
+  border: 1px solid var(--app-border);
+  border-radius: 0.65rem;
+  background: var(--app-surface);
+  padding: 0.55rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.resit-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--app-text-primary);
+}
+
+.invoice-card {
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--app-surface);
+}
+
+.invoice-card header {
+  background: var(--app-primary);
+  color: var(--app-surface);
+  padding: 0.8rem 1rem;
+}
+
+.invoice-card header h3 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.invoice-card header p {
+  margin: 0.2rem 0 0;
+  color: color-mix(in srgb, var(--app-surface) 92%, transparent);
+}
+
+.invoice-card .body {
+  padding: 0.85rem 1rem;
+}
+
+.invoice-card .body > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 0.4rem 0;
+}
+
+.invoice-card .body span {
+  color: var(--app-text-secondary);
+}
+
+.invoice-card .body strong {
+  color: var(--app-text-primary);
+}
+
+.invoice-card footer {
+  border-top: 1px solid var(--app-border);
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.invoice-card footer span {
+  color: var(--app-text-primary);
+}
+
+.invoice-card footer strong {
+  font-size: 2rem;
+  color: var(--app-text-primary);
+}
+
 .quick-pay-box {
   margin-top: 1rem;
   border: 1px solid var(--app-border);
@@ -114,22 +221,51 @@
   margin-bottom: 0.35rem;
 }
 
-.progress-track {
-  margin-top: 0.6rem;
+.school-fee-hero {
+  margin-top: 1rem;
+  background: var(--app-primary);
+  border-radius: 1.7rem;
+  padding: 1rem;
+  color: var(--app-surface);
+}
+
+.school-fee-hero h3 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.school-fee-hero p {
+  margin: 0.35rem 0 0;
+  color: color-mix(in srgb, var(--app-surface) 92%, transparent);
+}
+
+.school-fee-hero strong {
+  margin-top: 0.9rem;
+  display: block;
+  font-size: 3.8rem;
+  line-height: 1;
+}
+
+.hero-progress-track {
+  margin-top: 0.9rem;
   height: 0.45rem;
   background: color-mix(in srgb, var(--app-surface) 36%, transparent);
   border-radius: 999px;
   overflow: hidden;
 }
 
-.progress-fill {
+.hero-progress-fill {
   display: block;
   height: 100%;
   background: var(--app-surface);
 }
 
-.payment-box {
-  display: none;
+.hero-meta {
+  margin-top: 0.45rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-weight: 700;
 }
 
 .amount-input {
@@ -156,6 +292,7 @@
 .quick-btn {
   background: var(--app-primary);
   border-color: var(--app-primary);
+  min-width: 300px;
 }
 
 .history-card {
@@ -182,6 +319,10 @@
   border-bottom: 1px solid var(--app-border);
 }
 
+.history-amount {
+  text-align: right;
+}
+
 .history-row:last-child {
   border-bottom: none;
 }
@@ -195,13 +336,46 @@
   color: var(--app-text-primary);
 }
 
+.icon-download {
+  border: none;
+  background: transparent;
+  color: var(--app-text-secondary);
+}
+
+.hint {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--app-text-secondary);
+}
+
+input,
+select {
+  font-family: inherit;
+}
+
+.action-row {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
 @media (max-width: 900px) {
   .page-head {
     flex-direction: column;
+  }
+  .mode-actions {
+    flex-wrap: wrap;
+  }
+  .invoice-layout {
+    grid-template-columns: 1fr;
   }
   .fee-table th,
   .fee-table td {
     padding: 0.6rem;
     font-size: 0.9rem;
+  }
+  .school-fee-hero strong,
+  .invoice-card footer strong {
+    font-size: 3rem;
   }
 }

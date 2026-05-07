@@ -16,6 +16,13 @@ export type ReturningPaymentRecord = {
   referenceNo: string;
 };
 
+export type SchoolFeeInstallment = {
+  installmentLabel: string;
+  amount: number;
+  referenceNo: string;
+  paidAt: Date;
+};
+
 export type CourseReviewState = 'locked' | 'waiting' | 'rejected' | 'open';
 
 export type ResitCourse = {
@@ -85,6 +92,7 @@ export class ReturningFlowService {
   readonly minimumFirstPayment = 500000;
   readonly maxInstallments = 3;
   readonly paymentHistory = signal<ReturningPaymentRecord[]>([]);
+  readonly schoolFeeInstallments = signal<SchoolFeeInstallment[]>([]);
   readonly fees = signal<FeeItem[]>([
     { id: 'school-fees', name: 'School Fees', amount: 600000, status: 'remaining', type: 'mandatory' },
     { id: 'faculty-charges', name: 'Faculty Charges', amount: 10000, status: 'paid', type: 'mandatory' },
@@ -221,6 +229,16 @@ export class ReturningFlowService {
     this.coursePool().filter((course) => course.category === 'level')
   );
   readonly hasFailedCourse = computed(() => this.carryoverCourses().length > 0);
+  readonly schoolFeesPaid = computed(() =>
+    this.schoolFeeInstallments().reduce((sum, item) => sum + item.amount, 0)
+  );
+  readonly schoolFeesRemaining = computed(() => Math.max(0, this.totalSchoolFees - this.schoolFeesPaid()));
+  readonly schoolFeesProgressPercent = computed(() =>
+    Math.max(0, Math.min(100, Math.round((this.schoolFeesPaid() / this.totalSchoolFees) * 100)))
+  );
+  readonly canAddSchoolFeeInstallment = computed(() =>
+    this.schoolFeeInstallments().length < this.maxInstallments && this.schoolFeesRemaining() > 0
+  );
   readonly mandatoryFees = computed(() => this.fees().filter((fee) => fee.type === 'mandatory'));
   readonly optionalFees = computed(() => this.fees().filter((fee) => fee.type === 'optional'));
 
@@ -316,6 +334,61 @@ export class ReturningFlowService {
       return Math.min(this.minimumFirstPayment, this.outstandingAmount());
     }
     return this.outstandingAmount();
+  }
+
+  suggestedSchoolFeeAmount(): number {
+    const paidCount = this.schoolFeeInstallments().length;
+    if (paidCount === 0) {
+      return Math.min(this.minimumFirstPayment, this.schoolFeesRemaining());
+    }
+    return this.schoolFeesRemaining();
+  }
+
+  addSchoolFeeInstallment(amount: number): { ok: boolean; message: string } {
+    const normalizedAmount = Math.floor(amount || 0);
+    const paidCount = this.schoolFeeInstallments().length;
+    const remaining = this.schoolFeesRemaining();
+
+    if (!this.canAddSchoolFeeInstallment()) {
+      return { ok: false, message: 'No pending school fee installment at the moment.' };
+    }
+    if (normalizedAmount <= 0) {
+      return { ok: false, message: 'Enter a valid amount.' };
+    }
+    if (paidCount === 0 && normalizedAmount < this.minimumFirstPayment) {
+      return { ok: false, message: `First payment minimum is ${this.formatCurrency(this.minimumFirstPayment)}.` };
+    }
+    if (normalizedAmount > remaining) {
+      return { ok: false, message: `Amount cannot exceed ${this.formatCurrency(remaining)}.` };
+    }
+
+    const installmentNo = paidCount + 1;
+    const isFinal = installmentNo >= this.maxInstallments || normalizedAmount === remaining;
+    const paidAt = new Date();
+    const entry: SchoolFeeInstallment = {
+      installmentLabel: isFinal
+        ? `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment (Final Payment)`
+        : `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`,
+      amount: normalizedAmount,
+      paidAt,
+      referenceNo: `REM-${paidAt.getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
+    };
+
+    this.schoolFeeInstallments.set([...this.schoolFeeInstallments(), entry]);
+    this.paymentHistory.set([
+      ...this.paymentHistory(),
+      {
+        installmentLabel: entry.installmentLabel,
+        amount: entry.amount,
+        paidAt: entry.paidAt,
+        referenceNo: entry.referenceNo
+      }
+    ]);
+    if (this.courseReviewState() === 'locked') {
+      this.courseReviewState.set('waiting');
+    }
+    this.markFeeAsPaidByPriority();
+    return { ok: true, message: `${entry.installmentLabel} recorded successfully.` };
   }
 
   formatCurrency(value: number): string {
