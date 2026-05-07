@@ -1,0 +1,36 @@
+<div class="returning-payment-page">
+  <h1>School Fees Payment</h1>
+  <p>Make your installment payment in-app. First payment minimum is ₦500,000.</p>
+
+  <section class="summary-card">
+    <strong>{{ flow.formatCurrency(flow.outstandingAmount()) }}</strong>
+    <span>Outstanding • {{ flow.outstandingInstallmentLabel() }}</span>
+    <div class="progress-track">
+      <span class="progress-fill" [style.width.%]="flow.paymentProgressPercent()"></span>
+    </div>
+  </section>
+
+  <section class="payment-box">
+    <label for="amount">Amount to pay</label>
+    <div class="amount-input">
+      <span>₦</span>
+      <input id="amount" pInputText type="text" [ngModel]="amount()" (ngModelChange)="amount.set($event)" />
+    </div>
+
+    <button pButton type="button" [disabled]="isSubmitting()" (click)="recordPayment()">
+      {{ isSubmitting() ? 'Please wait...' : 'Record Payment' }}
+    </button>
+  </section>
+
+  <section class="history-card" *ngIf="history().length > 0">
+    <h2>Payment History</h2>
+    <div class="history-row" *ngFor="let item of history()">
+      <div>
+        <strong>{{ item.installmentLabel }}</strong>
+        <span>{{ item.referenceNo }}</span>
+      </div>
+      <strong>{{ flow.formatCurrency(item.amount) }}</strong>
+    </div>
+  </section>
+</div>
+

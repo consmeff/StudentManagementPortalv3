@@ -2,7 +2,16 @@ import { Injectable, inject } from '@angular/core';
 import { AuthSessionStore } from '../store/auth-session.store';
 import { Router } from '@angular/router';
 
-export type ProtectedPageFeature = 'dashboard' | 'profile' | 'payment' | 'admissionform' | 'summarypage' | 'courses';
+export type ProtectedPageFeature =
+  | 'dashboard'
+  | 'profile'
+  | 'payment'
+  | 'admissionform'
+  | 'summarypage'
+  | 'courses'
+  | 'results'
+  | 'cgpaTracker'
+  | 'hostel';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationAccessService {
@@ -16,6 +25,9 @@ export class NavigationAccessService {
       case 'admissionform':
       case 'summarypage':
       case 'courses':
+      case 'results':
+      case 'cgpaTracker':
+      case 'hostel':
         return true;
       case 'payment':
         if (!this.isNewPortalRoute()) {

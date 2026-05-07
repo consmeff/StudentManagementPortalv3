@@ -155,6 +155,15 @@ export class AppTopbar implements OnDestroy {
         if (url.includes('/admitted/courses') || url.includes('/new/courses') || url.includes('/returning/courses')) {
             return 'Courses';
         }
+        if (url.includes('/results')) {
+            return 'Results';
+        }
+        if (url.includes('/cgpa-tracker')) {
+            return 'CGPA Tracker';
+        }
+        if (url.includes('/hostel')) {
+            return 'Hostel';
+        }
         if (url.includes('/payment')) {
             return 'Payments';
         }

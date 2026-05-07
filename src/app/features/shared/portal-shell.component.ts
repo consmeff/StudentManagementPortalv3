@@ -15,18 +15,18 @@ import { ActivatedRoute } from '@angular/router';
   styles: [`
     .portal-shell {
       padding: 1.5rem;
-      background: #ffffff;
-      border: 1px solid #dbe7f9;
+      background: var(--app-surface);
+      border: 1px solid var(--app-border);
       border-radius: 1rem;
     }
     h1 {
       margin: 0 0 0.5rem;
-      color: #0f172a;
+      color: var(--app-text-primary);
       font-size: 1.7rem;
     }
     p {
       margin: 0;
-      color: #667085;
+      color: var(--app-text-secondary);
       max-width: 680px;
     }
   `]

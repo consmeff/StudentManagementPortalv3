@@ -1,0 +1,151 @@
+.returning-courses-page {
+  padding: 1rem;
+}
+
+.returning-courses-page h1 {
+  margin: 0;
+  color: var(--app-text-primary);
+}
+
+.returning-courses-page > p {
+  margin: 0.3rem 0 1rem;
+  color: var(--app-text-secondary);
+}
+
+.locked-state {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.state-icon {
+  font-size: 3rem;
+}
+
+.locked-state h2 {
+  margin: 0.75rem 0 0.35rem;
+  color: var(--app-text-primary);
+}
+
+.locked-state p {
+  margin: 0 0 1rem;
+  color: var(--app-text-secondary);
+  max-width: 640px;
+}
+
+.info-banner {
+  border: 1px solid color-mix(in srgb, var(--app-danger) 20%, transparent);
+  color: var(--app-danger);
+  background: color-mix(in srgb, var(--app-danger) 8%, transparent);
+  border-radius: 0.7rem;
+  text-align: center;
+  font-weight: 600;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.summary-card {
+  border-radius: 0.9rem;
+  background: var(--app-primary);
+  color: var(--app-surface);
+  padding: 1rem;
+  display: flex;
+  gap: 4rem;
+}
+
+.summary-card strong {
+  display: block;
+  font-size: 2rem;
+}
+
+.summary-card span {
+  opacity: 0.9;
+}
+
+.course-list {
+  margin-top: 1rem;
+}
+
+.course-list h3 {
+  margin: 1rem 0 0.5rem;
+  color: var(--app-text-primary);
+}
+
+.course-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 0.2rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.course-row.locked {
+  opacity: 0.45;
+}
+
+.course-row.carryover {
+  color: var(--app-danger);
+}
+
+.meta strong {
+  display: block;
+  color: var(--app-text-primary);
+}
+
+.meta span {
+  color: var(--app-text-secondary);
+}
+
+.course-row.carryover .meta strong,
+.course-row.carryover .meta span {
+  color: var(--app-danger);
+}
+
+.warn {
+  display: inline-block;
+  margin-top: 0.3rem;
+  color: var(--app-danger);
+  font-weight: 700;
+}
+
+.units {
+  text-align: right;
+  color: var(--app-text-primary);
+  font-weight: 700;
+}
+
+.units span {
+  display: block;
+  color: var(--app-text-secondary);
+  font-weight: 500;
+}
+
+.action-row {
+  margin-top: 1.2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.state-switcher {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.state-switcher small {
+  color: var(--app-text-secondary);
+}
+
+.state-switcher button {
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+  border-radius: 0.45rem;
+  padding: 0.3rem 0.55rem;
+}
+

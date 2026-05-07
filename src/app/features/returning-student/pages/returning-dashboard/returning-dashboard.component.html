@@ -1,0 +1,65 @@
+<div class="returning-dashboard-page">
+  <section class="student-hero">
+    <img src="assets/logo.png" alt="Student profile" class="student-photo" />
+    <div class="student-meta">
+      <h1>{{ flow.studentName() }}</h1>
+      <p>{{ flow.matricNo() }}</p>
+      <div class="student-tags">
+        <span>{{ flow.programme() }}</span>
+        <span>{{ flow.session() }}</span>
+        <span>{{ flow.level() }}</span>
+        <span>{{ flow.semester() }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <article class="summary-card">
+      <h3>Cumulative GPA</h3>
+      <strong>{{ flow.cumulativeGpa() }}</strong>
+      <p>{{ flow.gpaClass() }}</p>
+      <span class="chip positive">↑ {{ flow.gpaDelta() }}</span>
+    </article>
+
+    <article class="summary-card">
+      <h3>School Fees Outstanding</h3>
+      <strong>{{ flow.formatCurrency(flow.outstandingAmount()) }}</strong>
+      <p>{{ flow.outstandingInstallmentLabel() }}</p>
+      <div class="progress-track">
+        <span class="progress-fill" [style.width.%]="flow.paymentProgressPercent()"></span>
+      </div>
+      <small>{{ flow.formatCurrency(flow.totalSchoolFees) }}</small>
+    </article>
+
+    <article class="summary-card">
+      <h3>Courses registered</h3>
+      <strong>{{ flow.totalCoursesSelected() }}</strong>
+      <p>{{ flow.totalUnitsSelected() }} units this semester</p>
+      <span class="chip muted" *ngIf="flow.hasFailedCourse()">0 Failed course</span>
+    </article>
+  </section>
+
+  <section class="board-grid">
+    <article class="announcement-pane">
+      <h2>Announcement</h2>
+      <div class="announcement-item" *ngFor="let item of flow.announcementFeed()">
+        <div>
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.body }}</p>
+        </div>
+        <small>{{ item.timeAgo }}</small>
+      </div>
+    </article>
+
+    <article class="tasks-pane">
+      <h2>Quick Tasks</h2>
+      <div class="task-grid">
+        <app-button variant="muted" iconClass="pi pi-book" (buttonClick)="goToCourses()">Register Courses</app-button>
+        <app-button variant="muted" iconClass="pi pi-file" (buttonClick)="goToResults()">My Results</app-button>
+        <app-button variant="muted" iconClass="pi pi-credit-card" (buttonClick)="goToPayments()">Make Payment</app-button>
+        <app-button variant="muted" iconClass="pi pi-user" (buttonClick)="goToProfile()">Profile</app-button>
+      </div>
+    </article>
+  </section>
+</div>
+

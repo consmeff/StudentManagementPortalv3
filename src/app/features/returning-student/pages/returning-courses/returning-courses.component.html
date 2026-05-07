@@ -1,0 +1,81 @@
+<div class="returning-courses-page">
+  <h1>Course Registration</h1>
+  <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
+
+  <ng-container [ngSwitch]="flow.courseReviewState()">
+    <section class="locked-state" *ngSwitchCase="'locked'">
+      <div class="state-icon">🔒</div>
+      <h2>Course registration is locked</h2>
+      <p>
+        You need to make your first school fees payment before you can register for courses. Your minimum first
+        payment is ₦500,000.
+      </p>
+      <app-button iconClass="pi pi-credit-card" (buttonClick)="goToPayment()">Make Payment</app-button>
+    </section>
+
+    <section class="locked-state" *ngSwitchCase="'waiting'">
+      <div class="state-icon">⏳</div>
+      <h2>Your courses are waiting to be approved</h2>
+      <p>You need to make your first school fees payment and verify your documents before you can register for courses.</p>
+    </section>
+
+    <ng-container *ngSwitchDefault>
+      <section class="info-banner" *ngIf="flow.courseReviewState() === 'rejected'">
+        Your course registration was rejected. Please contact the Head of Department for reasons.
+      </section>
+
+      <section class="summary-card">
+        <div>
+          <strong>{{ flow.totalUnitsSelected() }}</strong>
+          <span>Total Units Selected</span>
+        </div>
+        <div>
+          <strong>{{ flow.totalCoursesSelected() }}</strong>
+          <span>No. of courses</span>
+        </div>
+      </section>
+
+      <section class="course-list">
+        <h3>Carryover Courses</h3>
+        <label class="course-row carryover" *ngFor="let course of flow.carryoverCourses()">
+          <input type="checkbox" [checked]="flow.isSelected(course.code)" disabled />
+          <div class="meta">
+            <strong>{{ course.code }}</strong>
+            <span>{{ course.title }}</span>
+          </div>
+          <div class="units">{{ course.units }}<span>Units</span></div>
+        </label>
+
+        <h3>200 level courses</h3>
+        <label class="course-row" *ngFor="let course of flow.levelCourses()" [class.locked]="course.locked">
+          <input
+            type="checkbox"
+            [checked]="flow.isSelected(course.code)"
+            [disabled]="course.locked || flow.courseReviewState() !== 'open'"
+            (change)="toggle(course, $any($event.target).checked)"
+          />
+          <div class="meta">
+            <strong>{{ course.code }}</strong>
+            <span>{{ course.title }}</span>
+            <small class="warn" *ngIf="course.locked">Prerequisite not met</small>
+          </div>
+          <div class="units">{{ course.units }}<span>Units</span></div>
+        </label>
+      </section>
+
+      <div class="action-row">
+        <app-button [disabled]="!canSubmit()" iconClass="pi pi-check" (buttonClick)="submit()">
+          Submit Course Registration
+        </app-button>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <div class="state-switcher" *ngIf="flow.hasInternalPayment()">
+    <small>Demo state:</small>
+    <button type="button" (click)="switchState('waiting')">Waiting</button>
+    <button type="button" (click)="switchState('rejected')">Rejected</button>
+    <button type="button" (click)="switchState('open')">Open</button>
+  </div>
+</div>
+
