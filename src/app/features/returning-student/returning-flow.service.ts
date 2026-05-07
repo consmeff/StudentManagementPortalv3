@@ -18,6 +18,23 @@ export type ReturningPaymentRecord = {
 
 export type CourseReviewState = 'locked' | 'waiting' | 'rejected' | 'open';
 
+export type ResitCourse = {
+  code: string;
+  title: string;
+  units: number;
+  score: number;
+  registered?: boolean;
+  test: number;
+  exam: number;
+  total: number;
+  countdown: { days: number; hours: number; mins: number; secs: number };
+  examDate: string;
+  examTime: string;
+  duration: string;
+  venue: string;
+  fee: number;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   readonly studentName = signal('ISHOLA, Hassan Gbadebo');
@@ -63,6 +80,40 @@ export class ReturningFlowService {
     { code: 'NUR 217', title: 'Human Anatomy III', units: 3, category: 'level', locked: true },
     { code: 'NUR 218', title: 'Human Anatomy III', units: 3, category: 'level' },
     { code: 'NUR 219', title: 'Human Anatomy III', units: 3, category: 'level' }
+  ]);
+
+  readonly resitCourses = signal<ResitCourse[]>([
+    {
+      code: 'NUR 111',
+      title: 'Human Anatomy I',
+      units: 3,
+      score: 36,
+      registered: true,
+      test: 13,
+      exam: 23,
+      total: 36,
+      countdown: { days: 9, hours: 13, mins: 16, secs: 10 },
+      examDate: '20 May 2026',
+      examTime: '9:00 AM',
+      duration: '3 hours',
+      venue: 'Hall 6, Block F',
+      fee: 5000
+    },
+    {
+      code: 'NUR 113',
+      title: 'Human Anatomy I',
+      units: 3,
+      score: 36,
+      test: 13,
+      exam: 23,
+      total: 36,
+      countdown: { days: 9, hours: 13, mins: 16, secs: 10 },
+      examDate: '20 May 2026',
+      examTime: '9:00 AM',
+      duration: '3 hours',
+      venue: 'Hall 6, Block F',
+      fee: 5000
+    }
   ]);
 
   readonly selectedCourseCodes = signal<string[]>(
@@ -178,4 +229,3 @@ export class ReturningFlowService {
     return 'th';
   }
 }
-

@@ -12,6 +12,113 @@
   color: var(--app-text-secondary);
 }
 
+.slip-card {
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: var(--app-surface);
+  padding: 1rem;
+}
+
+.slip-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+}
+
+.slip-head h2 {
+  margin: 0;
+  color: var(--app-text-primary);
+}
+
+.level-chip {
+  border: 1px solid var(--app-border);
+  border-radius: 0.55rem;
+  padding: 0.35rem 0.55rem;
+  color: var(--app-text-secondary);
+  font-size: 0.82rem;
+}
+
+.slip-student-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem 1.2rem;
+  border-top: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--app-border);
+  padding: 0.8rem 0;
+}
+
+.slip-student-grid small {
+  display: block;
+  color: var(--app-text-secondary);
+}
+
+.slip-student-grid strong {
+  color: var(--app-text-primary);
+}
+
+.semesters-grid {
+  margin-top: 0.9rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--app-border);
+  border-radius: 0.85rem;
+  overflow: hidden;
+}
+
+.semester-card:first-child {
+  border-right: 1px solid var(--app-border);
+}
+
+.semester-card h3 {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.84rem;
+  color: var(--app-surface);
+  background: var(--app-primary);
+}
+
+.semester-card .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 0.65rem 0.8rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.semester-card .row:last-child {
+  border-bottom: none;
+}
+
+.semester-card span {
+  color: var(--app-text-secondary);
+}
+
+.semester-card strong {
+  color: var(--app-text-primary);
+  white-space: nowrap;
+}
+
+.signature-row {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.signature-row > div {
+  color: var(--app-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.signature-row > div span {
+  flex: 1;
+  border-bottom: 1px solid var(--app-text-muted);
+}
+
 .locked-state {
   min-height: 50vh;
   display: flex;
@@ -128,24 +235,193 @@
   margin-top: 1.2rem;
   display: flex;
   justify-content: center;
+  gap: 0.6rem;
 }
 
-.state-switcher {
-  margin-top: 1rem;
+.action-row.secondary {
+  margin-top: 0.65rem;
+}
+
+.resit-list-card {
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: var(--app-surface);
+  padding: 1rem;
+}
+
+.resit-list-card h3 {
+  margin: 0 0 0.7rem;
+  color: var(--app-text-primary);
+}
+
+.resit-item {
+  border: 1px solid var(--app-border);
+  border-radius: 0.7rem;
+  padding: 0.75rem;
+  margin-bottom: 0.7rem;
+}
+
+.title-row {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+  gap: 0.6rem;
 }
 
-.state-switcher small {
+.title-row strong {
+  color: var(--app-text-primary);
+  display: block;
+}
+
+.title-row span {
   color: var(--app-text-secondary);
 }
 
-.state-switcher button {
-  border: 1px solid var(--app-border);
-  background: var(--app-surface);
-  color: var(--app-text-primary);
-  border-radius: 0.45rem;
-  padding: 0.3rem 0.55rem;
+.title-row small {
+  color: var(--app-success);
+  font-weight: 700;
 }
 
+.meta-row {
+  margin-top: 0.35rem;
+  display: flex;
+  gap: 1rem;
+  color: var(--app-text-secondary);
+}
+
+.view-btn {
+  margin-top: 0.6rem;
+  width: 100%;
+  border: none;
+  border-radius: 0.45rem;
+  padding: 0.5rem;
+  background: var(--app-primary);
+  color: var(--app-surface);
+  font-weight: 600;
+}
+
+.resit-detail-page {
+  border-top: 1px solid var(--app-border);
+  padding-top: 1rem;
+}
+
+.resit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.score-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--app-danger) 30%, transparent);
+  color: var(--app-danger);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.resit-head small {
+  color: var(--app-text-secondary);
+}
+
+.resit-head h3 {
+  margin: 0.2rem 0 0;
+  color: var(--app-text-primary);
+}
+
+.download-schedule {
+  border: none;
+  background: transparent;
+  color: var(--app-text-secondary);
+  font-size: 1.45rem;
+}
+
+.countdown-box {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.countdown-box span {
+  background: var(--app-primary);
+  color: var(--app-surface);
+  border-radius: 0.3rem;
+  padding: 0.3rem 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.countdown-box small {
+  display: block;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.resit-detail-page h4 {
+  margin: 1rem 0 0.6rem;
+  color: var(--app-text-primary);
+}
+
+.exam-card {
+  border: 1px solid var(--app-border);
+  border-radius: 0.7rem;
+  background: var(--app-surface);
+  padding: 0.8rem 0.9rem;
+  max-width: 700px;
+}
+
+.exam-card > div {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.exam-card > div:last-child {
+  margin-bottom: 0;
+}
+
+.exam-card span {
+  min-width: 105px;
+  color: var(--app-text-secondary);
+}
+
+.exam-card strong {
+  color: var(--app-text-primary);
+}
+
+@media (max-width: 960px) {
+  .slip-student-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .semesters-grid {
+    grid-template-columns: 1fr;
+  }
+  .semester-card:first-child {
+    border-right: none;
+    border-bottom: 1px solid var(--app-border);
+  }
+}
+
+@media (max-width: 720px) {
+  .slip-student-grid {
+    grid-template-columns: 1fr;
+  }
+  .resit-head {
+    flex-wrap: wrap;
+  }
+  .countdown-box {
+    justify-content: flex-start;
+  }
+}
+
+/* Keeping this block empty for now to avoid style drift for future controls. */
+.state-switcher {
+  margin-top: 1rem;
+}

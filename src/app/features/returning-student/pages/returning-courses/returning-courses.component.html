@@ -1,8 +1,114 @@
 <div class="returning-courses-page">
-  <h1>Course Registration</h1>
+  <h1>{{ viewMode() === 'resit-list' || viewMode() === 'resit-detail' ? 'Course Resit' : 'Course Registration' }}</h1>
   <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
 
-  <ng-container [ngSwitch]="flow.courseReviewState()">
+  <ng-container *ngIf="viewMode() === 'slip'">
+    <section class="slip-card">
+      <div class="slip-head">
+        <h2>Course Registration Slip</h2>
+        <div class="level-chip">{{ flow.level() }}</div>
+      </div>
+      <div class="slip-student-grid">
+        <div><small>Student Name</small><strong>{{ flow.studentName() }}</strong></div>
+        <div><small>Matric Number</small><strong>{{ flow.matricNo() }}</strong></div>
+        <div><small>Current Level</small><strong>{{ flow.level() }}</strong></div>
+        <div><small>Programme</small><strong>{{ flow.programme() }}</strong></div>
+        <div><small>Academic Session</small><strong>{{ flow.session() }}</strong></div>
+        <div><small>Date</small><strong>{{ '10 October 2025' }}</strong></div>
+      </div>
+      <div class="semesters-grid">
+        <div class="semester-card">
+          <h3>First Semester</h3>
+          <div class="row" *ngFor="let course of firstSemesterSlipCourses()">
+            <span>{{ course.code }} &nbsp; {{ course.title }}</span>
+            <strong>{{ course.units }} Units</strong>
+          </div>
+        </div>
+        <div class="semester-card">
+          <h3>Second Semester</h3>
+          <div class="row" *ngFor="let course of secondSemesterSlipCourses()">
+            <span>{{ course.code }} &nbsp; {{ course.title }}</span>
+            <strong>{{ course.units }} Units</strong>
+          </div>
+        </div>
+      </div>
+      <div class="signature-row">
+        <div>Student's Signature:<span></span></div>
+        <div>Course Coordinator's Signature:<span></span></div>
+      </div>
+      <div class="action-row">
+        <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">Download Course Slip</app-button>
+      </div>
+      <div class="action-row secondary">
+        <app-button variant="neutral" iconClass="pi pi-file" (buttonClick)="openResitList()">Course Resit</app-button>
+        <app-button variant="outline" iconClass="pi pi-arrow-left" (buttonClick)="backToRegistration()">Back</app-button>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-container *ngIf="viewMode() === 'resit-list'">
+    <section class="resit-list-card">
+      <h3>Failed courses to Resit</h3>
+      <article class="resit-item" *ngFor="let item of flow.resitCourses()">
+        <div class="title-row">
+          <div>
+            <strong>{{ item.code }}</strong>
+            <span>{{ item.title }}</span>
+          </div>
+          <small *ngIf="item.registered">Registered</small>
+        </div>
+        <div class="meta-row">
+          <span>Units: {{ item.units }}</span>
+          <span>Score: {{ item.score }}</span>
+        </div>
+        <button type="button" class="view-btn" (click)="openResitDetail(item)">View Details</button>
+      </article>
+      <div class="action-row secondary">
+        <app-button variant="neutral" (buttonClick)="openSlip()">View Course Slip</app-button>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-container *ngIf="viewMode() === 'resit-detail' && selectedResit() as detail">
+    <section class="resit-detail-page">
+      <div class="resit-head">
+        <div class="score-badge">{{ detail.score }}</div>
+        <div>
+          <small>{{ detail.code }}</small>
+          <h3>{{ detail.title }}</h3>
+        </div>
+        <button type="button" class="download-schedule" (click)="downloadResitSchedule(detail)">
+          <i class="pi pi-download"></i> Download Schedule
+        </button>
+      </div>
+
+      <div class="countdown-box">
+        <span>{{ detail.countdown.days }} <small>Days</small></span>
+        <span>{{ detail.countdown.hours }} <small>Hrs</small></span>
+        <span>{{ detail.countdown.mins }} <small>Mins</small></span>
+        <span>{{ detail.countdown.secs }} <small>Secs</small></span>
+      </div>
+
+      <h4>Examination Details</h4>
+      <div class="exam-card">
+        <div><span>Exam Date:</span><strong>{{ detail.examDate }}</strong></div>
+        <div><span>Time:</span><strong>{{ detail.examTime }}</strong></div>
+        <div><span>Duration:</span><strong>{{ detail.duration }}</strong></div>
+        <div><span>Venue:</span><strong>{{ detail.venue }}</strong></div>
+      </div>
+
+      <div class="action-row">
+        <app-button iconClass="pi pi-credit-card" (buttonClick)="payResitFee(detail)">
+          Pay Resit Fee - {{ flow.formatCurrency(detail.fee) }}
+        </app-button>
+      </div>
+      <div class="action-row secondary">
+        <app-button variant="outline" iconClass="pi pi-arrow-left" (buttonClick)="backToResitList()">Back</app-button>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-container [ngSwitch]="flow.courseReviewState()" *ngIf="viewMode() === 'registration'">
     <section class="locked-state" *ngSwitchCase="'locked'">
       <div class="state-icon">🔒</div>
       <h2>Course registration is locked</h2>
@@ -70,12 +176,4 @@
       </div>
     </ng-container>
   </ng-container>
-
-  <div class="state-switcher" *ngIf="flow.hasInternalPayment()">
-    <small>Demo state:</small>
-    <button type="button" (click)="switchState('waiting')">Waiting</button>
-    <button type="button" (click)="switchState('rejected')">Rejected</button>
-    <button type="button" (click)="switchState('open')">Open</button>
-  </div>
 </div>
-
