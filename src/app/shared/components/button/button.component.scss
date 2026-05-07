@@ -1,6 +1,6 @@
 .app-btn {
   --btn-bg: var(--app-primary);
-  --btn-fg: #ffffff;
+  --btn-fg: var(--app-surface);
   --btn-border: var(--btn-bg);
   --btn-outline-fg: var(--btn-bg);
   --btn-outline-border: var(--btn-bg);
@@ -34,22 +34,22 @@
 
 .btn--primary {
   --btn-bg: var(--app-primary);
-  --btn-fg: #ffffff;
+  --btn-fg: var(--app-surface);
 }
 
 .btn--secondary {
   --btn-bg: var(--app-success);
-  --btn-fg: #ffffff;
+  --btn-fg: var(--app-surface);
 }
 
 .btn--info {
   --btn-bg: var(--app-info);
-  --btn-fg: #ffffff;
+  --btn-fg: var(--app-surface);
 }
 
 .btn--danger {
   --btn-bg: var(--app-danger);
-  --btn-fg: #ffffff;
+  --btn-fg: var(--app-surface);
 }
 
 .btn--neutral {

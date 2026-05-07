@@ -4,7 +4,7 @@
 
 .courses-page h1 {
   margin: 0 0 1rem;
-  color: #10204c;
+  color: var(--app-text-primary);
 }
 
 .locked-state {
@@ -22,18 +22,18 @@
 
 .locked-state h2 {
   margin: 0.6rem 0 0.4rem;
-  color: #11224f;
+  color: var(--app-text-primary);
 }
 
 .locked-state p {
   margin: 0 0 1rem;
   max-width: 560px;
-  color: #7d8ead;
+  color: var(--app-text-secondary);
 }
 
 .summary-card {
-  background: #000b97;
-  color: #fff;
+  background: var(--app-primary);
+  color: var(--app-surface);
   border-radius: 0.9rem;
   padding: 1rem 1.1rem;
   display: flex;
@@ -51,7 +51,7 @@
 
 .course-list {
   margin-top: 1rem;
-  border: 1px solid #e4ecf9;
+  border: 1px solid var(--app-border);
   border-radius: 0.8rem;
   overflow: hidden;
 }
@@ -62,7 +62,7 @@
   align-items: center;
   gap: 0.9rem;
   padding: 0.9rem;
-  border-bottom: 1px solid #edf2fb;
+  border-bottom: 1px solid var(--app-border);
 }
 
 .course-row:last-child {
@@ -75,29 +75,29 @@
 
 .meta strong {
   display: block;
-  color: #142654;
+  color: var(--app-text-primary);
 }
 
 .meta span {
-  color: #6e80a4;
+  color: var(--app-text-secondary);
 }
 
 .warn {
   display: inline-block;
   margin-top: 0.3rem;
-  color: #e55353;
+  color: var(--app-danger);
   font-weight: 600;
 }
 
 .units {
   text-align: right;
-  color: #233765;
+  color: var(--app-text-primary);
   font-weight: 700;
 }
 
 .units span {
   display: block;
-  color: #7487a7;
+  color: var(--app-text-secondary);
   font-weight: 500;
 }
 
@@ -110,29 +110,29 @@
 .primary-btn {
   min-width: 260px;
   border-radius: 0.55rem;
-  background: #000b97;
-  border-color: #000b97;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
 }
 
 .slip {
-  border: 1px solid #dfe8f8;
+  border: 1px solid var(--app-border);
   border-radius: 0.85rem;
   overflow: hidden;
 }
 
 .slip-head {
   padding: 0.9rem 1rem;
-  border-bottom: 1px solid #edf2fb;
+  border-bottom: 1px solid var(--app-border);
 }
 
 .slip-head h2 {
   margin: 0;
-  color: #10214b;
+  color: var(--app-text-primary);
 }
 
 .slip-head p {
   margin: 0.2rem 0 0;
-  color: #7486a9;
+  color: var(--app-text-secondary);
 }
 
 .student-grid {
@@ -140,34 +140,34 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   padding: 0.9rem 1rem;
-  border-bottom: 1px solid #edf2fb;
+  border-bottom: 1px solid var(--app-border);
 }
 
 .student-grid small {
   display: block;
-  color: #7e8ead;
+  color: var(--app-text-secondary);
 }
 
 .student-grid strong {
-  color: #1a2e59;
+  color: var(--app-text-primary);
 }
 
 .semesters {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-bottom: 1px solid #edf2fb;
+  border-bottom: 1px solid var(--app-border);
 }
 
 .semester:first-child {
-  border-right: 1px solid #edf2fb;
+  border-right: 1px solid var(--app-border);
 }
 
 .semester h3 {
   margin: 0;
   padding: 0.7rem 0.9rem;
   font-size: 0.9rem;
-  color: #fff;
-  background: #000b97;
+  color: var(--app-surface);
+  background: var(--app-primary);
   text-transform: uppercase;
 }
 
@@ -176,7 +176,7 @@
   justify-content: space-between;
   gap: 0.7rem;
   padding: 0.65rem 0.9rem;
-  border-bottom: 1px solid #edf2fb;
+  border-bottom: 1px solid var(--app-border);
 }
 
 .semester .row:last-child {
@@ -184,14 +184,14 @@
 }
 
 .semester .row span {
-  color: #344d79;
+  color: var(--app-text-secondary);
 }
 
 .semester .row strong {
-  color: #11224f;
+  color: var(--app-text-primary);
 }
 
 .slip-footer {
   padding: 0.85rem 1rem;
-  color: #112450;
+  color: var(--app-text-primary);
 }

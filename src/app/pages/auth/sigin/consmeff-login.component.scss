@@ -10,7 +10,7 @@
 
 .slide-item {
   height: 100vh;
-  background: linear-gradient(145deg, #00157a 0%, #000080 45%, #02124f 100%);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--app-primary) 88%, black) 0%, var(--app-primary) 45%, color-mix(in srgb, var(--app-primary) 68%, black) 100%);
   position: relative;
 }
 
@@ -29,7 +29,7 @@
 }
 
 .slide-overlay h2 {
-  color: #ffffff;
+  color: var(--app-surface);
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
@@ -40,7 +40,7 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: #ffffff;
+  background: var(--app-surface);
 }
 
 .form-shell {
@@ -59,7 +59,7 @@
   line-height: 1.1;
   font-weight: 700;
   margin: 0.5rem 0 1.5rem;
-  color: #0f172a;
+  color: var(--app-text-primary);
 }
 
 .form-stack {
@@ -71,15 +71,15 @@
   display: block;
   text-align: left;
   margin-top: -0.5rem;
-  color: #b91c1c;
+  color: var(--app-danger);
   font-size: 0.78rem;
 }
 
 .action-btn {
   width: 100%;
   border-radius: 0.65rem;
-  background: #000080;
-  border-color: #000080;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
   margin-top: 0.5rem;
 }
 
@@ -90,7 +90,7 @@
 .text-link {
   border: none;
   background: none;
-  color: #000080;
+  color: var(--app-primary);
   font-weight: 700;
   margin-top: 0.9rem;
   display: inline-block;
@@ -100,13 +100,13 @@
 .switch-text {
   margin-top: 1rem;
   font-size: 0.95rem;
-  color: #475569;
+  color: var(--app-text-secondary);
 }
 
 .inline-link {
   border: none;
   background: none;
-  color: #000080;
+  color: var(--app-primary);
   font-weight: 700;
   padding: 0;
   margin-left: 0.25rem;
@@ -121,8 +121,8 @@
 :host ::ng-deep .p-password-input {
   width: 100%;
   border-radius: 0.6rem;
-  background: #f8fafc;
-  border-color: #dbeafe;
+  background: var(--app-surface-alt);
+  border-color: var(--app-border);
 }
 
 @media (max-width: 1024px) {

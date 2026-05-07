@@ -24,26 +24,26 @@
 }
 
 [data-tone='pending'] {
-  --tone-color: #f59e0b;
-  --tone-bg: rgba(245, 158, 11, 0.15);
+  --tone-color: var(--app-warning);
+  --tone-bg: color-mix(in srgb, var(--app-warning) 16%, transparent);
 }
 
 [data-tone='shortlisted'] {
-  --tone-color: #039855;
-  --tone-bg: rgba(3, 152, 85, 0.15);
+  --tone-color: var(--app-success);
+  --tone-bg: color-mix(in srgb, var(--app-success) 16%, transparent);
 }
 
 [data-tone='directive'] {
-  --tone-color: #ef4444;
-  --tone-bg: rgba(239, 68, 68, 0.15);
+  --tone-color: var(--app-danger);
+  --tone-bg: color-mix(in srgb, var(--app-danger) 16%, transparent);
 }
 
 [data-tone='resubmitted'] {
-  --tone-color: #c026d3;
-  --tone-bg: rgba(192, 38, 211, 0.14);
+  --tone-color: var(--app-info);
+  --tone-bg: color-mix(in srgb, var(--app-info) 16%, transparent);
 }
 
 [data-tone='rejected'] {
-  --tone-color: #d92d20;
-  --tone-bg: rgba(217, 45, 32, 0.14);
+  --tone-color: var(--app-danger);
+  --tone-bg: color-mix(in srgb, var(--app-danger) 16%, transparent);
 }

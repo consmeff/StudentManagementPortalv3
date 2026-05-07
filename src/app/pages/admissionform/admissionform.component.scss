@@ -4,7 +4,7 @@
   width: 100%;
   min-height: 100vh;
   padding: 0rem;
-  // background: #f8fafc;
+  // background handled by theme variables at shell level
 
   @include responsive($breakpoint-lg) {
     // margin-left: 8.5rem;
@@ -24,7 +24,7 @@
   margin: 0 0 1rem;
   font-size: 2rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--app-text-primary);
 }
 
 .stepper-wrapper {
@@ -44,7 +44,7 @@
 
 .step-label {
   font-size: 0.73rem;
-  color: #64748b;
+  color: var(--app-text-secondary);
   line-height: 1.2;
 }
 
@@ -79,9 +79,9 @@
       height: 22px;
       min-width: 22px;
       border-radius: 999px;
-      border: 1px solid #dbe5f6;
-      background: #fff;
-      color: #334155;
+      border: 1px solid var(--app-border);
+      background: var(--app-surface);
+      color: var(--app-text-primary);
       font-size: 0.7rem;
       font-weight: 700;
       margin: 0;
@@ -90,25 +90,25 @@
     .p-step-title {
       margin: 0;
       font-size: 0.72rem;
-      color: #7d8ba5;
+      color: var(--app-text-secondary);
       font-weight: 500;
     }
 
     .p-stepper-separator {
       height: 2px;
       margin: 10px 0.4rem 0;
-      background: #e2e8f0;
+      background: var(--app-border);
     }
 
     .p-step-active {
       .p-step-number {
-        background: #b34ba2;
-        border-color: #b34ba2;
-        color: #fff;
+        background: var(--app-primary);
+        border-color: var(--app-primary);
+        color: var(--app-surface);
       }
 
       .p-step-title {
-        color: #0f172a;
+        color: var(--app-text-primary);
         font-weight: 700;
       }
     }
@@ -129,8 +129,8 @@
     min-width: 140px;
     height: 40px !important;
     border-radius: 8px !important;
-    border: 1px solid #000080 !important;
-    background: #000080 !important;
+    border: 1px solid var(--app-primary) !important;
+    background: var(--app-primary) !important;
     font-size: 0.82rem !important;
     font-weight: 600 !important;
   }
@@ -139,9 +139,9 @@
     min-width: 90px;
     height: 40px !important;
     border-radius: 8px !important;
-    border: 1px solid #000080 !important;
-    background: #fff !important;
-    color: #000080 !important;
+    border: 1px solid var(--app-primary) !important;
+    background: var(--app-surface) !important;
+    color: var(--app-primary) !important;
     font-size: 0.82rem !important;
     font-weight: 600 !important;
   }

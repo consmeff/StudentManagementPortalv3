@@ -1,15 +1,16 @@
 .pending-flow-page {
   padding: 1.5rem;
+  color: var(--app-text-primary);
 }
 
 .welcome-line {
-  color: #6b7b98;
+  color: var(--app-text-secondary);
   font-size: 1.85rem;
 }
 
 .applicant-name {
   margin: 0.35rem 0 1.2rem;
-  color: #0f172a;
+  color: var(--app-text-primary);
   font-size: 2.9rem;
   font-weight: 700;
   line-height: 1.1;
@@ -22,7 +23,7 @@
   gap: 1.4rem;
   padding: 1.5rem 1.6rem;
   border-radius: 2rem;
-  background: #000b97;
+  background: var(--app-primary);
 }
 
 .completed-hero-card {
@@ -39,28 +40,28 @@
   align-items: center;
   padding: 1.3rem 1.6rem;
   border-radius: 1.25rem;
-  background: #f8fbff;
+  background: transparent;
 }
 
 .progress-ring.completed {
-  border-color: #00158f;
+  border-color: var(--app-primary);
 }
 
 .progress-ring.completed .progress-value {
-  color: #00158f;
+  color: var(--app-primary);
 }
 
-.completed-copy h2 {
-  color: #0d1a4f;
+.hero-copy.completed-copy h2 {
+  color: var(--app-text-primary);
 }
 
-.completed-copy p {
-  color: #7f93b0;
+.hero-copy.completed-copy p {
+  color: var(--app-text-secondary);
 }
 
 .applicant-photo-card {
-  background: #f8fbff;
-  border: 1px solid #e4ecf9;
+  background: transparent;
+  border: 1px solid var(--app-border);
   border-radius: 1rem;
   padding: 0.5rem;
   width: 150px;
@@ -82,16 +83,16 @@
 
 .details-section h3 {
   margin: 0 0 0.75rem;
-  color: #2c3d60;
+  color: var(--app-text-primary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-size: 1.15rem;
 }
 
 .details-card {
-  border: 1px solid #dbe7f9;
+  border: 1px solid var(--app-border);
   border-radius: 1rem;
-  background: #ffffff;
+  background: var(--app-surface);
   overflow: hidden;
 }
 
@@ -101,12 +102,12 @@
   align-items: center;
   gap: 0.8rem;
   padding: 1rem 1rem;
-  border-bottom: 1px solid #eef3fb;
-  color: #6b7b98;
+  border-bottom: 1px solid var(--app-border);
+  color: var(--app-text-secondary);
 }
 
 .details-row strong {
-  color: #0f172a;
+  color: var(--app-text-primary);
   font-weight: 700;
   text-align: right;
 }
@@ -135,8 +136,8 @@
   height: 100%;
   border-radius: 50%;
   border: 20px solid rgba(255, 255, 255, 0.22);
-  border-right-color: #ffffff;
-  border-top-color: #ffffff;
+  border-right-color: var(--app-surface);
+  border-top-color: var(--app-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,7 +146,7 @@
 .progress-value {
   font-size: 2rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--app-surface);
 }
 
 .hero-copy {
@@ -154,7 +155,7 @@
 
 .hero-copy h2 {
   margin: 0;
-  color: #ffffff;
+  color: var(--app-surface);
   font-size: 2.8rem;
   line-height: 1.1;
   max-width: 42rem;
@@ -162,7 +163,7 @@
 
 .hero-copy p {
   margin: 0.7rem 0 0;
-  color: rgba(226, 236, 255, 0.85);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 1.3rem;
   max-width: 44rem;
 }
@@ -170,23 +171,23 @@
 .continue-btn {
   min-width: 220px;
   border-radius: 14px;
-  background: #000080;
-  border-color: #000080;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
   font-size: 1.25rem;
   font-weight: 600;
 }
 
 .hero-card .continue-btn {
-  background: #ffffff;
-  border-color: #ffffff;
-  color: #000b97;
+  background: var(--app-surface);
+  border-color: var(--app-surface);
+  color: var(--app-primary);
   min-width: 235px;
 }
 
 .error-hint {
   margin-top: 0.7rem;
   display: block;
-  color: #dc2626;
+  color: var(--app-danger);
 }
 
 .steps-section {
@@ -195,7 +196,7 @@
 
 .steps-section h3 {
   margin: 0 0 1rem;
-  color: #2c3d60;
+  color: var(--app-text-primary);
   font-size: 2.3rem;
 }
 
@@ -233,19 +234,19 @@
 
 .marker-circle.completed,
 .marker-circle.active {
-  background: #a53d9f;
-  color: #ffffff;
+  background: var(--app-primary);
+  color: var(--app-surface);
 }
 
 .marker-circle.inactive {
-  background: #e8eef8;
-  color: #93a5bf;
+  background: var(--app-surface-alt);
+  color: var(--app-text-muted);
 }
 
 .marker-line {
   width: 2px;
   flex: 1;
-  background: #d7e1ef;
+  background: var(--app-border);
   margin-top: 0.2rem;
 }
 
@@ -267,17 +268,17 @@
 
 .step-content.completed .step-title,
 .step-content.active .step-title {
-  color: #0f172a;
+  color: var(--app-text-primary);
 }
 
 .step-content.completed .step-description,
 .step-content.active .step-description {
-  color: #7f93b0;
+  color: var(--app-text-secondary);
 }
 
 .step-content.inactive .step-title,
 .step-content.inactive .step-description {
-  color: #b8c5d9;
+  color: var(--app-text-muted);
 }
 
 .step-action {
@@ -289,14 +290,14 @@
 
 .step-action .continue-btn {
   min-width: 220px;
-  color: #ffffff;
+  color: var(--app-surface);
 }
 
 .step-complete {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #07a54f;
+  color: var(--app-success);
   font-size: 1.8rem;
   font-weight: 700;
 }
@@ -308,13 +309,13 @@
 }
 
 .programme-option {
-  border: 1px solid #dbe7f9;
+  border: 1px solid var(--app-border);
   border-radius: 16px;
   padding: 0.8rem 0.9rem;
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  background: #ffffff;
+  background: var(--app-surface);
   cursor: pointer;
   text-align: left;
 }
@@ -323,18 +324,18 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 2px solid #d9e5f6;
+  border: 2px solid var(--app-border);
   position: relative;
   flex: 0 0 auto;
 }
 
 .programme-option.selected {
-  background: #000b97;
-  border-color: #000b97;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
 }
 
 .programme-option.selected .option-radio {
-  border-color: #ffffff;
+  border-color: var(--app-surface);
 }
 
 .programme-option.selected .option-radio::after {
@@ -342,7 +343,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--app-surface);
   position: absolute;
   top: 4px;
   left: 4px;
@@ -353,20 +354,20 @@
 }
 
 .programme-name {
-  color: #1e2d4b;
+  color: var(--app-text-primary);
   font-size: 1.1rem;
   font-weight: 600;
 }
 
 .programme-meta {
   margin-top: 0.1rem;
-  color: #7b8fae;
+  color: var(--app-text-secondary);
   font-size: 0.78rem;
 }
 
 .programme-option.selected .programme-name,
 .programme-option.selected .programme-meta {
-  color: #ffffff;
+  color: var(--app-surface);
 }
 
 .dialog-actions {
@@ -382,7 +383,7 @@
   .p-dialog-title {
     font-weight: 700;
     font-size: 1.7rem;
-    color: #1b2a49;
+    color: var(--app-text-primary);
   }
 }
 

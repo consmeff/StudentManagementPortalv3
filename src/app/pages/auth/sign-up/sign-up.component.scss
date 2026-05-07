@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: center;
   padding: 2rem 1rem;
-  background: #ffffff;
+  background: var(--app-surface);
 }
 
 .single-form-shell {
@@ -29,7 +29,7 @@
   line-height: 1.1;
   font-weight: 700;
   margin: 0.5rem 0 1.5rem;
-  color: #0f172a;
+  color: var(--app-text-primary);
 }
 
 .form-stack {
@@ -38,8 +38,8 @@
 }
 
 .password-checklist {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--app-surface-alt);
+  border: 1px solid var(--app-border);
   border-radius: 0.6rem;
   padding: 0.75rem;
   text-align: left;
@@ -50,39 +50,39 @@
 .password-checklist p {
   margin: 0;
   font-size: 0.83rem;
-  color: #94a3b8;
+  color: var(--app-text-muted);
 }
 
 .password-checklist p.valid {
-  color: #0f172a;
+  color: var(--app-text-primary);
 }
 
 .error-text {
   display: block;
   text-align: left;
   margin-top: -0.5rem;
-  color: #b91c1c;
+  color: var(--app-danger);
   font-size: 0.78rem;
 }
 
 .action-btn {
   width: 100%;
   border-radius: 0.65rem;
-  background: #000080;
-  border-color: #000080;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
   margin-top: 0.5rem;
 }
 
 .switch-text {
   margin-top: 1rem;
   font-size: 0.95rem;
-  color: #475569;
+  color: var(--app-text-secondary);
 }
 
 .inline-link {
   border: none;
   background: none;
-  color: #000080;
+  color: var(--app-primary);
   font-weight: 700;
   padding: 0;
   margin-left: 0.25rem;
@@ -97,6 +97,6 @@
 :host ::ng-deep .p-password-input {
   width: 100%;
   border-radius: 0.6rem;
-  background: #f8fafc;
-  border-color: #dbeafe;
+  background: var(--app-surface-alt);
+  border-color: var(--app-border);
 }

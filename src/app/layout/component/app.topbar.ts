@@ -1,93 +1,169 @@
-import { Component, inject } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { StyleClassModule } from 'primeng/styleclass';
-import { AppConfigurator } from './app.configurator';
-import { LayoutService } from '../service/layout.service';
-import { TooltipModule } from 'primeng/tooltip';
+import { Component, OnDestroy, inject } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
+import { WidgetsService } from '../../widgets/services/widgets.service';
 import { ThemeService } from '../../services/theme.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
 
 @Component({
     selector: 'app-topbar',
     standalone: true,
-    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, TooltipModule],
-    template: ` <div class="layout-topbar">
-        <div class="layout-topbar-logo-container">
-            <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
+    imports: [CommonModule],
+    template: `
+    <div class="top-bar">
+        <div class="top-left">
+            <button type="button" class="sidebar-trigger" aria-label="Open sidebar" (click)="toggleSidebar()">
                 <i class="pi pi-bars"></i>
             </button>
-            <a class="layout-topbar-logo" routerLink="/">
-                <img src="https://consmmefs.edu.ng/img/favicon.ico" style="height: 25px;" alt="" srcset="">
-                <span style="font-family: monospace;font-weight:900">consmmefs</span>
-            </a>
+            <div class="top-title">{{ currentModuleName }}</div>
         </div>
-     
-
-        <div class="layout-topbar-actions">
-      
-            <div class="layout-config-menu">
-            <div style="display: flex;align-items: center;margin-right: 1rem;">
-     <span style="font-family: monospace;font-weight:600">{{companyName}}</span>
-</div>
-                <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
-                    <i [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
-                </button>
-                <div class="relative"  style="display: none;">
-                    <button
-                        class="layout-topbar-action layout-topbar-action-highlight"
-                        pStyleClass="@next"
-                        enterFromClass="hidden"
-                        enterActiveClass="animate-scalein"
-                        leaveToClass="hidden"
-                        leaveActiveClass="animate-fadeout"
-                        [hideOnOutsideClick]="true"
-                    >
-                        <i class="pi pi-palette"></i>
-                    </button>
-                    <app-configurator />
-                </div>
-            </div>
-
-            <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
-                <i class="pi pi-ellipsis-v"></i>
+        <div class="top-right">
+            <button type="button" class="top-icon-btn" (click)="toggleDarkMode()">
+                <i class="pi" [class.pi-moon]="!isDarkMode" [class.pi-sun]="isDarkMode"></i>
             </button>
-
-            <div class="layout-topbar-menu hidden lg:block">
-                <div class="layout-topbar-menu-content">
-                    <!-- <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-calendar"></i>
-                        <span>Calendar</span>
-                    </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-inbox"></i>
-                        <span>Messages</span>
-                    </button> -->
-                    <button type="button" class="layout-topbar-action" pTooltip="{{email}}" tooltipPosition="left">
-                        <i class="pi pi-user"></i>
-                        <span>Profile</span>
-                    </button>
-                </div>
+            <button type="button" class="top-icon-btn">
+                <i class="pi pi-bell"></i>
+            </button>
+            <button type="button" class="top-icon-btn">
+                <i class="pi pi-user"></i>
+            </button>
+            <div class="user-meta">
+                <span>{{ username }}</span>
+                <span>{{ companyName || 'Student Portal' }}</span>
             </div>
         </div>
-    </div>`
+    </div>`,
+    styles: [`
+      .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: .65rem 1rem;
+        background-color: var(--app-surface-alt);
+        box-shadow: var(--app-shadow-sm);
+        border-bottom: 1px solid var(--app-border);
+      }
+      .top-left {
+        display: flex;
+        align-items: center;
+      }
+      .sidebar-trigger {
+        display: none;
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-right: .75rem;
+        border: 1px solid var(--app-border);
+        border-radius: .5rem;
+        background: var(--app-surface);
+        color: var(--app-text-secondary);
+      }
+      .top-title {
+        margin-left: .35rem;
+        font-weight: 600;
+      }
+      .top-right {
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+        color: var(--app-text-secondary);
+      }
+      .top-icon-btn {
+        width: 2.2rem;
+        height: 2.2rem;
+        border: 1px solid var(--app-border);
+        border-radius: .5rem;
+        background: var(--app-surface);
+        color: var(--app-text-secondary);
+      }
+      .user-meta {
+        display: flex;
+        flex-direction: column;
+        margin-left: .25rem;
+      }
+      .user-meta span:first-child {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .user-meta span:last-child {
+        font-weight: 400;
+        font-size: 12px;
+      }
+      @media (max-width: 991px) {
+        .sidebar-trigger {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+      @media (max-width: 575px) {
+        .user-meta span:last-child {
+          display: none;
+        }
+        .top-title {
+          margin-left: 0;
+          font-size: .95rem;
+        }
+      }
+    `]
 })
-export class AppTopbar {
-    items!: MenuItem[];
-    email = "";
-    companyName = "";
-    private theme = inject(ThemeService);
-    private authSessionStore = inject(AuthSessionStore);
+export class AppTopbar implements OnDestroy {
+    private readonly theme = inject(ThemeService);
+    private readonly authSessionStore = inject(AuthSessionStore);
+    private readonly widgetService = inject(WidgetsService);
+    private readonly router = inject(Router);
+    private readonly subscriptions = new Subscription();
 
-    constructor(public layoutService: LayoutService) {
-        const name = this.authSessionStore.name();
-        this.email = name || '—';
+    username = '';
+    companyName = '';
+    isDarkMode = false;
+    currentModuleName = 'Dashboard';
+
+    constructor() {
+        this.username = this.authSessionStore.name() || 'User';
         this.companyName = this.authSessionStore.userType() || '';
+        this.currentModuleName = this.resolveModuleName(this.router.url);
+        this.subscriptions.add(
+            this.router.events
+                .pipe(filter((event) => event instanceof NavigationEnd))
+                .subscribe((event) => {
+                    const navigation = event as NavigationEnd;
+                    this.currentModuleName = this.resolveModuleName(navigation.urlAfterRedirects);
+                })
+        );
+        this.subscriptions.add(
+            this.theme.darkMode$.subscribe((isDark) => {
+                this.isDarkMode = isDark;
+            })
+        );
     }
 
-    toggleDarkMode() {
-        // this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme }));
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
+    }
+
+    toggleSidebar(): void {
+        this.widgetService.setSidebarState({ isvisible: true });
+    }
+
+    toggleDarkMode(): void {
         this.theme.toggle();
+    }
+
+    private resolveModuleName(url: string): string {
+        if (url.includes('/admitted/courses') || url.includes('/new/courses') || url.includes('/returning/courses')) {
+            return 'Courses';
+        }
+        if (url.includes('/payment')) {
+            return 'Payments';
+        }
+        if (url.includes('/profile')) {
+            return 'Profile';
+        }
+        if (url.includes('/admissionform')) {
+            return 'Admission';
+        }
+        return 'Dashboard';
     }
 }
