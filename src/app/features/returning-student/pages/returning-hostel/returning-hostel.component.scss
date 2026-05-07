@@ -1,0 +1,159 @@
+.returning-hostel-page {
+  padding: 1rem;
+}
+
+.returning-hostel-page h1 {
+  margin: 0;
+  color: var(--app-text-primary);
+}
+
+.returning-hostel-page > p {
+  margin: 0.3rem 0 1rem;
+  color: var(--app-text-secondary);
+}
+
+.state-card {
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.state-icon {
+  font-size: 4rem;
+}
+
+.state-card h2 {
+  margin: 0.85rem 0 0.45rem;
+  color: var(--app-text-primary);
+}
+
+.state-card p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--app-text-secondary);
+}
+
+.application-form {
+  border-top: 1px solid var(--app-border);
+  padding-top: 0.8rem;
+  max-width: 700px;
+}
+
+.form-field {
+  margin-bottom: 0.75rem;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--app-text-primary);
+  font-weight: 600;
+}
+
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  border: 1px solid var(--app-border);
+  border-radius: 0.65rem;
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+  padding: 0.7rem;
+  font-family: inherit;
+}
+
+.acknowledgement {
+  border-top: 1px solid var(--app-border);
+  padding-top: 0.8rem;
+}
+
+.acknowledgement h3 {
+  margin: 0;
+  color: var(--app-text-primary);
+}
+
+.acknowledgement p {
+  margin: 0.45rem 0 0;
+  color: var(--app-text-secondary);
+}
+
+.agree-check {
+  margin-top: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--app-text-primary);
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.actions.split {
+  gap: 0.6rem;
+}
+
+.allocated-card {
+  border-top: 1px solid var(--app-border);
+  padding-top: 0.8rem;
+}
+
+.student-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.student-grid small,
+.hostel-details small {
+  display: block;
+  color: var(--app-text-secondary);
+}
+
+.student-grid strong,
+.hostel-details strong {
+  color: var(--app-text-primary);
+}
+
+.hostel-details {
+  margin-top: 0.9rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: var(--app-surface);
+}
+
+.hostel-details h3 {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.86rem;
+  color: var(--app-text-secondary);
+  background: var(--app-surface-alt);
+  border-bottom: 1px solid var(--app-border);
+}
+
+.hostel-details > div {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.hostel-details > div:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 760px) {
+  .student-grid {
+    grid-template-columns: 1fr;
+  }
+  .actions.split {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+

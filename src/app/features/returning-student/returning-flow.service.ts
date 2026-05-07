@@ -69,6 +69,25 @@ export type FeeItem = {
   type: 'mandatory' | 'optional';
 };
 
+export type HostelApplicationStatus = 'locked' | 'form' | 'pending' | 'allocated';
+
+export type HostelApplicationPayload = {
+  academicSession: string;
+  preferredHostel: string;
+  preferredBlock: string;
+  specialNeeds: string;
+  acknowledged: boolean;
+};
+
+export type HostelAllocation = {
+  hostelName: string;
+  block: string;
+  roomNumber: string;
+  floor: string;
+  roomType: string;
+  bed: string;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   readonly studentName = signal('ISHOLA, Hassan Gbadebo');
@@ -78,6 +97,23 @@ export class ReturningFlowService {
   readonly level = signal('OND 2');
   readonly semester = signal('1st Semester');
   readonly selectedResultSemester = signal('OND 1 First Semester');
+  readonly hostelApplicationStatus = signal<HostelApplicationStatus>('locked');
+  readonly hostelApplicationDraft = signal<HostelApplicationPayload>({
+    academicSession: '',
+    preferredHostel: '',
+    preferredBlock: '',
+    specialNeeds: '',
+    acknowledged: false
+  });
+  readonly hostelApplicationDate = signal<Date | null>(null);
+  readonly hostelAllocation = signal<HostelAllocation>({
+    hostelName: 'Abimbola Hostel',
+    block: 'Block A',
+    roomNumber: 'Room 17',
+    floor: '2nd Floor',
+    roomType: '4-bed shared',
+    bed: 'Bed 3'
+  });
 
   readonly cumulativeGpa = signal(3.78);
   readonly gpaClass = signal('Second Class Upper');
@@ -179,6 +215,9 @@ export class ReturningFlowService {
   ]);
 
   readonly resultSemesterOptions = signal(['OND 1 First Semester', 'HND 1 First Semester', 'OND 2 First Semester']);
+  readonly hostelSessionOptions = signal(['2025/2026']);
+  readonly hostelOptions = signal(['Abimbola Hostel', 'Amina Hostel', 'Legacy Hostel']);
+  readonly hostelBlockOptions = signal(['Block A', 'Block B', 'Block C']);
 
   readonly cgpaThresholds = signal<CgpaThreshold[]>([
     { scoreRange: '70 - 100', letterGrade: 'A', gradePoint: '5', cgpaRange: '4.50 - 5.00', classOfDegree: 'First Class' },
@@ -241,6 +280,15 @@ export class ReturningFlowService {
   );
   readonly mandatoryFees = computed(() => this.fees().filter((fee) => fee.type === 'mandatory'));
   readonly optionalFees = computed(() => this.fees().filter((fee) => fee.type === 'optional'));
+  readonly hostelFeeStatus = computed(() => this.fees().find((fee) => fee.id === 'hostel')?.status ?? 'unpaid');
+  readonly canAccessHostelApplication = computed(() => this.hostelFeeStatus() === 'paid');
+  readonly effectiveHostelStatus = computed<HostelApplicationStatus>(() => {
+    if (!this.canAccessHostelApplication()) {
+      return 'locked';
+    }
+    const current = this.hostelApplicationStatus();
+    return current === 'locked' ? 'form' : current;
+  });
 
   readonly semesterResultGpa = computed(() => 3.85);
 
@@ -310,11 +358,42 @@ export class ReturningFlowService {
       fee.id === feeId ? { ...fee, status: 'paid' as const } : fee
     );
     this.fees.set(updated);
+    if (feeId === 'hostel' && this.hostelApplicationStatus() === 'locked') {
+      this.hostelApplicationStatus.set('form');
+    }
     return { ok: true, message: `${target.name} payment recorded.` };
   }
 
   setResultSemester(value: string): void {
     this.selectedResultSemester.set(value);
+  }
+
+  updateHostelDraft(patch: Partial<HostelApplicationPayload>): void {
+    this.hostelApplicationDraft.set({ ...this.hostelApplicationDraft(), ...patch });
+  }
+
+  submitHostelApplication(payload: HostelApplicationPayload): { ok: boolean; message: string } {
+    if (!this.canAccessHostelApplication()) {
+      return { ok: false, message: 'Hostel application is locked until hostel fee is paid.' };
+    }
+    if (!payload.academicSession || !payload.preferredHostel || !payload.preferredBlock) {
+      return { ok: false, message: 'Complete all required hostel fields.' };
+    }
+    if (!payload.acknowledged) {
+      return { ok: false, message: 'You must acknowledge hostel rules before submission.' };
+    }
+    this.hostelApplicationDraft.set(payload);
+    this.hostelApplicationDate.set(new Date());
+    this.hostelApplicationStatus.set('pending');
+    return { ok: true, message: 'Hostel application submitted successfully.' };
+  }
+
+  setHostelApplicationStatus(status: HostelApplicationStatus): void {
+    if (!this.canAccessHostelApplication() && status !== 'locked') {
+      this.hostelApplicationStatus.set('locked');
+      return;
+    }
+    this.hostelApplicationStatus.set(status);
   }
 
   setCourseReviewState(state: CourseReviewState): void {
