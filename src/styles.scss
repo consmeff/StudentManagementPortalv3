@@ -5,7 +5,92 @@
 @use './assets/demo/demo.scss';
 @import './assets/demo/_theme.scss';
 
+:root,
+[data-theme='light'] {
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-alt: #f8fafc;
+  --app-border: #e2e8f0;
+  --app-text-primary: #0f172a;
+  --app-text-secondary: #64748b;
+  --app-text-muted: #94a3b8;
+  --app-primary: #000080;
+  --app-success: #039855;
+  --app-danger: #d92d20;
+  --app-info: #c77c27;
+  --app-link: #0d6efd;
+  --app-shadow-sm: 0 2px 5px rgba(15, 23, 42, 0.08);
+  --app-modal-z-index: 3000000;
+}
 
-a:hover{
-    cursor: pointer;
+[data-theme='dark'],
+.dark {
+  --app-bg: #0b1120;
+  --app-surface: #111827;
+  --app-surface-alt: #1f2937;
+  --app-border: #334155;
+  --app-text-primary: #e2e8f0;
+  --app-text-secondary: #94a3b8;
+  --app-text-muted: #64748b;
+  --app-primary: #818cf8;
+  --app-success: #34d399;
+  --app-danger: #f87171;
+  --app-info: #f59e0b;
+  --app-link: #60a5fa;
+  --app-shadow-sm: 0 2px 5px rgba(2, 6, 23, 0.45);
+  --app-modal-z-index: 3000000;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: var(--app-bg);
+  color: var(--app-text-primary);
+  font-family: 'Raleway', 'Inter', 'Montserrat', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  outline: none;
+}
+
+.p-dialog-mask {
+  z-index: var(--app-modal-z-index) !important;
+}
+
+.p-dialog {
+  z-index: calc(var(--app-modal-z-index) + 1) !important;
+}
+
+.title-large {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 120%;
+}
+
+.title-medium {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+}
+
+.body-small {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+}
+
+.label-small {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 120%;
+}
+
+a,
+a:hover {
+  cursor: pointer;
 }

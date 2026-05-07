@@ -9,7 +9,7 @@
       <div class="lock-icon">🔒</div>
       <h2>Document Verification is locked</h2>
       <p>You need to make an in-app school fees payment before you verify your documents.</p>
-      <button pButton type="button" class="primary-btn" (click)="goToPayment()">Make Payment</button>
+      <app-button iconClass="pi pi-credit-card" (buttonClick)="goToPayment()">Make Payment</app-button>
     </div>
   </ng-container>
 
@@ -21,18 +21,19 @@
           <small>{{ item.fileName || "No file uploaded yet" }}</small>
         </div>
         <div class="doc-actions">
-          <span [class]="item.uploaded ? 'status-chip verified' : 'status-chip pending'">
-            {{ item.uploaded ? "Verified" : "Pending Upload" }}
-          </span>
+          <app-status-indicator
+            [text]="item.uploaded ? 'Verified' : 'Pending Upload'"
+            [tone]="item.uploaded ? 'shortlisted' : 'pending'"
+            [pill]="true"
+            [dot]="false"
+          ></app-status-indicator>
           <button pButton type="button" class="view-btn" [disabled]="!item.uploaded">View</button>
         </div>
       </div>
     </section>
 
     <div class="continue-row">
-      <button pButton type="button" class="primary-btn" (click)="continueToNextStep()">
-        Confirm and Proceed
-      </button>
+      <app-button iconClass="pi pi-check" (buttonClick)="continueToNextStep()">Confirm and Proceed</app-button>
     </div>
   </ng-template>
 </div>

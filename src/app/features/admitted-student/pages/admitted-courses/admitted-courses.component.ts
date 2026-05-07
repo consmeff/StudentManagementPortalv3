@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdmittedFlowService } from '../../admitted-flow.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 type CourseItem = {
   code: string;
@@ -15,7 +16,7 @@ type CourseItem = {
 @Component({
   selector: 'app-admitted-courses',
   standalone: true,
-  imports: [CommonModule, TraceabilityModule],
+  imports: [CommonModule, TraceabilityModule, ButtonComponent],
   templateUrl: './admitted-courses.component.html',
   styleUrl: './admitted-courses.component.scss'
 })

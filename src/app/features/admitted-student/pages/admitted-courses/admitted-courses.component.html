@@ -9,7 +9,7 @@
         You need to make your first school fees payment before registering courses. Minimum first payment is
         ₦500,000.
       </p>
-      <button pButton type="button" class="primary-btn" (click)="goToPayment()">Make Payment</button>
+      <app-button iconClass="pi pi-credit-card" (buttonClick)="goToPayment()">Make Payment</app-button>
     </section>
   </ng-container>
 
@@ -44,9 +44,9 @@
       </section>
 
       <div class="action-row">
-        <button pButton type="button" class="primary-btn" [disabled]="!canSubmit()" (click)="submitRegistration()">
+        <app-button [disabled]="!canSubmit()" iconClass="pi pi-check" (buttonClick)="submitRegistration()">
           Submit Course Registration
-        </button>
+        </app-button>
       </div>
     </ng-container>
   </ng-template>
@@ -91,7 +91,7 @@
         <strong>Total: {{ selectedCount() }} courses / {{ selectedUnits() }} units</strong>
       </div>
       <div class="action-row">
-        <button pButton type="button" class="primary-btn" (click)="downloadCourseSlip()">Download Course Slip</button>
+        <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">Download Course Slip</app-button>
       </div>
     </section>
   </ng-template>
