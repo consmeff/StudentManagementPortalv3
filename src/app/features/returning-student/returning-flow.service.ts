@@ -88,6 +88,53 @@ export type HostelAllocation = {
   bed: string;
 };
 
+export type ReturningProfileTab = 'overview' | 'personal' | 'account';
+
+export type ProfileOverviewData = {
+  fullName: string;
+  matricNo: string;
+  level: string;
+  admissionYear: string;
+  status: string;
+};
+
+export type PersonalContactData = {
+  fullName: string;
+  email: string;
+  phone: string;
+  alternatePhone: string;
+  dateOfBirth: string;
+  gender: string;
+  maritalStatus: string;
+  nationality: string;
+  stateOfOrigin: string;
+  lgaOfOrigin: string;
+  disability: string;
+  specificDisability: string;
+};
+
+export type AddressData = {
+  houseNumber: string;
+  streetName: string;
+  landmark: string;
+  areaTown: string;
+  state: string;
+  lga: string;
+};
+
+export type NextOfKinData = {
+  fullName: string;
+  email: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  title: string;
+  relationship: string;
+  occupation: string;
+  phone: string;
+  alternatePhone: string;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   readonly studentName = signal('ISHOLA, Hassan Gbadebo');
@@ -97,6 +144,7 @@ export class ReturningFlowService {
   readonly level = signal('OND 2');
   readonly semester = signal('1st Semester');
   readonly selectedResultSemester = signal('OND 1 First Semester');
+  readonly activeProfileTab = signal<ReturningProfileTab>('overview');
   readonly hostelApplicationStatus = signal<HostelApplicationStatus>('locked');
   readonly hostelApplicationDraft = signal<HostelApplicationPayload>({
     academicSession: '',
@@ -291,6 +339,55 @@ export class ReturningFlowService {
   });
 
   readonly semesterResultGpa = computed(() => 3.85);
+  readonly profileOverview = signal<ProfileOverviewData>({
+    fullName: 'ISHOLA, Hassan Gbadebo',
+    matricNo: 'CONSMMEFS/NUR/2024/0142',
+    level: 'OND 2',
+    admissionYear: '2024/25',
+    status: 'Active'
+  });
+  readonly personalContact = signal<PersonalContactData>({
+    fullName: 'ISHOLA, Hassan Gbadebo',
+    email: 'igbadeobh@gmail.com',
+    phone: '0802 773 6450',
+    alternatePhone: '0702 308 4619',
+    dateOfBirth: '14 March 2004',
+    gender: 'Male',
+    maritalStatus: 'Single',
+    nationality: 'Nigerian',
+    stateOfOrigin: 'Oyo State',
+    lgaOfOrigin: 'Oyo North',
+    disability: 'No',
+    specificDisability: 'None'
+  });
+  readonly residentialAddress = signal<AddressData>({
+    houseNumber: '3',
+    streetName: 'Akin Bayo close',
+    landmark: 'Grey Hotel',
+    areaTown: 'Akinyele',
+    state: 'Oyo State',
+    lga: 'Akinyele'
+  });
+  readonly nextOfKin = signal<NextOfKinData>({
+    fullName: 'ISHOLA, Dada Haruna',
+    email: 'ihadola@gmail.com',
+    firstName: 'Dada',
+    middleName: 'Haruna',
+    lastName: 'Ishola',
+    title: 'Chief',
+    relationship: 'Father',
+    occupation: 'Trader',
+    phone: '0707 289 0246',
+    alternatePhone: '0702 308 4619'
+  });
+  readonly nextOfKinResidence = signal<AddressData>({
+    houseNumber: '3',
+    streetName: 'Akin Bayo close',
+    landmark: 'Grey Hotel',
+    areaTown: 'Akinyele',
+    state: 'Oyo State',
+    lga: 'Akinyele'
+  });
 
   toggleCourseSelection(course: ReturningCourse, checked: boolean): void {
     if (course.locked || course.category === 'carryover') {
@@ -366,6 +463,43 @@ export class ReturningFlowService {
 
   setResultSemester(value: string): void {
     this.selectedResultSemester.set(value);
+  }
+
+  setProfileTab(tab: ReturningProfileTab): void {
+    this.activeProfileTab.set(tab);
+  }
+
+  updatePersonalContact(patch: Partial<PersonalContactData>): void {
+    this.personalContact.set({ ...this.personalContact(), ...patch });
+  }
+
+  updateResidentialAddress(patch: Partial<AddressData>): void {
+    this.residentialAddress.set({ ...this.residentialAddress(), ...patch });
+  }
+
+  updateNextOfKin(patch: Partial<NextOfKinData>): void {
+    this.nextOfKin.set({ ...this.nextOfKin(), ...patch });
+  }
+
+  updateNextOfKinResidence(patch: Partial<AddressData>): void {
+    this.nextOfKinResidence.set({ ...this.nextOfKinResidence(), ...patch });
+  }
+
+  saveProfileChanges(): { ok: boolean; message: string } {
+    return { ok: true, message: 'Profile changes saved successfully.' };
+  }
+
+  updateAccountPassword(currentPassword: string, newPassword: string, confirmPassword: string): { ok: boolean; message: string } {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return { ok: false, message: 'Please fill all password fields.' };
+    }
+    if (newPassword.length < 8) {
+      return { ok: false, message: 'New password must be at least 8 characters.' };
+    }
+    if (newPassword !== confirmPassword) {
+      return { ok: false, message: 'Confirm password does not match new password.' };
+    }
+    return { ok: true, message: 'Password updated successfully.' };
   }
 
   updateHostelDraft(patch: Partial<HostelApplicationPayload>): void {

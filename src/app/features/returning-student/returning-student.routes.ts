@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { featureAccessGuard } from '../../services/feature-access.guard';
-import { PortalShellComponent } from '../shared/portal-shell.component';
 import { ReturningCgpaTrackerComponent } from './pages/returning-cgpa-tracker/returning-cgpa-tracker.component';
 import { ReturningCoursesComponent } from './pages/returning-courses/returning-courses.component';
 import { ReturningDashboardComponent } from './pages/returning-dashboard/returning-dashboard.component';
 import { ReturningHostelComponent } from './pages/returning-hostel/returning-hostel.component';
 import { ReturningPaymentComponent } from './pages/returning-payment/returning-payment.component';
+import { ReturningProfileComponent } from './pages/returning-profile/returning-profile.component';
 import { ReturningResultsComponent } from './pages/returning-results/returning-results.component';
 
 export default [
@@ -48,12 +48,10 @@ export default [
   },
   {
     path: 'profile',
-    component: PortalShellComponent,
+    component: ReturningProfileComponent,
     canActivate: [featureAccessGuard],
     data: {
-      feature: 'profile',
-      title: 'Returning Student Profile',
-      description: 'Returning-student profile and records will be managed in this area.'
+      feature: 'profile'
     }
   },
   {

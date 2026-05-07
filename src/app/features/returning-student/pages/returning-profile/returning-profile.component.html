@@ -1,0 +1,211 @@
+<div class="returning-profile-page">
+  <h1>Student Profile</h1>
+  <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
+
+  <div class="profile-shell">
+    <aside class="profile-tabs">
+      <button type="button" [class.active]="activeTab() === 'overview'" (click)="setTab('overview')">Overview</button>
+      <button type="button" [class.active]="activeTab() === 'personal'" (click)="setTab('personal')">Personal and Contact</button>
+      <button type="button" [class.active]="activeTab() === 'account'" (click)="setTab('account')">Account Settings</button>
+    </aside>
+
+    <section class="profile-content">
+      <ng-container [ngSwitch]="activeTab()">
+        <div *ngSwitchCase="'overview'" class="overview-block">
+          <h2>Profile Overview</h2>
+          <div class="photo-row">
+            <img src="assets/logo.png" alt="Student photo" />
+            <button type="button" class="change-photo"><i class="pi pi-link"></i> Change Photo</button>
+          </div>
+          <div class="meta-grid">
+            <div><small>Full Name</small><strong>{{ overview().fullName }}</strong></div>
+            <div><small>Matric Number</small><strong>{{ overview().matricNo }}</strong></div>
+            <div><small>Current Level</small><strong>{{ overview().level }}</strong></div>
+            <div><small>Admission Year</small><strong>{{ overview().admissionYear }}</strong></div>
+            <div><small>Student Status</small><strong>{{ overview().status }}</strong></div>
+          </div>
+        </div>
+
+        <div *ngSwitchCase="'personal'" class="forms-stack">
+          <article class="form-card">
+            <div class="card-head">
+              <h3>Personal Information</h3>
+              <div class="card-actions" *ngIf="isEditingPersonal(); else personalEditAction">
+                <button type="button" class="mini-btn neutral" (click)="cancelEdit('personal')">Cancel</button>
+                <button type="button" class="mini-btn primary" (click)="save('personal')">Save</button>
+              </div>
+              <ng-template #personalEditAction>
+                <button type="button" class="icon-edit-btn" (click)="startEdit('personal')" aria-label="Edit personal information">
+                  <i class="pi pi-pencil"></i>
+                </button>
+              </ng-template>
+            </div>
+            <div class="form-grid two" *ngIf="isEditingPersonal(); else personalReadMode">
+              <label><span>Full Name</span><input [ngModel]="personalDraft().fullName" (ngModelChange)="updatePersonalDraft('fullName', $event)" /></label>
+              <label><span>Email Address</span><input [ngModel]="personalDraft().email" (ngModelChange)="updatePersonalDraft('email', $event)" /></label>
+              <label><span>Phone Number</span><input [ngModel]="personalDraft().phone" (ngModelChange)="updatePersonalDraft('phone', $event)" /></label>
+              <label><span>Alternate Phone Number</span><input [ngModel]="personalDraft().alternatePhone" (ngModelChange)="updatePersonalDraft('alternatePhone', $event)" /></label>
+              <label><span>Date of Birth</span><input [ngModel]="personalDraft().dateOfBirth" (ngModelChange)="updatePersonalDraft('dateOfBirth', $event)" /></label>
+              <label><span>Gender</span><input [ngModel]="personalDraft().gender" (ngModelChange)="updatePersonalDraft('gender', $event)" /></label>
+              <label><span>Marital status</span><input [ngModel]="personalDraft().maritalStatus" (ngModelChange)="updatePersonalDraft('maritalStatus', $event)" /></label>
+              <label><span>Nationality</span><input [ngModel]="personalDraft().nationality" (ngModelChange)="updatePersonalDraft('nationality', $event)" /></label>
+              <label><span>State of origin</span><input [ngModel]="personalDraft().stateOfOrigin" (ngModelChange)="updatePersonalDraft('stateOfOrigin', $event)" /></label>
+              <label><span>LGA of origin</span><input [ngModel]="personalDraft().lgaOfOrigin" (ngModelChange)="updatePersonalDraft('lgaOfOrigin', $event)" /></label>
+              <label><span>Living with Disability</span><input [ngModel]="personalDraft().disability" (ngModelChange)="updatePersonalDraft('disability', $event)" /></label>
+              <label><span>Specific Disability</span><input [ngModel]="personalDraft().specificDisability" (ngModelChange)="updatePersonalDraft('specificDisability', $event)" /></label>
+            </div>
+            <ng-template #personalReadMode>
+              <div class="display-grid two">
+                <div><span>Full Name</span><strong>{{ personal().fullName }}</strong></div>
+                <div><span>Email Address</span><strong>{{ personal().email }}</strong></div>
+                <div><span>Phone Number</span><strong>{{ personal().phone }}</strong></div>
+                <div><span>Alternate Phone Number</span><strong>{{ personal().alternatePhone }}</strong></div>
+                <div><span>Date of Birth</span><strong>{{ personal().dateOfBirth }}</strong></div>
+                <div><span>Gender</span><strong>{{ personal().gender }}</strong></div>
+                <div><span>Marital status</span><strong>{{ personal().maritalStatus }}</strong></div>
+                <div><span>Nationality</span><strong>{{ personal().nationality }}</strong></div>
+                <div><span>State of origin</span><strong>{{ personal().stateOfOrigin }}</strong></div>
+                <div><span>LGA of origin</span><strong>{{ personal().lgaOfOrigin }}</strong></div>
+                <div><span>Living with Disability</span><strong>{{ personal().disability }}</strong></div>
+                <div><span>Specific Disability</span><strong>{{ personal().specificDisability }}</strong></div>
+              </div>
+            </ng-template>
+          </article>
+
+          <article class="form-card">
+            <div class="card-head">
+              <h3>Residential Information</h3>
+              <div class="card-actions" *ngIf="isEditingResidential(); else residentialEditAction">
+                <button type="button" class="mini-btn neutral" (click)="cancelEdit('residential')">Cancel</button>
+                <button type="button" class="mini-btn primary" (click)="save('residential')">Save</button>
+              </div>
+              <ng-template #residentialEditAction>
+                <button type="button" class="icon-edit-btn" (click)="startEdit('residential')" aria-label="Edit residential information">
+                  <i class="pi pi-pencil"></i>
+                </button>
+              </ng-template>
+            </div>
+            <div class="form-grid two" *ngIf="isEditingResidential(); else residentialReadMode">
+              <label><span>House Number</span><input [ngModel]="residentialDraft().houseNumber" (ngModelChange)="updateResidentialDraft('houseNumber', $event)" /></label>
+              <label><span>Street Name</span><input [ngModel]="residentialDraft().streetName" (ngModelChange)="updateResidentialDraft('streetName', $event)" /></label>
+              <label><span>Landmark</span><input [ngModel]="residentialDraft().landmark" (ngModelChange)="updateResidentialDraft('landmark', $event)" /></label>
+              <label><span>Area / Town</span><input [ngModel]="residentialDraft().areaTown" (ngModelChange)="updateResidentialDraft('areaTown', $event)" /></label>
+              <label><span>State</span><input [ngModel]="residentialDraft().state" (ngModelChange)="updateResidentialDraft('state', $event)" /></label>
+              <label><span>Local Government Area</span><input [ngModel]="residentialDraft().lga" (ngModelChange)="updateResidentialDraft('lga', $event)" /></label>
+            </div>
+            <ng-template #residentialReadMode>
+              <div class="display-grid two">
+                <div><span>House Number</span><strong>{{ residential().houseNumber }}</strong></div>
+                <div><span>Street Name</span><strong>{{ residential().streetName }}</strong></div>
+                <div><span>Landmark</span><strong>{{ residential().landmark }}</strong></div>
+                <div><span>Area / Town</span><strong>{{ residential().areaTown }}</strong></div>
+                <div><span>State</span><strong>{{ residential().state }}</strong></div>
+                <div><span>Local Government Area</span><strong>{{ residential().lga }}</strong></div>
+              </div>
+            </ng-template>
+          </article>
+
+          <article class="form-card">
+            <div class="card-head">
+              <h3>Next of Kin Information</h3>
+              <div class="card-actions" *ngIf="isEditingNextOfKin(); else nokEditAction">
+                <button type="button" class="mini-btn neutral" (click)="cancelEdit('nok')">Cancel</button>
+                <button type="button" class="mini-btn primary" (click)="save('nok')">Save</button>
+              </div>
+              <ng-template #nokEditAction>
+                <button type="button" class="icon-edit-btn" (click)="startEdit('nok')" aria-label="Edit next of kin information">
+                  <i class="pi pi-pencil"></i>
+                </button>
+              </ng-template>
+            </div>
+            <div class="form-grid two" *ngIf="isEditingNextOfKin(); else nokReadMode">
+              <label><span>Full Name</span><input [ngModel]="nextOfKinDraft().fullName" (ngModelChange)="updateNextOfKinDraft('fullName', $event)" /></label>
+              <label><span>Email Address</span><input [ngModel]="nextOfKinDraft().email" (ngModelChange)="updateNextOfKinDraft('email', $event)" /></label>
+              <label><span>First Name</span><input [ngModel]="nextOfKinDraft().firstName" (ngModelChange)="updateNextOfKinDraft('firstName', $event)" /></label>
+              <label><span>Middle Name</span><input [ngModel]="nextOfKinDraft().middleName" (ngModelChange)="updateNextOfKinDraft('middleName', $event)" /></label>
+              <label><span>Last Name</span><input [ngModel]="nextOfKinDraft().lastName" (ngModelChange)="updateNextOfKinDraft('lastName', $event)" /></label>
+              <label><span>Title</span><input [ngModel]="nextOfKinDraft().title" (ngModelChange)="updateNextOfKinDraft('title', $event)" /></label>
+              <label><span>Relationship</span><input [ngModel]="nextOfKinDraft().relationship" (ngModelChange)="updateNextOfKinDraft('relationship', $event)" /></label>
+              <label><span>Occupation</span><input [ngModel]="nextOfKinDraft().occupation" (ngModelChange)="updateNextOfKinDraft('occupation', $event)" /></label>
+              <label><span>Phone Number</span><input [ngModel]="nextOfKinDraft().phone" (ngModelChange)="updateNextOfKinDraft('phone', $event)" /></label>
+              <label><span>Alternate Phone Number</span><input [ngModel]="nextOfKinDraft().alternatePhone" (ngModelChange)="updateNextOfKinDraft('alternatePhone', $event)" /></label>
+            </div>
+            <ng-template #nokReadMode>
+              <div class="display-grid two">
+                <div><span>Full Name</span><strong>{{ nextOfKin().fullName }}</strong></div>
+                <div><span>Email Address</span><strong>{{ nextOfKin().email }}</strong></div>
+                <div><span>First Name</span><strong>{{ nextOfKin().firstName }}</strong></div>
+                <div><span>Middle Name</span><strong>{{ nextOfKin().middleName }}</strong></div>
+                <div><span>Last Name</span><strong>{{ nextOfKin().lastName }}</strong></div>
+                <div><span>Title</span><strong>{{ nextOfKin().title }}</strong></div>
+                <div><span>Relationship</span><strong>{{ nextOfKin().relationship }}</strong></div>
+                <div><span>Occupation</span><strong>{{ nextOfKin().occupation }}</strong></div>
+                <div><span>Phone Number</span><strong>{{ nextOfKin().phone }}</strong></div>
+                <div><span>Alternate Phone Number</span><strong>{{ nextOfKin().alternatePhone }}</strong></div>
+              </div>
+            </ng-template>
+          </article>
+
+          <article class="form-card">
+            <div class="card-head">
+              <h3>Next of Kin Residence</h3>
+              <div class="card-actions" *ngIf="isEditingNextOfKinResidence(); else nokResidenceEditAction">
+                <button type="button" class="mini-btn neutral" (click)="cancelEdit('nok-residence')">Cancel</button>
+                <button type="button" class="mini-btn primary" (click)="save('nok-residence')">Save</button>
+              </div>
+              <ng-template #nokResidenceEditAction>
+                <button type="button" class="icon-edit-btn" (click)="startEdit('nok-residence')" aria-label="Edit next of kin residence">
+                  <i class="pi pi-pencil"></i>
+                </button>
+              </ng-template>
+            </div>
+            <div class="form-grid two" *ngIf="isEditingNextOfKinResidence(); else nokResidenceReadMode">
+              <label><span>House Number</span><input [ngModel]="nextOfKinResidenceDraft().houseNumber" (ngModelChange)="updateNextOfKinResidenceDraft('houseNumber', $event)" /></label>
+              <label><span>Street Name</span><input [ngModel]="nextOfKinResidenceDraft().streetName" (ngModelChange)="updateNextOfKinResidenceDraft('streetName', $event)" /></label>
+              <label><span>Landmark</span><input [ngModel]="nextOfKinResidenceDraft().landmark" (ngModelChange)="updateNextOfKinResidenceDraft('landmark', $event)" /></label>
+              <label><span>Area / Town</span><input [ngModel]="nextOfKinResidenceDraft().areaTown" (ngModelChange)="updateNextOfKinResidenceDraft('areaTown', $event)" /></label>
+              <label><span>State</span><input [ngModel]="nextOfKinResidenceDraft().state" (ngModelChange)="updateNextOfKinResidenceDraft('state', $event)" /></label>
+              <label><span>Local Government Area</span><input [ngModel]="nextOfKinResidenceDraft().lga" (ngModelChange)="updateNextOfKinResidenceDraft('lga', $event)" /></label>
+            </div>
+            <ng-template #nokResidenceReadMode>
+              <div class="display-grid two">
+                <div><span>House Number</span><strong>{{ nextOfKinResidence().houseNumber }}</strong></div>
+                <div><span>Street Name</span><strong>{{ nextOfKinResidence().streetName }}</strong></div>
+                <div><span>Landmark</span><strong>{{ nextOfKinResidence().landmark }}</strong></div>
+                <div><span>Area / Town</span><strong>{{ nextOfKinResidence().areaTown }}</strong></div>
+                <div><span>State</span><strong>{{ nextOfKinResidence().state }}</strong></div>
+                <div><span>Local Government Area</span><strong>{{ nextOfKinResidence().lga }}</strong></div>
+              </div>
+            </ng-template>
+          </article>
+        </div>
+
+        <div *ngSwitchCase="'account'" class="account-card">
+          <h2>Change Password</h2>
+          <label>
+            <span>Current Password</span>
+            <div class="password-input">
+              <input [type]="showCurrent() ? 'text' : 'password'" [ngModel]="currentPassword()" (ngModelChange)="currentPassword.set($event)" />
+              <button type="button" (click)="showCurrent.set(!showCurrent())"><i class="pi pi-eye-slash"></i></button>
+            </div>
+          </label>
+          <label>
+            <span>New Password</span>
+            <div class="password-input">
+              <input [type]="showNew() ? 'text' : 'password'" [ngModel]="newPassword()" (ngModelChange)="newPassword.set($event)" />
+              <button type="button" (click)="showNew.set(!showNew())"><i class="pi pi-eye-slash"></i></button>
+            </div>
+          </label>
+          <label>
+            <span>Confirm Password</span>
+            <div class="password-input">
+              <input [type]="showConfirm() ? 'text' : 'password'" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" />
+              <button type="button" (click)="showConfirm.set(!showConfirm())"><i class="pi pi-eye-slash"></i></button>
+            </div>
+          </label>
+          <app-button (buttonClick)="savePassword()">Update New Password</app-button>
+        </div>
+      </ng-container>
+    </section>
+  </div>
+</div>
