@@ -15,7 +15,7 @@ import { FormService } from '../../widgets/services/form.service';
 import { RegStoreService } from '../../services/regstore.service';
 import { ApplicationService } from '../../services/application.service';
 import { formstepDTO } from '../../data/application/form.dto';
-import { TAcademicHistory, TNextOfKinDTO, TOLevelResult, TPersonalDetailDTO, TUploadFile } from '../../data/application/transformer.dto';
+import { TAcademicHistory, TNextOfKinDTO, TOLevelResult, TPersonalDetailDTO, TUploadFile, TUtmeResultPayload } from '../../data/application/transformer.dto';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { States } from '../../data/application/location.dto';
 import { LGA } from '../../data/application/registrantdatadto';
@@ -59,6 +59,7 @@ export class AdmissionformComponent implements OnInit {
   isLoadingNextOfKin: boolean = false;
   isLoadingAcademic: boolean = false;
   isLoadingDocuments: boolean = false;
+  isSubmittingApplication: boolean = false;
 
   _widgetService = inject(WidgetsService);
   _formStepService = inject(FormService);
@@ -81,6 +82,7 @@ export class AdmissionformComponent implements OnInit {
   _nextofkinFormData: TNextOfKinDTO | null = null;
   _academicHistoryFormData: TAcademicHistory[] | null = null;
   _olevelFormData: TOLevelResult[] | null = null;
+  _utmeResultFormData: TUtmeResultPayload | null = null;
   _uploadFileFormData: TUploadFile | null = null;
 
   _states: States[] | undefined;
@@ -124,6 +126,12 @@ export class AdmissionformComponent implements OnInit {
     this._formStepService.olevelResult$.subscribe((data: TOLevelResult[] | null) => {
       if (data != null) {
         this._olevelFormData = data;
+      }
+    });
+
+    this._formStepService.utmeResult$.subscribe((data: TUtmeResultPayload | null) => {
+      if (data != null) {
+        this._utmeResultFormData = data;
       }
     });
   }
@@ -332,9 +340,14 @@ export class AdmissionformComponent implements OnInit {
     this.isLoadingAcademic = true;
     let _ad = this.buildAcademicDetailObj();
     let _ol = this.buildolevelDetailObj();
+    let _utme = this.buildUtmeResultObj();
     return new Promise((resolve, reject) => {
       this.app_no = this.authSessionStore.applicationNo() || "";
-      firstValueFrom(this._appservice.personalDetails(this.app_no, { academic_history: _ol, o_level_result: _ad }))
+      firstValueFrom(this._appservice.personalDetails(this.app_no, {
+        academic_history: _ol,
+        o_level_result: _ad,
+        utme_result: _utme
+      }))
         .then((data) => {
           this.showSuccess("Academic Details", "Saved Successfully");
           this.isLoadingAcademic = false;
@@ -440,6 +453,19 @@ export class AdmissionformComponent implements OnInit {
     return _allOlevel;
   }
 
+  buildUtmeResultObj() {
+    if (this._utmeResultFormData != null) {
+      return {
+        utme_reg_number: this._utmeResultFormData.utme_reg_number || '',
+        score: this._utmeResultFormData.score
+      };
+    }
+    return {
+      utme_reg_number: '',
+      score: null
+    };
+  }
+
   buildDocumentUploadObj() {
     if (this._uploadFileFormData != null) {
       return this._uploadFileFormData;
@@ -498,9 +524,28 @@ export class AdmissionformComponent implements OnInit {
     }
   }
 
-  confirm() {
-    this.visible = true;
-    this.cd.detectChanges();
+  async confirm(): Promise<void> {
+    if (this.isSubmittingApplication) {
+      return;
+    }
+
+    const applicantNo = this.authSessionStore.applicationNo() || '';
+    if (!applicantNo) {
+      this.showError('Submit Application', 'Application number is missing. Please refresh and try again.');
+      return;
+    }
+
+    this.isSubmittingApplication = true;
+    try {
+      await firstValueFrom(this._appservice.submitApplication({ applicant_no: applicantNo }));
+      this.visible = true;
+      this.cd.detectChanges();
+    } catch (err) {
+      const erMsg = this.extractErrorMessage(err);
+      this.showError('Submit Application', erMsg);
+    } finally {
+      this.isSubmittingApplication = false;
+    }
   }
 
   done() {

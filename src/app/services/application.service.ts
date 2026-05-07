@@ -69,6 +69,10 @@ export class ApplicationService {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/initiate-payment`, refPayload);
   }
 
+  submitApplication(payload: { applicant_no: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiRoot}/api/v1/applicants/submit-application`, payload);
+  }
+
   private normalizeCollectionResponse(response: any): { data: any[] } {
     if (Array.isArray(response)) {
       return { data: response };

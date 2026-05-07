@@ -71,3 +71,8 @@ export interface TUploadFile{
     origin:CertificateOfBirth;
     utme:CertificateOfBirth;
 }
+
+export interface TUtmeResultPayload {
+    utme_reg_number: string;
+    score: number | null;
+}

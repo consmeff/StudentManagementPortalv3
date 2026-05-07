@@ -196,6 +196,8 @@
                   
                   <p-button 
                     label="Submit and Confirm" 
+                    [loading]="isSubmittingApplication"
+                    [disabled]="isSubmittingApplication"
                     (onClick)="confirm()"
                     styleClass="primary-btn"
                     icon="pi pi-check"

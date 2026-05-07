@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 
-import { TAcademicHistory, TNextOfKinDTO, TOLevelResult, TPersonalDetailDTO, TUploadFile } from '../../data/application/transformer.dto';
+import { TAcademicHistory, TNextOfKinDTO, TOLevelResult, TPersonalDetailDTO, TUploadFile, TUtmeResultPayload } from '../../data/application/transformer.dto';
 import { formstepDTO } from '../../data/application/form.dto';
 
 @Injectable({
@@ -33,6 +33,10 @@ export class FormService {
   private readonly _olevelResult = signal<TOLevelResult[] | null>(null);
   readonly olevelResult = this._olevelResult.asReadonly();
   public olevelResult$ = toObservable(this._olevelResult);
+
+  private readonly _utmeResult = signal<TUtmeResultPayload | null>(null);
+  readonly utmeResult = this._utmeResult.asReadonly();
+  public utmeResult$ = toObservable(this._utmeResult);
 
   private readonly _uploadFile = signal<TUploadFile | null>(null);
   readonly uploadFile = this._uploadFile.asReadonly();
@@ -67,6 +71,12 @@ export class FormService {
   setOlevelResultFormData(payload:TOLevelResult[]){
     if(payload !=null){
       this._olevelResult.set([...payload]);
+    }
+  }
+
+  setUtmeResultFormData(payload:TUtmeResultPayload){
+    if(payload !=null){
+      this._utmeResult.set({ ...payload });
     }
   }
  

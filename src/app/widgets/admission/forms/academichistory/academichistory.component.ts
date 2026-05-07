@@ -16,7 +16,7 @@ import { ApplicationService } from '../../../../services/application.service';
 import { formstepDTO } from '../../../../data/application/form.dto';
 import { AcademicHistory, OLevelResult, RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { extractLastYearFromText, getPastYears } from '../../../../utility/yearutil';
-import { ExamRecord, TAcademicHistory, TOLevelResult } from '../../../../data/application/transformer.dto';
+import { ExamRecord, TAcademicHistory, TOLevelResult, TUtmeResultPayload } from '../../../../data/application/transformer.dto';
 
 @Component({
   selector: 'app-academichistory',
@@ -233,6 +233,15 @@ export class AcademichistoryComponent {
     });
 
     this._formStepService.setOlevelResultFormData(ex);
+    const rawRegNo = this.jambDetailsForm.value.registrationNumber;
+    const rawScore = this.jambDetailsForm.value.score;
+    const parsedScore = rawScore === '' || rawScore === undefined || rawScore === null ? null : Number(rawScore);
+    const normalizedScore = typeof parsedScore === 'number' && Number.isFinite(parsedScore) ? parsedScore : null;
+    const utmePayload: TUtmeResultPayload = {
+      utme_reg_number: (rawRegNo || '').trim(),
+      score: normalizedScore
+    };
+    this._formStepService.setUtmeResultFormData(utmePayload);
 
     let ah: TAcademicHistory[] = [
       {
