@@ -40,7 +40,7 @@ export class PaymentWorkflowService {
 
       const redirected = this.redirectToHostedPayment(ref, hooks);
       if (!redirected) {
-        this.makePayment(ref, hooks);
+        this.makePayment(applicationNo, ref, hooks);
       }
     } catch {
       hooks?.onProcessingChange?.(false);
@@ -62,7 +62,7 @@ export class PaymentWorkflowService {
     return true;
   }
 
-  private makePayment(ref: PaymentRefResponse, hooks?: PaymentWorkflowHooks): void {
+  private makePayment(applicationNo: string, ref: PaymentRefResponse, hooks?: PaymentWorkflowHooks): void {
     const handler = PaystackPop.setup({
       key: 'pk_test_3303a8dc18ea2a4b2728543b34813870ba6f8bd6',
       email: ref.email || 'solixzdev@gmail.com',
@@ -76,6 +76,7 @@ export class PaymentWorkflowService {
 
         try {
           await firstValueFrom(this.appService.verifyPayment({ ref_id: reference }));
+          await this.syncPaymentStatus(applicationNo);
           hooks?.onVerifyingChange?.(false);
           hooks?.onSuccess?.('Payment Successful', 'Your payment has been verified successfully, login to continue.');
           hooks?.onVerified?.();
@@ -94,5 +95,22 @@ export class PaymentWorkflowService {
     });
 
     handler.openIframe();
+  }
+
+  private async syncPaymentStatus(applicationNo: string): Promise<void> {
+    const applicantNo = (applicationNo || this.authSessionStore.applicationNo() || '').trim();
+    if (!applicantNo) {
+      return;
+    }
+
+    try {
+      const snapshot = await firstValueFrom(this.appService.registratantData(applicantNo));
+      const paymentStatus = snapshot?.data?.payment_status ?? '';
+      if (paymentStatus) {
+        this.authSessionStore.setPaymentStatus(paymentStatus);
+      }
+    } catch {
+      // Keep payment flow resilient even if status refresh fails.
+    }
   }
 }
