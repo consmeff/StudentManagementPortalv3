@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 // PrimeNG Imports
 import { InputTextModule } from 'primeng/inputtext';
@@ -82,6 +83,9 @@ export class PersonaldetailsComponent {
   minDate: Date = new Date(1940, 0, 1);
 
   private formInitialized = false;
+  private formSubscriptions = new Subscription();
+  private dropdownsHydrated = false;
+  private lgaCache = new Map<number, LGA[]>();
 
   constructor(private fb: FormBuilder) {
     this.setupSubscriptions();
@@ -141,6 +145,10 @@ export class PersonaldetailsComponent {
   }
 
   initializeForm() {
+    this.formSubscriptions.unsubscribe();
+    this.formSubscriptions = new Subscription();
+    this.dropdownsHydrated = false;
+
     const data = this.backendRegistrationData?.data;
     
     this.personalInfoForm = this.fb.group({
@@ -192,7 +200,7 @@ export class PersonaldetailsComponent {
   }
 
   private setDropdownValuesIfReady() {
-    if (!this.formInitialized || !this.backendRegistrationData?.data) return;
+    if (!this.formInitialized || !this.backendRegistrationData?.data || this.dropdownsHydrated) return;
 
     const data = this.backendRegistrationData.data;
 
@@ -201,7 +209,7 @@ export class PersonaldetailsComponent {
       const preferredNationality = data?.nationality || 'Nigeria';
       const nationality = this.findNationalityByName(preferredNationality);
       if (nationality) {
-        this.personalInfoForm.get('nationality')?.setValue(nationality.name);
+        this.personalInfoForm.get('nationality')?.setValue(nationality.name, { emitEvent: false });
       }
     }
 
@@ -209,7 +217,8 @@ export class PersonaldetailsComponent {
     if (this.stateOptions && data?.state_of_origin) {
       const stateId = this.getStateIDByName(data.state_of_origin);
       if (stateId) {
-        this.personalInfoForm.get('stateOfOrigin')?.setValue(stateId);
+        this.personalInfoForm.get('stateOfOrigin')?.setValue(stateId, { emitEvent: false });
+        this.getLocalGovtByStateID(stateId);
       }
     }
 
@@ -220,9 +229,12 @@ export class PersonaldetailsComponent {
         ? this.getStateIDByName(residentialStateName)
         : data.residential_address.state.id;
       if (residentialStateId) {
-        this.personalInfoForm.get('residentialState')?.setValue(residentialStateId);
+        this.personalInfoForm.get('residentialState')?.setValue(residentialStateId, { emitEvent: false });
+        this.getLocalGovtByStateID2(residentialStateId);
       }
     }
+
+    this.dropdownsHydrated = true;
   }
 
   private findNationalityByName(nationalityName: string): Countries | undefined {
@@ -232,8 +244,31 @@ export class PersonaldetailsComponent {
   }
 
   getLocalGovtByStateID(val: number) {
+    if (!val || val <= 0) {
+      return;
+    }
+    const cached = this.lgaCache.get(val);
+    if (cached) {
+      this.localGovOptions = cached;
+      this.localGovDropdownOptions = cached.map(lga => ({
+        label: lga.name,
+        value: lga.id
+      }));
+      this.regstore.setLGAData(this.localGovOptions);
+
+      const backendLga = this.backendRegistrationData?.data?.lga;
+      if (backendLga) {
+        const lgaId = this.getLocalGovtIDByName(backendLga);
+        if (lgaId && this.personalInfoForm.get('localGovernment')?.value !== lgaId) {
+          this.personalInfoForm.get('localGovernment')?.setValue(lgaId, { emitEvent: false });
+        }
+      }
+      return;
+    }
+
     this.appservice.lgas(val).subscribe(data => {
       if (data?.data) {
+        this.lgaCache.set(val, data.data);
         this.localGovOptions = data.data;
         this.localGovDropdownOptions = data.data.map(lga => ({
           label: lga.name,
@@ -244,8 +279,8 @@ export class PersonaldetailsComponent {
         const backendLga = this.backendRegistrationData?.data?.lga;
         if (backendLga) {
           const lgaId = this.getLocalGovtIDByName(backendLga);
-          if (lgaId) {
-            this.personalInfoForm.get('localGovernment')?.setValue(lgaId);
+          if (lgaId && this.personalInfoForm.get('localGovernment')?.value !== lgaId) {
+            this.personalInfoForm.get('localGovernment')?.setValue(lgaId, { emitEvent: false });
           }
         }
       }
@@ -253,8 +288,27 @@ export class PersonaldetailsComponent {
   }
 
   getLocalGovtByStateID2(val: number) {
+    if (!val || val <= 0) {
+      return;
+    }
+    const cached = this.lgaCache.get(val);
+    if (cached) {
+      this.residentialLocalGovernment = cached;
+      this.residentialLGADropdownOptions = cached.map(lga => ({
+        label: lga.name,
+        value: lga.id
+      }));
+
+      const backendResLga = this.backendRegistrationData?.data?.residential_address?.lga?.id;
+      if (backendResLga && this.personalInfoForm.get('residentialLocalGovernment')?.value !== backendResLga) {
+        this.personalInfoForm.get('residentialLocalGovernment')?.setValue(backendResLga, { emitEvent: false });
+      }
+      return;
+    }
+
     this.appservice.lgas(val).subscribe(data => {
       if (data?.data) {
+        this.lgaCache.set(val, data.data);
         this.residentialLocalGovernment = data.data;
         this.residentialLGADropdownOptions = data.data.map(lga => ({
           label: lga.name,
@@ -262,8 +316,8 @@ export class PersonaldetailsComponent {
         }));
         
         const backendResLga = this.backendRegistrationData?.data?.residential_address?.lga?.id;
-        if (backendResLga) {
-          this.personalInfoForm.get('residentialLocalGovernment')?.setValue(backendResLga);
+        if (backendResLga && this.personalInfoForm.get('residentialLocalGovernment')?.value !== backendResLga) {
+          this.personalInfoForm.get('residentialLocalGovernment')?.setValue(backendResLga, { emitEvent: false });
         }
       }
     });
@@ -293,7 +347,7 @@ export class PersonaldetailsComponent {
     if (!this.personalInfoForm) return;
 
     // Disability field validation
-    this.personalInfoForm.get('disability')?.valueChanges.subscribe((value) => {
+    this.formSubscriptions.add(this.personalInfoForm.get('disability')?.valueChanges.subscribe((value) => {
       const disabilityDetailsControl = this.personalInfoForm.get('disabilityDetails');
       if (value === 'Yes') {
         disabilityDetailsControl?.setValidators(Validators.required);
@@ -302,26 +356,26 @@ export class PersonaldetailsComponent {
         disabilityDetailsControl?.setValue('');
       }
       disabilityDetailsControl?.updateValueAndValidity();
-    });
+    }) ?? new Subscription());
 
     // State of origin changes
-    this.personalInfoForm.get("stateOfOrigin")?.valueChanges.subscribe((val: number) => {
+    this.formSubscriptions.add(this.personalInfoForm.get("stateOfOrigin")?.valueChanges.subscribe((val: number) => {
       if (val > 0) {
-        this.personalInfoForm.get('localGovernment')?.setValue(null);
+        this.personalInfoForm.get('localGovernment')?.setValue(null, { emitEvent: false });
         this.getLocalGovtByStateID(val);
       }
-    });
+    }) ?? new Subscription());
 
     // Residential state changes
-    this.personalInfoForm.get("residentialState")?.valueChanges.subscribe((val: number) => {
+    this.formSubscriptions.add(this.personalInfoForm.get("residentialState")?.valueChanges.subscribe((val: number) => {
       if (val > 0) {
-        this.personalInfoForm.get('residentialLocalGovernment')?.setValue(null);
+        this.personalInfoForm.get('residentialLocalGovernment')?.setValue(null, { emitEvent: false });
         this.getLocalGovtByStateID2(val);
       }
-    });
+    }) ?? new Subscription());
 
     // Form validation and data setting
-    this.personalInfoForm.valueChanges.subscribe(() => {
+    this.formSubscriptions.add(this.personalInfoForm.valueChanges.subscribe(() => {
       if (this.personalInfoForm.valid) {
         this._formStepService.setPersonalFormData(this.personalInfoForm.value);
         this.formStepStatus.personalinfoValid = true;
@@ -330,7 +384,7 @@ export class PersonaldetailsComponent {
         this.formStepStatus.personalinfoValid = false;
         this._formStepService.setFormSteps(this.formStepStatus);
       }
-    });
+    }));
   }
 
   isFieldInvalid(fieldName: string): boolean {

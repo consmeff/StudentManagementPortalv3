@@ -22,13 +22,14 @@ export class NavigationAccessService {
     switch (feature) {
       case 'dashboard':
       case 'profile':
-      case 'admissionform':
       case 'summarypage':
       case 'courses':
       case 'results':
       case 'cgpaTracker':
       case 'hostel':
         return true;
+      case 'admissionform':
+        return this.hasAnyPayment();
       case 'payment':
         if (!this.isNewPortalRoute()) {
           return true;
@@ -45,7 +46,13 @@ export class NavigationAccessService {
       return false;
     }
 
-    if (normalizedStatus.includes('unpaid') || normalizedStatus.includes('no payment')) {
+    if (
+      normalizedStatus.includes('unpaid')
+      || normalizedStatus.includes('no payment')
+      || normalizedStatus.includes('not paid')
+      || normalizedStatus.includes('pending')
+      || normalizedStatus.includes('fail')
+    ) {
       return false;
     }
 
