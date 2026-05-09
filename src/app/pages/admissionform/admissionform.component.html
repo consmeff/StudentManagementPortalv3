@@ -5,6 +5,10 @@
   
     
     <div class="page-title">Admission Form</div>
+    <div class="lock-notice" *ngIf="isEditLocked">
+      This application is read-only. Editing is only allowed when compliance is issued.
+      <span *ngIf="complianceDirective">Directive: {{ complianceDirective }}</span>
+    </div>
     
     <!-- Success Dialog -->
     <p-dialog 
@@ -80,7 +84,7 @@
                 <div class="step-actions">
                   <p-button 
                     label="Save and Continue" 
-                    [disabled]="!formStepStatus.personalinfoValid"
+                    [disabled]="isEditLocked || !formStepStatus.personalinfoValid"
                     [loading]="isLoadingPersonal"
                     (onClick)="saveAndMoveToStep(2, savePersonalDetails.bind(this))"
                     styleClass="primary-btn"
@@ -109,7 +113,7 @@
                   
                   <p-button 
                     label="Save and Continue" 
-                    [disabled]="!formStepStatus.nextofkinValid"
+                    [disabled]="isEditLocked || !formStepStatus.nextofkinValid"
                     [loading]="isLoadingNextOfKin"
                     (onClick)="saveAndMoveToStep(3, saveNextOfKinDetails.bind(this))"
                     styleClass="primary-btn"
@@ -138,7 +142,7 @@
                   
                   <p-button 
                     label="Save and Continue" 
-                    [disabled]="!formStepStatus.academicValid"
+                    [disabled]="isEditLocked || !formStepStatus.academicValid"
                     [loading]="isLoadingAcademic"
                     (onClick)="saveAndMoveToStep(4, saveAcademicHistory.bind(this))"
                     styleClass="primary-btn"
@@ -167,7 +171,7 @@
                   
                   <p-button 
                     label="Save and Continue" 
-                    [disabled]="!formStepStatus.docuplodValid"
+                    [disabled]="isEditLocked || !formStepStatus.docuplodValid"
                     [loading]="isLoadingDocuments"
                     (onClick)="saveAndMoveToStep(5, saveDocumentUpload.bind(this))"
                     styleClass="primary-btn"
@@ -197,7 +201,7 @@
                   <p-button 
                     label="Submit and Confirm" 
                     [loading]="isSubmittingApplication"
-                    [disabled]="isSubmittingApplication"
+                    [disabled]="isEditLocked || isSubmittingApplication"
                     (onClick)="confirm()"
                     styleClass="primary-btn"
                     icon="pi pi-check"

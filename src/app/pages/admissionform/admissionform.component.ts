@@ -60,6 +60,8 @@ export class AdmissionformComponent implements OnInit {
   isLoadingAcademic: boolean = false;
   isLoadingDocuments: boolean = false;
   isSubmittingApplication: boolean = false;
+  isEditLocked: boolean = false;
+  complianceDirective: string = '';
 
   _widgetService = inject(WidgetsService);
   _formStepService = inject(FormService);
@@ -186,6 +188,7 @@ export class AdmissionformComponent implements OnInit {
     this._appservice.registratantData(appNo).subscribe({
       next: (data: RegistrantDataDTO) => {
         this._preRegData.setRegData(data);
+        this.computeEditLockState(data);
         this.hydrateFormStateFromRegistrantData(data);
         this.setInitialStep(requestedStep);
       },
@@ -296,7 +299,46 @@ export class AdmissionformComponent implements OnInit {
     return value !== null && value !== undefined;
   }
 
+  private canEditApplication(): boolean {
+    return !this.isEditLocked;
+  }
+
+  private ensureCanEditOrReject(): Promise<void> | null {
+    if (this.canEditApplication()) {
+      return null;
+    }
+    const msg = 'Application can only be edited when compliance is issued.';
+    this.showError('Application Locked', msg);
+    return Promise.reject(msg);
+  }
+
+  private computeEditLockState(payload: RegistrantDataDTO): void {
+    const data = payload?.data;
+    if (!data) {
+      this.isEditLocked = false;
+      this.complianceDirective = '';
+      return;
+    }
+
+    const approvalStatus = (data.approval_status || '').toLowerCase();
+    const directive = (data as any).compliance_directive || '';
+    this.complianceDirective = directive;
+    const complianceIssued = approvalStatus.includes('complian') || approvalStatus.includes('complain');
+
+    const hasExistingApplicationData = this.hasRegistrantValue(data.marital_status)
+      || !!data.primary_parent_or_guardian
+      || (Array.isArray(data.academic_history) && data.academic_history.length > 0)
+      || !!data.certificate_of_birth?.file_url
+      || !!data.passport_photo?.file_url
+      || !!data.utme_result?.file?.file_url
+      || !!data.o_level_result?.length;
+
+    this.isEditLocked = hasExistingApplicationData && !complianceIssued;
+  }
+
   savePersonalDetails(): Promise<void> {
+    const blocked = this.ensureCanEditOrReject();
+    if (blocked) return blocked;
     this.isLoadingPersonal = true;
     let _pd = this.buildPersonalDetailObj();
     return new Promise((resolve, reject) => {
@@ -317,6 +359,8 @@ export class AdmissionformComponent implements OnInit {
   }
 
   saveNextOfKinDetails(): Promise<void> {
+    const blocked = this.ensureCanEditOrReject();
+    if (blocked) return blocked;
     this.isLoadingNextOfKin = true;
     let _nk = this.buildNextOfKinDetailObj();
     return new Promise((resolve, reject) => {
@@ -337,6 +381,8 @@ export class AdmissionformComponent implements OnInit {
   }
 
   saveAcademicHistory(): Promise<void> {
+    const blocked = this.ensureCanEditOrReject();
+    if (blocked) return blocked;
     this.isLoadingAcademic = true;
     let _ad = this.buildAcademicDetailObj();
     let _ol = this.buildolevelDetailObj();
@@ -346,7 +392,8 @@ export class AdmissionformComponent implements OnInit {
       firstValueFrom(this._appservice.personalDetails(this.app_no, {
         academic_history: _ol,
         o_level_result: _ad,
-        utme_result: _utme
+        utme_reg_no: _utme.utme_reg_no,
+        utme_result: { score: _utme.score }
       }))
         .then((data) => {
           this.showSuccess("Academic Details", "Saved Successfully");
@@ -363,10 +410,13 @@ export class AdmissionformComponent implements OnInit {
   }
 
   saveDocumentUpload(): Promise<void> {
+    const blocked = this.ensureCanEditOrReject();
+    if (blocked) return blocked;
     this.isLoadingDocuments = true;
     let _up = this.buildDocumentUploadObj();
     let _ad = this.buildAcademicDetailObj();
     let _ol = this.buildolevelDetailObj();
+    let _utme = this.buildUtmeResultObj();
     if (_ad && _ad[0] && _up?.olevels[0]) {
       _ad[0].file = _up?.olevels[0];
     }
@@ -377,7 +427,8 @@ export class AdmissionformComponent implements OnInit {
         certificate_of_birth: _up?.certificateofbirth,
         passport_photo: _up?.passport,
         certificate_of_origin: _up?.origin,
-        utme_result: { file: _up?.utme, score: 0 },
+        utme_reg_no: _utme.utme_reg_no,
+        utme_result: { file: _up?.utme, score: _utme.score },
         o_level_result: _ad,
       }))
         .then((data) => {
@@ -456,12 +507,12 @@ export class AdmissionformComponent implements OnInit {
   buildUtmeResultObj() {
     if (this._utmeResultFormData != null) {
       return {
-        utme_reg_number: this._utmeResultFormData.utme_reg_number || '',
+        utme_reg_no: this._utmeResultFormData.utme_reg_no || '',
         score: this._utmeResultFormData.score
       };
     }
     return {
-      utme_reg_number: '',
+      utme_reg_no: '',
       score: null
     };
   }

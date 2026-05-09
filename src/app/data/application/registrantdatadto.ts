@@ -24,6 +24,7 @@ export interface RegistrantData {
   disability:               string;
   payment_status:               string;
   utme_result:                  UtmeResult|undefined;
+  utme_reg_no?:                 string | null;
   residential_address:          Address|undefined;
   correspondence_address:       Address|undefined;
   nationality:                  string;
@@ -33,6 +34,7 @@ export interface RegistrantData {
   primary_parent_or_guardian:   AryParentOrGuardian|undefined;
   secondary_parent_or_guardian: AryParentOrGuardian|undefined;
   approval_status:              string;
+  compliance_directive?:        string | null;
   payment_record:               null;
   program:                      Department;
   session:                      Session;
@@ -130,5 +132,4 @@ export interface UtmeResult {
   score?: number;
   file:  CertificateOfBirth;
 }
-
 

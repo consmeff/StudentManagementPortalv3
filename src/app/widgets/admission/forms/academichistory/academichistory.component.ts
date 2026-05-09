@@ -148,10 +148,11 @@ export class AcademichistoryComponent {
       datecompleted: [_sec?.to_date ? new Date(_sec.to_date) : null, Validators.required]
     });
 
-    const utmeData = (this.backendRegistrationData?.data as any)?.utme_result;
+    const regData = (this.backendRegistrationData?.data as any) ?? {};
+    const utmeData = regData.utme_result;
     this.jambDetailsForm = this.fb.group({
-      registrationNumber: [utmeData?.registration_number ?? ''],
-      score: [utmeData?.score ?? null]
+      registrationNumber: [regData.utme_reg_no ?? utmeData?.utme_reg_no ?? '', Validators.required],
+      score: [utmeData?.score ?? null, [Validators.required, Validators.min(0), Validators.max(400)]]
     });
 
     let _exams = this.backendRegistrationData?.data?.o_level_result;
@@ -207,6 +208,7 @@ export class AcademichistoryComponent {
     if (this.academicHistoryPrimaryForm.valid && 
         this.academicHistorySecondaryForm.valid && 
         this.academicHistoryExamsForm.valid &&
+        this.jambDetailsForm.valid &&
         dateRangesValid &&
         optionalQualificationsValid) {
       this.formStepStatus.academicValid = true;
@@ -238,7 +240,7 @@ export class AcademichistoryComponent {
     const parsedScore = rawScore === '' || rawScore === undefined || rawScore === null ? null : Number(rawScore);
     const normalizedScore = typeof parsedScore === 'number' && Number.isFinite(parsedScore) ? parsedScore : null;
     const utmePayload: TUtmeResultPayload = {
-      utme_reg_number: (rawRegNo || '').trim(),
+      utme_reg_no: (rawRegNo || '').trim(),
       score: normalizedScore
     };
     this._formStepService.setUtmeResultFormData(utmePayload);

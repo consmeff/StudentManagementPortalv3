@@ -73,6 +73,6 @@ export interface TUploadFile{
 }
 
 export interface TUtmeResultPayload {
-    utme_reg_number: string;
+    utme_reg_no: string;
     score: number | null;
 }

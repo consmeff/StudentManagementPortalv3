@@ -27,6 +27,22 @@
   color: var(--app-text-primary);
 }
 
+.lock-notice {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface-alt);
+  color: var(--app-text-secondary);
+  font-size: 0.9rem;
+}
+
+.lock-notice span {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--app-text-primary);
+}
+
 .stepper-wrapper {
   padding: 0rem;
 }
