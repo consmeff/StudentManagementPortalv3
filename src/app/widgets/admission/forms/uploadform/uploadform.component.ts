@@ -47,6 +47,7 @@ export class UploadformComponent implements AfterViewInit {
   };
 
   formValid: boolean = false;
+  isEditable = true;
 
   // Loading states
   isLoadingCertificate: boolean = false;
@@ -79,6 +80,10 @@ export class UploadformComponent implements AfterViewInit {
         nextofkinValid: false,
         personalinfoValid: false
       };
+    });
+
+    this._formStepService.applicationEditable$.subscribe((editable) => {
+      this.isEditable = editable;
     });
 
     this._regService.uploadFile$.subscribe((f: any) => {
@@ -117,6 +122,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onCertificateUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, 'Certificate of Birth');
     if (selectedFile) {
       this.isLoadingCertificate = true;
@@ -145,6 +153,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onOlevelUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, "O' Level Result");
     if (selectedFile) {
       this.isLoadingOlevel = true;
@@ -176,6 +187,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onPassportUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, 'Passport Photograph');
     if (selectedFile) {
       this.isLoadingPassport = true;
@@ -204,6 +218,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onOriginUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, 'Certificate of Origin');
     if (selectedFile) {
       this.isLoadingOrigin = true;
@@ -232,6 +249,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onUTMEUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, 'UTME Result');
     if (selectedFile) {
       this.isLoadingUTME = true;
@@ -260,6 +280,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   removeFile(arg: number) {
+    if (!this.isEditable) {
+      return;
+    }
     switch (arg) {
       case 0:
         this.CertificateFile = undefined;

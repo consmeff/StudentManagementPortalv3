@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 // PrimeNG Imports
@@ -79,8 +79,10 @@ export class PersonaldetailsComponent {
   residentialLGADropdownOptions: any[] = [];
 
   // Date constraints
-  maxDate: Date = new Date();
+  maxDate: Date = this.createMaxDobDate();
   minDate: Date = new Date(1940, 0, 1);
+  maxBirthYear: number = this.maxDate.getFullYear();
+  isEditable = true;
 
   private formInitialized = false;
   private formSubscriptions = new Subscription();
@@ -98,6 +100,11 @@ export class PersonaldetailsComponent {
   private setupSubscriptions() {
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step;
+    });
+
+    this._formStepService.applicationEditable$.subscribe((editable) => {
+      this.isEditable = editable;
+      this.applyEditableState();
     });
 
     this.regstore.countryData$.subscribe(data => {
@@ -159,7 +166,7 @@ export class PersonaldetailsComponent {
       email: [data?.email ?? '', [Validators.required, Validators.email]],
       phonenumber: [data?.phone_number ?? '', [Validators.required, Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)]],
       alternativePhoneNumber: [data?.alt_phone_number ?? '', Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)],
-      dateOfBirth: [data?.dob ? new Date(data.dob) : null, Validators.required],
+      dateOfBirth: [data?.dob ? new Date(data.dob) : null, [Validators.required, this.minimumAgeValidator(16)]],
       maritalStatus: [data?.marital_status ?? null, Validators.required],
       gender: [data?.gender ?? null, Validators.required],
       nationality: [data?.nationality ?? 'Nigeria', Validators.required],
@@ -183,6 +190,41 @@ export class PersonaldetailsComponent {
     this.formInitialized = true;
     
     this.setDropdownValuesIfReady();
+    this.applyEditableState();
+  }
+
+  private createMaxDobDate(): Date {
+    const current = new Date();
+    return new Date(current.getFullYear() - 16, current.getMonth(), current.getDate());
+  }
+
+  private minimumAgeValidator(minAge: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+      const date = value instanceof Date ? value : new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return null;
+      }
+
+      const threshold = this.createMaxDobDate();
+      return date > threshold ? { minAge: { requiredAge: minAge } } : null;
+    };
+  }
+
+  private applyEditableState(): void {
+    if (!this.personalInfoForm) {
+      return;
+    }
+
+    if (this.isEditable) {
+      this.personalInfoForm.enable({ emitEvent: false });
+      return;
+    }
+
+    this.personalInfoForm.disable({ emitEvent: false });
   }
 
   private handleDisabilityField(data: any) {
@@ -398,6 +440,7 @@ export class PersonaldetailsComponent {
       if (field.errors['required']) return `${this.getFieldLabel(fieldName)} is required`;
       if (field.errors['email']) return 'Please enter a valid email address';
       if (field.errors['pattern']) return 'Please enter a valid phone number';
+      if (field.errors['minAge']) return 'Applicant must be at least 16 years old';
     }
     return '';
   }

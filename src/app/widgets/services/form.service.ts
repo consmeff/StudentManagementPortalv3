@@ -42,6 +42,10 @@ export class FormService {
   readonly uploadFile = this._uploadFile.asReadonly();
   public uploadFile$ = toObservable(this._uploadFile);
 
+  private readonly _applicationEditable = signal(true);
+  readonly applicationEditable = this._applicationEditable.asReadonly();
+  public applicationEditable$ = toObservable(this._applicationEditable);
+
 
 
   constructor() { }
@@ -90,6 +94,10 @@ export class FormService {
         utme: payload.utme
       });
     }
+  }
+
+  setApplicationEditable(editable: boolean) {
+    this._applicationEditable.set(!!editable);
   }
 
   

@@ -67,6 +67,7 @@ export class AcademichistoryComponent {
   });
 
   attemptOptions = ['1', '2'];
+  isEditable = true;
 
   constructor(private fb: FormBuilder) {
     this.academicHistoryOtherQualificationForm = this.fb.group({
@@ -79,6 +80,11 @@ export class AcademichistoryComponent {
 
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step;
+    });
+
+    this._formStepService.applicationEditable$.subscribe((editable) => {
+      this.isEditable = editable;
+      this.applyEditableState();
     });
 
     this.regstore.preRegData$.subscribe(data => {
@@ -168,6 +174,7 @@ export class AcademichistoryComponent {
     }
 
     this.setupListeners();
+    this.applyEditableState();
   }
 
   setupListeners() {
@@ -412,5 +419,27 @@ export class AcademichistoryComponent {
       return value.trim().length > 0;
     }
     return value !== null && value !== undefined;
+  }
+
+  private applyEditableState(): void {
+    const forms = [
+      this.academicHistoryPrimaryForm,
+      this.academicHistorySecondaryForm,
+      this.jambDetailsForm,
+      this.academicHistoryExamsForm,
+      this.academicHistoryOtherQualificationForm,
+      this.examnumform
+    ];
+
+    forms.forEach((form) => {
+      if (!form) {
+        return;
+      }
+      if (this.isEditable) {
+        form.enable({ emitEvent: false });
+      } else {
+        form.disable({ emitEvent: false });
+      }
+    });
   }
 }

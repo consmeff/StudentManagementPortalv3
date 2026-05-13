@@ -61,6 +61,7 @@ export class AdmissionformComponent implements OnInit {
   isLoadingDocuments: boolean = false;
   isSubmittingApplication: boolean = false;
   isEditLocked: boolean = false;
+  hasComplianceIssued: boolean = false;
   complianceDirective: string = '';
 
   _widgetService = inject(WidgetsService);
@@ -216,6 +217,10 @@ export class AdmissionformComponent implements OnInit {
   }
 
   canNavigateToStep(step: number): boolean {
+    if (this.hasComplianceIssued) {
+      return true;
+    }
+
     switch (step) {
       case 1:
         return true;
@@ -324,6 +329,7 @@ export class AdmissionformComponent implements OnInit {
     const directive = (data as any).compliance_directive || '';
     this.complianceDirective = directive;
     const complianceIssued = approvalStatus.includes('complian') || approvalStatus.includes('complain');
+    this.hasComplianceIssued = complianceIssued;
     const personalDone = this.hasRegistrantValue(data.marital_status)
       && this.hasRegistrantValue(data.gender)
       && this.hasRegistrantValue(data.dob)
@@ -346,6 +352,7 @@ export class AdmissionformComponent implements OnInit {
     const allStepsCompleted = personalDone && nextOfKinDone && academicDone && docsDone;
 
     this.isEditLocked = allStepsCompleted && !complianceIssued;
+    this._formStepService.setApplicationEditable(!this.isEditLocked);
   }
 
   savePersonalDetails(): Promise<void> {

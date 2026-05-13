@@ -64,10 +64,16 @@ export class NextofkinComponent {
   localGovDropdownOptions: any[] = [];
 
   private formInitialized = false;
+  isEditable = true;
 
   constructor(private fb: FormBuilder) {
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step;
+    });
+
+    this._formStepService.applicationEditable$.subscribe((editable) => {
+      this.isEditable = editable;
+      this.applyEditableState();
     });
 
     this.regstore.countryData$.subscribe(data => {
@@ -149,6 +155,7 @@ export class NextofkinComponent {
     });
 
     this.formInitialized = true;
+    this.applyEditableState();
 
     // Set dropdown values with delays for cascading dropdowns
     if (data) {
@@ -210,6 +217,19 @@ export class NextofkinComponent {
         this.nextofkinForm.controls["residentialLocalGovernment"].setValue(val);
       }
     });
+  }
+
+  private applyEditableState(): void {
+    if (!this.nextofkinForm) {
+      return;
+    }
+
+    if (this.isEditable) {
+      this.nextofkinForm.enable({ emitEvent: false });
+      return;
+    }
+
+    this.nextofkinForm.disable({ emitEvent: false });
   }
 
   getLocalGovtByStateID(val: number) {
