@@ -72,7 +72,7 @@ export class AppMenu {
     private buildMenu() {
         const activePortal = this.resolveActivePortalSegment();
         const baseUrl = `/${activePortal}`;
-        const items: MenuItem[] = [
+        let items: MenuItem[] = [
             this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
             this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile'),
             this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment'),
@@ -86,8 +86,50 @@ export class AppMenu {
         ];
 
         if (activePortal === 'new') {
-            items.splice(2, 0, this.createNavItem('Admission', 'pi pi-book', `${baseUrl}/admissionform`, 'admissionform'));
-            items.splice(4, 1);
+            items = [
+                this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
+                this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile'),
+                this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment'),
+                {
+                    label: 'Log Out',
+                    icon: 'pi pi-sign-out',
+                    styleClass: 'menu-item-logout',
+                    command: () => this.logOut()
+                }
+            ];
+        }
+
+        if (activePortal === 'admitted') {
+            items = [
+                this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
+                this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile'),
+                this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment'),
+                this.createNavItem('Courses', 'pi pi-book', `${baseUrl}/courses`, 'courses'),
+                {
+                    label: 'Log Out',
+                    icon: 'pi pi-sign-out',
+                    styleClass: 'menu-item-logout',
+                    command: () => this.logOut()
+                }
+            ];
+        }
+
+        if (activePortal === 'returning') {
+            items = [
+                this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
+                this.createNavItem('Courses', 'pi pi-book', `${baseUrl}/courses`, 'courses'),
+                this.createNavItem('Results', 'pi pi-file', `${baseUrl}/results`, 'results'),
+                this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment'),
+                this.createNavItem('CGPA Tracker', 'pi pi-chart-line', `${baseUrl}/cgpa-tracker`, 'cgpaTracker'),
+                this.createNavItem('Hostel', 'pi pi-home', `${baseUrl}/hostel`, 'hostel'),
+                this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile'),
+                {
+                    label: 'Log Out',
+                    icon: 'pi pi-sign-out',
+                    styleClass: 'menu-item-logout',
+                    command: () => this.logOut()
+                }
+            ];
         }
 
         this.model = this.filterMenu(items);
