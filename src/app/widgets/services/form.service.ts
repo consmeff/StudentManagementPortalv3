@@ -18,6 +18,15 @@ export class FormService {
   readonly formsteps = this._formsteps.asReadonly();
   public formsteps$ = toObservable(this._formsteps);
 
+  private readonly _savedFormSteps = signal<formstepDTO>({
+    academicValid: false,
+    docuplodValid: false,
+    nextofkinValid: false,
+    personalinfoValid: false
+  });
+  readonly savedFormSteps = this._savedFormSteps.asReadonly();
+  public savedFormSteps$ = toObservable(this._savedFormSteps);
+
   private readonly _personalform = signal<TPersonalDetailDTO | null>(null);
   readonly personalform = this._personalform.asReadonly();
   public personalform$ = toObservable(this._personalform);
@@ -52,6 +61,10 @@ export class FormService {
 
   setFormSteps(form:formstepDTO){
     this._formsteps.set({ ...form });
+  }
+
+  setSavedFormSteps(form: formstepDTO) {
+    this._savedFormSteps.set({ ...form });
   }
 
   setPersonalFormData(payload:TPersonalDetailDTO){

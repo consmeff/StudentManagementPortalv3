@@ -12,6 +12,8 @@ import { ApplicationGuidelineModalComponent } from '../application-guideline-mod
 import { PaymentWorkflowService } from '../../../services/payment-workflow.service';
 import { RegistrantData } from '../../../data/application/registrantdatadto';
 import {
+  APPROVAL_STATUS_MESSAGES,
+  APPROVAL_STATUS_MESSAGE_VARIANTS,
   ACTION_LABELS,
   HERO_CONTENT,
   ROUTES,
@@ -35,6 +37,9 @@ interface CompletedApplicationDetails {
   preferredProgramme: string;
   applicationDate: string;
 }
+
+type ApprovalStatusMessageVariant = typeof APPROVAL_STATUS_MESSAGE_VARIANTS[keyof typeof APPROVAL_STATUS_MESSAGE_VARIANTS];
+type ApprovalStatusTone = 'info' | 'success' | 'warning' | 'danger';
 
 @Component({
   selector: 'app-pending-payment-flow',
@@ -75,6 +80,10 @@ export class PendingPaymentFlowComponent implements OnInit {
   readonly heroDescription = signal<string>(HERO_CONTENT.pending.description);
   readonly primaryActionLabel = signal<string>(HERO_CONTENT.pending.actionLabel);
   readonly applicationSteps = signal<ApplicationStep[]>([]);
+  readonly approvalMessageTitle = signal('');
+  readonly approvalMessageDetail = signal('');
+  readonly approvalMessageTone = signal<ApprovalStatusTone>('info');
+  readonly activeApprovalStatus = signal<ApprovalStatusMessageVariant>(APPROVAL_STATUS_MESSAGE_VARIANTS.neutral);
 
   ngOnInit(): void {
     this.dashboardName.set(this.authSessionStore.name() || UI_COPY.defaultApplicantName);
@@ -114,6 +123,10 @@ export class PendingPaymentFlowComponent implements OnInit {
 
   viewApplicationSummary(): void {
     this.router.navigateByUrl('/pages/summarypage');
+  }
+
+  editApplicationDetails(): void {
+    this.navigateToFormStep(1);
   }
 
   async continueFlow(): Promise<void> {
@@ -396,6 +409,14 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.navigateToFormStep(5);
   }
 
+  isComplianceIssued(): boolean {
+    return this.activeApprovalStatus() === APPROVAL_STATUS_MESSAGE_VARIANTS.compliance;
+  }
+
+  hasApprovalMessage(): boolean {
+    return this.activeApprovalStatus() !== APPROVAL_STATUS_MESSAGE_VARIANTS.neutral;
+  }
+
   private navigateToFormStep(step: number): void {
     this.router.navigate([ROUTES.admissionForm], {
       queryParams: { step },
@@ -462,6 +483,7 @@ export class PendingPaymentFlowComponent implements OnInit {
     const completedSteps = steps.filter((step) => step.status === 'completed').length;
     this.applicationSteps.set(steps);
     this.progressPercent.set(submitDone ? 100 : Math.max(20, Math.min(100, completedSteps * 20)));
+    this.applyApprovalStatusMessage(registrant, submitDone);
 
     const pending = !paymentDone;
     this.isPaymentPending.set(pending);
@@ -482,6 +504,59 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.heroTitle.set(HERO_CONTENT.paid.title);
     this.heroDescription.set(HERO_CONTENT.paid.description);
     this.primaryActionLabel.set(HERO_CONTENT.paid.actionLabel);
+  }
+
+  private applyApprovalStatusMessage(registrant: RegistrantData | null, submitDone: boolean): void {
+    const statusVariant = this.resolveApprovalStatusVariant(registrant, submitDone);
+    const messageConfig = APPROVAL_STATUS_MESSAGES[statusVariant];
+    this.activeApprovalStatus.set(statusVariant);
+    this.approvalMessageTitle.set(messageConfig.title);
+    this.approvalMessageDetail.set(this.resolveApprovalStatusDetail(statusVariant, registrant, messageConfig.detail));
+    this.approvalMessageTone.set(this.resolveApprovalMessageTone(messageConfig.tone));
+  }
+
+  private resolveApprovalStatusVariant(
+    registrant: RegistrantData | null,
+    submitDone: boolean
+  ): ApprovalStatusMessageVariant {
+    const normalizedStatus = (registrant?.approval_status ?? '').toLowerCase().trim();
+    if (normalizedStatus.includes('complian') || normalizedStatus.includes('complain')) {
+      return APPROVAL_STATUS_MESSAGE_VARIANTS.compliance;
+    }
+    if (normalizedStatus.includes('shortlist')) {
+      return APPROVAL_STATUS_MESSAGE_VARIANTS.shortlisted;
+    }
+    if (normalizedStatus.includes('admitted') || normalizedStatus.includes('approved')) {
+      return APPROVAL_STATUS_MESSAGE_VARIANTS.admitted;
+    }
+    if (normalizedStatus.includes('submitted')) {
+      return APPROVAL_STATUS_MESSAGE_VARIANTS.submitted;
+    }
+    if (normalizedStatus.includes('pending') || normalizedStatus.includes('under_review')) {
+      return APPROVAL_STATUS_MESSAGE_VARIANTS.pending;
+    }
+    if (submitDone) {
+      return APPROVAL_STATUS_MESSAGE_VARIANTS.submitted;
+    }
+    return APPROVAL_STATUS_MESSAGE_VARIANTS.neutral;
+  }
+
+  private resolveApprovalStatusDetail(
+    statusVariant: ApprovalStatusMessageVariant,
+    registrant: RegistrantData | null,
+    fallbackMessage: string
+  ): string {
+    if (statusVariant !== APPROVAL_STATUS_MESSAGE_VARIANTS.compliance) {
+      return fallbackMessage;
+    }
+    return registrant?.compliance_directive?.trim() ?? fallbackMessage;
+  }
+
+  private resolveApprovalMessageTone(tone: string): ApprovalStatusTone {
+    if (tone === 'success' || tone === 'warning' || tone === 'danger') {
+      return tone;
+    }
+    return 'info';
   }
 
   private formatDisplayDate(value: string | Date | undefined): string {

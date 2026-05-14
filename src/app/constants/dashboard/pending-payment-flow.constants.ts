@@ -46,12 +46,56 @@ export const ACTION_LABELS = {
   continueApplication: 'Continue Application',
   continueToForm: 'Continue to Form',
   continueToPayment: 'Continue to Payment',
+  editApplicationDetails: 'Edit Application Details',
+  viewApplicationSummary: 'View Application Summary',
 } as const;
 
 export const STATUS_MATCHERS = {
   paymentNegativeKeywords: ['pending', 'fail', 'unpaid'],
   paymentPositiveKeywords: ['paid', 'complete', 'success'],
   submissionCompleted: ['submitted', 'under_review', 'approved', 'rejected'],
+} as const;
+
+export const APPROVAL_STATUS_MESSAGE_VARIANTS = {
+  compliance: 'compliance',
+  shortlisted: 'shortlisted',
+  admitted: 'admitted',
+  submitted: 'submitted',
+  pending: 'pending',
+  neutral: 'neutral',
+} as const;
+
+export const APPROVAL_STATUS_MESSAGES = {
+  compliance: {
+    title: 'Compliance required',
+    detail: 'Your application needs an update before the admission review can continue.',
+    tone: 'warning',
+  },
+  shortlisted: {
+    title: 'You have been shortlisted',
+    detail: 'Check your email for examination scheduling details.',
+    tone: 'success',
+  },
+  admitted: {
+    title: 'Admission offered',
+    detail: 'Congratulations. Your admission decision is now available on the portal.',
+    tone: 'success',
+  },
+  submitted: {
+    title: 'Application submitted',
+    detail: 'Your completed application has been received and is awaiting review.',
+    tone: 'info',
+  },
+  pending: {
+    title: 'Application under review',
+    detail: 'Your application is being reviewed. You will be notified once there is an update.',
+    tone: 'warning',
+  },
+  neutral: {
+    title: '',
+    detail: '',
+    tone: 'info',
+  },
 } as const;
 
 export const UI_COPY = {

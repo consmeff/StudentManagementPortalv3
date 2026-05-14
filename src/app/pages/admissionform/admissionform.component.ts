@@ -80,6 +80,12 @@ export class AdmissionformComponent implements OnInit {
     nextofkinValid: false,
     personalinfoValid: false
   };
+  savedStepStatus: formstepDTO = {
+    academicValid: false,
+    docuplodValid: false,
+    nextofkinValid: false,
+    personalinfoValid: false
+  };
 
   _personalFormData: TPersonalDetailDTO | null = null;
   _nextofkinFormData: TNextOfKinDTO | null = null;
@@ -100,6 +106,10 @@ export class AdmissionformComponent implements OnInit {
 
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step;
+    });
+
+    this._formStepService.savedFormSteps$.subscribe((step: formstepDTO) => {
+      this.savedStepStatus = step;
     });
 
     this._formStepService.personalform$.subscribe((data: TPersonalDetailDTO | null) => {
@@ -199,9 +209,10 @@ export class AdmissionformComponent implements OnInit {
     });
   }
 
-  saveAndMoveToStep(nextStep: number, saveFunction: () => Promise<void>) {
+  saveAndMoveToStep(currentStep: number, nextStep: number, saveFunction: () => Promise<void>) {
     saveFunction()
       .then(() => {
+        this.markStepAsSaved(currentStep);
         this.activateStep(nextStep);
       })
       .catch((error) => {
@@ -225,13 +236,13 @@ export class AdmissionformComponent implements OnInit {
       case 1:
         return true;
       case 2:
-        return this.formStepStatus.personalinfoValid;
+        return this.savedStepStatus.personalinfoValid;
       case 3:
-        return this.formStepStatus.nextofkinValid;
+        return this.savedStepStatus.nextofkinValid;
       case 4:
-        return this.formStepStatus.academicValid;
+        return this.savedStepStatus.academicValid;
       case 5:
-        return this.formStepStatus.docuplodValid;
+        return this.savedStepStatus.docuplodValid;
       default:
         return false;
     }
@@ -242,7 +253,7 @@ export class AdmissionformComponent implements OnInit {
       this.activateStep(requestedStep);
       return;
     }
-    this.activeStepIndex = this.resolveResumeStep(this.formStepStatus);
+    this.activeStepIndex = this.resolveResumeStep(this.savedStepStatus);
   }
 
   private resolveResumeStep(status: formstepDTO): number {
@@ -295,6 +306,20 @@ export class AdmissionformComponent implements OnInit {
     };
     this.formStepStatus = inferredStepStatus;
     this._formStepService.setFormSteps(inferredStepStatus);
+    this.savedStepStatus = inferredStepStatus;
+    this._formStepService.setSavedFormSteps(inferredStepStatus);
+  }
+
+  private markStepAsSaved(step: number): void {
+    const nextSavedStatus: formstepDTO = {
+      ...this.savedStepStatus,
+      personalinfoValid: step === 1 ? true : this.savedStepStatus.personalinfoValid,
+      nextofkinValid: step === 2 ? true : this.savedStepStatus.nextofkinValid,
+      academicValid: step === 3 ? true : this.savedStepStatus.academicValid,
+      docuplodValid: step === 4 ? true : this.savedStepStatus.docuplodValid,
+    };
+    this.savedStepStatus = nextSavedStatus;
+    this._formStepService.setSavedFormSteps(nextSavedStatus);
   }
 
   private hasRegistrantValue(value: unknown): boolean {

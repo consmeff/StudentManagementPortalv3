@@ -81,6 +81,77 @@
   margin-top: 1.5rem;
 }
 
+.status-message-card {
+  margin-top: 1.2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--app-border);
+  padding: 1rem 1.1rem;
+  background: var(--app-surface);
+}
+
+.status-message-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.status-message-detail {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.status-message-card.tone-info {
+  border-color: color-mix(in srgb, var(--app-primary) 25%, var(--app-border));
+  background: color-mix(in srgb, var(--app-primary) 10%, var(--app-surface));
+}
+
+.status-message-card.tone-info .status-message-title {
+  color: var(--app-primary);
+}
+
+.status-message-card.tone-info .status-message-detail {
+  color: var(--app-text-primary);
+}
+
+.status-message-card.tone-success {
+  border-color: color-mix(in srgb, var(--app-success) 35%, var(--app-border));
+  background: color-mix(in srgb, var(--app-success) 12%, var(--app-surface));
+}
+
+.status-message-card.tone-success .status-message-title {
+  color: var(--app-success);
+}
+
+.status-message-card.tone-success .status-message-detail {
+  color: var(--app-text-primary);
+}
+
+.status-message-card.tone-warning {
+  border-color: color-mix(in srgb, var(--app-warning) 40%, var(--app-border));
+  background: color-mix(in srgb, var(--app-warning) 12%, var(--app-surface));
+}
+
+.status-message-card.tone-warning .status-message-title {
+  color: var(--app-warning);
+}
+
+.status-message-card.tone-warning .status-message-detail {
+  color: var(--app-text-primary);
+}
+
+.status-message-card.tone-danger {
+  border-color: color-mix(in srgb, var(--app-danger) 40%, var(--app-border));
+  background: color-mix(in srgb, var(--app-danger) 12%, var(--app-surface));
+}
+
+.status-message-card.tone-danger .status-message-title {
+  color: var(--app-danger);
+}
+
+.status-message-card.tone-danger .status-message-detail {
+  color: var(--app-text-primary);
+}
+
 .details-section h3 {
   margin: 0 0 0.75rem;
   color: var(--app-text-primary);

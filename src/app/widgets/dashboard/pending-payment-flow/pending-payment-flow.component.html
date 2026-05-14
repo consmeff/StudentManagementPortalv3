@@ -20,6 +20,11 @@
       </div>
     </div>
 
+    <section class="status-message-card" *ngIf="hasApprovalMessage()" [ngClass]="'tone-' + approvalMessageTone()">
+      <div class="status-message-title">{{ approvalMessageTitle() }}</div>
+      <div class="status-message-detail">{{ approvalMessageDetail() }}</div>
+    </section>
+
     <section class="details-section" *ngIf="completedApplication() as details">
       <h3>Application Details</h3>
       <div class="details-card">
@@ -37,8 +42,13 @@
         </div>
       </div>
       <div class="summary-action">
-        <button pButton type="button" class="continue-btn summary-btn" (click)="viewApplicationSummary()">
-          View Application Summary
+        <button
+          pButton
+          type="button"
+          class="continue-btn summary-btn"
+          (click)="isComplianceIssued() ? editApplicationDetails() : viewApplicationSummary()"
+        >
+          {{ isComplianceIssued() ? actionLabels.editApplicationDetails : actionLabels.viewApplicationSummary }}
         </button>
       </div>
     </section>
@@ -61,6 +71,11 @@
     </div>
 
     <small class="error-hint" *ngIf="loadingError()">{{ loadingError() }}</small>
+
+    <section class="status-message-card" *ngIf="hasApprovalMessage()" [ngClass]="'tone-' + approvalMessageTone()">
+      <div class="status-message-title">{{ approvalMessageTitle() }}</div>
+      <div class="status-message-detail">{{ approvalMessageDetail() }}</div>
+    </section>
 
     <section class="steps-section">
       <h3>Application Steps</h3>

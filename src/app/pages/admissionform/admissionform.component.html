@@ -86,7 +86,7 @@
                     label="Save and Continue" 
                     [disabled]="isEditLocked || !formStepStatus.personalinfoValid"
                     [loading]="isLoadingPersonal"
-                    (onClick)="saveAndMoveToStep(2, savePersonalDetails.bind(this))"
+                    (onClick)="saveAndMoveToStep(1, 2, savePersonalDetails.bind(this))"
                     styleClass="primary-btn"
                     icon="pi pi-arrow-right"
                     iconPos="right">
@@ -115,7 +115,7 @@
                     label="Save and Continue" 
                     [disabled]="isEditLocked || !formStepStatus.nextofkinValid"
                     [loading]="isLoadingNextOfKin"
-                    (onClick)="saveAndMoveToStep(3, saveNextOfKinDetails.bind(this))"
+                    (onClick)="saveAndMoveToStep(2, 3, saveNextOfKinDetails.bind(this))"
                     styleClass="primary-btn"
                     icon="pi pi-arrow-right"
                     iconPos="right">
@@ -144,7 +144,7 @@
                     label="Save and Continue" 
                     [disabled]="isEditLocked || !formStepStatus.academicValid"
                     [loading]="isLoadingAcademic"
-                    (onClick)="saveAndMoveToStep(4, saveAcademicHistory.bind(this))"
+                    (onClick)="saveAndMoveToStep(3, 4, saveAcademicHistory.bind(this))"
                     styleClass="primary-btn"
                     icon="pi pi-arrow-right"
                     iconPos="right">
@@ -173,7 +173,7 @@
                     label="Save and Continue" 
                     [disabled]="isEditLocked || !formStepStatus.docuplodValid"
                     [loading]="isLoadingDocuments"
-                    (onClick)="saveAndMoveToStep(5, saveDocumentUpload.bind(this))"
+                    (onClick)="saveAndMoveToStep(4, 5, saveDocumentUpload.bind(this))"
                     styleClass="primary-btn"
                     icon="pi pi-arrow-right"
                     iconPos="right">
