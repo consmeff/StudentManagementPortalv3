@@ -23,6 +23,7 @@ import { Address } from '../../data/application/personaldetailsdto';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
 import { TraceabilityModule } from '../../shared/traceability.module';
+import { normalizeApplicationStatusKey } from '../../constants/application-status.utils';
 import { PersonaldetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
 import { NextofkinComponent } from '../../widgets/admission/forms/nextofkin/nextofkin.component';
 import { AcademichistoryComponent } from "../../widgets/admission/forms/academichistory/academichistory.component";
@@ -350,10 +351,10 @@ export class AdmissionformComponent implements OnInit {
       return;
     }
 
-    const approvalStatus = (data.approval_status || '').toLowerCase();
-    const directive = (data as any).compliance_directive || '';
+    const approvalStatus = normalizeApplicationStatusKey(data.approval_status);
+    const directive = data.compliance_directive ?? '';
     this.complianceDirective = directive;
-    const complianceIssued = approvalStatus.includes('complian') || approvalStatus.includes('complain');
+    const complianceIssued = approvalStatus === 'compliance_required';
     this.hasComplianceIssued = complianceIssued;
     const personalDone = this.hasRegistrantValue(data.marital_status)
       && this.hasRegistrantValue(data.gender)

@@ -1,3 +1,5 @@
+import { ApplicationStatusKey } from '../application-status.types';
+
 export const HERO_CONTENT = {
   pending: {
     title: 'Complete your application to apply for admission',
@@ -53,45 +55,67 @@ export const ACTION_LABELS = {
 export const STATUS_MATCHERS = {
   paymentNegativeKeywords: ['pending', 'fail', 'unpaid'],
   paymentPositiveKeywords: ['paid', 'complete', 'success'],
-  submissionCompleted: ['submitted', 'under_review', 'approved', 'rejected'],
+  submissionCompleted: ['submitted', 'approved', 'rejected', 'resubmitted', 'shortlisted', 'admitted', 'compliance_required', 'admitted_internally', 'auto_rejected'],
 } as const;
 
-export const APPROVAL_STATUS_MESSAGE_VARIANTS = {
-  compliance: 'compliance',
-  shortlisted: 'shortlisted',
-  admitted: 'admitted',
-  submitted: 'submitted',
-  pending: 'pending',
-  neutral: 'neutral',
-} as const;
+export type DashboardApprovalMessage = {
+  title: string;
+  detail: string;
+  tone: 'info' | 'success' | 'warning' | 'danger';
+};
 
-export const APPROVAL_STATUS_MESSAGES = {
-  compliance: {
-    title: 'Compliance required',
-    detail: 'Your application needs an update before the admission review can continue.',
+export const APPROVAL_STATUS_MESSAGES: Record<ApplicationStatusKey, DashboardApprovalMessage> = {
+  submitted: {
+    title: 'Submitted',
+    detail: 'Your completed application has been received and is awaiting review.',
+    tone: 'info',
+  },
+  approved: {
+    title: 'Approved',
+    detail: 'Your application has been approved provisionally or unconditionally and is still inconclusive.',
+    tone: 'info',
+  },
+  rejected: {
+    title: 'Rejected',
+    detail: 'Your application was not successful.',
+    tone: 'danger',
+  },
+  resubmitted: {
+    title: 'Resubmitted',
+    detail: 'Your updated application has been submitted again and is awaiting review.',
+    tone: 'info',
+  },
+  pending: {
+    title: 'Pending',
+    detail: 'Your application is being reviewed. You will be notified once there is an update.',
     tone: 'warning',
   },
   shortlisted: {
-    title: 'You have been shortlisted',
+    title: 'Shortlisted',
     detail: 'Check your email for examination scheduling details.',
     tone: 'success',
   },
   admitted: {
-    title: 'Admission offered',
+    title: 'Admitted',
     detail: 'Congratulations. Your admission decision is now available on the portal.',
     tone: 'success',
   },
-  submitted: {
-    title: 'Application submitted',
-    detail: 'Your completed application has been received and is awaiting review.',
-    tone: 'info',
-  },
-  pending: {
-    title: 'Application under review',
-    detail: 'Your application is being reviewed. You will be notified once there is an update.',
+  compliance_required: {
+    title: 'Complaince Required',
+    detail: 'Your application needs an update before the admission review can continue.',
     tone: 'warning',
   },
-  neutral: {
+  admitted_internally: {
+    title: 'Pending Publish',
+    detail: 'Your application decision has not been published yet.',
+    tone: 'warning',
+  },
+  auto_rejected: {
+    title: 'Auto Unqualified',
+    detail: 'Your application did not meet the admission requirements.',
+    tone: 'danger',
+  },
+  unknown: {
     title: '',
     detail: '',
     tone: 'info',

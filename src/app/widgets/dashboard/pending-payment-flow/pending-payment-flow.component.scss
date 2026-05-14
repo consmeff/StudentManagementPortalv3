@@ -89,6 +89,11 @@
   background: var(--app-surface);
 }
 
+.status-message-card app-status-indicator {
+  display: inline-flex;
+  margin-bottom: 0.75rem;
+}
+
 .status-message-title {
   font-size: 1.1rem;
   font-weight: 700;

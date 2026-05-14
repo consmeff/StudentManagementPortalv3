@@ -43,6 +43,16 @@
   --tone-bg: color-mix(in srgb, var(--app-info) 16%, transparent);
 }
 
+[data-tone='approved'] {
+  --tone-color: #175cd3;
+  --tone-bg: rgba(23, 92, 211, 0.14);
+}
+
+[data-tone='admitted'] {
+  --tone-color: #027a48;
+  --tone-bg: rgba(2, 122, 72, 0.14);
+}
+
 [data-tone='rejected'] {
   --tone-color: var(--app-danger);
   --tone-bg: color-mix(in srgb, var(--app-danger) 16%, transparent);

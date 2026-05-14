@@ -11,9 +11,11 @@ import { firstValueFrom } from 'rxjs';
 import { ApplicationGuidelineModalComponent } from '../application-guideline-modal/application-guideline-modal.component';
 import { PaymentWorkflowService } from '../../../services/payment-workflow.service';
 import { RegistrantData } from '../../../data/application/registrantdatadto';
+import { StatusIndicatorComponent, StatusTone } from '../../../shared/components/status-indicator/status-indicator.component';
+import { ApplicationStatusDefinition, ApplicationStatusKey } from '../../../constants/application-status.types';
+import { getApplicationStatusDefinition, normalizeApplicationStatusKey } from '../../../constants/application-status.utils';
 import {
   APPROVAL_STATUS_MESSAGES,
-  APPROVAL_STATUS_MESSAGE_VARIANTS,
   ACTION_LABELS,
   HERO_CONTENT,
   ROUTES,
@@ -38,13 +40,12 @@ interface CompletedApplicationDetails {
   applicationDate: string;
 }
 
-type ApprovalStatusMessageVariant = typeof APPROVAL_STATUS_MESSAGE_VARIANTS[keyof typeof APPROVAL_STATUS_MESSAGE_VARIANTS];
 type ApprovalStatusTone = 'info' | 'success' | 'warning' | 'danger';
 
 @Component({
   selector: 'app-pending-payment-flow',
   standalone: true,
-  imports: [CommonModule, TraceabilityModule, ApplicationGuidelineModalComponent],
+  imports: [CommonModule, TraceabilityModule, ApplicationGuidelineModalComponent, StatusIndicatorComponent],
   templateUrl: './pending-payment-flow.component.html',
   styleUrl: './pending-payment-flow.component.scss',
   providers: [MessageService],
@@ -83,7 +84,10 @@ export class PendingPaymentFlowComponent implements OnInit {
   readonly approvalMessageTitle = signal('');
   readonly approvalMessageDetail = signal('');
   readonly approvalMessageTone = signal<ApprovalStatusTone>('info');
-  readonly activeApprovalStatus = signal<ApprovalStatusMessageVariant>(APPROVAL_STATUS_MESSAGE_VARIANTS.neutral);
+  readonly approvalStatusLabel = signal('');
+  readonly approvalStatusTooltip = signal('');
+  readonly approvalStatusIndicatorTone = signal<StatusTone>('neutral');
+  readonly activeApprovalStatusKey = signal<ApplicationStatusKey>('unknown');
 
   ngOnInit(): void {
     this.dashboardName.set(this.authSessionStore.name() || UI_COPY.defaultApplicantName);
@@ -378,8 +382,8 @@ export class PendingPaymentFlowComponent implements OnInit {
       return true;
     }
 
-    const approval = (data.approval_status || '').toLowerCase();
-    return (STATUS_MATCHERS.submissionCompleted as readonly string[]).includes(approval);
+    const approvalStatusKey = normalizeApplicationStatusKey(data.approval_status);
+    return (STATUS_MATCHERS.submissionCompleted as readonly string[]).includes(approvalStatusKey);
   }
 
   private navigateToRelevantFormStep(): void {
@@ -410,11 +414,11 @@ export class PendingPaymentFlowComponent implements OnInit {
   }
 
   isComplianceIssued(): boolean {
-    return this.activeApprovalStatus() === APPROVAL_STATUS_MESSAGE_VARIANTS.compliance;
+    return this.activeApprovalStatusKey() === 'compliance_required';
   }
 
   hasApprovalMessage(): boolean {
-    return this.activeApprovalStatus() !== APPROVAL_STATUS_MESSAGE_VARIANTS.neutral;
+    return this.activeApprovalStatusKey() !== 'unknown';
   }
 
   private navigateToFormStep(step: number): void {
@@ -507,46 +511,45 @@ export class PendingPaymentFlowComponent implements OnInit {
   }
 
   private applyApprovalStatusMessage(registrant: RegistrantData | null, submitDone: boolean): void {
-    const statusVariant = this.resolveApprovalStatusVariant(registrant, submitDone);
-    const messageConfig = APPROVAL_STATUS_MESSAGES[statusVariant];
-    this.activeApprovalStatus.set(statusVariant);
+    const statusDefinition = this.resolveApprovalStatusDefinition(registrant, submitDone);
+    const messageConfig = APPROVAL_STATUS_MESSAGES[statusDefinition.key];
+    this.activeApprovalStatusKey.set(statusDefinition.key);
+    this.approvalStatusLabel.set(statusDefinition.label);
+    this.approvalStatusTooltip.set(statusDefinition.description);
+    this.approvalStatusIndicatorTone.set(statusDefinition.tone);
     this.approvalMessageTitle.set(messageConfig.title);
-    this.approvalMessageDetail.set(this.resolveApprovalStatusDetail(statusVariant, registrant, messageConfig.detail));
+    this.approvalMessageDetail.set(this.resolveApprovalStatusDetail(statusDefinition.key, registrant, messageConfig.detail));
     this.approvalMessageTone.set(this.resolveApprovalMessageTone(messageConfig.tone));
   }
 
-  private resolveApprovalStatusVariant(
+  private resolveApprovalStatusDefinition(
     registrant: RegistrantData | null,
     submitDone: boolean
-  ): ApprovalStatusMessageVariant {
-    const normalizedStatus = (registrant?.approval_status ?? '').toLowerCase().trim();
-    if (normalizedStatus.includes('complian') || normalizedStatus.includes('complain')) {
-      return APPROVAL_STATUS_MESSAGE_VARIANTS.compliance;
-    }
-    if (normalizedStatus.includes('shortlist')) {
-      return APPROVAL_STATUS_MESSAGE_VARIANTS.shortlisted;
-    }
-    if (normalizedStatus.includes('admitted') || normalizedStatus.includes('approved')) {
-      return APPROVAL_STATUS_MESSAGE_VARIANTS.admitted;
-    }
-    if (normalizedStatus.includes('submitted')) {
-      return APPROVAL_STATUS_MESSAGE_VARIANTS.submitted;
-    }
-    if (normalizedStatus.includes('pending') || normalizedStatus.includes('under_review')) {
-      return APPROVAL_STATUS_MESSAGE_VARIANTS.pending;
+  ): ApplicationStatusDefinition {
+    const statusKey = this.resolveApprovalStatusKey(registrant, submitDone);
+    return getApplicationStatusDefinition(statusKey);
+  }
+
+  private resolveApprovalStatusKey(
+    registrant: RegistrantData | null,
+    submitDone: boolean
+  ): ApplicationStatusKey {
+    const statusKey = normalizeApplicationStatusKey(registrant?.approval_status);
+    if (statusKey !== 'unknown') {
+      return statusKey;
     }
     if (submitDone) {
-      return APPROVAL_STATUS_MESSAGE_VARIANTS.submitted;
+      return 'submitted';
     }
-    return APPROVAL_STATUS_MESSAGE_VARIANTS.neutral;
+    return 'unknown';
   }
 
   private resolveApprovalStatusDetail(
-    statusVariant: ApprovalStatusMessageVariant,
+    statusKey: ApplicationStatusKey,
     registrant: RegistrantData | null,
     fallbackMessage: string
   ): string {
-    if (statusVariant !== APPROVAL_STATUS_MESSAGE_VARIANTS.compliance) {
+    if (statusKey !== 'compliance_required') {
       return fallbackMessage;
     }
     return registrant?.compliance_directive?.trim() ?? fallbackMessage;
