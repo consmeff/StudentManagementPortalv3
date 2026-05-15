@@ -46,7 +46,7 @@ const ACTIVE_SUMMARY_ACCORDION_VALUES = Object.values(SUMMARY_ACCORDION_PANEL_VA
   templateUrl: './applicationsummary.component.html',
   styleUrl: './applicationsummary.component.scss'
 })
-export class ApplicationsummaryComponent implements OnInit {
+export class ApplicationSummaryComponent implements OnInit {
 
   registrantData: RegistrantDataDTO = {};
   personalInfoItems: LabelValueRow[] = [];
@@ -64,16 +64,16 @@ export class ApplicationsummaryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataIntitialization();
+    this.dataInitialization();
   }
 
-  async dataIntitialization(): Promise<boolean> {
+  async dataInitialization(): Promise<boolean> {
     let result = false;
     let app_no = this.authSessionStore.applicationNo() || "";
     
     if (app_no != "") {
       this.isLoading = true;
-      await firstValueFrom(this.appservice.registratantData(app_no))
+      await firstValueFrom(this.appservice.registrantData(app_no))
         .then(async (data) => {
           this.registrantData = data;
           this.updateSummaryItems();

@@ -32,14 +32,14 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
   templateUrl: './nextofkin.component.html',
   styleUrls: ['./nextofkin.component.scss']
 })
-export class NextofkinComponent {
+export class NextOfKinComponent {
   _formStepService = inject(FormService);
   regstore = inject(RegStoreService);
   appservice = inject(ApplicationService);
   
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };

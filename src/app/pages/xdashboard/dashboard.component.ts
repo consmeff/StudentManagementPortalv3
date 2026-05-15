@@ -146,7 +146,7 @@ export class xDashboardComponent implements OnInit {
     const appNo = this.authSessionStore.applicationNo() || '';
     
     if (appNo !== '') {
-      await firstValueFrom(this.appService.registratantData(appNo))
+      await firstValueFrom(this.appService.registrantData(appNo))
         .then(async (data) => {
           this.regStore.setRegData(data);
           this.backendProgramme = data.data?.program;

@@ -19,7 +19,7 @@ import { AuthSessionStore } from '../../../store/auth-session.store';
   imports: [TraceabilityModule],
   providers: [MessageService]
 })
-export class PasswordresetComponent implements OnDestroy {
+export class PasswordResetComponent implements OnDestroy {
   busy = false;
   isDarkMode = false;
   visible = false;

@@ -34,7 +34,7 @@ import { ExamRecord, TAcademicHistory, TOLevelResult, TUtmeResultPayload } from 
   templateUrl: './academichistory.component.html',
   styleUrl: './academichistory.component.scss'
 })
-export class AcademichistoryComponent {
+export class AcademicHistoryComponent {
   _formStepService = inject(FormService);
   regstore = inject(RegStoreService);
   appservice = inject(ApplicationService);
@@ -42,7 +42,7 @@ export class AcademichistoryComponent {
 
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };

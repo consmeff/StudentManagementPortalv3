@@ -11,7 +11,7 @@ export class FormService {
 
   private readonly _formsteps = signal<formstepDTO>({
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   });
@@ -20,7 +20,7 @@ export class FormService {
 
   private readonly _savedFormSteps = signal<formstepDTO>({
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   });
@@ -97,7 +97,7 @@ export class FormService {
     }
   }
  
-  setuploadFileFormData(payload:TUploadFile){
+  setUploadFileFormData(payload:TUploadFile){
     if(payload !=null){
       this._uploadFile.set({
         certificateofbirth: payload.certificateofbirth,

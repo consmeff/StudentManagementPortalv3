@@ -24,11 +24,11 @@ import { AuthSessionStore } from '../../store/auth-session.store';
 import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { normalizeApplicationStatusKey } from '../../constants/application-status.utils';
-import { PersonaldetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
-import { NextofkinComponent } from '../../widgets/admission/forms/nextofkin/nextofkin.component';
-import { AcademichistoryComponent } from "../../widgets/admission/forms/academichistory/academichistory.component";
-import { UploadformComponent } from "../../widgets/admission/forms/uploadform/uploadform.component";
-import { ApplicationsummaryComponent } from "../../widgets/admission/forms/applicationsummary/applicationsummary.component";
+import { PersonalDetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
+import { NextOfKinComponent } from '../../widgets/admission/forms/nextofkin/nextofkin.component';
+import { AcademicHistoryComponent } from "../../widgets/admission/forms/academichistory/academichistory.component";
+import { UploadFormComponent } from "../../widgets/admission/forms/uploadform/uploadform.component";
+import { ApplicationSummaryComponent } from "../../widgets/admission/forms/applicationsummary/applicationsummary.component";
 
 @Component({
   selector: 'app-admissionform',
@@ -41,15 +41,15 @@ import { ApplicationsummaryComponent } from "../../widgets/admission/forms/appli
     DialogModule,
     ButtonModule,
     StepperModule,
-    PersonaldetailsComponent,
-    NextofkinComponent,
-    AcademichistoryComponent,
-    UploadformComponent,
-    ApplicationsummaryComponent
+    PersonalDetailsComponent,
+    NextOfKinComponent,
+    AcademicHistoryComponent,
+    UploadFormComponent,
+    ApplicationSummaryComponent
 ],
   providers: [MessageService]
 })
-export class AdmissionformComponent implements OnInit {
+export class AdmissionFormComponent implements OnInit {
 
   app_no: string = "";
   visible: boolean = false;
@@ -77,13 +77,13 @@ export class AdmissionformComponent implements OnInit {
 
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };
   savedStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };
@@ -155,7 +155,7 @@ export class AdmissionformComponent implements OnInit {
 
     this._appservice.registrationData().subscribe({
       next: (data) => {
-        this._preRegData.setpreRegData(data);
+        this._preRegData.setPreRegData(data);
       },
       error: (err) => {
         this.showError('Registration Data', 'Failed to load registration data');
@@ -197,7 +197,7 @@ export class AdmissionformComponent implements OnInit {
       return;
     }
 
-    this._appservice.registratantData(appNo).subscribe({
+    this._appservice.registrantData(appNo).subscribe({
       next: (data: RegistrantDataDTO) => {
         this._preRegData.setRegData(data);
         this.computeEditLockState(data);
@@ -243,7 +243,7 @@ export class AdmissionformComponent implements OnInit {
       case 4:
         return this.savedStepStatus.academicValid;
       case 5:
-        return this.savedStepStatus.docuplodValid;
+        return this.savedStepStatus.docUploadValid;
       default:
         return false;
     }
@@ -267,7 +267,7 @@ export class AdmissionformComponent implements OnInit {
     if (!status.academicValid) {
       return 3;
     }
-    if (!status.docuplodValid) {
+    if (!status.docUploadValid) {
       return 4;
     }
     return 5;
@@ -303,7 +303,7 @@ export class AdmissionformComponent implements OnInit {
       personalinfoValid: personalDone,
       nextofkinValid: nextOfKinDone,
       academicValid: academicDone,
-      docuplodValid: docsDone,
+      docUploadValid: docsDone,
     };
     this.formStepStatus = inferredStepStatus;
     this._formStepService.setFormSteps(inferredStepStatus);
@@ -317,7 +317,7 @@ export class AdmissionformComponent implements OnInit {
       personalinfoValid: step === 1 ? true : this.savedStepStatus.personalinfoValid,
       nextofkinValid: step === 2 ? true : this.savedStepStatus.nextofkinValid,
       academicValid: step === 3 ? true : this.savedStepStatus.academicValid,
-      docuplodValid: step === 4 ? true : this.savedStepStatus.docuplodValid,
+      docUploadValid: step === 4 ? true : this.savedStepStatus.docUploadValid,
     };
     this.savedStepStatus = nextSavedStatus;
     this._formStepService.setSavedFormSteps(nextSavedStatus);
@@ -430,7 +430,7 @@ export class AdmissionformComponent implements OnInit {
     if (blocked) return blocked;
     this.isLoadingAcademic = true;
     let _ad = this.buildAcademicDetailObj();
-    let _ol = this.buildolevelDetailObj();
+    let _ol = this.buildOLevelDetailObj();
     let _utme = this.buildUtmeResultObj();
     return new Promise((resolve, reject) => {
       this.app_no = this.authSessionStore.applicationNo() || "";
@@ -460,7 +460,7 @@ export class AdmissionformComponent implements OnInit {
     this.isLoadingDocuments = true;
     let _up = this.buildDocumentUploadObj();
     let _ad = this.buildAcademicDetailObj();
-    let _ol = this.buildolevelDetailObj();
+    let _ol = this.buildOLevelDetailObj();
     let _utme = this.buildUtmeResultObj();
     if (_ad && _ad[0] && _up?.olevels[0]) {
       _ad[0].file = _up?.olevels[0];
@@ -519,7 +519,7 @@ export class AdmissionformComponent implements OnInit {
     });
   }
 
-  buildolevelDetailObj() {
+  buildOLevelDetailObj() {
     let _allAcHistory: TAcademicHistory[] = [];
     if (this._academicHistoryFormData != null) {
       this._academicHistoryFormData.forEach((val, i) => {

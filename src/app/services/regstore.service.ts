@@ -44,7 +44,7 @@ export class RegStoreService {
 
 
   constructor(private appservice: ApplicationService) {
-     this.dataIntitialization();
+     this.dataInitialization();
 
   }
 
@@ -52,7 +52,7 @@ export class RegStoreService {
     this.setUploadFile(payload);
     this._regData.set(payload);
   }
-  setpreRegData(payload: PreRegistrationDataDTO) {
+  setPreRegData(payload: PreRegistrationDataDTO) {
     
     this._preRegData.set(payload);
   }
@@ -92,12 +92,12 @@ export class RegStoreService {
     }
   }
 
-  async dataIntitialization(): Promise<boolean> {
+  async dataInitialization(): Promise<boolean> {
 
     let result = false;
     let app_no = this.authSessionStore.applicationNo() || "";
     if (app_no != "") {
-      await firstValueFrom(this.appservice.registratantData(app_no))
+      await firstValueFrom(this.appservice.registrantData(app_no))
         .then(async (data) => {
           console.log("fetching app data ............................");
           // console.log(data);

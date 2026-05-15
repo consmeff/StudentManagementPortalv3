@@ -16,7 +16,7 @@ import { AuthSessionStore } from '../../../store/auth-session.store';
   styleUrl: './request-passwordreset.component.scss',
   providers: [MessageService]
 })
-export class RequestPasswordresetComponent implements OnDestroy {
+export class RequestPasswordResetComponent implements OnDestroy {
   busy = false;
   isDarkMode = false;
   private themeSub?: Subscription;

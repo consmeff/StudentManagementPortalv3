@@ -56,7 +56,7 @@ export class PaymentComponent implements OnInit {
 
     this.isLoading = true;
     try {
-      const snapshot = await firstValueFrom(this.appService.registratantData(appNo));
+      const snapshot = await firstValueFrom(this.appService.registrantData(appNo));
       this.regData = snapshot?.data ?? null;
       this.paymentHistory = this.buildPaymentHistory(this.regData);
     } catch {

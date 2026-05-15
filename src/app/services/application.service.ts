@@ -55,7 +55,7 @@ export class ApplicationService {
       map((response) => this.normalizeCollectionResponse(response))
     );
   }
-  registratantData(app_no: string): Observable<RegistrantDataDTO> {
+  registrantData(app_no: string): Observable<RegistrantDataDTO> {
     return this.http.get<RegistrantDataDTO>(`${this.apiRoot}/api/v1/applicants/single?applicant_no=${app_no}`);
   }
 

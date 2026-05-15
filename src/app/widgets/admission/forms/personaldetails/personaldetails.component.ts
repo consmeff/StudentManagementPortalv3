@@ -35,14 +35,14 @@ import { Countries, States } from '../../../../data/application/location.dto';
   styleUrl: './personaldetails.component.scss',
   providers: []
 })
-export class PersonaldetailsComponent {
+export class PersonalDetailsComponent {
   _formStepService = inject(FormService);
   regstore = inject(RegStoreService);
   appservice = inject(ApplicationService);
 
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };

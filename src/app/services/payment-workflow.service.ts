@@ -104,7 +104,7 @@ export class PaymentWorkflowService {
     }
 
     try {
-      const snapshot = await firstValueFrom(this.appService.registratantData(applicantNo));
+      const snapshot = await firstValueFrom(this.appService.registrantData(applicantNo));
       const paymentStatus = snapshot?.data?.payment_status ?? '';
       if (paymentStatus) {
         this.authSessionStore.setPaymentStatus(paymentStatus);

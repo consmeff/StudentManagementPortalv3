@@ -31,7 +31,7 @@ import { formatFileSize } from '../../../../utility/yearutil';
   templateUrl: './uploadform.component.html',
   styleUrl: './uploadform.component.scss'
 })
-export class UploadformComponent implements AfterViewInit {
+export class UploadFormComponent implements AfterViewInit {
   private readonly maxFileSizeBytes = 500 * 1024;
   private readonly maxFileSizeLabel = '500KB';
 
@@ -41,7 +41,7 @@ export class UploadformComponent implements AfterViewInit {
 
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };
@@ -76,7 +76,7 @@ export class UploadformComponent implements AfterViewInit {
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step || {
         academicValid: false,
-        docuplodValid: false,
+        docUploadValid: false,
         nextofkinValid: false,
         personalinfoValid: false
       };
@@ -329,11 +329,11 @@ export class UploadformComponent implements AfterViewInit {
       (this.OriginFile != undefined || this.fileObjects?.origin?.file_url != undefined);
 
     if (hasAllRequiredFiles && this.formStepStatus) {
-      this.formStepStatus.docuplodValid = true;
+      this.formStepStatus.docUploadValid = true;
       this._formStepService.setFormSteps(this.formStepStatus);
-      this._formStepService.setuploadFileFormData(this.fileObjects);
+      this._formStepService.setUploadFileFormData(this.fileObjects);
     } else if (this.formStepStatus) {
-      this.formStepStatus.docuplodValid = false;
+      this.formStepStatus.docUploadValid = false;
       this._formStepService.setFormSteps(this.formStepStatus);
     }
   }

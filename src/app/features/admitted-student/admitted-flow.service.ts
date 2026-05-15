@@ -147,7 +147,7 @@ export class AdmittedFlowService {
 
     this.loadingSnapshot.set(true);
     try {
-      const response = await firstValueFrom(this.appService.registratantData(appNo));
+      const response = await firstValueFrom(this.appService.registrantData(appNo));
       const data = response?.data ?? null;
       this.registrantData.set(data);
       if (data?.payment_status) {

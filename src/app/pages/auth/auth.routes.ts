@@ -8,9 +8,9 @@ import { Logout } from './logout';
 // import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { ConsmeffLoginComponent } from './sigin/consmeff-login.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
-import { RequestPasswordresetComponent } from './request-passwordreset/request-passwordreset.component';
+import { RequestPasswordResetComponent } from './request-passwordreset/request-passwordreset.component';
 import { Password } from 'primeng/password';
-import { PasswordresetComponent } from './passwordreset/passwordreset.component';
+import { PasswordResetComponent } from './passwordreset/passwordreset.component';
 import { OtpPageComponent } from './otp-page/otp-page.component';
 
 export default [
@@ -21,8 +21,8 @@ export default [
     
     { path: 'logout', component: Logout },
     { path: 'signup', component: SignUpComponent },
-    { path: 'request-passwordreset', component: RequestPasswordresetComponent },
-    { path: 'passwordreset', component: PasswordresetComponent },
+    { path: 'request-passwordreset', component: RequestPasswordResetComponent },
+    { path: 'passwordreset', component: PasswordResetComponent },
     { path: 'otp-page', component: OtpPageComponent },
     // { path: 'otp', component: OtpVerificationComponent },
     // { path: 'passwordreset', component: PasswordResetComponent }

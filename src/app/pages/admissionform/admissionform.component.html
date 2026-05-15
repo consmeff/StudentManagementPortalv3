@@ -171,7 +171,7 @@
                   
                   <p-button 
                     label="Save and Continue" 
-                    [disabled]="isEditLocked || !formStepStatus.docuplodValid"
+                    [disabled]="isEditLocked || !formStepStatus.docUploadValid"
                     [loading]="isLoadingDocuments"
                     (onClick)="saveAndMoveToStep(4, 5, saveDocumentUpload.bind(this))"
                     styleClass="primary-btn"
