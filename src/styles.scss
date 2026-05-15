@@ -1,4 +1,3 @@
-/* You can add global styles to this file, and also import other style files */
 @use './tailwind.css';
 @use './assets/layout/layout.scss';
 @use 'primeicons/primeicons.css';
@@ -59,9 +58,32 @@ body {
   font-family: 'Raleway', 'Inter', 'Montserrat', sans-serif;
 }
 
+
 * {
   box-sizing: border-box;
   outline: none;
+  font-family: "Raleway", "Inter", "Montserrat", sans-serif;
+
+  :disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+ul {
+  list-style: none;
+  padding: 0 !important;
+}
+
+table thead th,
+.p-datatable thead th {
+  font-family: "Raleway", "Inter", "Montserrat", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 120%;
+  letter-spacing: 0;
+  background-color: var(--app-bg);
 }
 
 .p-dialog-mask {

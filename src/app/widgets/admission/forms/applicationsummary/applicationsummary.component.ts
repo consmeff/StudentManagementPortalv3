@@ -4,9 +4,6 @@ import { firstValueFrom } from 'rxjs';
 
 // PrimeNG Imports
 import { AccordionModule } from 'primeng/accordion';
-import { CardModule } from 'primeng/card';
-import { DividerModule } from 'primeng/divider';
-import { ImageModule } from 'primeng/image';
 import { SkeletonModule } from 'primeng/skeleton';
 
 // Services & DTOs
@@ -28,15 +25,21 @@ interface DocumentRow {
   fileUrl: string;
 }
 
+const SUMMARY_ACCORDION_PANEL_VALUES = {
+  personalInformation: 'personal-information',
+  nextOfKinInformation: 'next-of-kin-information',
+  academicHistory: 'academic-history',
+  documents: 'documents'
+} as const;
+
+const ACTIVE_SUMMARY_ACCORDION_VALUES = Object.values(SUMMARY_ACCORDION_PANEL_VALUES);
+
 @Component({
   selector: 'app-applicationsummary',
   standalone: true,
   imports: [
     CommonModule,
     AccordionModule,
-    CardModule,
-    DividerModule,
-    ImageModule,
     SkeletonModule,
     TraceabilityModule
   ],
@@ -50,8 +53,8 @@ export class ApplicationsummaryComponent implements OnInit {
   nextOfKinItems: LabelValueRow[] = [];
   academicItems: LabelValueRow[] = [];
   documentItems: DocumentRow[] = [];
-  activeAccordionIndexes = [0, 1, 2, 3];
-  placeholder: string = "../../../../assets/doc.png";
+  readonly accordionPanelValues = SUMMARY_ACCORDION_PANEL_VALUES;
+  readonly activeAccordionValues = ACTIVE_SUMMARY_ACCORDION_VALUES;
   isLoading: boolean = true;
 
   private authSessionStore = inject(AuthSessionStore);
@@ -99,10 +102,6 @@ ${residential_address.lga?.name || ''},
 ${residential_address.state?.name || ''}, 
 ${residential_address.country?.name || ''}
 `.replace(/\n/g, ' ').replace(/ ,/g, ',').trim();
-  }
-
-  getImageUrl(url: string | undefined): string {
-    return url || this.placeholder;
   }
 
   private updateSummaryItems(): void {

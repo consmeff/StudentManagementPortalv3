@@ -23,6 +23,10 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: $text-secondary;
+
+  @include dark-mode {
+    color: $dark-text-secondary;
+  }
 }
 
 .row-value {
@@ -30,6 +34,10 @@
   font-size: $font-size-sm;
   color: $text-primary;
   word-break: break-word;
+
+  @include dark-mode {
+    color: $dark-text-primary;
+  }
 }
 
 .documents-list {
@@ -48,6 +56,10 @@
 .doc-label {
   font-size: $font-size-sm;
   color: $text-secondary;
+
+  @include dark-mode {
+    color: $dark-text-secondary;
+  }
 }
 
 .doc-file {
@@ -69,11 +81,19 @@
 .doc-name {
   font-weight: $font-weight-semibold;
   color: $text-primary;
+
+  @include dark-mode {
+    color: $dark-text-primary;
+  }
 }
 
 .doc-size {
   color: $text-secondary;
   font-size: $font-size-xs;
+
+  @include dark-mode {
+    color: $dark-text-secondary;
+  }
 }
 
 .view-doc-btn {
@@ -87,6 +107,11 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
+  @include dark-mode {
+    border-color: $dark-border-color;
+    color: $dark-text-secondary;
+  }
 }
 
 .view-doc-btn:hover {
@@ -329,82 +354,82 @@
       }
     }
 
-    // Accordion Styling (Optional)
-    .p-accordion {
-      .p-accordion-header {
+    .summary-accordion {
+      .p-accordionpanel {
         margin-bottom: $spacing-2;
+      }
 
-        .p-accordion-header-link {
-          background: $bg-primary;
-          border: 1px solid $border-color;
-          border-radius: $radius-md;
-          padding: $spacing-4 $spacing-6;
-          color: $text-primary;
-          font-weight: $font-weight-semibold;
-          transition: $transition-all;
+      .p-accordionheader {
+        background: $bg-primary;
+        border: 1px solid $border-color;
+        border-radius: $radius-md;
+        padding: $spacing-4 $spacing-6;
+        color: $text-primary;
+        font-weight: $font-weight-semibold;
+        transition: $transition-all;
 
-          &:hover {
-            background: $bg-secondary;
-            border-color: $primary;
-          }
-
-          &:focus {
-            box-shadow: $shadow-primary;
-          }
-
-          @include dark-mode {
-            background: $dark-bg-primary;
-            border-color: $dark-border-color;
-            color: $dark-text-primary;
-
-            &:hover {
-              background: $dark-bg-secondary;
-              border-color: $primary-light;
-            }
-
-            &:focus {
-              box-shadow: $shadow-primary-dark;
-            }
-          }
-
-          .p-accordion-toggle-icon {
-            color: $text-secondary;
-
-            @include dark-mode {
-              color: $dark-text-secondary;
-            }
-          }
+        &:hover {
+          background: $bg-secondary;
+          border-color: $primary;
         }
 
-        &.p-highlight {
-          .p-accordion-header-link {
-            background: $primary;
+        &:focus-visible {
+          box-shadow: $shadow-primary;
+        }
+
+        @include dark-mode {
+          background: $dark-bg-primary;
+          border-color: $dark-border-color;
+          color: $dark-text-primary;
+
+          &:hover {
+            background: $dark-bg-secondary;
             border-color: $primary;
-            color: white;
+          }
 
-            .p-accordion-toggle-icon {
-              color: white;
-            }
-
-            @include dark-mode {
-              background: $primary-light;
-              border-color: $primary-light;
-            }
+          &:focus-visible {
+            box-shadow: $shadow-primary-dark;
           }
         }
       }
 
-      .p-accordion-content {
+      .p-accordionheader-toggle-icon {
+        color: $text-secondary;
+
+        @include dark-mode {
+          color: $dark-text-secondary;
+        }
+      }
+
+      .p-accordionpanel.p-accordionpanel-active > .p-accordionheader {
+        background: $primary;
+        border-color: $primary;
+        color: white;
+
+        .p-accordionheader-toggle-icon {
+          color: white;
+        }
+      }
+
+      .p-accordioncontent {
         background: $bg-primary;
         border: 1px solid $border-color;
         border-top: none;
         border-radius: 0 0 $radius-md $radius-md;
-        padding: $spacing-6;
         margin-top: -$spacing-2;
 
         @include dark-mode {
           background: $dark-bg-primary;
           border-color: $dark-border-color;
+        }
+      }
+
+      .p-accordioncontent-content {
+        padding: $spacing-6;
+        color: $text-primary;
+
+        @include dark-mode {
+          color: $dark-text-primary;
         }
       }
     }

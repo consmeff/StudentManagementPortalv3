@@ -8,35 +8,46 @@
       </div>
     </div>
   
-    <p-accordion *ngIf="!isLoading" [multiple]="true" [activeIndex]="activeAccordionIndexes">
-      <p-accordionTab header="Personal Information">
+    <p-accordion *ngIf="!isLoading" [multiple]="true" [value]="activeAccordionValues" styleClass="summary-accordion">
+      <p-accordion-panel [value]="accordionPanelValues.personalInformation">
+        <p-accordion-header>Personal Information</p-accordion-header>
+        <p-accordion-content>
         <div class="rows-list">
           <div class="row-item" *ngFor="let item of personalInfoItems">
             <span class="row-label">{{ item.label }}:</span>
             <span class="row-value">{{ item.value }}</span>
           </div>
         </div>
-      </p-accordionTab>
+        </p-accordion-content>
+      </p-accordion-panel>
 
-      <p-accordionTab header="Next of Kin Information">
+      <p-accordion-panel [value]="accordionPanelValues.nextOfKinInformation">
+        <p-accordion-header>Next of Kin Information</p-accordion-header>
+        <p-accordion-content>
         <div class="rows-list">
           <div class="row-item" *ngFor="let item of nextOfKinItems">
             <span class="row-label">{{ item.label }}:</span>
             <span class="row-value">{{ item.value }}</span>
           </div>
         </div>
-      </p-accordionTab>
+        </p-accordion-content>
+      </p-accordion-panel>
 
-      <p-accordionTab header="Academic History">
+      <p-accordion-panel [value]="accordionPanelValues.academicHistory">
+        <p-accordion-header>Academic History</p-accordion-header>
+        <p-accordion-content>
         <div class="rows-list">
           <div class="row-item" *ngFor="let item of academicItems">
             <span class="row-label">{{ item.label }}:</span>
             <span class="row-value">{{ item.value }}</span>
           </div>
         </div>
-      </p-accordionTab>
+        </p-accordion-content>
+      </p-accordion-panel>
 
-      <p-accordionTab header="Documents">
+      <p-accordion-panel [value]="accordionPanelValues.documents">
+        <p-accordion-header>Documents</p-accordion-header>
+        <p-accordion-content>
         <div class="documents-list">
           <div class="document-row" *ngFor="let doc of documentItems">
             <span class="doc-label">{{ doc.label }}:</span>
@@ -52,7 +63,8 @@
             </button>
           </div>
         </div>
-      </p-accordionTab>
+        </p-accordion-content>
+      </p-accordion-panel>
     </p-accordion>
   
   </div>
