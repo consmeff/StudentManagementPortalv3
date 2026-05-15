@@ -23,20 +23,26 @@
   --app-modal-z-index: 3000000;
 }
 
+:root.app-dark,
 [data-theme='dark'],
 .dark {
   --app-bg: #0b1120;
   --app-surface: #111827;
   --app-surface-alt: #1f2937;
   --app-border: #334155;
-  --app-text-primary: #e2e8f0;
-  --app-text-secondary: #94a3b8;
-  --app-text-muted: #64748b;
+  --app-text-primary: #ffffff;
+  --app-text-secondary: #f8fafc;
+  --app-text-muted: #e2e8f0;
   --app-primary: #818cf8;
   --app-success: #34d399;
   --app-danger: #f87171;
   --app-info: #f59e0b;
   --app-link: #60a5fa;
+  --text-color: #ffffff;
+  --text-color-secondary: #f8fafc;
+  --p-text-color: #ffffff;
+  --p-text-muted-color: #f8fafc;
+  --p-content-color: #ffffff;
   --app-shadow-sm: 0 2px 5px rgba(2, 6, 23, 0.45);
   --app-modal-z-index: 3000000;
 }
@@ -66,28 +72,60 @@ body {
   z-index: calc(var(--app-modal-z-index) + 1) !important;
 }
 
-.title-large {
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 120%;
-}
-
-.title-medium {
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 120%;
-}
 
 .body-small {
   font-weight: 400;
   font-size: 14px;
   line-height: 150%;
+  gap: 4px;
+  letter-spacing: 0%;
+}
+
+.body-xs,
+.body-xs-500 {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
+  letter-spacing: 0%;
+}
+
+.body-xs-500 {
+  font-weight: 500;
 }
 
 .label-small {
   font-weight: 600;
   font-size: 12px;
   line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-xlarge {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-large {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-medium {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-small {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0%;
 }
 
 a,

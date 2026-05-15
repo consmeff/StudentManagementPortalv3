@@ -34,7 +34,8 @@ import { CommonModule } from '@angular/common';
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: white;
+      background: var(--app-surface);
+      border: 1px solid var(--app-border);
       padding: 2rem;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -56,7 +57,7 @@ import { CommonModule } from '@angular/common';
 
     .loading-text {
       margin-top: 1rem;
-      color: #333;
+      color: var(--app-text-primary);
       font-size: 16px;
       font-weight: 500;
     }

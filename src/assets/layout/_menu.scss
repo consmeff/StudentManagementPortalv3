@@ -64,12 +64,13 @@
             }
 
             &.menu-item-disabled {
-                color: #d7e3f4;
+                color: var(--text-color-secondary);
+                opacity: 0.72;
                 cursor: not-allowed;
                 pointer-events: none;
 
                 .layout-menuitem-icon {
-                    color: #d7e3f4;
+                    color: var(--text-color-secondary);
                 }
             }
 
@@ -144,12 +145,13 @@
             }
 
             &.menu-item-disabled {
-                color: #d7e3f4;
+                color: var(--text-color-secondary);
+                opacity: 0.72;
                 cursor: not-allowed;
                 pointer-events: none;
 
                 .layout-menuitem-icon {
-                    color: #d7e3f4;
+                    color: var(--text-color-secondary);
                 }
             }
 

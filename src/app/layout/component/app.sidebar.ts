@@ -162,8 +162,8 @@ type SidebarMenuItem = {
         left: calc(100% + 12px);
         top: 50%;
         transform: translateY(-50%);
-        background: #111827;
-        color: #fff;
+        background: var(--app-surface-alt);
+        color: var(--app-text-primary);
         font-size: 12px;
         font-weight: 600;
         white-space: nowrap;

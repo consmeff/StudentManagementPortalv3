@@ -81,7 +81,14 @@ export class xDashboardComponent implements OnInit {
     this.loadPaymentStatus();
   }
 
+  private getChartTextColor(cssVariableName: string, fallbackColor: string): string {
+    return getComputedStyle(document.documentElement).getPropertyValue(cssVariableName).trim() || fallbackColor;
+  }
+
   initChart() {
+    const primaryChartTextColor = this.getChartTextColor('--app-text-primary', '#0F172A');
+    const secondaryChartTextColor = this.getChartTextColor('--app-text-secondary', '#64748b');
+
     this.chartData = {
       labels: ['Complete', 'Remaining'],
       datasets: [{
@@ -122,11 +129,11 @@ export class xDashboardComponent implements OnInit {
           const centerX = chart.width / 2;
           const centerY = chart.height / 2;
 
-          ctx.fillStyle = '#0F172A';
+          ctx.fillStyle = primaryChartTextColor;
           ctx.fillText(`${percentage}%`, centerX, centerY - 10);
           
           ctx.font = `${(parseInt(fontSize) / 3)}px sans-serif`;
-          ctx.fillStyle = '#64748b';
+          ctx.fillStyle = secondaryChartTextColor;
           ctx.fillText('Complete', centerX, centerY + 20);
           ctx.restore();
         }
