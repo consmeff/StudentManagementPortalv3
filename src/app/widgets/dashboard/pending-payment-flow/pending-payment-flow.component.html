@@ -1,6 +1,6 @@
 <div class="pending-flow-page">
   <div class="welcome-line">Welcome,</div>
-  <h1 class="applicant-name">{{ dashboardName() }}</h1>
+  <h1 class="applicant-name title-xlarge">{{ dashboardName() }}</h1>
 
   <ng-container *ngIf="isApplicationCompleted(); else inProgressFlow">
     <div class="completed-hero-card">
@@ -11,8 +11,8 @@
           </div>
         </div>
         <div class="hero-copy completed-copy">
-          <h2>{{ heroTitle() }}</h2>
-          <p>{{ heroDescription() }}</p>
+          <h2 class="title-xlarge">{{ heroTitle() }}</h2>
+          <p class="body-small">{{ heroDescription() }}</p>
         </div>
       </div>
       <div class="applicant-photo-card">
@@ -69,12 +69,18 @@
         </div>
       </div>
       <div class="hero-copy">
-        <h2>{{ heroTitle() }}</h2>
-        <p>{{ heroDescription() }}</p>
+        <h2 class="title-xlarge">{{ heroTitle() }}</h2>
+        <p class="body-small">{{ heroDescription() }}</p>
       </div>
-      <button pButton type="button" class="continue-btn" (click)="onPrimaryAction()" [disabled]="loadingApplications()">
+      <app-button
+        class="continue-btn py-8"
+        type="button"
+        variant="neutral"
+        [disabled]="loadingApplications()"
+        (buttonClick)="onPrimaryAction()"
+      >
         {{ loadingApplications() ? "Loading..." : primaryActionLabel() }}
-      </button>
+      </app-button>
     </div>
 
     <small class="error-hint" *ngIf="loadingError()">{{ loadingError() }}</small>

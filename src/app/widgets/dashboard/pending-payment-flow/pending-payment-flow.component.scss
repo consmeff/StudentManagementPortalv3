@@ -11,9 +11,6 @@
 .applicant-name {
   margin: 0.35rem 0 1.2rem;
   color: var(--app-text-primary);
-  font-size: 2.9rem;
-  font-weight: 700;
-  line-height: 1.1;
 }
 
 .hero-card {
@@ -244,20 +241,24 @@
   max-width: 44rem;
 }
 
-.continue-btn {
+app-button.continue-btn {
   min-width: 220px;
+}
+
+app-button.continue-btn ::ng-deep .app-btn {
   border-radius: 14px;
-  background: var(--app-primary);
-  border-color: var(--app-primary);
   font-size: 1.25rem;
   font-weight: 600;
 }
 
-.hero-card .continue-btn {
+.hero-card app-button.continue-btn {
+  min-width: 235px;
+}
+
+.hero-card app-button.continue-btn ::ng-deep .app-btn {
   background: var(--app-surface);
   border-color: var(--app-surface);
   color: var(--app-primary);
-  min-width: 235px;
 }
 
 .error-hint {
