@@ -241,10 +241,6 @@
   max-width: 44rem;
 }
 
-app-button.continue-btn {
-  min-width: 220px;
-}
-
 app-button.continue-btn ::ng-deep .app-btn {
   border-radius: 14px;
   font-size: 1.25rem;
@@ -274,7 +270,6 @@ app-button.continue-btn ::ng-deep .app-btn {
 .steps-section h3 {
   margin: 0 0 1rem;
   color: var(--app-text-primary);
-  font-size: 2.3rem;
 }
 
 .steps-list {
@@ -287,7 +282,7 @@ app-button.continue-btn ::ng-deep .app-btn {
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr) auto;
   gap: 0.9rem;
-  align-items: center;
+  align-items: start;
   min-height: 78px;
 }
 
@@ -299,14 +294,13 @@ app-button.continue-btn ::ng-deep .app-btn {
 }
 
 .marker-circle {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 24px;
 }
 
 .marker-circle.completed,
@@ -331,16 +325,9 @@ app-button.continue-btn ::ng-deep .app-btn {
   min-width: 0;
 }
 
-.step-title {
-  font-size: 2.15rem;
-  line-height: 1.05;
-  font-weight: 700;
-}
 
 .step-description {
   margin-top: 0.4rem;
-  font-size: 1.6rem;
-  line-height: 1.25;
 }
 
 .step-content.completed .step-title,
@@ -366,7 +353,7 @@ app-button.continue-btn ::ng-deep .app-btn {
 }
 
 .step-action .continue-btn {
-  min-width: 220px;
+  padding: 20px;
   color: var(--app-surface);
 }
 
@@ -375,8 +362,6 @@ app-button.continue-btn ::ng-deep .app-btn {
   align-items: center;
   gap: 0.5rem;
   color: var(--app-success);
-  font-size: 1.8rem;
-  font-weight: 700;
 }
 
 .programme-grid {
@@ -471,18 +456,6 @@ app-button.continue-btn ::ng-deep .app-btn {
 
   .step-description {
     font-size: 1.15rem;
-  }
-
-  .steps-section h3 {
-    font-size: 1.6rem;
-  }
-
-  .hero-copy h2 {
-    font-size: 2rem;
-  }
-
-  .hero-copy p {
-    font-size: 1rem;
   }
 
   .welcome-line {

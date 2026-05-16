@@ -33,19 +33,19 @@
     </section>
 
     <section class="details-section" *ngIf="completedApplication() as details">
-      <h3>Application Details</h3>
+      <h3 class="title-small">Application Details</h3>
       <div class="details-card">
         <div class="details-row">
-          <span>Application Number:</span>
-          <strong>{{ details.applicationNo }}</strong>
+          <span class="body-small">Application Number:</span>
+          <strong class="title-small">{{ details.applicationNo }}</strong>
         </div>
         <div class="details-row">
-          <span>Preferred Programme:</span>
-          <strong>{{ details.preferredProgramme }}</strong>
+          <span class="body-small">Preferred Programme:</span>
+          <strong class="title-small">{{ details.preferredProgramme }}</strong>
         </div>
         <div class="details-row">
-          <span>Application Date:</span>
-          <strong>{{ details.applicationDate }}</strong>
+          <span class="body-small">Application Date:</span>
+          <strong class="title-small">{{ details.applicationDate }}</strong>
         </div>
       </div>
       <div class="summary-action">
@@ -98,7 +98,7 @@
     </section>
 
     <section class="steps-section">
-      <h3>Application Steps</h3>
+      <h3 class="title-small">Application Steps</h3>
 
       <div class="steps-list">
         <div class="step-row" *ngFor="let step of applicationSteps(); let last = last">
@@ -111,25 +111,25 @@
           </div>
 
           <div class="step-content" [class]="step.status">
-            <div class="step-title">{{ step.title }}</div>
-            <div class="step-description">{{ step.description }}</div>
+            <div class="step-title title-xsmall">{{ step.title }}</div>
+            <div class="step-description body-small">{{ step.description }}</div>
           </div>
 
           <div class="step-action">
-            <div class="step-complete" *ngIf="step.status === 'completed'">
+            <div class="step-complete label-m" *ngIf="step.status === 'completed'">
               <span>Completed</span>
               <i class="pi pi-check-circle"></i>
             </div>
-            <button
+            <app-button
               *ngIf="step.actionLabel"
-              pButton
               type="button"
+              variant="primary"
               class="continue-btn"
               [disabled]="loadingApplications() || initializingApplication()"
-              (click)="onStepAction(step)"
+              (buttonClick)="onStepAction(step)"
             >
               {{ step.actionLabel }}
-            </button>
+            </app-button>
           </div>
         </div>
       </div>

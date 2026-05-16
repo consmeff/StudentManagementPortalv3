@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 
 export type ButtonVariant =
   | 'primary'
@@ -10,35 +9,52 @@ export type ButtonVariant =
   | 'neutral'
   | 'muted';
 
+type ButtonType = 'button' | 'submit' | 'reset';
+
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [CommonModule],
   templateUrl: './button.component.html',
   styleUrl: './button.component.scss'
 })
 export class ButtonComponent {
-  @Input() variant: ButtonVariant = 'primary';
-  @Input() outline = false;
-  @Input() type: 'button' | 'submit' | 'reset' = 'button';
-  @Input() disabled = false;
-  @Input() fullWidth = false;
-  @Input() iconClass = '';
-  @Input() iconPosition: 'left' | 'right' = 'left';
+  readonly variant = input<ButtonVariant>('primary');
+  readonly outline = input(false);
+  readonly type = input<ButtonType>('button');
+  readonly disabled = input(false);
+  readonly fullWidth = input(false);
+  readonly iconClass = input('');
+  readonly iconPosition = input<'left' | 'right'>('left');
+  readonly forwardedClass = input('', { alias: 'class' });
 
-  @Output() buttonClick = new EventEmitter<MouseEvent>();
+  readonly buttonClick = output<MouseEvent>();
 
-  get variantClass(): string {
-    const mappedVariant = this.variant === 'outline' ? 'primary' : this.variant;
-    return `btn--${mappedVariant}`;
-  }
+  readonly buttonClass = computed(() => {
+    const resolvedVariant = this.variant() === 'outline' ? 'primary' : this.variant();
+    const classes = [
+      'app-btn',
+      `btn--${resolvedVariant}`,
+      this.outline() || this.variant() === 'outline' ? 'btn--outline' : 'btn--solid'
+    ];
 
-  get modeClass(): string {
-    return this.outline || this.variant === 'outline' ? 'btn--outline' : 'btn--solid';
-  }
+    if (this.fullWidth()) {
+      classes.push('btn--full');
+    }
+
+    if (this.disabled()) {
+      classes.push('btn--disabled');
+    }
+
+    const customClass = this.forwardedClass().trim();
+    if (customClass.length > 0) {
+      classes.push(customClass);
+    }
+
+    return classes.join(' ');
+  });
 
   handleClick(event: MouseEvent): void {
-    if (this.disabled) {
+    if (this.disabled()) {
       event.preventDefault();
       return;
     }
