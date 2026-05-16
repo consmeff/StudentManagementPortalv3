@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { ApplicationService } from '../../services/application.service';
 import { RegistrantData } from '../../data/application/registrantdatadto';
 import { AuthSessionStore } from '../../store/auth-session.store';
+import { formatStructuredName } from '../../utility/name-format';
 
 export type VerificationDocument = {
   label: string;
@@ -36,7 +37,11 @@ export class AdmittedFlowService {
   readonly applicantName = computed(() => {
     const data = this.registrantData();
     const fallback = this.authSessionStore.name();
-    const composed = `${data?.first_name || ''} ${data?.last_name || ''}`.trim();
+    const composed = formatStructuredName({
+      firstName: data?.first_name,
+      lastName: data?.last_name,
+      middleName: data?.other_names
+    });
     return composed || fallback || 'Applicant';
   });
 

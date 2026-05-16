@@ -14,6 +14,7 @@ import { RegistrantData } from '../../../data/application/registrantdatadto';
 import { StatusIndicatorComponent, StatusTone } from '../../../shared/components/status-indicator/status-indicator.component';
 import { ApplicationStatusDefinition, ApplicationStatusKey } from '../../../constants/application-status.types';
 import { getApplicationStatusDefinition, normalizeApplicationStatusKey } from '../../../constants/application-status.utils';
+import { formatStructuredName } from '../../../utility/name-format';
 import {
   APPROVAL_STATUS_MESSAGES,
   ACTION_LABELS,
@@ -253,7 +254,11 @@ export class PendingPaymentFlowComponent implements OnInit {
         }
       }
       if (data?.first_name || data?.last_name) {
-        const composedName = `${data.first_name ?? ''} ${data.last_name ?? ''}`.trim();
+        const composedName = formatStructuredName({
+          firstName: data.first_name,
+          lastName: data.last_name,
+          middleName: data.other_names
+        });
         if (composedName) {
           this.dashboardName.set(composedName);
         }

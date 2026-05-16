@@ -1,6 +1,7 @@
 import { effect } from '@angular/core';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { LoginResponse } from '../data/auth/auth.data';
+import { normalizeDisplayName } from '../utility/name-format';
 
 type AuthSessionState = {
   name: string;
@@ -96,7 +97,7 @@ export const AuthSessionStore = signalStore(
     setSessionFromLogin(response: LoginResponse) {
       const nextState: AuthSessionState = {
         ...initialAuthSessionState,
-        name: response.name ?? '',
+        name: normalizeDisplayName(response.name),
         userType: response.user_type ?? '',
         matriculationNo: response.matriculation_no ?? '',
         applicationNo: response.application_no ?? '',
@@ -122,7 +123,7 @@ export const AuthSessionStore = signalStore(
       patchState(store, { userType: userType ?? '' });
     },
     setName(name: string) {
-      patchState(store, { name: name ?? '' });
+      patchState(store, { name: normalizeDisplayName(name) });
     },
     setPaymentStatus(paymentStatus: string) {
       patchState(store, { paymentStatus: paymentStatus ?? '' });

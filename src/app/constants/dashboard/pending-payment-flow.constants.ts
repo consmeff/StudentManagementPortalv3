@@ -2,14 +2,14 @@ import { ApplicationStatusKey } from '../application-status.types';
 
 export const HERO_CONTENT = {
   pending: {
-    title: 'Complete your application to apply for admission',
+    title: 'Complete your application process',
     description:
       'You have created your account. To apply, choose your course, pay the application fee, and fill in your details.',
     actionLabel: 'Continue Application',
   },
   paid: {
-    title: 'Continue your admission process',
-    description: 'Your application fee has been confirmed. Continue to complete your admission form.',
+    title: 'Continue your application process',
+    description: 'Your application fee has been confirmed. Continue to complete your application form.',
     actionLabel: 'Continue to Form',
   },
 } as const;
@@ -34,9 +34,9 @@ export const STEP_CONTENT = {
     description: "O'level result, passport photograph, JAMB result slip, Birth certificate in JPEG, PNG or PDF format.",
   },
   submitApplication: {
-    title: 'Submit application and await admission decision',
+    title: 'Submit application and await application decision',
     description:
-      'Your application will be reviewed by the admissions team. You will be notified of the outcome via this portal and SMS.',
+      'Your application will be reviewed by the applications team. You will be notified of the outcome via this portal and SMS.',
   },
 } as const;
 
@@ -97,12 +97,12 @@ export const APPROVAL_STATUS_MESSAGES: Record<ApplicationStatusKey, DashboardApp
   },
   admitted: {
     title: 'Admitted',
-    detail: 'Congratulations. Your admission decision is now available on the portal.',
+    detail: 'Congratulations. Your application decision is now available on the portal.',
     tone: 'success',
   },
   compliance_required: {
     title: 'Complaince Required',
-    detail: 'Your application needs an update before the admission review can continue.',
+    detail: 'Your application needs an update before the application review can continue.',
     tone: 'warning',
   },
   admitted_internally: {
@@ -112,7 +112,7 @@ export const APPROVAL_STATUS_MESSAGES: Record<ApplicationStatusKey, DashboardApp
   },
   auto_rejected: {
     title: 'Auto Unqualified',
-    detail: 'Your application did not meet the admission requirements.',
+    detail: 'Your application did not meet the application requirements.',
     tone: 'danger',
   },
   unknown: {
