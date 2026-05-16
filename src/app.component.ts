@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { GlobalLoadingComponent } from './app/global-loader/global-loader.component';
+import { ThemeService } from './app/services/theme.service';
 
 @Component({
     selector: 'app-root',
@@ -13,4 +14,8 @@ import { GlobalLoadingComponent } from './app/global-loader/global-loader.compon
     <app-global-loading></app-global-loading>
     `
 })
-export class AppComponent {}
+export class AppComponent {
+    constructor(themeService: ThemeService) {
+        void themeService;
+    }
+}

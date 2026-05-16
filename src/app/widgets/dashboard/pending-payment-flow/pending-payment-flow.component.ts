@@ -491,17 +491,18 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.applyApprovalStatusMessage(registrant, submitDone);
 
     const pending = !paymentDone;
+    const approvalStatusKey = normalizeApplicationStatusKey(registrant?.approval_status);
     this.isPaymentPending.set(pending);
-    if (pending) {
-      this.heroTitle.set(HERO_CONTENT.pending.title);
+    if (approvalStatusKey === 'pending') {
+      this.heroTitle.set('Awaiting Review');
       this.heroDescription.set(HERO_CONTENT.pending.description);
       this.primaryActionLabel.set(HERO_CONTENT.pending.actionLabel);
       return;
     }
 
-    if (submitDone) {
+    if (approvalStatusKey === 'shortlisted') {
       this.heroTitle.set('Awaiting Admission');
-      this.heroDescription.set('You have successfully completed your application. Now awaiting admission decision.');
+      this.heroDescription.set('');
       this.primaryActionLabel.set('View Application Summary');
       return;
     }

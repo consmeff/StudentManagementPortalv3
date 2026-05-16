@@ -5,6 +5,10 @@
   padding: $spacing-4;
 }
 
+:host {
+  display: block;
+}
+
 .rows-list {
   display: flex;
   flex-direction: column;
@@ -486,6 +490,34 @@
   .section-title {
     font-size: $font-size-lg;
   }
+
+
+:host ::ng-deep .summary-accordion {
+  .p-accordionheader,
+  .p-accordionheader .p-accordionheader-label,
+  .p-accordionheader .p-accordionheader-toggle-icon,
+  .p-accordioncontent,
+  .p-accordioncontent .row-label,
+  .p-accordioncontent .row-value,
+  .p-accordioncontent .doc-label,
+  .p-accordioncontent .doc-name,
+  .p-accordioncontent .doc-size,
+  .p-accordioncontent-content,
+  .p-accordioncontent-content .row-label,
+  .p-accordioncontent-content .row-value,
+  .p-accordioncontent-content .doc-label,
+  .p-accordioncontent-content .doc-name,
+  .p-accordioncontent-content .doc-size {
+    color: var(--app-text-primary) !important;
+  }
+
+  .p-accordionheader,
+  .p-accordioncontent,
+  .p-accordioncontent-content,
+  .p-accordionpanel.p-accordionpanel-active > .p-accordionheader {
+    background: transparent !important;
+  }
+}
 
   .info-grid {
     gap: $spacing-3;
