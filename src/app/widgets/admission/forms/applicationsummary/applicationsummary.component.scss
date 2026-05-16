@@ -22,21 +22,21 @@
   font-family: $font-family-sans;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: $text-secondary;
+  color: #000000;
 
   @include dark-mode {
-    color: $dark-text-secondary;
+    color: #ffffff;
   }
 }
 
 .row-value {
   font-family: $font-family-sans;
   font-size: $font-size-sm;
-  color: $text-primary;
+  color: #000000;
   word-break: break-word;
 
   @include dark-mode {
-    color: $dark-text-primary;
+    color: #ffffff;
   }
 }
 
@@ -55,10 +55,10 @@
 
 .doc-label {
   font-size: $font-size-sm;
-  color: $text-secondary;
+  color: #000000;
 
   @include dark-mode {
-    color: $dark-text-secondary;
+    color: #ffffff;
   }
 }
 
@@ -80,19 +80,19 @@
 
 .doc-name {
   font-weight: $font-weight-semibold;
-  color: $text-primary;
+  color: #000000;
 
   @include dark-mode {
-    color: $dark-text-primary;
+    color: #ffffff;
   }
 }
 
 .doc-size {
-  color: $text-secondary;
+  color: #000000;
   font-size: $font-size-xs;
 
   @include dark-mode {
-    color: $dark-text-secondary;
+    color: #ffffff;
   }
 }
 
@@ -355,21 +355,38 @@
     }
 
     .summary-accordion {
+      .p-accordionheader,
+      .p-accordionheader .p-accordionheader-label,
+      .p-accordionheader .p-accordionheader-toggle-icon,
+      .p-accordioncontent,
+      .p-accordioncontent-content,
+      .p-accordioncontent-content .row-label,
+      .p-accordioncontent-content .row-value,
+      .p-accordioncontent-content .doc-label,
+      .p-accordioncontent-content .doc-name,
+      .p-accordioncontent-content .doc-size {
+        color: #000000 !important;
+
+        @include dark-mode {
+          color: #ffffff !important;
+        }
+      }
+
       .p-accordionpanel {
         margin-bottom: $spacing-2;
       }
 
       .p-accordionheader {
-        background: $bg-primary;
+        background: transparent;
         border: 1px solid $border-color;
         border-radius: $radius-md;
         padding: $spacing-4 $spacing-6;
-        color: $text-primary;
+        color: #000000;
         font-weight: $font-weight-semibold;
         transition: $transition-all;
 
         &:hover {
-          background: $bg-secondary;
+          background: transparent;
           border-color: $primary;
         }
 
@@ -378,12 +395,12 @@
         }
 
         @include dark-mode {
-          background: $dark-bg-primary;
+          background: transparent;
           border-color: $dark-border-color;
-          color: $dark-text-primary;
+          color: #ffffff;
 
           &:hover {
-            background: $dark-bg-secondary;
+            background: transparent;
             border-color: $primary;
           }
 
@@ -394,42 +411,51 @@
       }
 
       .p-accordionheader-toggle-icon {
-        color: $text-secondary;
+        color: #000000;
 
         @include dark-mode {
-          color: $dark-text-secondary;
+          color: #ffffff;
         }
       }
 
       .p-accordionpanel.p-accordionpanel-active > .p-accordionheader {
-        background: $primary;
-        border-color: $primary;
-        color: white;
+        background: transparent;
+        border-color: $border-color;
+        color: #000000;
 
         .p-accordionheader-toggle-icon {
-          color: white;
+          color: #000000;
+        }
+
+        @include dark-mode {
+          border-color: $dark-border-color;
+          color: #ffffff;
+
+          .p-accordionheader-toggle-icon {
+            color: #ffffff;
+          }
         }
       }
 
       .p-accordioncontent {
-        background: $bg-primary;
+        background: transparent;
         border: 1px solid $border-color;
         border-top: none;
         border-radius: 0 0 $radius-md $radius-md;
         margin-top: -$spacing-2;
 
         @include dark-mode {
-          background: $dark-bg-primary;
           border-color: $dark-border-color;
         }
       }
 
       .p-accordioncontent-content {
         padding: $spacing-6;
-        color: $text-primary;
+        background: transparent;
+        color: #000000;
 
         @include dark-mode {
-          color: $dark-text-primary;
+          color: #ffffff;
         }
       }
     }

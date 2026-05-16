@@ -332,7 +332,7 @@ export class AdmissionFormComponent implements OnInit {
     if (this.canEditApplication()) {
       return null;
     }
-    const msg = 'Application can only be edited when compliance is issued.';
+    const msg = 'Application can only be edited when the status is pending or compliance is issued.';
     this.showError('Application Locked', msg);
     return Promise.reject(msg);
   }
@@ -349,29 +349,10 @@ export class AdmissionFormComponent implements OnInit {
     const directive = data.compliance_directive ?? '';
     this.complianceDirective = directive;
     const complianceIssued = approvalStatus === 'compliance_required';
+    const pendingApproval = approvalStatus === 'pending';
     this.hasComplianceIssued = complianceIssued;
-    const personalDone = this.hasRegistrantValue(data.marital_status)
-      && this.hasRegistrantValue(data.gender)
-      && this.hasRegistrantValue(data.dob)
-      && this.hasRegistrantValue(data.nationality)
-      && this.hasRegistrantValue(data.state_of_origin)
-      && this.hasRegistrantValue(data.lga);
-    const nextOfKinDone = !!data.primary_parent_or_guardian
-      && this.hasRegistrantValue(data.primary_parent_or_guardian.first_name)
-      && this.hasRegistrantValue(data.primary_parent_or_guardian.last_name)
-      && this.hasRegistrantValue(data.primary_parent_or_guardian.phone_number);
-    const academicDone = Array.isArray(data.academic_history)
-      && data.academic_history.length > 0
-      && this.hasRegistrantValue(data.utme_reg_no)
-      && this.hasRegistrantValue(data.utme_result?.score);
-    const docsDone = !!data.certificate_of_birth?.file_url
-      && !!data.passport_photo?.file_url
-      && !!data.utme_result?.file?.file_url
-      && !!data.certificate_of_origin?.file_url
-      && !!data.o_level_result?.[0]?.file?.file_url;
-    const allStepsCompleted = personalDone && nextOfKinDone && academicDone && docsDone;
 
-    this.isEditLocked = allStepsCompleted && !complianceIssued;
+    this.isEditLocked = !(pendingApproval || complianceIssued);
     this._formStepService.setApplicationEditable(!this.isEditLocked);
   }
 
