@@ -42,9 +42,9 @@ export class PaymentWorkflowService {
       if (!redirected) {
         this.makePayment(applicationNo, ref, hooks);
       }
-    } catch {
+    } catch (error) {
       hooks?.onProcessingChange?.(false);
-      hooks?.onError?.('Payment Error', 'Unable to initialize payment. Please try again.');
+      throw error;
     }
   }
 
@@ -86,7 +86,6 @@ export class PaymentWorkflowService {
           }, 1500);
         } catch {
           hooks?.onVerifyingChange?.(false);
-          hooks?.onError?.('Verification Failed', 'Payment verification failed. Please contact support.');
         }
       },
       onClose: () => {

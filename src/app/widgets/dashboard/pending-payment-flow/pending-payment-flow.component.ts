@@ -225,11 +225,6 @@ export class PendingPaymentFlowComponent implements OnInit {
       });
       await this.loadRegistrantSnapshot();
     } catch {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Application',
-        detail: UI_COPY.initializeApplicationError,
-      });
     } finally {
       this.initializingApplication.set(false);
     }

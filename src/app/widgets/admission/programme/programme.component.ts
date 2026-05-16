@@ -2,7 +2,6 @@ import { Component, EventEmitter, inject, Input, OnInit, Output, SimpleChanges, 
 import { FormControl, FormGroup } from '@angular/forms';
 import { ApplicationService } from '../../../services/application.service';
 import { AppInitResponseDTO, DepartmentsDTO, OpenApplicationDTO, Program } from '../../../data/application/admission.dto';
-import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { RegStoreService } from '../../../services/regstore.service';
 import { FormService } from '../../services/form.service';
@@ -86,14 +85,7 @@ export class ProgrammeComponent implements OnInit {
         this.programmes = data;
         this.initializeForm();
       },
-      error: ((err: HttpErrorResponse) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load programmes',
-          life: 5000
-        });
-      })
+      error: () => {}
     });
   }
 
@@ -222,12 +214,6 @@ export class ProgrammeComponent implements OnInit {
       })
       .catch(err => {
         this.busy = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to initialize application',
-          life: 5000
-        });
       });
   }
 
@@ -246,15 +232,9 @@ export class ProgrammeComponent implements OnInit {
         this.toShow = 1;
         this.busy = false;
       },
-      error: ((err: HttpErrorResponse) => {
+      error: () => {
         this.busy = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load departments',
-          life: 5000
-        });
-      })
+      }
     });
   }
 }

@@ -157,27 +157,21 @@ export class AdmissionFormComponent implements OnInit {
       next: (data) => {
         this._preRegData.setPreRegData(data);
       },
-      error: (err) => {
-        this.showError('Registration Data', 'Failed to load registration data');
-      }
+      error: () => {}
     });
 
     this._appservice.countries().subscribe({
       next: (data) => {
         this._preRegData.setCountryData(data);
       },
-      error: (err) => {
-        this.showError('Country Data', 'Failed to load country data');
-      }
+      error: () => {}
     });
 
     this._appservice.states().subscribe({
       next: (data) => {
         this._preRegData.setStateData(data);
       },
-      error: (err) => {
-        this.showError('State Data', 'Failed to load state data');
-      }
+      error: () => {}
     });
 
     this._preRegData.stateData$.subscribe(data => {
@@ -395,10 +389,8 @@ export class AdmissionFormComponent implements OnInit {
           resolve();
         })
         .catch(err => {
-          let erMsg = this.extractErrorMessage(err);
-          this.showError("Personal Detail", erMsg);
           this.isLoadingPersonal = false;
-          reject(erMsg);
+          reject(err);
         });
     });
   }
@@ -417,10 +409,8 @@ export class AdmissionFormComponent implements OnInit {
           resolve();
         })
         .catch(err => {
-          let erMsg = this.extractErrorMessage(err);
-          this.showError("Next Of Kin Details", erMsg);
           this.isLoadingNextOfKin = false;
-          reject(erMsg);
+          reject(err);
         });
     });
   }
@@ -446,10 +436,8 @@ export class AdmissionFormComponent implements OnInit {
           resolve();
         })
         .catch(err => {
-          let erMsg = this.extractErrorMessage(err);
-          this.showError("Academic Details", erMsg);
           this.isLoadingAcademic = false;
-          reject(erMsg);
+          reject(err);
         });
     });
   }
@@ -482,23 +470,10 @@ export class AdmissionFormComponent implements OnInit {
           resolve();
         })
         .catch(err => {
-          this.showError("Document Upload", "Upload Failed");
           this.isLoadingDocuments = false;
           reject(err);
         });
     });
-  }
-
-  // Helper methods
-  extractErrorMessage(err: any): string {
-    if (err.error && err.error?.errors?.non_field_errors) {
-      return err.error.errors.non_field_errors[0];
-    } else if (err.error && err.error.non_field_errors) {
-      return err.error.non_field_errors[0];
-    } else if (err.error && err.error.message) {
-      return err.error.message;
-    }
-    return "Unable to Save";
   }
 
   showSuccess(summary: string, detail: string) {
@@ -636,9 +611,7 @@ export class AdmissionFormComponent implements OnInit {
       await firstValueFrom(this._appservice.submitApplication({ applicant_no: applicantNo }));
       this.visible = true;
       this.cd.detectChanges();
-    } catch (err) {
-      const erMsg = this.extractErrorMessage(err);
-      this.showError('Submit Application', erMsg);
+    } catch {
     } finally {
       this.isSubmittingApplication = false;
     }

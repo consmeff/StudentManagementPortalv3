@@ -1,8 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-import { MessageService } from 'primeng/api';
-
 // Services & DTOs
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { ApplicationService } from '../../services/application.service';
@@ -25,7 +23,6 @@ type PaymentHistoryRow = {
   imports: [
     TraceabilityModule
   ],
-  providers: [MessageService],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss'
 })
@@ -37,10 +34,7 @@ export class PaymentComponent implements OnInit {
   paymentHistory: PaymentHistoryRow[] = [];
   regData: RegistrantData | null = null;
 
-  constructor(
-    private appService: ApplicationService,
-    private messageService: MessageService
-  ) {
+  constructor(private appService: ApplicationService) {
     this._widgetService.sidebarState$.subscribe((state: sidebarStateDTO) => {
       this.sidebarVisible = state.isvisible;
     });
@@ -60,7 +54,7 @@ export class PaymentComponent implements OnInit {
       this.regData = snapshot?.data ?? null;
       this.paymentHistory = this.buildPaymentHistory(this.regData);
     } catch {
-      this.showError('Payment History', 'Unable to load payment history');
+      this.paymentHistory = [];
     } finally {
       this.isLoading = false;
     }
@@ -124,15 +118,5 @@ export class PaymentComponent implements OnInit {
     anchor.download = `payment-receipt-${item.referenceNumber}.txt`;
     anchor.click();
     URL.revokeObjectURL(url);
-  }
-
-  // Notification helpers
-  private showError(title: string, message: string) {
-    this.messageService.add({
-      severity: 'error',
-      summary: title,
-      detail: message,
-      life: 5000
-    });
   }
 }

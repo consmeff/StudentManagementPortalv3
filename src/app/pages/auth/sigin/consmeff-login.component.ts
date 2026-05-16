@@ -77,21 +77,8 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
         this.isLoading.set(false);
         this.router.navigateByUrl(this.userPortalService.dashboardUrl());
       },
-      error: (err) => {
-        let erMsg = "Login Failed";
-
-
-        if (err.error && err.error?.errors?.non_field_errors) {
-          erMsg = err.error.errors.non_field_errors[0];
-        } else
-          if (err.error && err.error.non_field_errors) {
-            erMsg = err.error.non_field_errors[0];
-          } else {
-            erMsg = err.error.message;
-          }
-        this.messageService.add({ severity: 'error', summary: 'Login', detail: erMsg });
+      error: () => {
         this.isLoading.set(false);
-        
       },
       complete: () => {
         this.isLoading.set(false);

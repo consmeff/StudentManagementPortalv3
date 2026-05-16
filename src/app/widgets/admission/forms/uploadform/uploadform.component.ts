@@ -140,10 +140,8 @@ export class UploadFormComponent implements AfterViewInit {
             }
             this.isLoadingCertificate = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingCertificate = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(0);
             return;
           });
@@ -174,10 +172,8 @@ export class UploadFormComponent implements AfterViewInit {
             }
             this.isLoadingOlevel = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingOlevel = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(1);
             return;
           });
@@ -205,10 +201,8 @@ export class UploadFormComponent implements AfterViewInit {
             }
             this.isLoadingPassport = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingPassport = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(2);
             return;
           });
@@ -236,10 +230,8 @@ export class UploadFormComponent implements AfterViewInit {
             }
             this.isLoadingOrigin = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingOrigin = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(3);
             return;
           });
@@ -267,10 +259,8 @@ export class UploadFormComponent implements AfterViewInit {
             }
             this.isLoadingUTME = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingUTME = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(4);
             return;
           });
