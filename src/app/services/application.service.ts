@@ -132,11 +132,16 @@ export class ApplicationService {
       : Array.isArray(rawResponse['data'])
         ? rawResponse['data']
         : [];
+    const primaryCount = this.readNumber(rawResponse, 'count');
+    const fallbackCount = this.readNumber(rawResponse, 'total');
+    const count = primaryCount > 0 ? primaryCount : fallbackCount;
+    const next = this.readNullableString(rawResponse, 'next') ?? this.readNullableString(rawResponse, 'next_page_url');
+    const previous = this.readNullableString(rawResponse, 'previous') ?? this.readNullableString(rawResponse, 'prev_page_url');
 
     return {
-      count: this.readNumber(rawResponse, 'count'),
-      next: this.readNullableString(rawResponse, 'next'),
-      previous: this.readNullableString(rawResponse, 'previous'),
+      count,
+      next,
+      previous,
       results: resultsSource.map((item) => this.normalizePaymentItem(item))
     };
   }

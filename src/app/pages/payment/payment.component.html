@@ -17,10 +17,10 @@
       <div class="max-w-xl">
         <app-search-input
           class="toolbar-search"
+          inputId="payment-search"
           placeholder="Search by reference, applicant, payment type, or summary"
           [model]="searchValue()"
           (modelChange)="updateSearchValue($event)"
-          (searchTrigger)="applySearch()"
         ></app-search-input>
       </div>
     </div>

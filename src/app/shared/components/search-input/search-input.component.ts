@@ -10,12 +10,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './search-input.component.scss'
 })
 export class SearchInputComponent {
+  readonly inputId = input<string>('');
   readonly placeholder = input<string>('Search');
   readonly model = input<string>('');
   readonly modelChange = output<string>();
-  readonly searchTrigger = output<void>();
-
-  emitSearch(): void {
-    this.searchTrigger.emit();
-  }
 }

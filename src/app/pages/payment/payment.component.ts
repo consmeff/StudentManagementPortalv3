@@ -2,8 +2,8 @@ import { HttpResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, DestroyRef, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { EMPTY } from 'rxjs';
-import { catchError, distinctUntilChanged, finalize, map, switchMap, take, tap } from 'rxjs/operators';
+import { EMPTY, Subject } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMap, take, tap } from 'rxjs/operators';
 
 import {
   PAYMENT_PAGE_CONFIG,
@@ -61,6 +61,7 @@ export class PaymentComponent implements OnInit {
   readonly activeSortDirection = computed(() => this.resolveActiveSortDirection());
   readonly paymentTableColumns = PAYMENT_TABLE_COLUMNS;
   readonly paymentTableGridTemplate = PAYMENT_TABLE_GRID_TEMPLATE;
+  private readonly searchValueChange$ = new Subject<string>();
 
   constructor(
     private readonly widgetService: WidgetsService,
@@ -73,6 +74,7 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit(): void {
     this.observeSidebarState();
+    this.observeSearchValueChanges();
     this.observePaymentQueryState();
   }
 
@@ -154,11 +156,7 @@ export class PaymentComponent implements OnInit {
 
   updateSearchValue(searchValue: string): void {
     this.searchValue.set(searchValue);
-  }
-
-  applySearch(): void {
-    const normalizedSearch = this.normalizeQueryValue(this.searchValue());
-    this.navigateWithQueryState(PAYMENT_PAGE_CONFIG.defaultPageNumber, this.currentPageSize(), this.currentOrdering(), normalizedSearch);
+    this.searchValueChange$.next(searchValue);
   }
 
   clearSearch(): void {
@@ -176,6 +174,26 @@ export class PaymentComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe((state: sidebarStateDTO) => {
       this.sidebarVisible.set(state.isvisible);
+    });
+  }
+
+  private observeSearchValueChanges(): void {
+    this.searchValueChange$.pipe(
+      debounceTime(PAYMENT_PAGE_CONFIG.searchDebounceMs),
+      map((searchValue) => this.normalizeQueryValue(searchValue)),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((normalizedSearch) => {
+      if (normalizedSearch === this.currentSearch()) {
+        return;
+      }
+
+      this.navigateWithQueryState(
+        PAYMENT_PAGE_CONFIG.defaultPageNumber,
+        this.currentPageSize(),
+        this.currentOrdering(),
+        normalizedSearch
+      );
     });
   }
 

@@ -7,6 +7,7 @@ export const PAYMENT_PAGE_CONFIG = {
   defaultReceiptExtension: 'pdf',
   defaultPageNumber: 1,
   defaultPageSize: 10,
+  searchDebounceMs: 300,
   pageQueryParam: 'page',
   pageSizeQueryParam: 'page_size',
   orderingQueryParam: 'ordering',
