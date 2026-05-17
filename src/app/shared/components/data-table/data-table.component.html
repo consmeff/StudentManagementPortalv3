@@ -1,45 +1,63 @@
-<div class="data-table-card">
-  <div class="data-table-header" [style.--app-data-table-columns]="gridTemplateColumns()">
-    <div
-      class="data-table-heading"
-      *ngFor="let column of columns()"
-      [class]="resolveHeaderClass(column) + (column.className ? ' ' + column.className : '')"
-    >
-      <button
-        *ngIf="isSortable(column); else staticHeaderLabel"
-        type="button"
-        class="header-sort-button"
-        [class.active]="isActiveSort(column)"
-        (click)="emitSortChange(column)"
-      >
-        <span>{{ column.label }}</span>
-        <i [class]="resolveSortIconClass(column)" aria-hidden="true"></i>
-      </button>
-
-      <ng-template #staticHeaderLabel>
-        <span>{{ column.label }}</span>
-      </ng-template>
-    </div>
-  </div>
-
-  <div class="table-state-row" *ngIf="loading()">
+<div class="data-table-card" [style.--app-data-table-columns]="gridTemplateColumns()">
+  <div class="table-state-row" *ngIf="loading(); else dataTableContent">
     {{ loadingMessage() }}
   </div>
 
-  <ng-container *ngIf="!loading() && hasRows()">
-    <div
-      class="data-table-row"
-      *ngFor="let row of rows(); let index = index; trackBy: trackByRow"
-      [style.--app-data-table-columns]="gridTemplateColumns()"
+  <ng-template #dataTableContent>
+    <p-table
+      [value]="tableRows()"
+      [rowTrackBy]="trackByRow"
+      tableStyleClass="app-data-table-table"
     >
-      <ng-container
-        [ngTemplateOutlet]="rowTemplate()"
-        [ngTemplateOutletContext]="{ $implicit: row, index: index }"
-      ></ng-container>
-    </div>
-  </ng-container>
+      <ng-template pTemplate="colgroup">
+        <colgroup>
+          <col *ngFor="let columnWidth of columnWidths()" [style.width]="columnWidth" />
+        </colgroup>
+      </ng-template>
 
-  <div class="table-state-row" *ngIf="!loading() && !hasRows()">
-    {{ emptyMessage() }}
-  </div>
+      <ng-template pTemplate="header">
+        <tr>
+          <th
+            *ngFor="let column of columns()"
+            [class]="resolveHeaderClass(column) + (column.className ? ' ' + column.className : '')"
+            scope="col"
+          >
+            <div class="data-table-heading">
+              <button
+                *ngIf="isSortable(column); else staticHeaderLabel"
+                type="button"
+                class="header-sort-button"
+                [class.active]="isActiveSort(column)"
+                (click)="emitSortChange(column)"
+              >
+                <span>{{ column.label }}</span>
+                <i [class]="resolveSortIconClass(column)" aria-hidden="true"></i>
+              </button>
+
+              <ng-template #staticHeaderLabel>
+                <span>{{ column.label }}</span>
+              </ng-template>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+        <tr>
+          <ng-container
+            [ngTemplateOutlet]="rowTemplate()"
+            [ngTemplateOutletContext]="{ $implicit: row, index: rowIndex }"
+          ></ng-container>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td class="table-state-cell" [attr.colspan]="columnCount()">
+            {{ emptyMessage() }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-template>
 </div>

@@ -41,28 +41,32 @@
   ></app-data-table>
 
   <ng-template #paymentRowTemplate let-item>
-    <div class="history-cell" data-label="Date">{{ formatDate(item.created_at) }}</div>
-    <div class="history-cell value-strong" data-label="Payment Type">{{ item.payment_type || '—' }}</div>
-    <div class="history-cell" data-label="Applicant">{{ item.applicant_name || item.applicant_no || '—' }}</div>
-    <div class="history-cell" data-label="Reference Number">{{ item.ref_id || '—' }}</div>
-    <div class="history-cell" data-label="Amount">{{ formatCurrency(item.amount) }}</div>
-    <div class="history-cell" data-label="Amount Paid">{{ formatCurrency(item.amount_paid) }}</div>
-    <div class="history-cell" data-label="Status">
+    <td class="history-cell" data-label="Date">{{ formatDate(item.created_at) }}</td>
+    <td class="history-cell value-strong" data-label="Payment Type">{{ item.payment_type || '—' }}</td>
+    <td class="history-cell" data-label="Applicant">{{ item.applicant_name || item.applicant_no || '—' }}</td>
+    <td class="history-cell" data-label="Reference Number">{{ item.ref_id || '—' }}</td>
+    <td class="history-cell" data-label="Amount">{{ formatCurrency(item.amount) }}</td>
+    <td class="history-cell" data-label="Amount Paid">{{ formatCurrency(item.amount_paid) }}</td>
+    <td class="history-cell" data-label="Status">
       <span class="status-pill" [ngClass]="paymentStatusClass(item.status)">{{ item.status || 'Unknown' }}</span>
-    </div>
-    <div class="history-cell summary-cell" data-label="Summary">{{ item.summary || '—' }}</div>
-    <div class="history-cell actions-cell" data-label="Actions">
+    </td>
+    <td class="history-cell summary-cell" data-label="Summary">
+      <span class="summary-text" [attr.title]="item.summary?.trim() ? item.summary : null">
+        {{ item.summary?.trim() ? item.summary : '—' }}
+      </span>
+    </td>
+    <td class="history-cell actions-cell" data-label="Actions">
       <app-button
         type="button"
-        variant="outline"
+        variant="muted"
         class="download-btn"
         iconClass="pi pi-download"
         [disabled]="isReceiptLoading(item.ref_id)"
         (buttonClick)="downloadReceipt(item)"
       >
-        {{ isReceiptLoading(item.ref_id) ? 'Preparing...' : 'Receipt' }}
+        {{ isReceiptLoading(item.ref_id) ? 'Preparing...' : 'Download' }}
       </app-button>
-    </div>
+    </td>
   </ng-template>
 
   <app-pagination

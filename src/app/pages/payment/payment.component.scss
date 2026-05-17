@@ -77,6 +77,14 @@
   word-break: break-word;
 }
 
+.summary-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  word-break: break-word;
+}
+
 .actions-cell {
   display: flex;
   justify-content: flex-start;
@@ -119,7 +127,8 @@
 }
 
 .download-btn {
-  min-width: 7.5rem;
+  min-width: fit-content;
+  background: transparent !important;
 }
 
 @media (max-width: 900px) {
@@ -161,6 +170,10 @@
   .summary-cell,
   .actions-cell {
     display: block;
+  }
+
+  .summary-text {
+    display: -webkit-box;
   }
 
   .summary-cell::before,
