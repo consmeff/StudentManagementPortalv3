@@ -1,19 +1,17 @@
 import { HttpResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Component, DestroyRef, Inject, OnInit, computed, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { EMPTY, Observable, from, of } from 'rxjs';
+import { EMPTY } from 'rxjs';
 import { catchError, distinctUntilChanged, finalize, map, switchMap, take, tap } from 'rxjs/operators';
 
 import {
   PAYMENT_PAGE_CONFIG,
-  PAYMENT_RECEIPT_KEYS,
   PAYMENT_STATUS_CLASS,
   PAYMENT_TABLE_COLUMNS,
   PAYMENT_TABLE_GRID_TEMPLATE
 } from '../../constants/payment-page.constants';
 import { PaginatedPaymentsResponse, PaymentHistoryItem } from '../../data/application/payment.data';
-import { AuthSessionStore } from '../../store/auth-session.store';
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { ApplicationService } from '../../services/application.service';
 import { TraceabilityModule } from '../../shared/traceability.module';
@@ -22,11 +20,6 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { DataTableComponent } from '../../shared/components/data-table/data-table.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
-
-type TAuthSessionStore = {
-  applicationNo: () => string;
-  paymentRef: () => string;
-};
 
 type TPaymentQueryState = {
   pageNumber: number;
@@ -70,7 +63,6 @@ export class PaymentComponent implements OnInit {
   readonly paymentTableGridTemplate = PAYMENT_TABLE_GRID_TEMPLATE;
 
   constructor(
-    @Inject(AuthSessionStore) private readonly authSessionStore: TAuthSessionStore,
     private readonly widgetService: WidgetsService,
     private readonly appService: ApplicationService,
     private readonly destroyRef: DestroyRef,
@@ -87,31 +79,13 @@ export class PaymentComponent implements OnInit {
   downloadReceipt(item: PaymentHistoryItem): void {
     const referenceId = item.ref_id.trim();
     if (!referenceId) {
-      this.downloadFallbackReceipt(item);
       return;
     }
 
     this.activeReceiptRefId.set(referenceId);
-    this.appService.getPayment(referenceId).pipe(
+    this.appService.getPaymentReceipt(referenceId).pipe(
       take(1),
-      switchMap((paymentDetail) =>
-        this.appService.getPaymentReceipt(referenceId).pipe(
-          take(1),
-          switchMap((receiptResponse) =>
-            this.resolveReceiptResponse(receiptResponse, paymentDetail).pipe(
-              tap((receiptOpened) => {
-                if (!receiptOpened) {
-                  this.downloadFallbackReceipt(paymentDetail);
-                }
-              })
-            )
-          )
-        )
-      ),
-      catchError(() => {
-        this.downloadFallbackReceipt(item);
-        return EMPTY;
-      }),
+      tap((receiptResponse) => this.downloadReceiptResponse(receiptResponse, referenceId)),
       finalize(() => {
         this.activeReceiptRefId.set(null);
       }),
@@ -327,90 +301,14 @@ export class PaymentComponent implements OnInit {
     });
   }
 
-  private resolveReceiptResponse(
-    response: HttpResponse<Blob>,
-    payment: PaymentHistoryItem
-  ): Observable<boolean> {
-    const receiptBody = response.body;
-    if (!receiptBody || receiptBody.size === 0) {
-      return of(false);
+  private downloadReceiptResponse(response: HttpResponse<Blob>, referenceId: string): void {
+    const receiptFile = response.body;
+    if (!receiptFile || receiptFile.size === 0) {
+      return;
     }
 
-    const contentType = response.headers.get('content-type') ?? '';
-    if (this.isTextLikeContent(contentType)) {
-      return from(receiptBody.text()).pipe(
-        map((payloadText) => {
-          const normalizedPayloadText = payloadText.trim();
-          const receiptUrl = this.extractReceiptUrl(this.parseJsonSafely(normalizedPayloadText))
-            ?? this.extractReceiptUrl(normalizedPayloadText);
-
-          if (receiptUrl === null) {
-            return false;
-          }
-
-          this.openExternalUrl(receiptUrl);
-          return true;
-        })
-      );
-    }
-
-    const fileName = this.extractReceiptFileName(response, payment.ref_id);
-    this.downloadBlob(receiptBody, fileName);
-    return of(true);
-  }
-
-  private parseJsonSafely(value: string): unknown {
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value;
-    }
-  }
-
-  private extractReceiptUrl(value: unknown): string | null {
-    if (typeof value === 'string') {
-      return this.resolveUrl(value);
-    }
-
-    if (!this.isRecord(value)) {
-      return null;
-    }
-
-    for (const receiptKey of PAYMENT_RECEIPT_KEYS) {
-      const receiptValue = value[receiptKey];
-      if (typeof receiptValue === 'string') {
-        const resolvedReceiptUrl = this.resolveUrl(receiptValue);
-        if (resolvedReceiptUrl !== null) {
-          return resolvedReceiptUrl;
-        }
-      }
-    }
-
-    return 'data' in value ? this.extractReceiptUrl(value['data']) : null;
-  }
-
-  private isRecord(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
-  }
-
-  private isTextLikeContent(contentType: string): boolean {
-    return contentType.includes('application/json')
-      || contentType.includes('text/plain')
-      || contentType.includes('text/html');
-  }
-
-  private resolveUrl(value: string): string | null {
-    const trimmedValue = value.trim();
-    if (!trimmedValue) {
-      return null;
-    }
-
-    try {
-      const parsedUrl = new URL(trimmedValue, globalThis.location?.origin ?? 'http://localhost');
-      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:' ? parsedUrl.toString() : null;
-    } catch {
-      return null;
-    }
+    const receiptFileName = this.extractReceiptFileName(response, referenceId);
+    this.downloadBlob(receiptFile, receiptFileName);
   }
 
   private extractReceiptFileName(response: HttpResponse<Blob>, referenceId: string): string {
@@ -424,34 +322,12 @@ export class PaymentComponent implements OnInit {
   }
 
   private downloadBlob(blob: Blob, fileName: string): void {
-    const url = URL.createObjectURL(blob);
+    const objectUrl = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
-    anchor.href = url;
+    anchor.href = objectUrl;
     anchor.download = fileName;
     anchor.click();
-    URL.revokeObjectURL(url);
-  }
-
-  private downloadFallbackReceipt(item: PaymentHistoryItem): void {
-    const receiptText = [
-      'Payment Receipt',
-      `Date: ${this.formatDate(item.created_at)}`,
-      `Applicant: ${item.applicant_name || '—'}`,
-      `Applicant No: ${item.applicant_no || this.authSessionStore.applicationNo() || '—'}`,
-      `Payment Type: ${item.payment_type || '—'}`,
-      `Reference Number: ${item.ref_id || this.authSessionStore.paymentRef() || '—'}`,
-      `Amount: ${this.formatCurrency(item.amount)}`,
-      `Amount Paid: ${this.formatCurrency(item.amount_paid)}`,
-      `Status: ${item.status || '—'}`,
-      `Summary: ${item.summary || '—'}`
-    ].join('\n');
-
-    const blob = new Blob([receiptText], { type: 'text/plain;charset=utf-8' });
-    this.downloadBlob(blob, `payment-receipt-${item.ref_id || 'record'}.txt`);
-  }
-
-  private openExternalUrl(url: string): void {
-    globalThis.open?.(url, '_blank', 'noopener,noreferrer');
+    URL.revokeObjectURL(objectUrl);
   }
 
   private resolveTotalRecordsLabel(): string {

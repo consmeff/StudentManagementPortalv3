@@ -87,11 +87,6 @@ export class ApplicationService {
       map((response) => this.normalizePaginatedPaymentsResponse(response))
     );
   }
-  getPayment(refId: string): Observable<PaymentHistoryItem> {
-    return this.http.get<unknown>(`${this.apiRoot}/api/v1/payments/payments/${encodeURIComponent(refId)}`).pipe(
-      map((response) => this.normalizePaymentResponse(response))
-    );
-  }
   getPaymentReceipt(refId: string): Observable<HttpResponse<Blob>> {
     return this.http.get(`${this.apiRoot}/api/v1/payments/payments/${encodeURIComponent(refId)}/receipt`, {
       observe: 'response',
@@ -144,11 +139,6 @@ export class ApplicationService {
       previous: this.readNullableString(rawResponse, 'previous'),
       results: resultsSource.map((item) => this.normalizePaymentItem(item))
     };
-  }
-
-  private normalizePaymentResponse(response: unknown): PaymentHistoryItem {
-    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
-    return this.normalizePaymentItem(rawResponse);
   }
 
   private normalizePaymentItem(response: unknown): PaymentHistoryItem {

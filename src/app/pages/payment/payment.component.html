@@ -14,7 +14,7 @@
   <div class="payment-toolbar">
     <div class="search-form">
       <label class="search-label" for="payment-search">Search payments</label>
-      <div class="search-input-group">
+      <div class="max-w-xl">
         <app-search-input
           class="toolbar-search"
           placeholder="Search by reference, applicant, payment type, or summary"
@@ -22,15 +22,6 @@
           (modelChange)="updateSearchValue($event)"
           (searchTrigger)="applySearch()"
         ></app-search-input>
-        <app-button
-          type="button"
-          variant="muted"
-          class="toolbar-btn"
-          [disabled]="isLoading() || searchValue().trim().length === 0"
-          (buttonClick)="clearSearch()"
-        >
-          Clear
-        </app-button>
       </div>
     </div>
   </div>
