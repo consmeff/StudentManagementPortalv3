@@ -18,6 +18,8 @@ export class DataTableComponent<TRowData> {
   readonly rows = input.required<ReadonlyArray<TRowData>>();
   readonly rowTemplate = input.required<TemplateRef<DataTableRowContext<TRowData>>>();
   readonly gridTemplateColumns = input<string>(DATA_TABLE_CONFIG.defaultGridTemplateColumns);
+  readonly scrollable = input<boolean>(false);
+  readonly scrollHeight = input<string>('flex');
   readonly loading = input<boolean>(false);
   readonly loadingMessage = input<string>(DATA_TABLE_CONFIG.defaultLoadingMessage);
   readonly emptyMessage = input<string>(DATA_TABLE_CONFIG.defaultEmptyMessage);

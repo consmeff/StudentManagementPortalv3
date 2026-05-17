@@ -7,6 +7,8 @@
     <p-table
       [value]="tableRows()"
       [rowTrackBy]="trackByRow"
+      [scrollable]="scrollable()"
+      [scrollHeight]="scrollHeight()"
       tableStyleClass="app-data-table-table"
     >
       <ng-template pTemplate="colgroup">

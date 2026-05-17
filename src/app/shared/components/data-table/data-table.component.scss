@@ -1,8 +1,13 @@
 :host {
   display: block;
+  min-height: 0;
+  height: 100%;
 }
 
 .data-table-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   border: 1px solid var(--app-border);
   border-radius: 1rem;
   overflow: hidden;
@@ -63,6 +68,20 @@
 }
 
 :host ::ng-deep {
+  .p-datatable {
+    height: 100%;
+  }
+
+  .p-datatable-scrollable {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .p-datatable-wrapper {
+    flex: 1 1 auto;
+  }
+
   .app-data-table-table {
     width: 100%;
     border-collapse: collapse;

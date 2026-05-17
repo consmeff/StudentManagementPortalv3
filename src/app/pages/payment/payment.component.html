@@ -31,6 +31,8 @@
     [rows]="paymentHistory()"
     [rowTemplate]="paymentRowTemplate"
     [gridTemplateColumns]="paymentTableGridTemplate"
+    [scrollable]="true"
+    scrollHeight="flex"
     [loading]="isLoading()"
     [trackBy]="trackPaymentRow"
     [activeSortKey]="activeSortKey()"

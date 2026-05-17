@@ -1,8 +1,26 @@
 @import '../../../assets/demo/theme';
 
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
 .payment-page {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
   padding: 1.5rem;
   color: var(--app-text-primary);
+}
+
+app-data-table {
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .page-header {
@@ -129,6 +147,12 @@
 .download-btn {
   min-width: fit-content;
   background: transparent !important;
+}
+
+app-pagination {
+  display: block;
+  margin-top: 1rem;
+  flex-shrink: 0;
 }
 
 @media (max-width: 900px) {

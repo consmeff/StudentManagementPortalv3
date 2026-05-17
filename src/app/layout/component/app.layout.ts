@@ -15,7 +15,9 @@ import { AppFooter } from './app.footer';
         <section class="content-shell">
             <app-topbar></app-topbar>
             <div class="center-pane">
-                <router-outlet></router-outlet>
+                <div class="page-pane">
+                    <router-outlet></router-outlet>
+                </div>
                 <app-footer></app-footer>
             </div>
         </section>
@@ -44,9 +46,27 @@ import { AppFooter } from './app.footer';
       }
       .center-pane {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
         overflow: auto;
         padding: 1rem;
         background: var(--app-surface);
+      }
+      .page-pane {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      .page-pane > * {
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      app-footer {
+        display: block;
+        margin-top: auto;
+        flex-shrink: 0;
       }
     `]
 })
