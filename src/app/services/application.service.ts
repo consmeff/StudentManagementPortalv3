@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
@@ -17,6 +17,7 @@ import { RegistrantDataDTO } from '../data/application/registrantdatadto';
 })
 export class ApplicationService {
   private readonly apiRoot = environment.apiURL;
+  private readonly paymentsEndpoint = `${this.apiRoot}/api/v1/payments/payments`;
 
   constructor(private http: HttpClient) { }
 
@@ -71,9 +72,16 @@ export class ApplicationService {
   getPaymentRef(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/initiate-payment`, refPayload);
   }
-  getPayments(pageUrl?: string): Observable<PaginatedPaymentsResponse> {
-    const endpoint = this.resolveApiUrl(pageUrl ?? `${this.apiRoot}/api/v1/payments/payments`);
-    return this.http.get<unknown>(endpoint).pipe(
+  getPayments(query: { page: number; ordering: string | null; search: string | null }): Observable<PaginatedPaymentsResponse> {
+    let params = new HttpParams().set('page', String(query.page));
+    if (query.ordering) {
+      params = params.set('ordering', query.ordering);
+    }
+    if (query.search) {
+      params = params.set('search', query.search);
+    }
+
+    return this.http.get<unknown>(this.paymentsEndpoint, { params }).pipe(
       map((response) => this.normalizePaginatedPaymentsResponse(response))
     );
   }
@@ -154,17 +162,6 @@ export class ApplicationService {
       applicant_no: this.readString(rawResponse, 'applicant_no'),
       applicant_name: this.readString(rawResponse, 'applicant_name')
     };
-  }
-
-  private resolveApiUrl(url: string): string {
-    const trimmedUrl = url.replace(/[`'\s]/g, '');
-    if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
-      return trimmedUrl;
-    }
-    if (trimmedUrl.startsWith('/')) {
-      return `${this.apiRoot}${trimmedUrl}`;
-    }
-    return `${this.apiRoot}/${trimmedUrl}`;
   }
 
   private getNestedRecord(source: unknown, key: string): Record<string, unknown> | null {

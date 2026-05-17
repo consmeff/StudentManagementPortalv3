@@ -1,6 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { WidgetsService } from '../../widgets/services/widgets.service';
@@ -15,7 +16,11 @@ const PAYMENT_PAGE_CONFIG = {
   currencyCode: 'NGN',
   currencyLocale: 'en-NG',
   dateLocale: 'en-GB',
-  defaultReceiptExtension: 'pdf'
+  defaultReceiptExtension: 'pdf',
+  defaultPageNumber: 1,
+  pageQueryParam: 'page',
+  orderingQueryParam: 'ordering',
+  searchQueryParam: 'search'
 } as const;
 
 const PAYMENT_STATUS_CLASS = {
@@ -38,20 +43,25 @@ const PAYMENT_STATUS_CLASS = {
 export class PaymentComponent implements OnInit {
   private readonly authSessionStore = inject(AuthSessionStore);
 
-  sidebarVisible = false;
-  isLoading = false;
+  sidebarVisible: boolean = false;
+  isLoading: boolean = false;
   activeReceiptRefId: string | null = null;
   paymentHistory: PaymentHistoryItem[] = [];
-  totalPayments = 0;
-  nextPageUrl: string | null = null;
-  previousPageUrl: string | null = null;
-  currentPage = 1;
-  totalPages = 1;
+  totalPayments: number = 0;
+  nextPage: boolean = false;
+  previousPage: boolean = false;
+  currentPage: number = PAYMENT_PAGE_CONFIG.defaultPageNumber;
+  totalPages: number | null = null;
+  currentOrdering: string | null = null;
+  currentSearch: string | null = null;
+  knownPageSize: number | null = null;
 
   constructor(
     private readonly widgetService: WidgetsService,
     private readonly appService: ApplicationService,
-    private readonly destroyRef: DestroyRef
+    private readonly destroyRef: DestroyRef,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {
     this.widgetService.sidebarState$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -61,25 +71,39 @@ export class PaymentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    void this.loadPaymentHistory();
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((queryParams) => {
+        const pageNumber = this.parsePageNumber(queryParams.get(PAYMENT_PAGE_CONFIG.pageQueryParam));
+        const ordering = this.normalizeQueryValue(queryParams.get(PAYMENT_PAGE_CONFIG.orderingQueryParam));
+        const search = this.normalizeQueryValue(queryParams.get(PAYMENT_PAGE_CONFIG.searchQueryParam));
+
+        this.currentPage = pageNumber;
+        this.currentOrdering = ordering;
+        this.currentSearch = search;
+        void this.loadPaymentHistory(pageNumber, ordering, search);
+      });
   }
 
-  async loadPaymentHistory(pageUrl: string | null = null): Promise<void> {
+  async loadPaymentHistory(pageNumber: number, ordering: string | null, search: string | null): Promise<void> {
     this.isLoading = true;
     try {
-      const response = await firstValueFrom(this.appService.getPayments(pageUrl ?? undefined));
+      const response = await firstValueFrom(this.appService.getPayments({
+        page: pageNumber,
+        ordering,
+        search
+      }));
       this.paymentHistory = response.results;
       this.totalPayments = response.count;
-      this.nextPageUrl = response.next;
-      this.previousPageUrl = response.previous;
-      this.updatePaginationState(response.count, response.results.length, response.next, response.previous);
+      this.nextPage = response.next !== null;
+      this.previousPage = response.previous !== null;
+      this.updatePaginationState(response.count, response.results.length, response.next !== null, response.previous !== null);
     } catch {
       this.totalPayments = 0;
       this.paymentHistory = [];
-      this.nextPageUrl = null;
-      this.previousPageUrl = null;
-      this.currentPage = 1;
-      this.totalPages = 1;
+      this.nextPage = false;
+      this.previousPage = false;
+      this.totalPages = null;
     } finally {
       this.isLoading = false;
     }
@@ -154,11 +178,11 @@ export class PaymentComponent implements OnInit {
   }
 
   canGoToPreviousPage(): boolean {
-    return this.previousPageUrl !== null && !this.isLoading;
+    return this.previousPage && !this.isLoading;
   }
 
   canGoToNextPage(): boolean {
-    return this.nextPageUrl !== null && !this.isLoading;
+    return this.nextPage && !this.isLoading;
   }
 
   loadPreviousPage(): void {
@@ -166,7 +190,7 @@ export class PaymentComponent implements OnInit {
       return;
     }
 
-    void this.loadPaymentHistory(this.previousPageUrl);
+    void this.navigateToPage(this.currentPage - 1);
   }
 
   loadNextPage(): void {
@@ -174,53 +198,64 @@ export class PaymentComponent implements OnInit {
       return;
     }
 
-    void this.loadPaymentHistory(this.nextPageUrl);
+    void this.navigateToPage(this.currentPage + 1);
   }
 
   private updatePaginationState(
     totalPayments: number,
     currentResultCount: number,
-    nextPageUrl: string | null,
-    previousPageUrl: string | null
+    hasNextPage: boolean,
+    hasPreviousPage: boolean
   ): void {
-    const nextPageNumber = this.extractPageNumber(nextPageUrl);
-    const previousPageNumber = this.extractPageNumber(previousPageUrl);
-    const resolvedPageSize = currentResultCount > 0 ? currentResultCount : totalPayments;
-
-    if (nextPageNumber !== null) {
-      this.currentPage = Math.max(nextPageNumber - 1, 1);
-    } else if (previousPageNumber !== null) {
-      this.currentPage = previousPageNumber + 1;
-    } else {
-      this.currentPage = 1;
+    if (currentResultCount > 0 && hasNextPage) {
+      this.knownPageSize = currentResultCount;
     }
 
-    if (resolvedPageSize > 0) {
-      this.totalPages = Math.max(Math.ceil(totalPayments / resolvedPageSize), 1);
+    if (totalPayments === 0) {
+      this.totalPages = null;
       return;
     }
 
-    this.totalPages = 1;
+    if (!hasNextPage && !hasPreviousPage) {
+      this.totalPages = PAYMENT_PAGE_CONFIG.defaultPageNumber;
+      this.knownPageSize = currentResultCount > 0 ? currentResultCount : this.knownPageSize;
+      return;
+    }
+
+    if (this.knownPageSize !== null && this.knownPageSize > 0) {
+      this.totalPages = Math.max(Math.ceil(totalPayments / this.knownPageSize), PAYMENT_PAGE_CONFIG.defaultPageNumber);
+      return;
+    }
+
+    this.totalPages = null;
   }
 
-  private extractPageNumber(url: string | null): number | null {
-    if (!url) {
-      return null;
+  private parsePageNumber(pageValue: string | null): number {
+    if (!pageValue) {
+      return PAYMENT_PAGE_CONFIG.defaultPageNumber;
     }
 
-    try {
-      const baseUrl = globalThis.location?.origin ?? 'http://localhost';
-      const parsedUrl = new URL(url, baseUrl);
-      const pageValue = parsedUrl.searchParams.get('page');
-      if (!pageValue) {
-        return null;
-      }
+    const pageNumber = Number(pageValue);
+    return Number.isFinite(pageNumber) && pageNumber > 0
+      ? Math.trunc(pageNumber)
+      : PAYMENT_PAGE_CONFIG.defaultPageNumber;
+  }
 
-      const pageNumber = Number(pageValue);
-      return Number.isFinite(pageNumber) && pageNumber > 0 ? pageNumber : null;
-    } catch {
-      return null;
-    }
+  private normalizeQueryValue(value: string | null): string | null {
+    return value && value.trim().length > 0 ? value.trim() : null;
+  }
+
+  private async navigateToPage(pageNumber: number): Promise<void> {
+    const resolvedPageNumber = Math.max(pageNumber, PAYMENT_PAGE_CONFIG.defaultPageNumber);
+    await this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        [PAYMENT_PAGE_CONFIG.pageQueryParam]: resolvedPageNumber,
+        [PAYMENT_PAGE_CONFIG.orderingQueryParam]: this.currentOrdering,
+        [PAYMENT_PAGE_CONFIG.searchQueryParam]: this.currentSearch
+      },
+      queryParamsHandling: 'merge'
+    });
   }
 
   private async openReceiptResponse(
