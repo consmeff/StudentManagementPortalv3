@@ -91,16 +91,17 @@ small {
   border-radius: 50%;
 }
 
-.p-radiobutton-input:checked ~ .p-radiobutton-box {
+.p-radiobutton-input:checked~.p-radiobutton-box {
   border-color: var(--app-primary);
 }
 
-.p-radiobutton-input:checked ~ .p-radiobutton-box .p-radiobutton-icon {
+.p-radiobutton-input:checked~.p-radiobutton-box .p-radiobutton-icon {
   background: var(--app-primary);
 }
 
 ::ng-deep {
   .personal-details-container {
+
     .p-inputtext,
     .p-dropdown,
     .p-calendar .p-inputtext {
@@ -109,7 +110,11 @@ small {
       border: 1px solid var(--app-border);
       border-radius: 7px;
       background: var(--app-surface);
-      font-size: 0.8rem;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 160%;
+      letter-spacing: 0%;
+
     }
 
     .p-inputtext,

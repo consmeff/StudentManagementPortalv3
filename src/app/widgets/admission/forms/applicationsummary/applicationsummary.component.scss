@@ -1,12 +1,12 @@
 @import '../../../../../assets/demo/theme';
 
+:host {
+  display: block;
+}
+
 .summary-container {
   width: 100%;
   padding: $spacing-4;
-}
-
-:host {
-  display: block;
 }
 
 .rows-list {
@@ -23,25 +23,20 @@
 }
 
 .row-label {
-  font-family: $font-family-sans;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: #000000;
-
-  @include dark-mode {
-    color: #ffffff;
-  }
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 0%;
+  color: var(--app-text-secondary);
 }
 
 .row-value {
-  font-family: $font-family-sans;
-  font-size: $font-size-sm;
-  color: #000000;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 0%;
+  color: var(--app-text-primary);
   word-break: break-word;
-
-  @include dark-mode {
-    color: #ffffff;
-  }
 }
 
 .documents-list {
@@ -58,12 +53,10 @@
 }
 
 .doc-label {
-  font-size: $font-size-sm;
-  color: #000000;
-
-  @include dark-mode {
-    color: #ffffff;
-  }
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 0%;
+  color: var(--app-text-secondary);
 }
 
 .doc-file {
@@ -83,39 +76,32 @@
 }
 
 .doc-name {
-  font-weight: $font-weight-semibold;
-  color: #000000;
-
-  @include dark-mode {
-    color: #ffffff;
-  }
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 160%;
+  letter-spacing: 0%;
+  color: var(--app-text-primary);
 }
 
 .doc-size {
-  color: #000000;
-  font-size: $font-size-xs;
-
-  @include dark-mode {
-    color: #ffffff;
-  }
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 0%;
+  color: var(--app-text-primary);
 }
 
 .view-doc-btn {
-  border: 1px solid $border-color;
+  border: 1px solid var(--app-border);
   background: transparent;
   border-radius: 50%;
   width: 34px;
   height: 34px;
-  color: $text-secondary;
+  color: var(--app-text-secondary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-
-  @include dark-mode {
-    border-color: $dark-border-color;
-    color: $dark-text-secondary;
-  }
 }
 
 .view-doc-btn:hover {
@@ -123,350 +109,108 @@
   color: $primary;
 }
 
-.loading-state {
-  .summary-section {
-    background-color: $bg-secondary;
-    border-radius: $radius-xl;
-    padding: $spacing-8;
-    margin-bottom: $spacing-6;
-
-    @include dark-mode {
-      background-color: $dark-bg-secondary;
-    }
-  }
-}
-
-.summary-section {
+.loading-state .summary-section {
   background-color: $bg-secondary;
   border-radius: $radius-xl;
-  padding: $spacing-6;
+  padding: $spacing-8;
   margin-bottom: $spacing-6;
-
-  @include responsive($breakpoint-md) {
-    padding: $spacing-8 $spacing-10;
-  }
 
   @include dark-mode {
     background-color: $dark-bg-secondary;
   }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 }
 
-.section-title {
-  font-family: $font-family-sans;
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  line-height: $line-height-tight;
-  color: $text-primary;
-  margin-bottom: $spacing-4;
+:host ::ng-deep {
+  .summary-container .p-skeleton {
+    background-color: $gray-200;
+    border-radius: $radius;
 
-  @include dark-mode {
-    color: $dark-text-primary;
-  }
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-4;
-  margin-top: $spacing-4;
-
-  @include responsive($breakpoint-md) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-6 $spacing-8;
-  }
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-1;
-
-  @include responsive($breakpoint-lg) {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-}
-
-.info-label {
-  font-family: $font-family-sans;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  line-height: $line-height-normal;
-  color: $text-secondary;
-  min-width: 180px;
-
-  @include dark-mode {
-    color: $dark-text-secondary;
-  }
-
-  @include responsive($breakpoint-lg) {
-    flex-shrink: 0;
-  }
-}
-
-.info-value {
-  font-family: $font-family-sans;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-normal;
-  line-height: $line-height-normal;
-  color: $text-primary;
-  word-break: break-word;
-
-  @include dark-mode {
-    color: $dark-text-primary;
-  }
-}
-
-.documents-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-6;
-  margin-top: $spacing-4;
-
-  @include responsive($breakpoint-md) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include responsive($breakpoint-lg) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.document-item {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-3;
-}
-
-.document-label {
-  font-family: $font-family-sans;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  line-height: $line-height-normal;
-  color: $text-primary;
-
-  @include dark-mode {
-    color: $dark-text-primary;
-  }
-}
-
-.document-preview {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-// PrimeNG Component Customization
-::ng-deep {
-  .summary-container {
-    // Divider Styling
-    .p-divider {
-      &.p-divider-horizontal {
-        margin: 0;
-        padding: 0;
-
-        &::before {
-          border-top: 1px solid $border-color;
-        }
-
-        @include dark-mode {
-          &::before {
-            border-top-color: $dark-border-color;
-          }
-        }
-      }
+    @include dark-mode {
+      background-color: $gray-700;
     }
 
-    // Image Preview Styling
-    .document-image {
-      border-radius: $radius-md;
-      border: 1px solid $border-color;
-      cursor: pointer;
-      transition: $transition-all;
-      max-width: 200px;
-      height: auto;
-
-      &:hover {
-        transform: scale(1.02);
-        box-shadow: $shadow-md;
-      }
+    &::after {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
 
       @include dark-mode {
-        border-color: $dark-border-color;
-      }
-    }
-
-    // Image Preview Dialog
-    .p-image-preview-container {
-      .p-image-preview {
-        max-width: 90vw;
-        max-height: 90vh;
-      }
-    }
-
-    .p-image-mask {
-      background-color: rgba(0, 0, 0, 0.9);
-    }
-
-    .p-image-toolbar {
-      padding: $spacing-4;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: $radius-md;
-
-      button {
-        color: white;
-        width: 48px;
-        height: 48px;
-        border-radius: $radius;
-        transition: $transition-all;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.2);
-        }
-      }
-    }
-
-    // Skeleton Styling
-    .p-skeleton {
-      background-color: $gray-200;
-      border-radius: $radius;
-
-      @include dark-mode {
-        background-color: $gray-700;
-      }
-
-      &::after {
         background: linear-gradient(
           90deg,
           rgba(255, 255, 255, 0) 0,
-          rgba(255, 255, 255, 0.4) 50%,
+          rgba(255, 255, 255, 0.1) 50%,
           rgba(255, 255, 255, 0) 100%
         );
+      }
+    }
+  }
 
-        @include dark-mode {
-          background: linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0) 0,
-            rgba(255, 255, 255, 0.1) 50%,
-            rgba(255, 255, 255, 0) 100%
-          );
+  .summary-accordion {
+    .p-accordionpanel {
+      margin-bottom: $spacing-2;
+    }
+
+    .p-accordionheader,
+    .p-accordionheader .p-accordionheader-label,
+    .p-accordionheader .p-accordionheader-toggle-icon,
+    .p-accordioncontent,
+    .p-accordioncontent-content,
+    .p-accordioncontent-content .row-label,
+    .p-accordioncontent-content .row-value,
+    .p-accordioncontent-content .doc-label,
+    .p-accordioncontent-content .doc-name,
+    .p-accordioncontent-content .doc-size {
+      color: var(--app-text-primary) !important;
+    }
+
+    .p-accordionheader {
+      background: transparent;
+      border: 1px solid var(--app-border);
+      border-radius: $radius-md;
+      padding: $spacing-4 $spacing-6;
+      font-weight: $font-weight-semibold;
+      transition: $transition-all;
+
+      &:hover {
+        background: transparent;
+        border-color: $primary;
+      }
+
+      &:focus-visible {
+        box-shadow: $shadow-primary;
+      }
+
+      @include dark-mode {
+        &:focus-visible {
+          box-shadow: $shadow-primary-dark;
         }
       }
     }
 
-    .summary-accordion {
-      .p-accordionheader,
-      .p-accordionheader .p-accordionheader-label,
-      .p-accordionheader .p-accordionheader-toggle-icon,
-      .p-accordioncontent,
-      .p-accordioncontent-content,
-      .p-accordioncontent-content .row-label,
-      .p-accordioncontent-content .row-value,
-      .p-accordioncontent-content .doc-label,
-      .p-accordioncontent-content .doc-name,
-      .p-accordioncontent-content .doc-size {
-        color: #000000 !important;
+    .p-accordionpanel.p-accordionpanel-active > .p-accordionheader {
+      background: transparent;
+      border-color: var(--app-border);
+    }
 
-        @include dark-mode {
-          color: #ffffff !important;
-        }
-      }
+    .p-accordioncontent {
+      background: transparent;
+      border: 1px solid var(--app-border);
+      border-top: none;
+      border-radius: 0 0 $radius-md $radius-md;
+      margin-top: -$spacing-2;
+    }
 
-      .p-accordionpanel {
-        margin-bottom: $spacing-2;
-      }
-
-      .p-accordionheader {
-        background: transparent;
-        border: 1px solid $border-color;
-        border-radius: $radius-md;
-        padding: $spacing-4 $spacing-6;
-        color: #000000;
-        font-weight: $font-weight-semibold;
-        transition: $transition-all;
-
-        &:hover {
-          background: transparent;
-          border-color: $primary;
-        }
-
-        &:focus-visible {
-          box-shadow: $shadow-primary;
-        }
-
-        @include dark-mode {
-          background: transparent;
-          border-color: $dark-border-color;
-          color: #ffffff;
-
-          &:hover {
-            background: transparent;
-            border-color: $primary;
-          }
-
-          &:focus-visible {
-            box-shadow: $shadow-primary-dark;
-          }
-        }
-      }
-
-      .p-accordionheader-toggle-icon {
-        color: #000000;
-
-        @include dark-mode {
-          color: #ffffff;
-        }
-      }
-
-      .p-accordionpanel.p-accordionpanel-active > .p-accordionheader {
-        background: transparent;
-        border-color: $border-color;
-        color: #000000;
-
-        .p-accordionheader-toggle-icon {
-          color: #000000;
-        }
-
-        @include dark-mode {
-          border-color: $dark-border-color;
-          color: #ffffff;
-
-          .p-accordionheader-toggle-icon {
-            color: #ffffff;
-          }
-        }
-      }
-
-      .p-accordioncontent {
-        background: transparent;
-        border: 1px solid $border-color;
-        border-top: none;
-        border-radius: 0 0 $radius-md $radius-md;
-        margin-top: -$spacing-2;
-
-        @include dark-mode {
-          border-color: $dark-border-color;
-        }
-      }
-
-      .p-accordioncontent-content {
-        padding: $spacing-6;
-        background: transparent;
-        color: #000000;
-
-        @include dark-mode {
-          color: #ffffff;
-        }
-      }
+    .p-accordioncontent-content {
+      padding: $spacing-6;
+      background: transparent;
+      color: var(--app-text-primary);
     }
   }
 }
 
-// Responsive Adjustments
 @media (max-width: $breakpoint-md) {
   .summary-container {
     padding: $spacing-2;
@@ -483,66 +227,15 @@
     align-items: start;
   }
 
-  .summary-section {
+  .loading-state .summary-section {
     padding: $spacing-4;
   }
-
-  .section-title {
-    font-size: $font-size-lg;
-  }
-
-
-:host ::ng-deep .summary-accordion {
-  .p-accordionheader,
-  .p-accordionheader .p-accordionheader-label,
-  .p-accordionheader .p-accordionheader-toggle-icon,
-  .p-accordioncontent,
-  .p-accordioncontent .row-label,
-  .p-accordioncontent .row-value,
-  .p-accordioncontent .doc-label,
-  .p-accordioncontent .doc-name,
-  .p-accordioncontent .doc-size,
-  .p-accordioncontent-content,
-  .p-accordioncontent-content .row-label,
-  .p-accordioncontent-content .row-value,
-  .p-accordioncontent-content .doc-label,
-  .p-accordioncontent-content .doc-name,
-  .p-accordioncontent-content .doc-size {
-    color: var(--app-text-primary) !important;
-  }
-
-  .p-accordionheader,
-  .p-accordioncontent,
-  .p-accordioncontent-content,
-  .p-accordionpanel.p-accordionpanel-active > .p-accordionheader {
-    background: transparent !important;
-  }
 }
 
-  .info-grid {
-    gap: $spacing-3;
-  }
-
-  .info-label {
-    min-width: auto;
-  }
-
-  .documents-grid {
-    gap: $spacing-4;
-  }
-}
-
-// Print Styles
 @media print {
-  .summary-container {
-    .summary-section {
-      page-break-inside: avoid;
-      background: white !important;
-      box-shadow: none !important;
-    }
-
-    .document-image {
-      max-width: 150px;
-    }
+  .loading-state .summary-section {
+    page-break-inside: avoid;
+    background: white !important;
+    box-shadow: none !important;
   }
 }

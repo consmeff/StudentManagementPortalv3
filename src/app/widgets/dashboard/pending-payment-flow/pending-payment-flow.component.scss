@@ -321,6 +321,10 @@ app-button.continue-btn ::ng-deep .app-btn {
   margin-top: 0.2rem;
 }
 
+.marker-line.completed {
+  background: var(--app-primary);
+}
+
 .step-content {
   min-width: 0;
 }

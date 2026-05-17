@@ -107,7 +107,7 @@
               <i *ngIf="step.status === 'completed'" class="pi pi-check"></i>
               <ng-container *ngIf="step.status !== 'completed'">{{ step.index }}</ng-container>
             </span>
-            <span class="marker-line" *ngIf="!last"></span>
+            <span class="marker-line" [class.completed]="step.status === 'completed'" *ngIf="!last"></span>
           </div>
 
           <div class="step-content" [class]="step.status">
