@@ -440,11 +440,11 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.completedApplication.set(
       registrant
         ? {
-            applicationNo: registrant.application_no || '—',
-            preferredProgramme: registrant.program?.name || '—',
-            preferredCourse: registrant.department?.name || '—',
-            applicationDate: this.formatDisplayDate(registrant.created_at),
-          }
+          applicationNo: registrant.application_no || '—',
+          preferredProgramme: registrant.program?.code || registrant.program?.name || '—',
+          preferredCourse: registrant.department?.name || registrant.department?.code || '—',
+          applicationDate: this.formatDisplayDate(registrant.created_at),
+        }
         : null
     );
     this.applicantPhotoUrl.set(registrant?.passport_photo?.file_url || '');

@@ -48,6 +48,7 @@ export class UploadFormComponent implements AfterViewInit {
 
   formValid: boolean = false;
   isEditable = true;
+  hasDraftFiles = false;
 
   // Loading states
   isLoadingCertificate: boolean = false;
@@ -86,8 +87,15 @@ export class UploadFormComponent implements AfterViewInit {
       this.isEditable = editable;
     });
 
+    this._formStepService.uploadFile$.subscribe((data: TUploadFile | null) => {
+      if (data !== null && data !== undefined) {
+        this.hasDraftFiles = true;
+        this.fileObjects = data;
+      }
+    });
+
     this._regService.uploadFile$.subscribe((f: any) => {
-      if (f != null && f != undefined) {
+      if (!this.hasDraftFiles && f != null && f != undefined) {
         this.fileObjects = f as TUploadFile;
         // Ensure nested objects are initialized
         if (!this.fileObjects.certificateofbirth) this.fileObjects.certificateofbirth = {};

@@ -17,6 +17,7 @@ import { ApplicationService } from '../../../../services/application.service';
 import { formstepDTO } from '../../../../data/application/form.dto';
 import { LGA, RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { Countries, States } from '../../../../data/application/location.dto';
+import { TPersonalDetailDTO } from '../../../../data/application/transformer.dto';
 
 @Component({
   selector: 'app-personaldetails',
@@ -49,6 +50,7 @@ export class PersonalDetailsComponent {
 
   personalInfoForm!: FormGroup;
   backendRegistrationData!: RegistrantDataDTO;
+  draftPersonalData: TPersonalDetailDTO | null = null;
   
   maritalStatusOptions = [
     { label: 'Single', value: 'Single' },
@@ -107,6 +109,10 @@ export class PersonalDetailsComponent {
       this.applyEditableState();
     });
 
+    this._formStepService.personalform$.subscribe((data) => {
+      this.draftPersonalData = data;
+    });
+
     this.regstore.countryData$.subscribe(data => {
       if (data?.data) {
         this.nationalityOptions = data.data;
@@ -157,35 +163,38 @@ export class PersonalDetailsComponent {
     this.dropdownsHydrated = false;
 
     const data = this.backendRegistrationData?.data;
+    const draftData = this.draftPersonalData;
     
     this.personalInfoForm = this.fb.group({
       // Personal Information
-      firstname: [data?.first_name ?? '', Validators.required],
-      lastname: [data?.last_name ?? '', Validators.required],
-      middlename: [data?.other_names ?? ''],
-      email: [data?.email ?? '', [Validators.required, Validators.email]],
-      phonenumber: [data?.phone_number ?? '', [Validators.required, Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)]],
-      alternativePhoneNumber: [data?.alt_phone_number ?? '', Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)],
-      dateOfBirth: [data?.dob ? new Date(data.dob) : null, [Validators.required, this.minimumAgeValidator(16)]],
-      maritalStatus: [data?.marital_status ?? null, Validators.required],
-      gender: [data?.gender ?? null, Validators.required],
-      nationality: [data?.nationality ?? 'Nigeria', Validators.required],
-      stateOfOrigin: [null, Validators.required],
-      localGovernment: [null, Validators.required],
-      disability: [data?.disability?.toLowerCase().includes("no") ? 'No' : 'Yes', Validators.required],
-      disabilityDetails: [''],
+      firstname: [draftData?.firstname ?? data?.first_name ?? '', Validators.required],
+      lastname: [draftData?.lastname ?? data?.last_name ?? '', Validators.required],
+      middlename: [draftData?.middlename ?? data?.other_names ?? ''],
+      email: [draftData?.email ?? data?.email ?? '', [Validators.required, Validators.email]],
+      phonenumber: [draftData?.phonenumber ?? data?.phone_number ?? '', [Validators.required, Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)]],
+      alternativePhoneNumber: [draftData?.alternativePhoneNumber ?? data?.alt_phone_number ?? '', Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)],
+      dateOfBirth: [draftData?.dateOfBirth ?? (data?.dob ? new Date(data.dob) : null), [Validators.required, this.minimumAgeValidator(16)]],
+      maritalStatus: [draftData?.maritalStatus ?? data?.marital_status ?? null, Validators.required],
+      gender: [draftData?.gender ?? data?.gender ?? null, Validators.required],
+      nationality: [draftData?.nationality ?? data?.nationality ?? 'Nigeria', Validators.required],
+      stateOfOrigin: [draftData?.stateOfOrigin ?? null, Validators.required],
+      localGovernment: [draftData?.localGovernment ?? null, Validators.required],
+      disability: [draftData?.disability ?? (data?.disability?.toLowerCase().includes("no") ? 'No' : 'Yes'), Validators.required],
+      disabilityDetails: [draftData?.disabilityDetails ?? ''],
       // Residential Information
-      houseNumber: [this.getAddressPart(data?.residential_address?.address, 0), Validators.required],
-      streetName: [data?.residential_address?.street_name ?? '', Validators.required],
-      landmark: [data?.residential_address?.land_mark ?? '', Validators.required],
-      areaTown: [data?.residential_address?.city ?? '', Validators.required],
-      residentialState: [null, Validators.required],
-      residentialLocalGovernment: [null, Validators.required],
+      houseNumber: [draftData?.houseNumber ?? this.getAddressPart(data?.residential_address?.address, 0), Validators.required],
+      streetName: [draftData?.streetName ?? data?.residential_address?.street_name ?? '', Validators.required],
+      landmark: [draftData?.landmark ?? data?.residential_address?.land_mark ?? '', Validators.required],
+      areaTown: [draftData?.areaTown ?? data?.residential_address?.city ?? '', Validators.required],
+      residentialState: [draftData?.residentialState ?? null, Validators.required],
+      residentialLocalGovernment: [draftData?.residentialLocalGovernment ?? null, Validators.required],
       
     });
 
 
-    this.handleDisabilityField(data);
+    if (draftData === null) {
+      this.handleDisabilityField(data);
+    }
     this.setupFormSubscriptions();
     this.formInitialized = true;
     
@@ -242,7 +251,8 @@ export class PersonalDetailsComponent {
   }
 
   private setDropdownValuesIfReady() {
-    if (!this.formInitialized || !this.backendRegistrationData?.data || this.dropdownsHydrated) return;
+    if (!this.formInitialized || this.dropdownsHydrated || this.draftPersonalData !== null) return;
+    if (!this.backendRegistrationData?.data) return;
 
     const data = this.backendRegistrationData.data;
 
@@ -298,7 +308,7 @@ export class PersonalDetailsComponent {
       }));
       this.regstore.setLGAData(this.localGovOptions);
 
-      const backendLga = this.backendRegistrationData?.data?.lga;
+      const backendLga = this.draftPersonalData === null ? this.backendRegistrationData?.data?.lga : null;
       if (backendLga) {
         const lgaId = this.getLocalGovtIDByName(backendLga);
         if (lgaId && this.personalInfoForm.get('localGovernment')?.value !== lgaId) {
@@ -318,7 +328,7 @@ export class PersonalDetailsComponent {
         }));
         this.regstore.setLGAData(this.localGovOptions);
         
-        const backendLga = this.backendRegistrationData?.data?.lga;
+        const backendLga = this.draftPersonalData === null ? this.backendRegistrationData?.data?.lga : null;
         if (backendLga) {
           const lgaId = this.getLocalGovtIDByName(backendLga);
           if (lgaId && this.personalInfoForm.get('localGovernment')?.value !== lgaId) {
@@ -341,7 +351,7 @@ export class PersonalDetailsComponent {
         value: lga.id
       }));
 
-      const backendResLga = this.backendRegistrationData?.data?.residential_address?.lga?.id;
+      const backendResLga = this.draftPersonalData === null ? this.backendRegistrationData?.data?.residential_address?.lga?.id : null;
       if (backendResLga && this.personalInfoForm.get('residentialLocalGovernment')?.value !== backendResLga) {
         this.personalInfoForm.get('residentialLocalGovernment')?.setValue(backendResLga, { emitEvent: false });
       }
@@ -357,7 +367,7 @@ export class PersonalDetailsComponent {
           value: lga.id
         }));
         
-        const backendResLga = this.backendRegistrationData?.data?.residential_address?.lga?.id;
+        const backendResLga = this.draftPersonalData === null ? this.backendRegistrationData?.data?.residential_address?.lga?.id : null;
         if (backendResLga && this.personalInfoForm.get('residentialLocalGovernment')?.value !== backendResLga) {
           this.personalInfoForm.get('residentialLocalGovernment')?.setValue(backendResLga, { emitEvent: false });
         }

@@ -18,10 +18,9 @@ import { formstepDTO } from '../../data/application/form.dto';
 import { TAcademicHistory, TNextOfKinDTO, TOLevelResult, TPersonalDetailDTO, TUploadFile, TUtmeResultPayload } from '../../data/application/transformer.dto';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { States } from '../../data/application/location.dto';
-import { LGA } from '../../data/application/registrantdatadto';
+import { AcademicHistory, CertificateOfBirth, LGA, OLevelResult, RegistrantData, RegistrantDataDTO } from '../../data/application/registrantdatadto';
 import { Address } from '../../data/application/personaldetailsdto';
 import { AuthSessionStore } from '../../store/auth-session.store';
-import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { normalizeApplicationStatusKey } from '../../constants/application-status.utils';
 import { PersonalDetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
@@ -204,15 +203,9 @@ export class AdmissionFormComponent implements OnInit {
     });
   }
 
-  saveAndMoveToStep(currentStep: number, nextStep: number, saveFunction: () => Promise<void>) {
-    saveFunction()
-      .then(() => {
-        this.markStepAsSaved(currentStep);
-        this.activateStep(nextStep);
-      })
-      .catch((error) => {
-        console.error('Save failed:', error);
-      });
+  continueToStep(currentStep: number, nextStep: number): void {
+    this.markStepAsSaved(currentStep);
+    this.activateStep(nextStep);
   }
 
   activateStep(step: number) {
@@ -241,6 +234,13 @@ export class AdmissionFormComponent implements OnInit {
       default:
         return false;
     }
+  }
+
+  isReadyToSubmit(): boolean {
+    return this.formStepStatus.personalinfoValid
+      && this.formStepStatus.nextofkinValid
+      && this.formStepStatus.academicValid
+      && this.formStepStatus.docUploadValid;
   }
 
   private setInitialStep(requestedStep: number): void {
@@ -354,107 +354,6 @@ export class AdmissionFormComponent implements OnInit {
 
     this.isEditLocked = !(pendingApproval || complianceIssued);
     this._formStepService.setApplicationEditable(!this.isEditLocked);
-  }
-
-  savePersonalDetails(): Promise<void> {
-    const blocked = this.ensureCanEditOrReject();
-    if (blocked) return blocked;
-    this.isLoadingPersonal = true;
-    let _pd = this.buildPersonalDetailObj();
-    return new Promise((resolve, reject) => {
-      this.app_no = this.authSessionStore.applicationNo() || "";
-      firstValueFrom(this._appservice.personalDetails(this.app_no, _pd))
-        .then((data) => {
-          this.showSuccess("Personal Detail", "Saved Successfully");
-          this.isLoadingPersonal = false;
-          resolve();
-        })
-        .catch(err => {
-          this.isLoadingPersonal = false;
-          reject(err);
-        });
-    });
-  }
-
-  saveNextOfKinDetails(): Promise<void> {
-    const blocked = this.ensureCanEditOrReject();
-    if (blocked) return blocked;
-    this.isLoadingNextOfKin = true;
-    let _nk = this.buildNextOfKinDetailObj();
-    return new Promise((resolve, reject) => {
-      this.app_no = this.authSessionStore.applicationNo() || "";
-      firstValueFrom(this._appservice.personalDetails(this.app_no, { primary_parent_or_guardian: _nk }))
-        .then((data) => {
-          this.showSuccess("Next Of Kin Details", "Saved Successfully");
-          this.isLoadingNextOfKin = false;
-          resolve();
-        })
-        .catch(err => {
-          this.isLoadingNextOfKin = false;
-          reject(err);
-        });
-    });
-  }
-
-  saveAcademicHistory(): Promise<void> {
-    const blocked = this.ensureCanEditOrReject();
-    if (blocked) return blocked;
-    this.isLoadingAcademic = true;
-    let _ad = this.buildAcademicDetailObj();
-    let _ol = this.buildOLevelDetailObj();
-    let _utme = this.buildUtmeResultObj();
-    return new Promise((resolve, reject) => {
-      this.app_no = this.authSessionStore.applicationNo() || "";
-      firstValueFrom(this._appservice.personalDetails(this.app_no, {
-        academic_history: _ol,
-        o_level_result: _ad,
-        utme_reg_no: _utme.utme_reg_no,
-        utme_result: { score: _utme.score }
-      }))
-        .then((data) => {
-          this.showSuccess("Academic Details", "Saved Successfully");
-          this.isLoadingAcademic = false;
-          resolve();
-        })
-        .catch(err => {
-          this.isLoadingAcademic = false;
-          reject(err);
-        });
-    });
-  }
-
-  saveDocumentUpload(): Promise<void> {
-    const blocked = this.ensureCanEditOrReject();
-    if (blocked) return blocked;
-    this.isLoadingDocuments = true;
-    let _up = this.buildDocumentUploadObj();
-    let _ad = this.buildAcademicDetailObj();
-    let _ol = this.buildOLevelDetailObj();
-    let _utme = this.buildUtmeResultObj();
-    if (_ad && _ad[0] && _up?.olevels[0]) {
-      _ad[0].file = _up?.olevels[0];
-    }
-
-    return new Promise((resolve, reject) => {
-      this.app_no = this.authSessionStore.applicationNo() || "";
-      firstValueFrom(this._appservice.personalDetails(this.app_no, {
-        certificate_of_birth: _up?.certificateofbirth,
-        passport_photo: _up?.passport,
-        certificate_of_origin: _up?.origin,
-        utme_reg_no: _utme.utme_reg_no,
-        utme_result: { file: _up?.utme, score: _utme.score },
-        o_level_result: _ad,
-      }))
-        .then((data) => {
-          this.showSuccess("Document Upload", "Saved Successfully");
-          this.isLoadingDocuments = false;
-          resolve();
-        })
-        .catch(err => {
-          this.isLoadingDocuments = false;
-          reject(err);
-        });
-    });
   }
 
   showSuccess(summary: string, detail: string) {
@@ -589,13 +488,188 @@ export class AdmissionFormComponent implements OnInit {
 
     this.isSubmittingApplication = true;
     try {
+      await this.persistDraftChanges(applicantNo);
       await firstValueFrom(this._appservice.submitApplication({ applicant_no: applicantNo }));
       this.visible = true;
       this.cd.detectChanges();
     } catch {
+      this.showError('Submit Application', 'Unable to submit your application right now. Please try again.');
     } finally {
       this.isSubmittingApplication = false;
     }
+  }
+
+  private async persistDraftChanges(applicantNo: string): Promise<void> {
+    const blocked = this.ensureCanEditOrReject();
+    if (blocked) {
+      await blocked;
+      return;
+    }
+
+    const payload = this.buildMergedApplicationPayload();
+    if (Object.keys(payload).length === 0) {
+      return;
+    }
+
+    await firstValueFrom(this._appservice.personalDetails(applicantNo, payload));
+    const latestRegistrantData = await firstValueFrom(this._appservice.registrantData(applicantNo));
+    this._preRegData.setRegData(latestRegistrantData);
+  }
+
+  private buildMergedApplicationPayload(): Record<string, unknown> {
+    const payload: Record<string, unknown> = {};
+    const personalDetails = this.buildPersonalDetailObj();
+    const nextOfKinDetails = this.buildNextOfKinDetailObj();
+
+    if (personalDetails) {
+      Object.assign(payload, personalDetails);
+    }
+
+    if (nextOfKinDetails) {
+      payload['primary_parent_or_guardian'] = nextOfKinDetails;
+    }
+
+    Object.assign(payload, this.buildMergedAcademicAndDocumentPayload());
+
+    return payload;
+  }
+
+  private buildMergedAcademicAndDocumentPayload(): Record<string, unknown> {
+    const payload: Record<string, unknown> = {};
+    const registrant = this._preRegData.regData()?.data;
+    const hasAcademicDraft = this._academicHistoryFormData !== null
+      || this._olevelFormData !== null
+      || this._utmeResultFormData !== null;
+    const hasUploadDraft = this._uploadFileFormData !== null;
+
+    if (!hasAcademicDraft && !hasUploadDraft) {
+      return payload;
+    }
+
+    const academicHistory = this.resolveAcademicHistoryPayload(registrant);
+    if (academicHistory.length > 0) {
+      payload['academic_history'] = academicHistory;
+    }
+
+    const oLevelResults = this.resolveOLevelResultPayload(registrant);
+    if (oLevelResults.length > 0) {
+      payload['o_level_result'] = oLevelResults;
+    }
+
+    const utmeRegNo = this.resolveUtmeRegNo(registrant);
+    if (utmeRegNo.length > 0) {
+      payload['utme_reg_no'] = utmeRegNo;
+    }
+
+    const utmeResult = this.resolveUtmeResultPayload(registrant);
+    if (Object.keys(utmeResult).length > 0) {
+      payload['utme_result'] = utmeResult;
+    }
+
+    const documentPayload = this.resolveDocumentPayload(registrant);
+    Object.assign(payload, documentPayload);
+
+    return payload;
+  }
+
+  private resolveAcademicHistoryPayload(registrant: RegistrantData | undefined): TAcademicHistory[] {
+    if (this._academicHistoryFormData !== null) {
+      return [...this._academicHistoryFormData];
+    }
+
+    return (registrant?.academic_history ?? []).map((item: AcademicHistory) => ({
+      institution: item.institution,
+      certificate_type: item.certificate_type,
+      from_date: item.from_date,
+      to_date: item.to_date
+    }));
+  }
+
+  private resolveOLevelResultPayload(registrant: RegistrantData | undefined): TOLevelResult[] {
+    const oLevelResults = this._olevelFormData !== null
+      ? this._olevelFormData.map((item) => ({ ...item }))
+      : (registrant?.o_level_result ?? []).map((item: OLevelResult) => ({
+          name: item.name,
+          subjects: item.subjects,
+          file: item.file
+        }));
+
+    const uploadedOLevelFile = this._uploadFileFormData?.olevels?.[0] ?? registrant?.o_level_result?.[0]?.file;
+    if (uploadedOLevelFile && oLevelResults[0]) {
+      oLevelResults[0].file = uploadedOLevelFile;
+    }
+
+    return oLevelResults;
+  }
+
+  private resolveUtmeRegNo(registrant: RegistrantData | undefined): string {
+    const utmeRegNo = this._utmeResultFormData?.utme_reg_no ?? registrant?.utme_reg_no ?? '';
+    return utmeRegNo.trim();
+  }
+
+  private resolveUtmeResultPayload(registrant: RegistrantData | undefined): Record<string, unknown> {
+    const payload: Record<string, unknown> = {};
+    const utmeScore = this._utmeResultFormData?.score ?? registrant?.utme_result?.score ?? null;
+    const utmeFile = this._uploadFileFormData?.utme ?? registrant?.utme_result?.file;
+
+    if (utmeFile?.file_url) {
+      payload['file'] = utmeFile;
+    }
+
+    if (utmeScore !== null) {
+      payload['score'] = utmeScore;
+    }
+
+    return payload;
+  }
+
+  private resolveDocumentPayload(registrant: RegistrantData | undefined): Record<string, unknown> {
+    if (this._uploadFileFormData === null) {
+      return {};
+    }
+
+    const payload: Record<string, unknown> = {};
+    const certificateOfBirth = this.resolveUploadedDocument(
+      this._uploadFileFormData.certificateofbirth,
+      registrant?.certificate_of_birth
+    );
+    const passportPhoto = this.resolveUploadedDocument(
+      this._uploadFileFormData.passport,
+      registrant?.passport_photo
+    );
+    const certificateOfOrigin = this.resolveUploadedDocument(
+      this._uploadFileFormData.origin,
+      registrant?.certificate_of_origin
+    );
+
+    if (certificateOfBirth?.file_url) {
+      payload['certificate_of_birth'] = certificateOfBirth;
+    }
+
+    if (passportPhoto?.file_url) {
+      payload['passport_photo'] = passportPhoto;
+    }
+
+    if (certificateOfOrigin?.file_url) {
+      payload['certificate_of_origin'] = certificateOfOrigin;
+    }
+
+    return payload;
+  }
+
+  private resolveUploadedDocument(
+    draftDocument: CertificateOfBirth | undefined,
+    backendDocument: CertificateOfBirth | undefined
+  ): CertificateOfBirth | undefined {
+    if (draftDocument?.file_url) {
+      return draftDocument;
+    }
+
+    if (backendDocument?.file_url) {
+      return backendDocument;
+    }
+
+    return undefined;
   }
 
   done() {

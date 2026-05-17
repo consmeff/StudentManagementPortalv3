@@ -65,12 +65,6 @@
 
         <small class="error-hint" *ngIf="loadingError()">{{ loadingError() }}</small>
 
-        <section class="status-message-card" *ngIf="hasApprovalMessage()" [ngClass]="'tone-' + approvalMessageTone()">
-            <app-status-indicator [text]="approvalStatusLabel()" [tone]="approvalStatusIndicatorTone()" [tooltip]="approvalStatusTooltip()" [pill]="true" [dot]="false"></app-status-indicator>
-            <div class="status-message-title">{{ approvalMessageTitle() }}</div>
-            <div class="status-message-detail">{{ approvalMessageDetail() }}</div>
-        </section>
-
         <section class="steps-section">
             <h3 class="title-small">Application Steps</h3>
 

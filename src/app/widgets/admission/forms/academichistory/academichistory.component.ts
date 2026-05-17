@@ -54,6 +54,9 @@ export class AcademicHistoryComponent {
   academicHistoryOtherQualificationForm!: FormGroup;
 
   backendRegistrationData!: RegistrantDataDTO;
+  draftAcademicHistory: TAcademicHistory[] | null = null;
+  draftOLevelResults: TOLevelResult[] | null = null;
+  draftUtmeResult: TUtmeResultPayload | null = null;
 
   examOptions: string[] = [];
   examDropdownOptions: any[] = [];
@@ -85,6 +88,18 @@ export class AcademicHistoryComponent {
     this._formStepService.applicationEditable$.subscribe((editable) => {
       this.isEditable = editable;
       this.applyEditableState();
+    });
+
+    this._formStepService.academicHistory$.subscribe((data) => {
+      this.draftAcademicHistory = data;
+    });
+
+    this._formStepService.olevelResult$.subscribe((data) => {
+      this.draftOLevelResults = data;
+    });
+
+    this._formStepService.utmeResult$.subscribe((data) => {
+      this.draftUtmeResult = data;
     });
 
     this.regstore.preRegData$.subscribe(data => {
@@ -131,13 +146,14 @@ export class AcademicHistoryComponent {
   }
 
   initializeForm() {
-    let _primary = this.backendRegistrationData?.data?.academic_history
+    const academicHistorySource = this.draftAcademicHistory ?? this.backendRegistrationData?.data?.academic_history ?? [];
+    let _primary = academicHistorySource
       ?.filter(f => f.certificate_type === "Primary School Leaving Certificate")?.[0] ?? null;
 
-    let _sec = this.backendRegistrationData?.data?.academic_history
+    let _sec = academicHistorySource
       ?.filter(f => f.certificate_type === "SSSCE")?.[0] ?? null;
 
-    let _more = this.backendRegistrationData?.data?.academic_history
+    let _more = academicHistorySource
       ?.filter(f => f.certificate_type !== "SSSCE" && f.certificate_type !== "Primary School Leaving Certificate") ?? null;
 
     this.academicHistoryPrimaryForm = this.fb.group({
@@ -157,11 +173,11 @@ export class AcademicHistoryComponent {
     const regData = (this.backendRegistrationData?.data as any) ?? {};
     const utmeData = regData.utme_result;
     this.jambDetailsForm = this.fb.group({
-      registrationNumber: [regData.utme_reg_no ?? utmeData?.utme_reg_no ?? '', Validators.required],
-      score: [utmeData?.score ?? null, [Validators.required, Validators.min(0), Validators.max(400)]]
+      registrationNumber: [this.draftUtmeResult?.utme_reg_no ?? regData.utme_reg_no ?? utmeData?.utme_reg_no ?? '', Validators.required],
+      score: [this.draftUtmeResult?.score ?? utmeData?.score ?? null, [Validators.required, Validators.min(0), Validators.max(400)]]
     });
 
-    let _exams = this.backendRegistrationData?.data?.o_level_result;
+    let _exams = this.draftOLevelResults ?? this.backendRegistrationData?.data?.o_level_result;
     if (_exams != undefined && _exams.length > 0 && _exams[0].subjects != undefined) {
       this.clearExamAttempt();
       _exams.forEach((exam) => this.addExamAttempt(exam));
@@ -294,7 +310,7 @@ export class AcademicHistoryComponent {
     return this.academicHistoryOtherQualificationForm.get('qualifications') as FormArray;
   }
 
-  createQualificationGroup(item?: AcademicHistory): FormGroup {
+  createQualificationGroup(item?: TAcademicHistory | AcademicHistory): FormGroup {
     return this.fb.group({
       name: [item?.institution ?? ''],
       qualificationType: [item?.certificate_type ?? null],
@@ -303,7 +319,7 @@ export class AcademicHistoryComponent {
     });
   }
 
-  createAcademicHistoryGroup(exam?: OLevelResult): FormGroup {
+  createAcademicHistoryGroup(exam?: TOLevelResult | OLevelResult): FormGroup {
     if (exam == undefined) {
       return this.fb.group({
         name: [null, Validators.required],
@@ -327,7 +343,7 @@ export class AcademicHistoryComponent {
     }
   }
 
-  addQualification(item?: AcademicHistory): void {
+  addQualification(item?: TAcademicHistory | AcademicHistory): void {
     this.qualificationsArray().push(this.createQualificationGroup(item));
   }
 
@@ -335,7 +351,7 @@ export class AcademicHistoryComponent {
     this.qualificationsArray().removeAt(index);
   }
 
-  addExamAttempt(exam?: OLevelResult): void {
+  addExamAttempt(exam?: TOLevelResult | OLevelResult): void {
     this.examAttemptCountArray().push(this.createAcademicHistoryGroup(exam));
   }
 
