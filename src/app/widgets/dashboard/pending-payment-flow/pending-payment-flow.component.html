@@ -19,19 +19,6 @@
         <img [src]="applicantPhotoUrl() || 'assets/doc.png'" alt="Applicant photo" class="applicant-photo" />
       </div>
     </div>
-
-    <section class="status-message-card" *ngIf="hasApprovalMessage()" [ngClass]="'tone-' + approvalMessageTone()">
-      <app-status-indicator
-        [text]="approvalStatusLabel()"
-        [tone]="approvalStatusIndicatorTone()"
-        [tooltip]="approvalStatusTooltip()"
-        [pill]="true"
-        [dot]="false"
-      ></app-status-indicator>
-      <div class="status-message-title">{{ approvalMessageTitle() }}</div>
-      <div class="status-message-detail">{{ approvalMessageDetail() }}</div>
-    </section>
-
     <section class="details-section" *ngIf="completedApplication() as details">
       <h3 class="title-small">Application Details</h3>
       <div class="details-card">
@@ -44,19 +31,23 @@
           <strong class="title-small">{{ details.preferredProgramme }}</strong>
         </div>
         <div class="details-row">
+          <span class="body-small">Preferred Course:</span>
+          <strong class="title-small">{{ details.preferredCourse }}</strong>
+        </div>
+        <div class="details-row">
           <span class="body-small">Application Date:</span>
           <strong class="title-small">{{ details.applicationDate }}</strong>
         </div>
       </div>
       <div class="summary-action">
-        <button
-          pButton
+        <app-button
           type="button"
+          variant="primary"
           class="continue-btn summary-btn"
-          (click)="isComplianceIssued() ? editApplicationDetails() : viewApplicationSummary()"
+          (buttonClick)="isComplianceIssued() ? editApplicationDetails() : viewApplicationSummary()"
         >
           {{ isComplianceIssued() ? actionLabels.editApplicationDetails : actionLabels.viewApplicationSummary }}
-        </button>
+        </app-button>
       </div>
     </section>
   </ng-container>

@@ -39,6 +39,7 @@ interface ApplicationStep {
 interface CompletedApplicationDetails {
   applicationNo: string;
   preferredProgramme: string;
+  preferredCourse: string;
   applicationDate: string;
 }
 
@@ -440,7 +441,8 @@ export class PendingPaymentFlowComponent implements OnInit {
       registrant
         ? {
             applicationNo: registrant.application_no || '—',
-            preferredProgramme: registrant.department?.name || registrant.program?.name || '—',
+            preferredProgramme: registrant.program?.name || '—',
+            preferredCourse: registrant.department?.name || '—',
             applicationDate: this.formatDisplayDate(registrant.created_at),
           }
         : null
@@ -489,27 +491,10 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.applicationSteps.set(steps);
     this.progressPercent.set(submitDone ? 100 : Math.max(20, Math.min(100, completedSteps * 20)));
     this.applyApprovalStatusMessage(registrant, submitDone);
+    this.applyHeroStatusContent(registrant, submitDone, paymentDone);
 
     const pending = !paymentDone;
-    const approvalStatusKey = normalizeApplicationStatusKey(registrant?.approval_status);
     this.isPaymentPending.set(pending);
-    if (approvalStatusKey === 'pending') {
-      this.heroTitle.set('Awaiting Review');
-      this.heroDescription.set(HERO_CONTENT.pending.description);
-      this.primaryActionLabel.set(HERO_CONTENT.pending.actionLabel);
-      return;
-    }
-
-    if (approvalStatusKey === 'shortlisted') {
-      this.heroTitle.set('Awaiting Admission');
-      this.heroDescription.set('');
-      this.primaryActionLabel.set('View Application Summary');
-      return;
-    }
-
-    this.heroTitle.set(HERO_CONTENT.paid.title);
-    this.heroDescription.set(HERO_CONTENT.paid.description);
-    this.primaryActionLabel.set(HERO_CONTENT.paid.actionLabel);
   }
 
   private applyApprovalStatusMessage(registrant: RegistrantData | null, submitDone: boolean): void {
@@ -522,6 +507,36 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.approvalMessageTitle.set(messageConfig.title);
     this.approvalMessageDetail.set(this.resolveApprovalStatusDetail(statusDefinition.key, registrant, messageConfig.detail));
     this.approvalMessageTone.set(this.resolveApprovalMessageTone(messageConfig.tone));
+  }
+
+  private applyHeroStatusContent(
+    registrant: RegistrantData | null,
+    submitDone: boolean,
+    paymentDone: boolean
+  ): void {
+    const approvalStatusKey = this.resolveApprovalStatusKey(registrant, submitDone);
+    if (approvalStatusKey !== 'unknown') {
+      const messageConfig = APPROVAL_STATUS_MESSAGES[approvalStatusKey];
+      this.heroTitle.set(messageConfig.title);
+      this.heroDescription.set(this.resolveApprovalStatusDetail(approvalStatusKey, registrant, messageConfig.detail));
+      this.primaryActionLabel.set(
+        approvalStatusKey === 'compliance_required'
+          ? ACTION_LABELS.editApplicationDetails
+          : ACTION_LABELS.viewApplicationSummary
+      );
+      return;
+    }
+
+    if (!paymentDone) {
+      this.heroTitle.set(HERO_CONTENT.pending.title);
+      this.heroDescription.set(HERO_CONTENT.pending.description);
+      this.primaryActionLabel.set(HERO_CONTENT.pending.actionLabel);
+      return;
+    }
+
+    this.heroTitle.set(HERO_CONTENT.paid.title);
+    this.heroDescription.set(HERO_CONTENT.paid.description);
+    this.primaryActionLabel.set(HERO_CONTENT.paid.actionLabel);
   }
 
   private resolveApprovalStatusDefinition(
