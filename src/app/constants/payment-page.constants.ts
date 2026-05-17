@@ -6,7 +6,9 @@ export const PAYMENT_PAGE_CONFIG = {
   dateLocale: 'en-GB',
   defaultReceiptExtension: 'pdf',
   defaultPageNumber: 1,
+  defaultPageSize: 10,
   pageQueryParam: 'page',
+  pageSizeQueryParam: 'page_size',
   orderingQueryParam: 'ordering',
   searchQueryParam: 'search'
 } as const;
@@ -27,12 +29,12 @@ export const PAYMENT_RECEIPT_KEYS = [
 ] as const;
 
 export const PAYMENT_TABLE_COLUMNS: ReadonlyArray<DataTableColumn> = [
-  { key: 'date', label: 'Date', sortable: true },
-  { key: 'paymentType', label: 'Payment Type', sortable: true },
+  { key: 'date', label: 'Date', sortable: true, sortKey: 'created_at' },
+  { key: 'paymentType', label: 'Payment Type', sortable: true, sortKey: 'payment_type' },
   { key: 'applicant', label: 'Applicant' },
-  { key: 'referenceNumber', label: 'Reference Number', sortable: true },
-  { key: 'amount', label: 'Amount', sortable: true },
-  { key: 'amountPaid', label: 'Amount Paid', sortable: true },
+  { key: 'referenceNumber', label: 'Reference Number', sortable: true, sortKey: 'ref_id' },
+  { key: 'amount', label: 'Amount', sortable: true, sortKey: 'amount' },
+  { key: 'amountPaid', label: 'Amount Paid', sortable: true, sortKey: 'amount_paid' },
   { key: 'status', label: 'Status' },
   { key: 'summary', label: 'Summary' },
   { key: 'actions', label: 'Actions', align: 'end' }

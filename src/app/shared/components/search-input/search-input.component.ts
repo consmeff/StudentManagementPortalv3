@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -10,7 +10,12 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './search-input.component.scss'
 })
 export class SearchInputComponent {
-  @Input() placeholder = 'Search';
-  @Input() model = '';
-  @Output() modelChange = new EventEmitter<string>();
+  readonly placeholder = input<string>('Search');
+  readonly model = input<string>('');
+  readonly modelChange = output<string>();
+  readonly searchTrigger = output<void>();
+
+  emitSearch(): void {
+    this.searchTrigger.emit();
+  }
 }

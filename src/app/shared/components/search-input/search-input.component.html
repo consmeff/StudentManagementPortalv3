@@ -2,11 +2,12 @@
   <input
     type="text"
     class="form-control"
-    [placeholder]="placeholder"
-    [ngModel]="model"
+    [placeholder]="placeholder()"
+    [ngModel]="model()"
     (ngModelChange)="modelChange.emit($event)"
+    (keyup.enter)="emitSearch()"
   />
-  <button type="button" class="search-btn" aria-label="Search">
+  <button type="button" class="search-btn" aria-label="Search" (click)="emitSearch()">
     <i class="pi pi-search"></i>
   </button>
 </div>

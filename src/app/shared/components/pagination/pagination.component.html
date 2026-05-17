@@ -1,4 +1,19 @@
 <div class="pagination-shell" *ngIf="showPagination()">
+  <div class="page-size-control">
+    <label class="page-size-label" for="app-pagination-page-size">Items per page</label>
+    <select
+      id="app-pagination-page-size"
+      class="page-size-select"
+      [disabled]="disabled()"
+      [value]="pageSize()"
+      (change)="selectPageSize($any($event.target).value)"
+    >
+      <option *ngFor="let pageSizeOption of pageSizeOptions()" [value]="pageSizeOption">
+        {{ pageSizeOption }}
+      </option>
+    </select>
+  </div>
+
   <div class="pagination-nav">
     <button
       type="button"

@@ -10,6 +10,36 @@
   padding-top: 1rem;
 }
 
+.page-size-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-shrink: 0;
+}
+
+.page-size-label {
+  color: #6c7f99;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.page-size-select {
+  min-width: 7.8rem;
+  height: 3rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.85rem;
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+  padding: 0 2.5rem 0 0.9rem;
+  font-size: 1rem;
+  outline: none;
+}
+
+.page-size-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .pagination-nav {
   display: inline-flex;
   align-items: center;
@@ -89,6 +119,15 @@
 }
 
 @media (max-width: 720px) {
+  .page-size-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .page-size-select {
+    min-width: 6.5rem;
+  }
+
   .pagination-nav {
     width: 100%;
     justify-content: space-between;

@@ -4,6 +4,7 @@ export type DataTableColumn = {
   key: string;
   label: string;
   sortable?: boolean;
+  sortKey?: string;
   align?: DataTableColumnAlign;
   className?: string;
 };

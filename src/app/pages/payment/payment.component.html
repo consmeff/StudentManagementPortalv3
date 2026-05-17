@@ -11,6 +11,30 @@
     </div>
   </div>
 
+  <div class="payment-toolbar">
+    <div class="search-form">
+      <label class="search-label" for="payment-search">Search payments</label>
+      <div class="search-input-group">
+        <app-search-input
+          class="toolbar-search"
+          placeholder="Search by reference, applicant, payment type, or summary"
+          [model]="searchValue()"
+          (modelChange)="updateSearchValue($event)"
+          (searchTrigger)="applySearch()"
+        ></app-search-input>
+        <app-button
+          type="button"
+          variant="muted"
+          class="toolbar-btn"
+          [disabled]="isLoading() || searchValue().trim().length === 0"
+          (buttonClick)="clearSearch()"
+        >
+          Clear
+        </app-button>
+      </div>
+    </div>
+  </div>
+
   <app-data-table
     [columns]="paymentTableColumns"
     [rows]="paymentHistory()"
@@ -18,8 +42,11 @@
     [gridTemplateColumns]="paymentTableGridTemplate"
     [loading]="isLoading()"
     [trackBy]="trackPaymentRow"
+    [activeSortKey]="activeSortKey()"
+    [activeSortDirection]="activeSortDirection()"
     loadingMessage="Loading payment history..."
     emptyMessage="No payment history found."
+    (sortChange)="updateOrdering($event)"
   ></app-data-table>
 
   <ng-template #paymentRowTemplate let-item>
@@ -52,8 +79,9 @@
     [currentPage]="currentPage()"
     [totalPages]="totalPages()!"
     [totalItems]="totalPayments()"
-    [pageSize]="pageSize()"
+    [pageSize]="currentPageSize()"
     [disabled]="isLoading()"
     (pageChange)="goToPage($event)"
+    (pageSizeChange)="updatePageSize($event)"
   ></app-pagination>
 </div>

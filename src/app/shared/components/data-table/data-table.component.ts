@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input, TemplateRef, TrackByFunction } from '@angular/core';
+import { Component, computed, input, output, TemplateRef, TrackByFunction } from '@angular/core';
 
 import { DATA_TABLE_CONFIG } from '../../../constants/data-table.constants';
 
@@ -21,8 +21,11 @@ export class DataTableComponent<TRowData> {
   readonly loadingMessage = input<string>(DATA_TABLE_CONFIG.defaultLoadingMessage);
   readonly emptyMessage = input<string>(DATA_TABLE_CONFIG.defaultEmptyMessage);
   readonly trackBy = input<TrackByFunction<TRowData>>((index) => index);
+  readonly activeSortKey = input<string | null>(null);
+  readonly activeSortDirection = input<'asc' | 'desc' | null>(null);
   readonly hasRows = computed(() => this.rows().length > 0);
   readonly trackByRow: TrackByFunction<TRowData> = (index, row) => this.trackBy()(index, row);
+  readonly sortChange = output<string>();
 
   resolveHeaderClass(column: DataTableColumn): string {
     if (column.align === 'center') {
@@ -34,4 +37,37 @@ export class DataTableComponent<TRowData> {
     return 'align-start';
   }
 
+  isSortable(column: DataTableColumn): boolean {
+    return column.sortable === true;
+  }
+
+  isActiveSort(column: DataTableColumn): boolean {
+    return this.resolveSortKey(column) === this.activeSortKey();
+  }
+
+  resolveSortIconClass(column: DataTableColumn): string {
+    if (!this.isSortable(column)) {
+      return 'pi pi-sort-alt sort-indicator';
+    }
+
+    if (!this.isActiveSort(column) || this.activeSortDirection() === null) {
+      return 'pi pi-sort-alt sort-indicator';
+    }
+
+    return this.activeSortDirection() === 'asc'
+      ? 'pi pi-sort-amount-up-alt sort-indicator sort-indicator-active'
+      : 'pi pi-sort-amount-down sort-indicator sort-indicator-active';
+  }
+
+  emitSortChange(column: DataTableColumn): void {
+    if (!this.isSortable(column)) {
+      return;
+    }
+
+    this.sortChange.emit(this.resolveSortKey(column));
+  }
+
+  private resolveSortKey(column: DataTableColumn): string {
+    return column.sortKey ?? column.key;
+  }
 }
