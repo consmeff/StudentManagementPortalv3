@@ -1,133 +1,116 @@
 import { HttpResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { Component, DestroyRef, Inject, OnInit, computed, signal } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { EMPTY, Observable, from, of } from 'rxjs';
+import { catchError, distinctUntilChanged, finalize, map, switchMap, take, tap } from 'rxjs/operators';
 
+import {
+  PAYMENT_PAGE_CONFIG,
+  PAYMENT_RECEIPT_KEYS,
+  PAYMENT_STATUS_CLASS,
+  PAYMENT_TABLE_COLUMNS,
+  PAYMENT_TABLE_GRID_TEMPLATE
+} from '../../constants/payment-page.constants';
+import { PaginatedPaymentsResponse, PaymentHistoryItem } from '../../data/application/payment.data';
+import { AuthSessionStore } from '../../store/auth-session.store';
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { ApplicationService } from '../../services/application.service';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { PaymentHistoryItem } from '../../data/application/payment.data';
-import { AuthSessionStore } from '../../store/auth-session.store';
+import { DataTableComponent } from '../../shared/components/data-table/data-table.component';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 
-const PAYMENT_PAGE_CONFIG = {
-  currencyCode: 'NGN',
-  currencyLocale: 'en-NG',
-  dateLocale: 'en-GB',
-  defaultReceiptExtension: 'pdf',
-  defaultPageNumber: 1,
-  pageQueryParam: 'page',
-  orderingQueryParam: 'ordering',
-  searchQueryParam: 'search'
-} as const;
+type TAuthSessionStore = {
+  applicationNo: () => string;
+  paymentRef: () => string;
+};
 
-const PAYMENT_STATUS_CLASS = {
-  completed: 'status-pill--completed',
-  failed: 'status-pill--failed',
-  pending: 'status-pill--pending',
-  default: 'status-pill--default'
-} as const;
+type TPaymentQueryState = {
+  pageNumber: number;
+  ordering: string | null;
+  search: string | null;
+};
 
 @Component({
   selector: 'app-payment',
   standalone: true,
   imports: [
     TraceabilityModule,
-    ButtonComponent
+    ButtonComponent,
+    DataTableComponent,
+    PaginationComponent
   ],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss'
 })
 export class PaymentComponent implements OnInit {
-  private readonly authSessionStore = inject(AuthSessionStore);
-
-  sidebarVisible: boolean = false;
-  isLoading: boolean = false;
-  activeReceiptRefId: string | null = null;
-  paymentHistory: PaymentHistoryItem[] = [];
-  totalPayments: number = 0;
-  nextPage: boolean = false;
-  previousPage: boolean = false;
-  currentPage: number = PAYMENT_PAGE_CONFIG.defaultPageNumber;
-  totalPages: number | null = null;
-  currentOrdering: string | null = null;
-  currentSearch: string | null = null;
-  knownPageSize: number | null = null;
+  readonly sidebarVisible = signal<boolean>(false);
+  readonly isLoading = signal<boolean>(false);
+  readonly activeReceiptRefId = signal<string | null>(null);
+  readonly paymentHistory = signal<PaymentHistoryItem[]>([]);
+  readonly totalPayments = signal<number>(0);
+  readonly currentPage = signal<number>(PAYMENT_PAGE_CONFIG.defaultPageNumber);
+  readonly totalPages = signal<number | null>(null);
+  readonly currentOrdering = signal<string | null>(null);
+  readonly currentSearch = signal<string | null>(null);
+  readonly pageSize = signal<number>(0);
+  readonly totalRecordsLabel = computed(() => this.resolveTotalRecordsLabel());
+  readonly pageLabel = computed(() => this.resolvePageLabel());
+  readonly showPageSummary = computed(() => !this.isLoading() && this.paymentHistory().length > 0);
+  readonly showPagination = computed(() => !this.isLoading() && this.paymentHistory().length > 0 && this.totalPages() !== null);
+  readonly paymentTableColumns = PAYMENT_TABLE_COLUMNS;
+  readonly paymentTableGridTemplate = PAYMENT_TABLE_GRID_TEMPLATE;
 
   constructor(
+    @Inject(AuthSessionStore) private readonly authSessionStore: TAuthSessionStore,
     private readonly widgetService: WidgetsService,
     private readonly appService: ApplicationService,
     private readonly destroyRef: DestroyRef,
     private readonly route: ActivatedRoute,
     private readonly router: Router
   ) {
-    this.widgetService.sidebarState$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((state: sidebarStateDTO) => {
-        this.sidebarVisible = state.isvisible;
-      });
   }
 
   ngOnInit(): void {
-    this.route.queryParamMap
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((queryParams) => {
-        const pageNumber = this.parsePageNumber(queryParams.get(PAYMENT_PAGE_CONFIG.pageQueryParam));
-        const ordering = this.normalizeQueryValue(queryParams.get(PAYMENT_PAGE_CONFIG.orderingQueryParam));
-        const search = this.normalizeQueryValue(queryParams.get(PAYMENT_PAGE_CONFIG.searchQueryParam));
-
-        this.currentPage = pageNumber;
-        this.currentOrdering = ordering;
-        this.currentSearch = search;
-        void this.loadPaymentHistory(pageNumber, ordering, search);
-      });
+    this.observeSidebarState();
+    this.observePaymentQueryState();
   }
 
-  async loadPaymentHistory(pageNumber: number, ordering: string | null, search: string | null): Promise<void> {
-    this.isLoading = true;
-    try {
-      const response = await firstValueFrom(this.appService.getPayments({
-        page: pageNumber,
-        ordering,
-        search
-      }));
-      this.paymentHistory = response.results;
-      this.totalPayments = response.count;
-      this.nextPage = response.next !== null;
-      this.previousPage = response.previous !== null;
-      this.updatePaginationState(response.count, response.results.length, response.next !== null, response.previous !== null);
-    } catch {
-      this.totalPayments = 0;
-      this.paymentHistory = [];
-      this.nextPage = false;
-      this.previousPage = false;
-      this.totalPages = null;
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  async downloadReceipt(item: PaymentHistoryItem): Promise<void> {
+  downloadReceipt(item: PaymentHistoryItem): void {
     const referenceId = item.ref_id.trim();
     if (!referenceId) {
       this.downloadFallbackReceipt(item);
       return;
     }
 
-    this.activeReceiptRefId = referenceId;
-    try {
-      const paymentDetail = await firstValueFrom(this.appService.getPayment(referenceId));
-      const receiptResponse = await firstValueFrom(this.appService.getPaymentReceipt(referenceId));
-      const receiptOpened = await this.openReceiptResponse(receiptResponse, paymentDetail);
-
-      if (!receiptOpened) {
-        this.downloadFallbackReceipt(paymentDetail);
-      }
-    } finally {
-      this.activeReceiptRefId = null;
-    }
+    this.activeReceiptRefId.set(referenceId);
+    this.appService.getPayment(referenceId).pipe(
+      take(1),
+      switchMap((paymentDetail) =>
+        this.appService.getPaymentReceipt(referenceId).pipe(
+          take(1),
+          switchMap((receiptResponse) =>
+            this.resolveReceiptResponse(receiptResponse, paymentDetail).pipe(
+              tap((receiptOpened) => {
+                if (!receiptOpened) {
+                  this.downloadFallbackReceipt(paymentDetail);
+                }
+              })
+            )
+          )
+        )
+      ),
+      catchError(() => {
+        this.downloadFallbackReceipt(item);
+        return EMPTY;
+      }),
+      finalize(() => {
+        this.activeReceiptRefId.set(null);
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe();
   }
 
   formatDate(value: string): string {
@@ -174,31 +157,78 @@ export class PaymentComponent implements OnInit {
   }
 
   isReceiptLoading(refId: string): boolean {
-    return this.activeReceiptRefId === refId;
+    return this.activeReceiptRefId() === refId;
   }
 
-  canGoToPreviousPage(): boolean {
-    return this.previousPage && !this.isLoading;
+  trackPaymentRow(index: number, item: PaymentHistoryItem): string {
+    return item.ref_id || `${index}`;
   }
 
-  canGoToNextPage(): boolean {
-    return this.nextPage && !this.isLoading;
+  goToPage(pageNumber: number): void {
+    this.navigateToPage(pageNumber);
   }
 
-  loadPreviousPage(): void {
-    if (!this.canGoToPreviousPage()) {
-      return;
-    }
-
-    void this.navigateToPage(this.currentPage - 1);
+  private observeSidebarState(): void {
+    this.widgetService.sidebarState$.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((state: sidebarStateDTO) => {
+      this.sidebarVisible.set(state.isvisible);
+    });
   }
 
-  loadNextPage(): void {
-    if (!this.canGoToNextPage()) {
-      return;
-    }
+  private observePaymentQueryState(): void {
+    this.route.queryParamMap.pipe(
+      map((queryParams) => this.mapQueryState(queryParams)),
+      distinctUntilChanged((previousState, currentState) =>
+        previousState.pageNumber === currentState.pageNumber
+        && previousState.ordering === currentState.ordering
+        && previousState.search === currentState.search
+      ),
+      tap((queryState) => {
+        this.currentPage.set(queryState.pageNumber);
+        this.currentOrdering.set(queryState.ordering);
+        this.currentSearch.set(queryState.search);
+        this.isLoading.set(true);
+      }),
+      switchMap((queryState) =>
+        this.appService.getPayments({
+          page: queryState.pageNumber,
+          ordering: queryState.ordering,
+          search: queryState.search
+        }).pipe(
+          tap((response) => this.applyPaymentResponse(response)),
+          catchError(() => {
+            this.resetPaymentState();
+            return EMPTY;
+          }),
+          finalize(() => {
+            this.isLoading.set(false);
+          })
+        )
+      ),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe();
+  }
 
-    void this.navigateToPage(this.currentPage + 1);
+  private mapQueryState(queryParams: ParamMap): TPaymentQueryState {
+    return {
+      pageNumber: this.parsePageNumber(queryParams.get(PAYMENT_PAGE_CONFIG.pageQueryParam)),
+      ordering: this.normalizeQueryValue(queryParams.get(PAYMENT_PAGE_CONFIG.orderingQueryParam)),
+      search: this.normalizeQueryValue(queryParams.get(PAYMENT_PAGE_CONFIG.searchQueryParam))
+    };
+  }
+
+  private applyPaymentResponse(response: PaginatedPaymentsResponse): void {
+    this.paymentHistory.set(response.results);
+    this.totalPayments.set(response.count);
+    this.updatePaginationState(response.count, response.results.length, response.next !== null, response.previous !== null);
+  }
+
+  private resetPaymentState(): void {
+    this.totalPayments.set(0);
+    this.paymentHistory.set([]);
+    this.totalPages.set(null);
+    this.pageSize.set(0);
   }
 
   private updatePaginationState(
@@ -208,26 +238,38 @@ export class PaymentComponent implements OnInit {
     hasPreviousPage: boolean
   ): void {
     if (currentResultCount > 0 && hasNextPage) {
-      this.knownPageSize = currentResultCount;
+      this.pageSize.set(currentResultCount);
     }
 
     if (totalPayments === 0) {
-      this.totalPages = null;
+      this.totalPages.set(null);
+      this.pageSize.set(0);
       return;
     }
 
     if (!hasNextPage && !hasPreviousPage) {
-      this.totalPages = PAYMENT_PAGE_CONFIG.defaultPageNumber;
-      this.knownPageSize = currentResultCount > 0 ? currentResultCount : this.knownPageSize;
+      this.totalPages.set(PAYMENT_PAGE_CONFIG.defaultPageNumber);
+      this.pageSize.set(currentResultCount);
       return;
     }
 
-    if (this.knownPageSize !== null && this.knownPageSize > 0) {
-      this.totalPages = Math.max(Math.ceil(totalPayments / this.knownPageSize), PAYMENT_PAGE_CONFIG.defaultPageNumber);
+    if (!hasNextPage && hasPreviousPage && currentResultCount > 0 && this.currentPage() > PAYMENT_PAGE_CONFIG.defaultPageNumber) {
+      const inferredPageSize = (totalPayments - currentResultCount) / (this.currentPage() - 1);
+      if (Number.isInteger(inferredPageSize) && inferredPageSize > 0) {
+        this.pageSize.set(inferredPageSize);
+      }
+    }
+
+    if (this.pageSize() > 0) {
+      this.totalPages.set(Math.max(Math.ceil(totalPayments / this.pageSize()), PAYMENT_PAGE_CONFIG.defaultPageNumber));
       return;
     }
 
-    this.totalPages = null;
+    this.pageSize.set(currentResultCount);
+    const resolvedTotalPages = currentResultCount > 0
+      ? Math.max(Math.ceil(totalPayments / currentResultCount), PAYMENT_PAGE_CONFIG.defaultPageNumber)
+      : PAYMENT_PAGE_CONFIG.defaultPageNumber;
+    this.totalPages.set(resolvedTotalPages);
   }
 
   private parsePageNumber(pageValue: string | null): number {
@@ -245,44 +287,49 @@ export class PaymentComponent implements OnInit {
     return value && value.trim().length > 0 ? value.trim() : null;
   }
 
-  private async navigateToPage(pageNumber: number): Promise<void> {
+  private navigateToPage(pageNumber: number): void {
     const resolvedPageNumber = Math.max(pageNumber, PAYMENT_PAGE_CONFIG.defaultPageNumber);
-    await this.router.navigate([], {
+    void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
         [PAYMENT_PAGE_CONFIG.pageQueryParam]: resolvedPageNumber,
-        [PAYMENT_PAGE_CONFIG.orderingQueryParam]: this.currentOrdering,
-        [PAYMENT_PAGE_CONFIG.searchQueryParam]: this.currentSearch
+        [PAYMENT_PAGE_CONFIG.orderingQueryParam]: this.currentOrdering(),
+        [PAYMENT_PAGE_CONFIG.searchQueryParam]: this.currentSearch()
       },
       queryParamsHandling: 'merge'
     });
   }
 
-  private async openReceiptResponse(
+  private resolveReceiptResponse(
     response: HttpResponse<Blob>,
     payment: PaymentHistoryItem
-  ): Promise<boolean> {
+  ): Observable<boolean> {
     const receiptBody = response.body;
     if (!receiptBody || receiptBody.size === 0) {
-      return false;
+      return of(false);
     }
 
     const contentType = response.headers.get('content-type') ?? '';
     if (this.isTextLikeContent(contentType)) {
-      const payloadText = (await receiptBody.text()).trim();
-      const receiptUrl = this.extractReceiptUrl(this.parseJsonSafely(payloadText)) ?? this.extractReceiptUrl(payloadText);
+      return from(receiptBody.text()).pipe(
+        map((payloadText) => {
+          const normalizedPayloadText = payloadText.trim();
+          const receiptUrl = this.extractReceiptUrl(this.parseJsonSafely(normalizedPayloadText))
+            ?? this.extractReceiptUrl(normalizedPayloadText);
 
-      if (receiptUrl) {
-        this.openExternalUrl(receiptUrl);
-        return true;
-      }
+          if (receiptUrl === null) {
+            return false;
+          }
 
-      return false;
+          this.openExternalUrl(receiptUrl);
+          return true;
+        })
+      );
     }
 
     const fileName = this.extractReceiptFileName(response, payment.ref_id);
     this.downloadBlob(receiptBody, fileName);
-    return true;
+    return of(true);
   }
 
   private parseJsonSafely(value: string): unknown {
@@ -295,18 +342,20 @@ export class PaymentComponent implements OnInit {
 
   private extractReceiptUrl(value: unknown): string | null {
     if (typeof value === 'string') {
-      return this.isValidUrl(value) ? value : null;
+      return this.resolveUrl(value);
     }
 
     if (!this.isRecord(value)) {
       return null;
     }
 
-    const receiptKeys = ['receipt_url', 'file_url', 'url', 'download_url', 'receipt'];
-    for (const receiptKey of receiptKeys) {
+    for (const receiptKey of PAYMENT_RECEIPT_KEYS) {
       const receiptValue = value[receiptKey];
-      if (typeof receiptValue === 'string' && this.isValidUrl(receiptValue)) {
-        return receiptValue;
+      if (typeof receiptValue === 'string') {
+        const resolvedReceiptUrl = this.resolveUrl(receiptValue);
+        if (resolvedReceiptUrl !== null) {
+          return resolvedReceiptUrl;
+        }
       }
     }
 
@@ -323,17 +372,17 @@ export class PaymentComponent implements OnInit {
       || contentType.includes('text/html');
   }
 
-  private isValidUrl(value: string): boolean {
+  private resolveUrl(value: string): string | null {
     const trimmedValue = value.trim();
     if (!trimmedValue) {
-      return false;
+      return null;
     }
 
     try {
-      const parsedUrl = new URL(trimmedValue);
-      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+      const parsedUrl = new URL(trimmedValue, globalThis.location?.origin ?? 'http://localhost');
+      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:' ? parsedUrl.toString() : null;
     } catch {
-      return false;
+      return null;
     }
   }
 
@@ -376,5 +425,19 @@ export class PaymentComponent implements OnInit {
 
   private openExternalUrl(url: string): void {
     globalThis.open?.(url, '_blank', 'noopener,noreferrer');
+  }
+
+  private resolveTotalRecordsLabel(): string {
+    const resolvedTotalPayments = this.totalPayments();
+    return `${resolvedTotalPayments} record${resolvedTotalPayments === 1 ? '' : 's'}`;
+  }
+
+  private resolvePageLabel(): string {
+    const resolvedTotalPages = this.totalPages();
+    if (resolvedTotalPages === null) {
+      return `Page ${this.currentPage()}`;
+    }
+
+    return `Page ${this.currentPage()} of ${resolvedTotalPages}`;
   }
 }

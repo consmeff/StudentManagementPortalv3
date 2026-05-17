@@ -81,7 +81,7 @@ export class ApplicationService {
       params = params.set('search', query.search);
     }
 
-    return this.http.get<unknown>(this.paymentsEndpoint, { params }).pipe(
+    return this.http.get<unknown>(`${this.paymentsEndpoint}/users`, { params }).pipe(
       map((response) => this.normalizePaginatedPaymentsResponse(response))
     );
   }

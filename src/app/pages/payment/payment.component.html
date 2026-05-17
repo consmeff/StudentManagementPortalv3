@@ -5,80 +5,55 @@
       <p class="page-subtitle">View your payment records, current status, and receipt downloads.</p>
     </div>
 
-    <div class="page-summary" *ngIf="!isLoading && paymentHistory.length > 0">
-      <span>{{ totalPayments }} record{{ totalPayments === 1 ? '' : 's' }}</span>
-      <span>Page {{ currentPage }}{{ totalPages !== null ? ' of ' + totalPages : '' }}</span>
+    <div class="page-summary" *ngIf="showPageSummary()">
+      <span>{{ totalRecordsLabel() }}</span>
+      <span>{{ pageLabel() }}</span>
     </div>
   </div>
 
-  <div class="history-card">
-    <div class="history-header">
-      <div>Date</div>
-      <div>Payment Type</div>
-      <div>Applicant</div>
-      <div>Reference Number</div>
-      <div>Amount</div>
-      <div>Amount Paid</div>
-      <div>Status</div>
-      <div>Summary</div>
-      <div>Actions</div>
+  <app-data-table
+    [columns]="paymentTableColumns"
+    [rows]="paymentHistory()"
+    [rowTemplate]="paymentRowTemplate"
+    [gridTemplateColumns]="paymentTableGridTemplate"
+    [loading]="isLoading()"
+    [trackBy]="trackPaymentRow"
+    loadingMessage="Loading payment history..."
+    emptyMessage="No payment history found."
+  ></app-data-table>
+
+  <ng-template #paymentRowTemplate let-item>
+    <div class="history-cell" data-label="Date">{{ formatDate(item.created_at) }}</div>
+    <div class="history-cell value-strong" data-label="Payment Type">{{ item.payment_type || '—' }}</div>
+    <div class="history-cell" data-label="Applicant">{{ item.applicant_name || item.applicant_no || '—' }}</div>
+    <div class="history-cell" data-label="Reference Number">{{ item.ref_id || '—' }}</div>
+    <div class="history-cell" data-label="Amount">{{ formatCurrency(item.amount) }}</div>
+    <div class="history-cell" data-label="Amount Paid">{{ formatCurrency(item.amount_paid) }}</div>
+    <div class="history-cell" data-label="Status">
+      <span class="status-pill" [ngClass]="paymentStatusClass(item.status)">{{ item.status || 'Unknown' }}</span>
     </div>
-
-    <div class="loading-row" *ngIf="isLoading">
-      Loading payment history...
+    <div class="history-cell summary-cell" data-label="Summary">{{ item.summary || '—' }}</div>
+    <div class="history-cell actions-cell" data-label="Actions">
+      <app-button
+        type="button"
+        variant="outline"
+        class="download-btn"
+        iconClass="pi pi-download"
+        [disabled]="isReceiptLoading(item.ref_id)"
+        (buttonClick)="downloadReceipt(item)"
+      >
+        {{ isReceiptLoading(item.ref_id) ? 'Preparing...' : 'Receipt' }}
+      </app-button>
     </div>
+  </ng-template>
 
-    <div class="history-row" *ngFor="let item of paymentHistory">
-      <div class="history-cell" data-label="Date">{{ formatDate(item.created_at) }}</div>
-      <div class="history-cell value-strong" data-label="Payment Type">{{ item.payment_type || '—' }}</div>
-      <div class="history-cell" data-label="Applicant">{{ item.applicant_name || item.applicant_no || '—' }}</div>
-      <div class="history-cell" data-label="Reference Number">{{ item.ref_id || '—' }}</div>
-      <div class="history-cell" data-label="Amount">{{ formatCurrency(item.amount) }}</div>
-      <div class="history-cell" data-label="Amount Paid">{{ formatCurrency(item.amount_paid) }}</div>
-      <div class="history-cell" data-label="Status">
-        <span class="status-pill" [ngClass]="paymentStatusClass(item.status)">{{ item.status || 'Unknown' }}</span>
-      </div>
-      <div class="history-cell summary-cell" data-label="Summary">{{ item.summary || '—' }}</div>
-      <div class="history-cell actions-cell" data-label="Actions">
-        <app-button
-          type="button"
-          variant="outline"
-          class="download-btn"
-          iconClass="pi pi-download"
-          [disabled]="isReceiptLoading(item.ref_id)"
-          (buttonClick)="downloadReceipt(item)"
-        >
-          {{ isReceiptLoading(item.ref_id) ? 'Preparing...' : 'Receipt' }}
-        </app-button>
-      </div>
-    </div>
-
-    <div class="empty-row" *ngIf="!isLoading && paymentHistory.length === 0">
-      No payment history found.
-    </div>
-  </div>
-
-  <div class="pagination" *ngIf="!isLoading && paymentHistory.length > 0 && (nextPage || previousPage)">
-    <app-button
-      type="button"
-      variant="muted"
-      class="pagination-btn"
-      [disabled]="!canGoToPreviousPage()"
-      (buttonClick)="loadPreviousPage()"
-    >
-      Previous
-    </app-button>
-
-    <div class="pagination-text">Page {{ currentPage }}{{ totalPages !== null ? ' of ' + totalPages : '' }}</div>
-
-    <app-button
-      type="button"
-      variant="primary"
-      class="pagination-btn"
-      [disabled]="!canGoToNextPage()"
-      (buttonClick)="loadNextPage()"
-    >
-      Next
-    </app-button>
-  </div>
+  <app-pagination
+    *ngIf="showPagination()"
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()!"
+    [totalItems]="totalPayments()"
+    [pageSize]="pageSize()"
+    [disabled]="isLoading()"
+    (pageChange)="goToPage($event)"
+  ></app-pagination>
 </div>

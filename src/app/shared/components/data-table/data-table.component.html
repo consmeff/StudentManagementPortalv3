@@ -1,0 +1,33 @@
+<div class="data-table-card">
+  <div class="data-table-header" [style.--app-data-table-columns]="gridTemplateColumns()">
+    <div
+      class="data-table-heading"
+      *ngFor="let column of columns()"
+      [class]="resolveHeaderClass(column) + (column.className ? ' ' + column.className : '')"
+    >
+      <span>{{ column.label }}</span>
+      <i *ngIf="column.sortable" class="pi pi-sort-alt sort-indicator" aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="table-state-row" *ngIf="loading()">
+    {{ loadingMessage() }}
+  </div>
+
+  <ng-container *ngIf="!loading() && hasRows()">
+    <div
+      class="data-table-row"
+      *ngFor="let row of rows(); let index = index; trackBy: trackByRow"
+      [style.--app-data-table-columns]="gridTemplateColumns()"
+    >
+      <ng-container
+        [ngTemplateOutlet]="rowTemplate()"
+        [ngTemplateOutletContext]="{ $implicit: row, index: index }"
+      ></ng-container>
+    </div>
+  </ng-container>
+
+  <div class="table-state-row" *ngIf="!loading() && !hasRows()">
+    {{ emptyMessage() }}
+  </div>
+</div>
