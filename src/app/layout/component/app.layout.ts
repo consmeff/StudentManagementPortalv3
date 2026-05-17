@@ -46,6 +46,7 @@ import { AppFooter } from './app.footer';
         flex: 1;
         overflow: auto;
         padding: 1rem;
+        background: var(--app-surface);
       }
     `]
 })

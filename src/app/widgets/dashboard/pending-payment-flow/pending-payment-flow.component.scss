@@ -154,18 +154,21 @@
   color: var(--app-text-primary);
 }
 
-.details-section h3 {
-  margin: 0 0 0.75rem;
-  color: var(--app-text-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 1.15rem;
+.details-section {
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  h3 {
+    background: var(--app-surface-alt);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    padding: 1rem;
+    margin:0;
+    color: var(--app-text-primary);
+    text-transform: uppercase;
+  }
 }
 
 .details-card {
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  background: var(--app-surface);
   overflow: hidden;
 }
 
