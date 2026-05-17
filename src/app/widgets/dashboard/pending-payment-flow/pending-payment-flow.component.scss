@@ -177,6 +177,9 @@
   padding: 1rem 1rem;
   border-bottom: 1px solid var(--app-border);
   color: var(--app-text-secondary);
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--app-border);
+  }
 }
 
 .details-row strong {
@@ -243,12 +246,6 @@
 
 app-button.continue-btn ::ng-deep .app-btn {
   border-radius: 14px;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.hero-card app-button.continue-btn {
-  min-width: 235px;
 }
 
 .hero-card app-button.continue-btn ::ng-deep .app-btn {
@@ -357,7 +354,6 @@ app-button.continue-btn ::ng-deep .app-btn {
 }
 
 .step-action .continue-btn {
-  padding: 20px;
   color: var(--app-surface);
 }
 
