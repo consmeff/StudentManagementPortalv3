@@ -22,8 +22,6 @@
 
 .page-title {
   margin: 0 0 1rem;
-  font-size: 2rem;
-  font-weight: 700;
   color: var(--app-text-primary);
 }
 
@@ -166,10 +164,6 @@
 @media (max-width: 992px) {
   .content-wrapper {
     padding: 1rem 0.75rem;
-  }
-
-  .page-title {
-    font-size: 1.45rem;
   }
 
   .stepper-wrapper {

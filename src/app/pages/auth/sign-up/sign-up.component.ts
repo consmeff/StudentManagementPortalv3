@@ -16,7 +16,7 @@ import { ThemeService } from '../../../services/theme.service';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 @Component({
   selector: 'app-sign-up',
-  imports: [ AppFloatingConfigurator, TraceabilityModule],
+  imports: [ TraceabilityModule],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss',
   providers: [MessageService],

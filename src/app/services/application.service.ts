@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
-import { PaymentRefResponse } from '../data/application/payment.data';
+import {
+  PaginatedPaymentsResponse,
+  PaymentHistoryItem,
+  PaymentRefResponse
+} from '../data/application/payment.data';
 import { PreRegistrationDataDTO } from '../data/application/preregistrationdatadto';
 import { RegistrantDataDTO } from '../data/application/registrantdatadto';
 
@@ -12,8 +16,7 @@ import { RegistrantDataDTO } from '../data/application/registrantdatadto';
   providedIn: 'root'
 })
 export class ApplicationService {
-
-  apiRoot = environment.apiURL;
+  private readonly apiRoot = environment.apiURL;
 
   constructor(private http: HttpClient) { }
 
@@ -65,8 +68,25 @@ export class ApplicationService {
   verifyPayment(ref: { ref_id: string }): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/callbacks/verify-payment-status`, ref);
   }
-  getPaymentRef( refPayload:{ application_no: string }): Observable<PaymentRefResponse> {
+  getPaymentRef(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/initiate-payment`, refPayload);
+  }
+  getPayments(pageUrl?: string): Observable<PaginatedPaymentsResponse> {
+    const endpoint = this.resolveApiUrl(pageUrl ?? `${this.apiRoot}/api/v1/payments/payments`);
+    return this.http.get<unknown>(endpoint).pipe(
+      map((response) => this.normalizePaginatedPaymentsResponse(response))
+    );
+  }
+  getPayment(refId: string): Observable<PaymentHistoryItem> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/payments/payments/${encodeURIComponent(refId)}`).pipe(
+      map((response) => this.normalizePaymentResponse(response))
+    );
+  }
+  getPaymentReceipt(refId: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.apiRoot}/api/v1/payments/payments/${encodeURIComponent(refId)}/receipt`, {
+      observe: 'response',
+      responseType: 'blob'
+    });
   }
 
   submitApplication(payload: { applicant_no: string }): Observable<any> {
@@ -98,5 +118,92 @@ export class ApplicationService {
       gender: Array.isArray(raw.gender) ? raw.gender : [],
       occupations: Array.isArray(raw.occupations) ? raw.occupations : []
     };
+  }
+
+  private normalizePaginatedPaymentsResponse(response: unknown): PaginatedPaymentsResponse {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const resultsSource = Array.isArray(rawResponse['results'])
+      ? rawResponse['results']
+      : Array.isArray(rawResponse['data'])
+        ? rawResponse['data']
+        : [];
+
+    return {
+      count: this.readNumber(rawResponse, 'count'),
+      next: this.readNullableString(rawResponse, 'next'),
+      previous: this.readNullableString(rawResponse, 'previous'),
+      results: resultsSource.map((item) => this.normalizePaymentItem(item))
+    };
+  }
+
+  private normalizePaymentResponse(response: unknown): PaymentHistoryItem {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    return this.normalizePaymentItem(rawResponse);
+  }
+
+  private normalizePaymentItem(response: unknown): PaymentHistoryItem {
+    const rawResponse = this.toRecord(response);
+    return {
+      ref_id: this.readString(rawResponse, 'ref_id'),
+      payment_type: this.readString(rawResponse, 'payment_type'),
+      amount: this.readNumber(rawResponse, 'amount'),
+      amount_paid: this.readNullableNumber(rawResponse, 'amount_paid'),
+      status: this.readString(rawResponse, 'status'),
+      summary: this.readString(rawResponse, 'summary'),
+      created_at: this.readString(rawResponse, 'created_at'),
+      applicant_no: this.readString(rawResponse, 'applicant_no'),
+      applicant_name: this.readString(rawResponse, 'applicant_name')
+    };
+  }
+
+  private resolveApiUrl(url: string): string {
+    const trimmedUrl = url.replace(/[`'\s]/g, '');
+    if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+      return trimmedUrl;
+    }
+    if (trimmedUrl.startsWith('/')) {
+      return `${this.apiRoot}${trimmedUrl}`;
+    }
+    return `${this.apiRoot}/${trimmedUrl}`;
+  }
+
+  private getNestedRecord(source: unknown, key: string): Record<string, unknown> | null {
+    const record = this.toRecord(source);
+    const nestedValue = record[key];
+    if (this.isRecord(nestedValue)) {
+      return nestedValue;
+    }
+    return null;
+  }
+
+  private toRecord(value: unknown): Record<string, unknown> {
+    if (this.isRecord(value)) {
+      return value;
+    }
+    return {};
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+  }
+
+  private readString(source: Record<string, unknown>, key: string): string {
+    const value = source[key];
+    return typeof value === 'string' ? value : '';
+  }
+
+  private readNullableString(source: Record<string, unknown>, key: string): string | null {
+    const value = source[key];
+    return typeof value === 'string' && value.trim().length > 0 ? value : null;
+  }
+
+  private readNumber(source: Record<string, unknown>, key: string): number {
+    const value = source[key];
+    return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+  }
+
+  private readNullableNumber(source: Record<string, unknown>, key: string): number | null {
+    const value = source[key];
+    return typeof value === 'number' && Number.isFinite(value) ? value : null;
   }
 }
