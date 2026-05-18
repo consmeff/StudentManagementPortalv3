@@ -3,27 +3,24 @@ import { AuthSessionStore } from '../store/auth-session.store';
 
 export type PortalSegment = 'new' | 'admitted' | 'returning';
 
+const ADMITTED_KEYWORDS = ['admitted', 'admission', 'fresh', 'new student'];
+const RETURNING_KEYWORDS = ['returning', 'matric', 'student', 'old'];
+
 @Injectable({ providedIn: 'root' })
 export class UserPortalService {
   private readonly authSessionStore = inject(AuthSessionStore);
 
   portalSegment(): PortalSegment {
     const userType = (this.authSessionStore.userType() || '').toLowerCase().trim();
+    const matriculationNo = (this.authSessionStore.matriculationNo() || '').trim();
 
-    // uncomment this guy and fine-tune to determine returning student
-    // const matriculationNo = (this.authSessionStore.matriculationNo() || '').trim();
-    const matriculationNo = '';
+    if (ADMITTED_KEYWORDS.some((keyword) => userType.includes(keyword))) {
+      return 'admitted';
+    }
 
-    const admittedKeywords = ['admitted', 'admission', 'fresh', 'new student'];
-    const returningKeywords = ['returning', 'matric', 'student', 'old'];
-
-    // if (admittedKeywords.some((keyword) => userType.includes(keyword))) {
-    //   return 'admitted';
-    // }
-
-    // if (returningKeywords.some((keyword) => userType.includes(keyword)) || !!matriculationNo) {
-    //   return 'returning';
-    // }
+    if (RETURNING_KEYWORDS.some((keyword) => userType.includes(keyword)) || !!matriculationNo) {
+      return 'returning';
+    }
 
     return 'new';
   }
