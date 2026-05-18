@@ -2,7 +2,7 @@
 @use './assets/layout/layout.scss';
 @use 'primeicons/primeicons.css';
 @use './assets/demo/demo.scss';
-@import './assets/demo/_theme.scss';
+@use './assets/demo/theme' as *;
 
 :root,
 [data-theme='light'] {

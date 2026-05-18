@@ -5,8 +5,8 @@ import { Subscription } from 'rxjs';
 
 // PrimeNG Imports
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { FloatLabelModule } from 'primeng/floatlabel';
 
@@ -27,8 +27,8 @@ import { TPersonalDetailDTO } from '../../../../data/application/transformer.dto
     FormsModule,
     CommonModule,
     InputTextModule,
-    DropdownModule,
-    CalendarModule,
+    SelectModule,
+    DatePickerModule,
     RadioButtonModule,
     FloatLabelModule
   ],
@@ -173,7 +173,7 @@ export class PersonalDetailsComponent {
       email: [draftData?.email ?? data?.email ?? '', [Validators.required, Validators.email]],
       phonenumber: [draftData?.phonenumber ?? data?.phone_number ?? '', [Validators.required, Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)]],
       alternativePhoneNumber: [draftData?.alternativePhoneNumber ?? data?.alt_phone_number ?? '', Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)],
-      dateOfBirth: [draftData?.dateOfBirth ?? (data?.dob ? new Date(data.dob) : null), [Validators.required, this.minimumAgeValidator(16)]],
+      dateOfBirth: [this.normalizeDateOfBirth(draftData?.dateOfBirth ?? data?.dob ?? null), [Validators.required, this.minimumAgeValidator(16)]],
       maritalStatus: [draftData?.maritalStatus ?? data?.marital_status ?? null, Validators.required],
       gender: [draftData?.gender ?? data?.gender ?? null, Validators.required],
       nationality: [draftData?.nationality ?? data?.nationality ?? 'Nigeria', Validators.required],
@@ -205,6 +205,19 @@ export class PersonalDetailsComponent {
   private createMaxDobDate(): Date {
     const current = new Date();
     return new Date(current.getFullYear() - 16, current.getMonth(), current.getDate());
+  }
+
+  private normalizeDateOfBirth(value: Date | string | null): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    return date <= this.maxDate ? date : null;
   }
 
   private minimumAgeValidator(minAge: number): ValidatorFn {

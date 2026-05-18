@@ -12,7 +12,7 @@ import { ApplicationGuidelineModalComponent } from '../application-guideline-mod
 import { PaymentWorkflowService } from '../../../services/payment-workflow.service';
 import { RegistrantData } from '../../../data/application/registrantdatadto';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { StatusIndicatorComponent, StatusTone } from '../../../shared/components/status-indicator/status-indicator.component';
+import { StatusTone } from '../../../shared/components/status-indicator/status-indicator.component';
 import { ApplicationStatusDefinition, ApplicationStatusKey } from '../../../constants/application-status.types';
 import { getApplicationStatusDefinition, normalizeApplicationStatusKey } from '../../../constants/application-status.utils';
 import { formatStructuredName } from '../../../utility/name-format';
@@ -48,7 +48,7 @@ type ApprovalStatusTone = 'info' | 'success' | 'warning' | 'danger';
 @Component({
   selector: 'app-pending-payment-flow',
   standalone: true,
-  imports: [CommonModule, TraceabilityModule, ApplicationGuidelineModalComponent, ButtonComponent, StatusIndicatorComponent],
+  imports: [CommonModule, TraceabilityModule, ApplicationGuidelineModalComponent, ButtonComponent],
   templateUrl: './pending-payment-flow.component.html',
   styleUrl: './pending-payment-flow.component.scss',
   providers: [MessageService],

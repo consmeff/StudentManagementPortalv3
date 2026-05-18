@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 
 // PrimeNG Imports
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { RadioButtonModule } from 'primeng/radiobutton';
 
 // Services
@@ -27,7 +27,7 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
     ReactiveFormsModule,
     FormsModule,
     InputTextModule,
-    DropdownModule,
+    SelectModule,
     RadioButtonModule
   ],
   templateUrl: './nextofkin.component.html',

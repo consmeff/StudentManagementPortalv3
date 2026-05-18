@@ -4,8 +4,8 @@ import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 
 // PrimeNG Imports
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ButtonModule } from 'primeng/button';
 
@@ -26,8 +26,8 @@ import { ExamRecord, TAcademicHistory, TOLevelResult, TUtmeResultPayload } from 
     FormsModule,
     CommonModule,
     InputTextModule,
-    DropdownModule,
-    CalendarModule,
+    SelectModule,
+    DatePickerModule,
     RadioButtonModule,
     ButtonModule
   ],

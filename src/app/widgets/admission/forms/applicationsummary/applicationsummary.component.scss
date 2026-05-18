@@ -1,4 +1,4 @@
-@import '../../../../../assets/demo/theme';
+@use '../../../../../assets/demo/theme' as *;
 
 :host {
   display: block;

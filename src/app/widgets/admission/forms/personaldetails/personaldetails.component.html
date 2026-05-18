@@ -56,7 +56,7 @@
                 <!-- Date of Birth -->
                 <div class="form-field">
                     <label for="dateOfBirth" class="field-label">Date of Birth <span class="required">*</span></label>
-                    <p-calendar
+                    <p-datepicker
                         inputId="dateOfBirth"
                         formControlName="dateOfBirth"
                         [showIcon]="true"
@@ -65,12 +65,13 @@
                         [maxDate]="maxDate"
                         [defaultDate]="maxDate"
                         [minDate]="minDate"
+                        [readonlyInput]="true"
                         [yearNavigator]="true"
                         [monthNavigator]="true"
                         [yearRange]="'1940:' + maxBirthYear"
                         [class.p-invalid]="isFieldInvalid('dateOfBirth')"
                         styleClass="w-full"
-                    ></p-calendar>
+                    ></p-datepicker>
                     <small *ngIf="isFieldInvalid('dateOfBirth')" class="p-error">
                         {{ getErrorMessage('dateOfBirth') }}
                     </small>
@@ -96,7 +97,7 @@
                 <!-- Marital Status -->
                 <div class="form-field">
                     <label for="maritalStatus" class="field-label">Marital Status <span class="required">*</span></label>
-                    <p-dropdown inputId="maritalStatus" [options]="maritalStatusOptions" formControlName="maritalStatus" placeholder="Select marital status" [class.p-invalid]="isFieldInvalid('maritalStatus')" styleClass="w-full"></p-dropdown>
+                    <p-select inputId="maritalStatus" [options]="maritalStatusOptions" formControlName="maritalStatus" placeholder="Select marital status" [class.p-invalid]="isFieldInvalid('maritalStatus')" styleClass="w-full"></p-select>
                     <small *ngIf="isFieldInvalid('maritalStatus')" class="p-error">
                         {{ getErrorMessage('maritalStatus') }}
                     </small>
@@ -105,7 +106,7 @@
                 <!-- Nationality -->
                 <div class="form-field">
                     <label for="nationality" class="field-label">Nationality <span class="required">*</span></label>
-                    <p-dropdown
+                    <p-select
                         inputId="nationality"
                         [options]="nationalityDropdownOptions"
                         formControlName="nationality"
@@ -115,7 +116,7 @@
                         [disabled]="!nationalityDropdownOptions || nationalityDropdownOptions.length === 0"
                         [class.p-invalid]="isFieldInvalid('nationality')"
                         styleClass="w-full"
-                    ></p-dropdown>
+                    ></p-select>
                     <small *ngIf="!nationalityDropdownOptions || nationalityDropdownOptions.length === 0" class="p-info"> Loading nationalities... </small>
                     <small *ngIf="isFieldInvalid('nationality')" class="p-error">
                         {{ getErrorMessage('nationality') }}
@@ -125,7 +126,7 @@
                 <!-- State of Origin -->
                 <div class="form-field">
                     <label for="stateOfOrigin" class="field-label">State of Origin <span class="required">*</span></label>
-                    <p-dropdown
+                    <p-select
                         inputId="stateOfOrigin"
                         [options]="stateDropdownOptions"
                         formControlName="stateOfOrigin"
@@ -135,7 +136,7 @@
                         [disabled]="!stateDropdownOptions || stateDropdownOptions.length === 0"
                         [class.p-invalid]="isFieldInvalid('stateOfOrigin')"
                         styleClass="w-full"
-                    ></p-dropdown>
+                    ></p-select>
                     <small *ngIf="!stateDropdownOptions || stateDropdownOptions.length === 0" class="p-info"> Loading states... </small>
                     <small *ngIf="isFieldInvalid('stateOfOrigin')" class="p-error">
                         {{ getErrorMessage('stateOfOrigin') }}
@@ -145,7 +146,7 @@
                 <!-- Local Government -->
                 <div class="form-field">
                     <label for="localGovernment" class="field-label">Local Government <span class="required">*</span></label>
-                    <p-dropdown
+                    <p-select
                         inputId="localGovernment"
                         [options]="localGovDropdownOptions"
                         formControlName="localGovernment"
@@ -155,7 +156,7 @@
                         [disabled]="!localGovDropdownOptions || localGovDropdownOptions.length === 0 || !personalInfoForm.get('stateOfOrigin')?.value"
                         [class.p-invalid]="isFieldInvalid('localGovernment')"
                         styleClass="w-full"
-                    ></p-dropdown>
+                    ></p-select>
                     <small *ngIf="!personalInfoForm.get('stateOfOrigin')?.value" class="p-info"> Please select state of origin first </small>
                     <small *ngIf="personalInfoForm.get('stateOfOrigin')?.value && (!localGovDropdownOptions || localGovDropdownOptions.length === 0)" class="p-info"> Loading local governments... </small>
                     <small *ngIf="isFieldInvalid('localGovernment')" class="p-error">
@@ -236,7 +237,7 @@
                 <!-- Residential State -->
                 <div class="form-field">
                     <label for="residentialState" class="field-label">Residential State <span class="required">*</span></label>
-                    <p-dropdown
+                    <p-select
                         inputId="residentialState"
                         [options]="stateDropdownOptions"
                         formControlName="residentialState"
@@ -246,7 +247,7 @@
                         [disabled]="!stateDropdownOptions || stateDropdownOptions.length === 0"
                         [class.p-invalid]="isFieldInvalid('residentialState')"
                         styleClass="w-full"
-                    ></p-dropdown>
+                    ></p-select>
                     <small *ngIf="isFieldInvalid('residentialState')" class="p-error">
                         {{ getErrorMessage('residentialState') }}
                     </small>
@@ -255,7 +256,7 @@
                 <!-- Residential Local Government -->
                 <div class="form-field">
                     <label for="residentialLocalGovernment" class="field-label">Residential Local Government <span class="required">*</span></label>
-                    <p-dropdown
+                    <p-select
                         inputId="residentialLocalGovernment"
                         [options]="residentialLGADropdownOptions"
                         formControlName="residentialLocalGovernment"
@@ -265,7 +266,7 @@
                         [disabled]="!residentialLGADropdownOptions || residentialLGADropdownOptions.length === 0 || !personalInfoForm.get('residentialState')?.value"
                         [class.p-invalid]="isFieldInvalid('residentialLocalGovernment')"
                         styleClass="w-full"
-                    ></p-dropdown>
+                    ></p-select>
                     <small *ngIf="!personalInfoForm.get('residentialState')?.value" class="p-info"> Please select residential state first </small>
                     <small *ngIf="personalInfoForm.get('residentialState')?.value && (!residentialLGADropdownOptions || residentialLGADropdownOptions.length === 0)" class="p-info"> Loading local governments... </small>
                     <small *ngIf="isFieldInvalid('residentialLocalGovernment')" class="p-error">

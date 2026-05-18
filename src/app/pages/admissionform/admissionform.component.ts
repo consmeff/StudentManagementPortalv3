@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 // PrimeNG
@@ -424,8 +425,14 @@ export class AdmissionFormComponent implements OnInit {
     return;
   }
 
-  buildPersonalDetailObj() {
+  private async buildPersonalDetailObj(registrant: RegistrantData | undefined): Promise<Record<string, unknown> | undefined> {
     if (this._personalFormData != null) {
+      const stateOfOrigin = this.resolveStateName(this._personalFormData.stateOfOrigin, registrant?.state_of_origin);
+      const lga = await this.resolveLgaName(
+        this._personalFormData.stateOfOrigin,
+        this._personalFormData.localGovernment,
+        registrant?.lga
+      );
       let _caddress: Address = {
         address: `${this._personalFormData.houseNumber}, ${this._personalFormData.streetName}, ${this._personalFormData.areaTown}`,
         street_name: this._personalFormData.streetName,
@@ -448,15 +455,27 @@ export class AdmissionFormComponent implements OnInit {
         nationality: this._personalFormData.nationality,
         dob: this._personalFormData.dateOfBirth ? this._personalFormData.dateOfBirth.toISOString().split('T')[0] : '',
         gender: this._personalFormData.gender,
-        lga: this._lgas?.filter(f => f.id == +this._personalFormData!.localGovernment)[0].name,
-        state_of_origin: this._states?.filter(f => f.id == +this._personalFormData!.stateOfOrigin)[0].name,
+        lga,
+        state_of_origin: stateOfOrigin,
       };
       return _personalDetail;
     }
+
+    return undefined;
   }
 
-  buildNextOfKinDetailObj() {
+  private async buildNextOfKinDetailObj(registrant: RegistrantData | undefined): Promise<Record<string, unknown> | undefined> {
     if (this._nextofkinFormData != null) {
+      const nextOfKinRegistrant = registrant?.primary_parent_or_guardian;
+      const stateOfOrigin = this.resolveStateName(
+        this._nextofkinFormData.stateOfOrigin,
+        nextOfKinRegistrant?.state_of_origin
+      );
+      const lga = await this.resolveLgaName(
+        this._nextofkinFormData.stateOfOrigin,
+        this._nextofkinFormData.localGovernment,
+        nextOfKinRegistrant?.lga
+      );
       let _nokDetail: any = {
         title: this._nextofkinFormData.title,
         first_name: this._nextofkinFormData.firstname,
@@ -468,11 +487,76 @@ export class AdmissionFormComponent implements OnInit {
         nationality: this._nextofkinFormData.nationality,
         residential_address: `${this._nextofkinFormData.houseNumber}, ${this._nextofkinFormData.streetName},${this._nextofkinFormData.landmark}, ${this._nextofkinFormData.areaTown}`,
         correspondence_address: `${this._nextofkinFormData.houseNumber}, ${this._nextofkinFormData.streetName},${this._nextofkinFormData.landmark}, ${this._nextofkinFormData.areaTown}`,
-        lga: this._lgas?.filter(f => f.id == +this._nextofkinFormData!.localGovernment)[0].name,
-        state_of_origin: this._states?.filter(f => f.id == +this._nextofkinFormData!.stateOfOrigin)[0].name,
+        lga,
+        state_of_origin: stateOfOrigin,
       };
       return _nokDetail;
     }
+
+    return undefined;
+  }
+
+  private resolveStateName(rawStateValue: string, fallbackStateName: string | undefined): string {
+    const stateId = Number(rawStateValue);
+    if (Number.isFinite(stateId)) {
+      const matchedState = this._states?.find((state) => state.id === stateId);
+      if (matchedState?.name) {
+        return matchedState.name;
+      }
+    }
+
+    return fallbackStateName ?? rawStateValue;
+  }
+
+  private async resolveLgaName(
+    rawStateValue: string,
+    rawLgaValue: string,
+    fallbackLgaName: string | undefined
+  ): Promise<string> {
+    const lgaId = Number(rawLgaValue);
+    if (!Number.isFinite(lgaId)) {
+      return fallbackLgaName ?? rawLgaValue;
+    }
+
+    const cachedLga = this._lgas?.find((lga) => lga.id === lgaId);
+    if (cachedLga?.name) {
+      return cachedLga.name;
+    }
+
+    const stateId = Number(rawStateValue);
+    if (Number.isFinite(stateId)) {
+      const lgaResponse = await firstValueFrom(this._appservice.lgas(stateId));
+      const matchedLga = lgaResponse.data.find((lga) => lga.id === lgaId);
+      if (matchedLga?.name) {
+        return matchedLga.name;
+      }
+    }
+
+    return fallbackLgaName ?? rawLgaValue;
+  }
+
+  private extractSubmissionErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const errorPayload = error.error;
+      if (typeof errorPayload === 'string' && errorPayload.trim().length > 0) {
+        return errorPayload;
+      }
+      if (typeof errorPayload?.detail === 'string' && errorPayload.detail.trim().length > 0) {
+        return errorPayload.detail;
+      }
+      if (typeof errorPayload?.message === 'string' && errorPayload.message.trim().length > 0) {
+        return errorPayload.message;
+      }
+      if (Array.isArray(errorPayload?.errors) && errorPayload.errors.length > 0) {
+        return String(errorPayload.errors[0]);
+      }
+    }
+
+    if (error instanceof Error && error.message.trim().length > 0) {
+      return error.message;
+    }
+
+    return 'Unable to submit your application right now. Please try again.';
   }
 
   async confirm(): Promise<void> {
@@ -490,10 +574,11 @@ export class AdmissionFormComponent implements OnInit {
     try {
       await this.persistDraftChanges(applicantNo);
       await firstValueFrom(this._appservice.submitApplication({ applicant_no: applicantNo }));
+      this._formStepService.resetAdmissionFormState();
       this.visible = true;
       this.cd.detectChanges();
-    } catch {
-      this.showError('Submit Application', 'Unable to submit your application right now. Please try again.');
+    } catch (error: unknown) {
+      this.showError('Submit Application', this.extractSubmissionErrorMessage(error));
     } finally {
       this.isSubmittingApplication = false;
     }
@@ -506,7 +591,7 @@ export class AdmissionFormComponent implements OnInit {
       return;
     }
 
-    const payload = this.buildMergedApplicationPayload();
+    const payload = await this.buildMergedApplicationPayload();
     if (Object.keys(payload).length === 0) {
       return;
     }
@@ -516,10 +601,11 @@ export class AdmissionFormComponent implements OnInit {
     this._preRegData.setRegData(latestRegistrantData);
   }
 
-  private buildMergedApplicationPayload(): Record<string, unknown> {
+  private async buildMergedApplicationPayload(): Promise<Record<string, unknown>> {
     const payload: Record<string, unknown> = {};
-    const personalDetails = this.buildPersonalDetailObj();
-    const nextOfKinDetails = this.buildNextOfKinDetailObj();
+    const registrant = this._preRegData.regData()?.data;
+    const personalDetails = await this.buildPersonalDetailObj(registrant);
+    const nextOfKinDetails = await this.buildNextOfKinDetailObj(registrant);
 
     if (personalDetails) {
       Object.assign(payload, personalDetails);

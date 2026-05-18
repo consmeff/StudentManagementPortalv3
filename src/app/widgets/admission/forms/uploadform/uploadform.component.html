@@ -18,13 +18,13 @@
 
       <div *ngIf="CertificateFile || fileObjects?.certificateofbirth?.file_url" class="file-preview">
         <div class="file-info">
-          <img [src]="fileObjects?.certificateofbirth?.file_url || placeholder" alt="document" class="file-icon" />
+          <img [src]="fileObjects.certificateofbirth.file_url || placeholder" alt="document" class="file-icon" />
           <div class="file-details">
             <div class="file-name">
-              {{ fileObjects?.certificateofbirth?.file_url ? getFileName(fileObjects.certificateofbirth.file_url) : CertificateFile?.name }}
+              {{ fileObjects.certificateofbirth.file_url ? getFileName(fileObjects.certificateofbirth.file_url) : CertificateFile?.name }}
             </div>
             <div class="file-size">
-              {{ passSize(fileObjects?.certificateofbirth?.file_size || CertificateFile?.size) }}
+              {{ passSize(fileObjects.certificateofbirth.file_size || CertificateFile?.size) }}
             </div>
           </div>
           <p-progressSpinner *ngIf="isLoadingCertificate" styleClass="file-spinner" 
@@ -76,13 +76,13 @@
 
       <div *ngIf="PassportFile || fileObjects?.passport?.file_url" class="file-preview">
         <div class="file-info">
-          <img [src]="fileObjects?.passport?.file_url || placeholder" alt="document" class="file-icon" />
+          <img [src]="fileObjects.passport.file_url || placeholder" alt="document" class="file-icon" />
           <div class="file-details">
             <div class="file-name">
-              {{ fileObjects?.passport?.file_url ? getFileName(fileObjects.passport.file_url) : PassportFile?.name }}
+              {{ fileObjects.passport.file_url ? getFileName(fileObjects.passport.file_url) : PassportFile?.name }}
             </div>
             <div class="file-size">
-              {{ passSize(fileObjects?.passport?.file_size || PassportFile?.size) }}
+              {{ passSize(fileObjects.passport.file_size || PassportFile?.size) }}
             </div>
           </div>
           <p-progressSpinner *ngIf="isLoadingPassport" styleClass="file-spinner" 
@@ -105,13 +105,13 @@
 
       <div *ngIf="UTMEFile || fileObjects?.utme?.file_url" class="file-preview">
         <div class="file-info">
-          <img [src]="fileObjects?.utme?.file_url || placeholder" alt="document" class="file-icon" />
+          <img [src]="fileObjects.utme.file_url || placeholder" alt="document" class="file-icon" />
           <div class="file-details">
             <div class="file-name">
-              {{ fileObjects?.utme?.file_url ? getFileName(fileObjects.utme.file_url) : UTMEFile?.name }}
+              {{ fileObjects.utme.file_url ? getFileName(fileObjects.utme.file_url) : UTMEFile?.name }}
             </div>
             <div class="file-size">
-              {{ passSize(fileObjects?.utme?.file_size || UTMEFile?.size) }}
+              {{ passSize(fileObjects.utme.file_size || UTMEFile?.size) }}
             </div>
           </div>
           <p-progressSpinner *ngIf="isLoadingUTME" styleClass="file-spinner" 
@@ -134,13 +134,13 @@
 
       <div *ngIf="OriginFile || fileObjects?.origin?.file_url" class="file-preview">
         <div class="file-info">
-          <img [src]="fileObjects?.origin?.file_url || placeholder" alt="document" class="file-icon" />
+          <img [src]="fileObjects.origin.file_url || placeholder" alt="document" class="file-icon" />
           <div class="file-details">
             <div class="file-name">
-              {{ fileObjects?.origin?.file_url ? getFileName(fileObjects.origin.file_url) : OriginFile?.name }}
+              {{ fileObjects.origin.file_url ? getFileName(fileObjects.origin.file_url) : OriginFile?.name }}
             </div>
             <div class="file-size">
-              {{ passSize(fileObjects?.origin?.file_size || OriginFile?.size) }}
+              {{ passSize(fileObjects.origin.file_size || OriginFile?.size) }}
             </div>
           </div>
           <p-progressSpinner *ngIf="isLoadingOrigin" styleClass="file-spinner" 

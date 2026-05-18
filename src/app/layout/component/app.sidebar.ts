@@ -32,7 +32,7 @@ type SidebarMenuItem = {
       <div class="sidebar-top-row">
         @if (!isDesktopCollapsed) {
           <div class="brand-wrap">
-            <img src="../../../assets/sblogo.png" alt="School Logo" />
+            <img src="/assets/consmmefs-logo.png" alt="School Logo" />
           </div>
         }
         <button type="button" class="collapse-btn" (click)="toggleSidebar()">

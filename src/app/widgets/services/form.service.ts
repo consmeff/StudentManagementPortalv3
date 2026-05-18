@@ -113,5 +113,25 @@ export class FormService {
     this._applicationEditable.set(!!editable);
   }
 
-  
+  resetAdmissionFormState() {
+    this._formsteps.set({
+      academicValid: false,
+      docUploadValid: false,
+      nextofkinValid: false,
+      personalinfoValid: false
+    });
+    this._savedFormSteps.set({
+      academicValid: false,
+      docUploadValid: false,
+      nextofkinValid: false,
+      personalinfoValid: false
+    });
+    this._personalform.set(null);
+    this._nextofkinform.set(null);
+    this._academicHistory.set(null);
+    this._olevelResult.set(null);
+    this._utmeResult.set(null);
+    this._uploadFile.set(null);
+    this._applicationEditable.set(true);
+  }
 }
