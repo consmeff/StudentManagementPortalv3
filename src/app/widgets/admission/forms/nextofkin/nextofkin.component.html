@@ -307,19 +307,19 @@
           <label for="residentialLocalGovernment" class="field-label">Residential Local Government <span class="required">*</span></label>
           <p-select 
             inputId="residentialLocalGovernment"
-            [options]="localGovDropdownOptions"
+            [options]="residentialLocalGovDropdownOptions"
             formControlName="residentialLocalGovernment"
             placeholder="Select residential LGA"
             [filter]="true"
             filterBy="label"
-            [disabled]="!localGovDropdownOptions || localGovDropdownOptions.length === 0 || !nextofkinForm.get('residentialState')?.value"
+            [disabled]="!residentialLocalGovDropdownOptions || residentialLocalGovDropdownOptions.length === 0 || !nextofkinForm.get('residentialState')?.value"
             [class.p-invalid]="isFieldInvalid('residentialLocalGovernment')"
             styleClass="w-full"
           ></p-select>
           <small *ngIf="!nextofkinForm.get('residentialState')?.value" class="p-info">
             Please select residential state first
           </small>
-          <small *ngIf="nextofkinForm.get('residentialState')?.value && (!localGovDropdownOptions || localGovDropdownOptions.length === 0)" class="p-info">
+          <small *ngIf="nextofkinForm.get('residentialState')?.value && (!residentialLocalGovDropdownOptions || residentialLocalGovDropdownOptions.length === 0)" class="p-info">
             Loading local governments...
           </small>
           <small *ngIf="isFieldInvalid('residentialLocalGovernment')" class="p-error">

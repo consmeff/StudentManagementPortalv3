@@ -84,6 +84,7 @@
                 <div class="step-actions">
                   <p-button 
                     label="Continue" 
+                    [loading]="isLoadingPersonal"
                     [disabled]="isEditLocked || !formStepStatus.personalinfoValid"
                     (onClick)="continueToStep(1, 2)"
                     styleClass="primary-btn"
@@ -112,6 +113,7 @@
                   
                   <p-button 
                     label="Continue" 
+                    [loading]="isLoadingNextOfKin"
                     [disabled]="isEditLocked || !formStepStatus.nextofkinValid"
                     (onClick)="continueToStep(2, 3)"
                     styleClass="primary-btn"
@@ -140,6 +142,7 @@
                   
                   <p-button 
                     label="Continue" 
+                    [loading]="isLoadingAcademic"
                     [disabled]="isEditLocked || !formStepStatus.academicValid"
                     (onClick)="continueToStep(3, 4)"
                     styleClass="primary-btn"
@@ -168,6 +171,7 @@
                   
                   <p-button 
                     label="Continue" 
+                    [loading]="isLoadingDocuments"
                     [disabled]="isEditLocked || !formStepStatus.docUploadValid"
                     (onClick)="continueToStep(4, 5)"
                     styleClass="primary-btn"

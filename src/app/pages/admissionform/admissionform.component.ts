@@ -205,8 +205,7 @@ export class AdmissionFormComponent implements OnInit {
   }
 
   continueToStep(currentStep: number, nextStep: number): void {
-    this.markStepAsSaved(currentStep);
-    this.activateStep(nextStep);
+    void this.saveStepAndContinue(currentStep, nextStep);
   }
 
   activateStep(step: number) {
@@ -316,6 +315,70 @@ export class AdmissionFormComponent implements OnInit {
     };
     this.savedStepStatus = nextSavedStatus;
     this._formStepService.setSavedFormSteps(nextSavedStatus);
+  }
+
+  private async saveStepAndContinue(currentStep: number, nextStep: number): Promise<void> {
+    if (!this.canNavigateAfterSave(currentStep)) {
+      return;
+    }
+
+    const applicantNo = this.authSessionStore.applicationNo() || '';
+    if (!applicantNo) {
+      this.showError('Save Step', 'Application number is missing. Please refresh and try again.');
+      return;
+    }
+
+    const blocked = this.ensureCanEditOrReject();
+    if (blocked) {
+      await blocked;
+      return;
+    }
+
+    this.setStepLoadingState(currentStep, true);
+
+    try {
+      await this.persistStepChanges(applicantNo, currentStep);
+      this.markStepAsSaved(currentStep);
+      this.activateStep(nextStep);
+    } catch (error: unknown) {
+      this.showError('Save Step', this.extractSubmissionErrorMessage(error));
+    } finally {
+      this.setStepLoadingState(currentStep, false);
+    }
+  }
+
+  private canNavigateAfterSave(step: number): boolean {
+    switch (step) {
+      case 1:
+        return this.formStepStatus.personalinfoValid;
+      case 2:
+        return this.formStepStatus.nextofkinValid;
+      case 3:
+        return this.formStepStatus.academicValid;
+      case 4:
+        return this.formStepStatus.docUploadValid;
+      default:
+        return false;
+    }
+  }
+
+  private setStepLoadingState(step: number, isLoading: boolean): void {
+    switch (step) {
+      case 1:
+        this.isLoadingPersonal = isLoading;
+        break;
+      case 2:
+        this.isLoadingNextOfKin = isLoading;
+        break;
+      case 3:
+        this.isLoadingAcademic = isLoading;
+        break;
+      case 4:
+        this.isLoadingDocuments = isLoading;
+        break;
+      default:
+        break;
+    }
   }
 
   private hasRegistrantValue(value: unknown): boolean {
@@ -572,7 +635,6 @@ export class AdmissionFormComponent implements OnInit {
 
     this.isSubmittingApplication = true;
     try {
-      await this.persistDraftChanges(applicantNo);
       await firstValueFrom(this._appservice.submitApplication({ applicant_no: applicantNo }));
       this._formStepService.resetAdmissionFormState();
       this.visible = true;
@@ -584,14 +646,8 @@ export class AdmissionFormComponent implements OnInit {
     }
   }
 
-  private async persistDraftChanges(applicantNo: string): Promise<void> {
-    const blocked = this.ensureCanEditOrReject();
-    if (blocked) {
-      await blocked;
-      return;
-    }
-
-    const payload = await this.buildMergedApplicationPayload();
+  private async persistStepChanges(applicantNo: string, step: number): Promise<void> {
+    const payload = await this.buildStepPayload(step);
     if (Object.keys(payload).length === 0) {
       return;
     }
@@ -601,59 +657,47 @@ export class AdmissionFormComponent implements OnInit {
     this._preRegData.setRegData(latestRegistrantData);
   }
 
-  private async buildMergedApplicationPayload(): Promise<Record<string, unknown>> {
-    const payload: Record<string, unknown> = {};
+  private async buildStepPayload(step: number): Promise<Record<string, unknown>> {
     const registrant = this._preRegData.regData()?.data;
-    const personalDetails = await this.buildPersonalDetailObj(registrant);
-    const nextOfKinDetails = await this.buildNextOfKinDetailObj(registrant);
 
-    if (personalDetails) {
-      Object.assign(payload, personalDetails);
+    switch (step) {
+      case 1:
+        return (await this.buildPersonalDetailObj(registrant)) ?? {};
+      case 2: {
+        const nextOfKinDetails = await this.buildNextOfKinDetailObj(registrant);
+        return nextOfKinDetails ? { primary_parent_or_guardian: nextOfKinDetails } : {};
+      }
+      case 3:
+        return this.buildAcademicStepPayload(registrant);
+      case 4:
+        return this.resolveDocumentPayload(registrant);
+      default:
+        return {};
     }
-
-    if (nextOfKinDetails) {
-      payload['primary_parent_or_guardian'] = nextOfKinDetails;
-    }
-
-    Object.assign(payload, this.buildMergedAcademicAndDocumentPayload());
-
-    return payload;
   }
 
-  private buildMergedAcademicAndDocumentPayload(): Record<string, unknown> {
+  private buildAcademicStepPayload(registrant: RegistrantData | undefined): Record<string, unknown> {
     const payload: Record<string, unknown> = {};
-    const registrant = this._preRegData.regData()?.data;
-    const hasAcademicDraft = this._academicHistoryFormData !== null
-      || this._olevelFormData !== null
-      || this._utmeResultFormData !== null;
-    const hasUploadDraft = this._uploadFileFormData !== null;
-
-    if (!hasAcademicDraft && !hasUploadDraft) {
-      return payload;
-    }
-
     const academicHistory = this.resolveAcademicHistoryPayload(registrant);
+    const oLevelResults = this.resolveOLevelResultPayload(registrant);
+    const utmeRegNo = this.resolveUtmeRegNo(registrant);
+    const utmeResult = this.resolveUtmeResultPayload(registrant);
+
     if (academicHistory.length > 0) {
       payload['academic_history'] = academicHistory;
     }
 
-    const oLevelResults = this.resolveOLevelResultPayload(registrant);
     if (oLevelResults.length > 0) {
       payload['o_level_result'] = oLevelResults;
     }
 
-    const utmeRegNo = this.resolveUtmeRegNo(registrant);
     if (utmeRegNo.length > 0) {
       payload['utme_reg_no'] = utmeRegNo;
     }
 
-    const utmeResult = this.resolveUtmeResultPayload(registrant);
     if (Object.keys(utmeResult).length > 0) {
       payload['utme_result'] = utmeResult;
     }
-
-    const documentPayload = this.resolveDocumentPayload(registrant);
-    Object.assign(payload, documentPayload);
 
     return payload;
   }

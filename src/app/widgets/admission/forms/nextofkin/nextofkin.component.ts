@@ -64,6 +64,7 @@ export class NextOfKinComponent {
   nationalityDropdownOptions: any[] = [];
   stateDropdownOptions: any[] = [];
   localGovDropdownOptions: any[] = [];
+  residentialLocalGovDropdownOptions: any[] = [];
 
   private formInitialized = false;
   isEditable = true;
@@ -125,7 +126,6 @@ export class NextOfKinComponent {
     this.regstore.regData$.subscribe(data => {
       if (data != null) {
         this.backendRegistrationData = data;
-        console.log(this.backendRegistrationData);
         this.initializeForm();
       }
     });
@@ -163,6 +163,7 @@ export class NextOfKinComponent {
 
     this.formInitialized = true;
     this.applyEditableState();
+    this.initializeLocalGovernmentOptions();
 
     // Set dropdown values with delays for cascading dropdowns
     if (data && draftData === null) {
@@ -171,7 +172,6 @@ export class NextOfKinComponent {
           const stateId = this.getStateIDByName(data.state_of_origin);
           if (stateId) {
             this.nextofkinForm.controls['stateOfOrigin'].setValue(stateId);
-            this.nextofkinForm.controls['residentialState'].setValue(stateId);
           }
         }
       }, 1000);
@@ -181,7 +181,6 @@ export class NextOfKinComponent {
           const lgaId = this.getLocalGovtIDByName(data.lga);
           if (lgaId) {
             this.nextofkinForm.controls['localGovernment'].setValue(lgaId);
-            this.nextofkinForm.controls['residentialLocalGovernment'].setValue(lgaId);
           }
         }
       }, 2000);
@@ -202,7 +201,6 @@ export class NextOfKinComponent {
     this.nextofkinForm.valueChanges.subscribe(val => {
       if (this.nextofkinForm.valid) {
         this.formStepStatus.nextofkinValid = true;
-        console.log(this.nextofkinForm.value);
         this._formStepService.setNextOfKinFormData(this.nextofkinForm.value);
         this._formStepService.setFormSteps(this.formStepStatus);
       } else {
@@ -214,14 +212,14 @@ export class NextOfKinComponent {
     this.nextofkinForm.controls["stateOfOrigin"].valueChanges.subscribe((val: number) => {
       if (val > 0) {
         this.nextofkinForm.controls["localGovernment"].setValue(null);
-        this.getLocalGovtByStateID(val);
-        this.nextofkinForm.controls["residentialState"].setValue(val);
+        this.getLocalGovtByStateID(val, 'origin');
       }
     });
 
-    this.nextofkinForm.controls["localGovernment"].valueChanges.subscribe((val: number) => {
+    this.nextofkinForm.controls["residentialState"].valueChanges.subscribe((val: number) => {
       if (val > 0) {
-        this.nextofkinForm.controls["residentialLocalGovernment"].setValue(val);
+        this.nextofkinForm.controls["residentialLocalGovernment"].setValue(null);
+        this.getLocalGovtByStateID(val, 'residential');
       }
     });
   }
@@ -239,15 +237,36 @@ export class NextOfKinComponent {
     this.nextofkinForm.disable({ emitEvent: false });
   }
 
-  getLocalGovtByStateID(val: number) {
+  private initializeLocalGovernmentOptions(): void {
+    const originStateId = Number(this.nextofkinForm.controls['stateOfOrigin'].value);
+    const residentialStateId = Number(this.nextofkinForm.controls['residentialState'].value);
+
+    if (originStateId > 0) {
+      this.getLocalGovtByStateID(originStateId, 'origin');
+    }
+
+    if (residentialStateId > 0) {
+      this.getLocalGovtByStateID(residentialStateId, 'residential');
+    }
+  }
+
+  getLocalGovtByStateID(val: number, target: 'origin' | 'residential') {
     this.appservice.lgas(val).subscribe(data => {
       if (data != undefined) {
-        this.localGovOptions = data.data;
-        this.localGovDropdownOptions = data.data.map(lga => ({
+        const dropdownOptions = data.data.map(lga => ({
           label: lga.name,
           value: lga.id
         }));
-        this.regstore.setLGAData(this.localGovOptions);
+
+        if (target === 'origin') {
+          this.localGovOptions = data.data;
+          this.localGovDropdownOptions = dropdownOptions;
+          this.regstore.setLGAData(this.localGovOptions);
+          return;
+        }
+
+        this.residentialLocalGovernment = data.data;
+        this.residentialLocalGovDropdownOptions = dropdownOptions;
       }
     });
   }
