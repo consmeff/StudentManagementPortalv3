@@ -3,8 +3,10 @@ import { AuthSessionStore } from '../store/auth-session.store';
 
 export type PortalSegment = 'new' | 'admitted' | 'returning';
 
-const ADMITTED_KEYWORDS = ['admitted', 'admission', 'fresh', 'new student'];
-const RETURNING_KEYWORDS = ['returning', 'matric', 'student', 'old'];
+const ADMITTED_USER_TYPES = ['freshman'];
+const RETURNING_USER_TYPES = ['student'];
+const NEW_CANDIDATE_USER_TYPES = ['applicant'];
+const PENDING_ACCEPTANCE_FEE_KEYWORDS = ['pending', 'unpaid', 'not paid', 'fail'];
 
 @Injectable({ providedIn: 'root' })
 export class UserPortalService {
@@ -13,13 +15,18 @@ export class UserPortalService {
   portalSegment(): PortalSegment {
     const userType = (this.authSessionStore.userType() || '').toLowerCase().trim();
     const matriculationNo = (this.authSessionStore.matriculationNo() || '').trim();
+    const isAdmitted = this.authSessionStore.isAdmitted();
 
-    if (ADMITTED_KEYWORDS.some((keyword) => userType.includes(keyword))) {
+    if (isAdmitted || ADMITTED_USER_TYPES.includes(userType)) {
       return 'admitted';
     }
 
-    if (RETURNING_KEYWORDS.some((keyword) => userType.includes(keyword)) || !!matriculationNo) {
+    if (RETURNING_USER_TYPES.includes(userType) || !!matriculationNo) {
       return 'returning';
+    }
+
+    if (NEW_CANDIDATE_USER_TYPES.includes(userType)) {
+      return 'new';
     }
 
     return 'new';
@@ -27,6 +34,23 @@ export class UserPortalService {
 
   isNewCandidatePortal(): boolean {
     return this.portalSegment() === 'new';
+  }
+
+  isAdmittedPortal(): boolean {
+    return this.portalSegment() === 'admitted';
+  }
+
+  hasPendingAcceptanceFee(): boolean {
+    const acceptanceFeeStatus = (this.authSessionStore.acceptanceFeeStatus() || '').toLowerCase().trim();
+    if (!acceptanceFeeStatus) {
+      return false;
+    }
+
+    return PENDING_ACCEPTANCE_FEE_KEYWORDS.some((keyword) => acceptanceFeeStatus.includes(keyword));
+  }
+
+  landingUrl(): string {
+    return this.dashboardUrl();
   }
 
   dashboardUrl(): string {

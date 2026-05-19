@@ -1,0 +1,49 @@
+<div class="acceptance-payment-page">
+  <h1>Invoice Generation</h1>
+
+  <section class="invoice-layout">
+    <div class="invoice-form">
+      <label>Payment Type:</label>
+      <div class="readonly-input">Acceptance Fee</div>
+
+      <label>Amount:</label>
+      <div class="amount-input">
+        <span>₦</span>
+        <strong>{{ flow.acceptanceFee.toLocaleString('en-NG') }}</strong>
+      </div>
+    </div>
+
+    <article class="invoice-card">
+      <header>
+        <h3>CONSMMEFS</h3>
+        <p>Invoice Generation</p>
+      </header>
+      <div class="body">
+        <div><span>Candidate Name:</span><strong>{{ flow.applicantName() }}</strong></div>
+        <div><span>Application No:</span><strong>{{ flow.applicationNo() }}</strong></div>
+        <div><span>Programme Admitted to:</span><strong>{{ flow.programmeName() }}</strong></div>
+        <div><span>Academic Session:</span><strong>{{ flow.academicSession() }}</strong></div>
+        <div><span>Payment Type:</span><strong>Acceptance Fee</strong></div>
+        <div><span>Amount:</span><strong>₦{{ flow.acceptanceFee.toLocaleString('en-NG') }}</strong></div>
+        <div><span>Processing Fee:</span><strong>₦{{ flow.processingFee.toLocaleString('en-NG') }}</strong></div>
+      </div>
+      <footer>
+        <span>Total to Pay:</span>
+        <strong>₦{{ flow.totalPay().toLocaleString('en-NG') }}</strong>
+      </footer>
+    </article>
+  </section>
+
+  <div class="action-row">
+    <button pButton type="button" class="secondary-btn" (click)="goBackToDashboard()">Back</button>
+    <button
+      pButton
+      type="button"
+      class="primary-btn"
+      [disabled]="isProcessing() || isVerifying()"
+      (click)="proceedToPayment()"
+    >
+      {{ isVerifying() ? 'Verifying Payment...' : isProcessing() ? 'Processing...' : 'Proceed to Payment' }}
+    </button>
+  </div>
+</div>

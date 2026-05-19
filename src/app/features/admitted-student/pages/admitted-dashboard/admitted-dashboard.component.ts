@@ -25,11 +25,11 @@ export class AdmittedDashboardComponent implements OnInit {
   }
 
   goToAcceptancePayment(): void {
-    void this.router.navigateByUrl('/admitted/payment');
+    void this.router.navigateByUrl('/admitted/acceptance-payment');
   }
 
-  goToProfileVerification(): void {
-    void this.router.navigateByUrl('/admitted/profile');
+  goToSchoolFeesPayment(): void {
+    void this.router.navigateByUrl('/admitted/payment');
   }
 
   downloadReceipt(): void {

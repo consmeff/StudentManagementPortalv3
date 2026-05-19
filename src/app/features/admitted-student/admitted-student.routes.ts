@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { featureAccessGuard } from '../../services/feature-access.guard';
+import { AdmittedAcceptancePaymentComponent } from './pages/admitted-acceptance-payment/admitted-acceptance-payment.component';
 import { AdmittedCoursesComponent } from './pages/admitted-courses/admitted-courses.component';
 import { AdmittedDashboardComponent } from './pages/admitted-dashboard/admitted-dashboard.component';
 import { AdmittedPaymentComponent } from './pages/admitted-payment/admitted-payment.component';
@@ -10,6 +11,12 @@ export default [
   {
     path: 'dashboard',
     component: AdmittedDashboardComponent,
+    canActivate: [featureAccessGuard],
+    data: { feature: 'dashboard' }
+  },
+  {
+    path: 'acceptance-payment',
+    component: AdmittedAcceptancePaymentComponent,
     canActivate: [featureAccessGuard],
     data: { feature: 'dashboard' }
   },

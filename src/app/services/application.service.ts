@@ -72,6 +72,9 @@ export class ApplicationService {
   getPaymentRef(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/initiate-payment`, refPayload);
   }
+  acceptanceFeePayment(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
+    return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/acceptance-fee-payment`, refPayload);
+  }
   getPayments(query: { page: number; pageSize: number; ordering: string | null; search: string | null }): Observable<PaginatedPaymentsResponse> {
     let params = new HttpParams()
       .set('page', String(query.page))

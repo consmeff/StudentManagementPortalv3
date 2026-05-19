@@ -1,0 +1,152 @@
+.acceptance-payment-page {
+  padding: 1rem;
+}
+
+.acceptance-payment-page h1 {
+  margin: 0;
+  color: var(--app-text-primary);
+}
+
+.invoice-layout {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.invoice-form label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--app-text-primary);
+  font-weight: 600;
+}
+
+.invoice-form label:not(:first-child) {
+  margin-top: 0.95rem;
+}
+
+.readonly-input {
+  width: 100%;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-secondary);
+  border-radius: 0.65rem;
+  padding: 0.8rem 0.9rem;
+}
+
+.amount-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--app-border);
+  border-radius: 0.65rem;
+  overflow: hidden;
+}
+
+.amount-input span {
+  padding: 0.8rem;
+  background: var(--app-surface-alt);
+  color: var(--app-text-primary);
+}
+
+.amount-input strong {
+  padding: 0 0.9rem;
+  color: var(--app-text-primary);
+  font-size: 2rem;
+}
+
+.invoice-card {
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--app-surface);
+}
+
+.invoice-card header {
+  background: var(--app-primary);
+  color: var(--app-surface);
+  padding: 0.8rem 1rem;
+}
+
+.invoice-card header h3 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.invoice-card header p {
+  margin: 0.2rem 0 0;
+  color: color-mix(in srgb, var(--app-surface) 92%, transparent);
+}
+
+.invoice-card .body {
+  padding: 0.85rem 1rem;
+}
+
+.invoice-card .body > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 0.4rem 0;
+}
+
+.invoice-card .body span {
+  color: var(--app-text-secondary);
+}
+
+.invoice-card .body strong {
+  color: var(--app-text-primary);
+}
+
+.invoice-card footer {
+  border-top: 1px solid var(--app-border);
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.invoice-card footer span {
+  color: var(--app-text-primary);
+}
+
+.invoice-card footer strong {
+  font-size: 2rem;
+  color: var(--app-text-primary);
+}
+
+.action-row {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.primary-btn {
+  min-width: 260px;
+  border-radius: 0.55rem;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
+}
+
+.secondary-btn {
+  min-width: 180px;
+  border-radius: 0.55rem;
+  color: var(--app-primary);
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+}
+
+@media (max-width: 900px) {
+  .invoice-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .action-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .invoice-card footer strong,
+  .amount-input strong {
+    font-size: 1.5rem;
+  }
+}

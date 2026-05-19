@@ -30,7 +30,9 @@ export interface LoginResponse {
   permissions: string[];
   user_type: string;
   password_reset_required: boolean;
-  matriculation_no: string;
-  application_no: string;
+  matriculation_no: string | null;
+  application_no: string | null;
   payment_status: string;
+  acceptance_fee_status: string | null;
+  is_admitted: boolean | null;
 }

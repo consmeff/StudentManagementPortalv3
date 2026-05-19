@@ -75,7 +75,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
         this.authSessionStore.setSessionFromLogin(result);
         this.messageService.add({ severity: 'success', summary: 'Login', detail: 'Login Successful' });
         this.isLoading.set(false);
-        this.router.navigateByUrl(this.userPortalService.dashboardUrl());
+        this.router.navigateByUrl(this.userPortalService.landingUrl());
       },
       error: () => {
         this.isLoading.set(false);

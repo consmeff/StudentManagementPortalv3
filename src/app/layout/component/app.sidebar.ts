@@ -223,6 +223,7 @@ export class AppSidebar {
         });
         effect(() => {
             this.authSessionStore.paymentStatus();
+            this.authSessionStore.acceptanceFeeStatus();
             this.authSessionStore.userType();
             this.authSessionStore.matriculationNo();
             this.buildMenu();
