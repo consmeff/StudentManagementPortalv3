@@ -538,13 +538,6 @@ export class AdmissionFormComponent implements OnInit {
     };
   }
 
-  buildDocumentUploadObj() {
-    if (this._uploadFileFormData != null) {
-      return this._uploadFileFormData;
-    }
-    
-  }
-
   private async buildPersonalDetailObj(registrant: RegistrantData | undefined): Promise<Record<string, unknown> | undefined> {
     if (this._personalFormData != null) {
       const stateOfOrigin = this.resolveStateName(this._personalFormData.stateOfOrigin, registrant?.state_of_origin);
