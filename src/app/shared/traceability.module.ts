@@ -6,8 +6,6 @@ import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextareaModule } from 'primeng/textarea';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -53,7 +51,7 @@ import { BlockUIModule } from 'primeng/blockui';
   imports: [
     CommonModule,
     InputTextModule,ReactiveFormsModule,FormsModule, FluidModule, ButtonModule, SelectModule, FormsModule, TextareaModule,
-    DropdownModule,CalendarModule,ToastModule,DatePickerModule,ProgressSpinnerModule, 
+    ToastModule,DatePickerModule,ProgressSpinnerModule, 
   TabsModule, BadgeModule, ToggleSwitchModule,ToolbarModule, TableModule, IconFieldModule, InputIconModule, TagModule,
   SplitterModule,ListboxModule, CheckboxModule,CardModule,MultiSelectModule,DividerModule,DialogModule,PasswordModule,ChipModule,
   ChipModule, TimelineModule, TreeModule, FloatLabelModule,RouterModule,SidebarModule,AvatarModule,MenuModule,ChartModule,
@@ -62,7 +60,7 @@ import { BlockUIModule } from 'primeng/blockui';
   exports: [
     CommonModule,
     InputTextModule, FluidModule, ButtonModule, SelectModule, FormsModule, TextareaModule,
-    ReactiveFormsModule,FormsModule,DropdownModule,CalendarModule,ToastModule,DatePickerModule,ProgressSpinnerModule,
+    ReactiveFormsModule,FormsModule,ToastModule,DatePickerModule,ProgressSpinnerModule,
     TabsModule, BadgeModule, ToggleSwitchModule,ToolbarModule, TableModule, IconFieldModule, InputIconModule, TagModule,
     SplitterModule,ListboxModule, CheckboxModule,CardModule,MultiSelectModule,DividerModule,DialogModule,PasswordModule,ChipModule,
     SkeletonModule,ProgressBarModule,TooltipModule,MessageModule,StepperModule,InputOtpModule,StepsModule,ToggleButtonModule ,

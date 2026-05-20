@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { AuthSessionStore } from '../store/auth-session.store';
 import { Router } from '@angular/router';
+import { UserPortalService } from './user-portal.service';
 
 export type ProtectedPageFeature =
   | 'dashboard'
@@ -17,6 +18,7 @@ export type ProtectedPageFeature =
 export class NavigationAccessService {
   private readonly authSessionStore = inject(AuthSessionStore);
   private readonly router = inject(Router);
+  private readonly userPortalService = inject(UserPortalService);
 
   canAccess(feature: ProtectedPageFeature): boolean {
     switch (feature) {
@@ -31,6 +33,9 @@ export class NavigationAccessService {
       case 'admissionform':
         return this.hasAnyPayment();
       case 'payment':
+        if (this.isAdmittedPortalRoute()) {
+          return !this.userPortalService.hasPendingAcceptanceFee();
+        }
         if (!this.isNewPortalRoute()) {
           return true;
         }
@@ -64,5 +69,10 @@ export class NavigationAccessService {
   private isNewPortalRoute(): boolean {
     const firstSegment = this.router.url.split('/').filter(Boolean)[0];
     return firstSegment === 'new' || firstSegment === 'pages';
+  }
+
+  private isAdmittedPortalRoute(): boolean {
+    const firstSegment = this.router.url.split('/').filter(Boolean)[0];
+    return firstSegment === 'admitted';
   }
 }

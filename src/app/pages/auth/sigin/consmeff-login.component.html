@@ -1,8 +1,23 @@
 <div class="auth-layout">
   <div class="left-panel">
-    <div class="slide-item">
-      <div class="slide-overlay">
-        <h2>Admission Portal</h2>
+    <div class="carousel-shell">
+      <div
+        *ngFor="let imagePath of carouselImages; let index = index"
+        class="slide-item"
+        [class.active-slide]="activeSlideIndex() === index"
+        [style.backgroundImage]="'url(' + imagePath + ')'"
+      >
+      </div>
+
+      <div class="carousel-indicators">
+        <button
+          *ngFor="let imagePath of carouselImages; let index = index"
+          type="button"
+          class="indicator-btn"
+          [class.active-indicator]="activeSlideIndex() === index"
+          [attr.aria-label]="'Show slide ' + (index + 1)"
+          (click)="setActiveSlide(index)"
+        ></button>
       </div>
     </div>
   </div>

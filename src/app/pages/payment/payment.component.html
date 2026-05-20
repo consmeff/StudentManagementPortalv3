@@ -1,30 +1,84 @@
 <div class="payment-page">
-  <h1 class="page-title">Payment History</h1>
-
-  <div class="history-card">
-    <div class="history-header">
-      <div>Date</div>
-      <div>Payment Type</div>
-      <div>Reference Number</div>
-      <div>Amount</div>
-      <div>Actions</div>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title title-xlarge">Payment History</h1>
+      <p class="page-subtitle">View your payment records, current status, and receipt downloads.</p>
     </div>
 
-    <div class="history-row" *ngFor="let item of paymentHistory">
-      <div>{{ item.date }}</div>
-      <div class="value-strong">{{ item.paymentType }}</div>
-      <div>{{ item.referenceNumber }}</div>
-      <div>{{ item.amount }}</div>
-      <div>
-        <button type="button" class="download-btn" (click)="downloadReceipt(item)">
-          <i class="pi pi-download"></i>
-          <span>Download</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="empty-row" *ngIf="!isLoading && paymentHistory.length === 0">
-      No payment history found.
+    <div class="page-summary" *ngIf="showPageSummary()">
+      <span>{{ totalRecordsLabel() }}</span>
+      <span>{{ pageLabel() }}</span>
     </div>
   </div>
+
+  <div class="payment-toolbar">
+    <div class="search-form">
+      <label class="search-label" for="payment-search">Search payments</label>
+      <div class="max-w-xl">
+        <app-search-input
+          class="toolbar-search"
+          inputId="payment-search"
+          placeholder="Search by reference, applicant, payment type, or summary"
+          [model]="searchValue()"
+          (modelChange)="updateSearchValue($event)"
+        ></app-search-input>
+      </div>
+    </div>
+  </div>
+
+  <app-data-table
+    [columns]="paymentTableColumns"
+    [rows]="paymentHistory()"
+    [rowTemplate]="paymentRowTemplate"
+    [gridTemplateColumns]="paymentTableGridTemplate"
+    [scrollable]="true"
+    scrollHeight="flex"
+    [loading]="isLoading()"
+    [trackBy]="trackPaymentRow"
+    [activeSortKey]="activeSortKey()"
+    [activeSortDirection]="activeSortDirection()"
+    loadingMessage="Loading payment history..."
+    emptyMessage="No payment history found."
+    (sortChange)="updateOrdering($event)"
+  ></app-data-table>
+
+  <ng-template #paymentRowTemplate let-item>
+    <td class="history-cell" data-label="Date">{{ formatDate(item.created_at) }}</td>
+    <td class="history-cell value-strong" data-label="Payment Type">{{ item.payment_type || '—' }}</td>
+    <td class="history-cell" data-label="Applicant">{{ item.applicant_name || item.applicant_no || '—' }}</td>
+    <td class="history-cell" data-label="Reference Number">{{ item.ref_id || '—' }}</td>
+    <td class="history-cell" data-label="Amount">{{ formatCurrency(item.amount) }}</td>
+    <td class="history-cell" data-label="Amount Paid">{{ formatCurrency(item.amount_paid) }}</td>
+    <td class="history-cell" data-label="Status">
+      <span class="status-pill" [ngClass]="paymentStatusClass(item.status)">{{ item.status || 'Unknown' }}</span>
+    </td>
+    <td class="history-cell summary-cell" data-label="Summary">
+      <span class="summary-text" [attr.title]="item.summary?.trim() ? item.summary : null">
+        {{ item.summary?.trim() ? item.summary : '—' }}
+      </span>
+    </td>
+    <td class="history-cell actions-cell" data-label="Actions">
+      <app-button
+        type="button"
+        variant="muted"
+        class="download-btn"
+        iconClass="pi pi-download"
+        [disabled]="isReceiptLoading(item.ref_id)"
+        (buttonClick)="downloadReceipt(item)"
+      >
+        {{ isReceiptLoading(item.ref_id) ? 'Preparing...' : 'Download' }}
+      </app-button>
+    </td>
+  </ng-template>
+
+  <app-pagination
+    *ngIf="showPagination()"
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()!"
+    [totalItems]="totalPayments()"
+    [pageSize]="currentPageSize()"
+    [disabled]="isLoading()"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="updatePageSize($event)"
+  ></app-pagination>
 </div>

@@ -16,7 +16,7 @@ export const APPLICATION_GUIDELINE_CONTENT: ApplicationGuidelineContent = {
   sections: [
     {
       heading:
-        'Candidates for admission into the Basic Midwifery Programme must possess the Senior Secondary School Certificate (SSCE) or its equivalent at credit level in the following five (5) subjects at not more than two (2) sittings:',
+        'Candidates for admission into the Basic Midwifery program must possess the Senior Secondary School Certificate (SSCE) or its equivalent at credit level in the following five (5) subjects at not more than two (2) sittings:',
       items: ['Physics', 'Chemistry', 'Biology', 'English', 'Mathematics'],
     },
     {
@@ -27,16 +27,22 @@ export const APPLICATION_GUIDELINE_CONTENT: ApplicationGuidelineContent = {
         "O' Level (SSCE) Certificates",
         'Certificate of Origin',
         'Passport Photograph',
+        'Jamb Result'
       ],
     },
     {
       heading:
-        'Candidates are required to make payment of a non-refundable sum of Fifteen Thousand Naira Only (NGN15,000.00) as application fee.',
+        'Candidates are required to make payment of a non-refundable sum of Fifteen Thousand Naira (NGN25,500.00) as application fee, excluding charges.',
       items: [],
     },
     {
       heading:
-        'Candidate must have a minimum JAMB score of 150 and must have chosen the institution as first choice in the 2024 UTME registration. Moreover, candidates who did not select CONSMMEFS as their first choice can change institution on the JAMB Portal.',
+        'Candidate must have a minimum JAMB score of 165 and must have chosen the institution as first choice in the 2024 UTME registration. Moreover, candidates who did not select CONSMMEFS as their first choice can change institution on the JAMB Portal.',
+      items: [],
+    },
+    {
+      heading:
+        'Applying candidates must be at least sixteen (16) years of age by October before applying.',
       items: [],
     },
   ],

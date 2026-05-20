@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 // PrimeNG Imports
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { FloatLabelModule } from 'primeng/floatlabel';
 
@@ -17,6 +17,7 @@ import { ApplicationService } from '../../../../services/application.service';
 import { formstepDTO } from '../../../../data/application/form.dto';
 import { LGA, RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { Countries, States } from '../../../../data/application/location.dto';
+import { TPersonalDetailDTO } from '../../../../data/application/transformer.dto';
 
 @Component({
   selector: 'app-personaldetails',
@@ -26,8 +27,8 @@ import { Countries, States } from '../../../../data/application/location.dto';
     FormsModule,
     CommonModule,
     InputTextModule,
-    DropdownModule,
-    CalendarModule,
+    SelectModule,
+    DatePickerModule,
     RadioButtonModule,
     FloatLabelModule
   ],
@@ -35,20 +36,21 @@ import { Countries, States } from '../../../../data/application/location.dto';
   styleUrl: './personaldetails.component.scss',
   providers: []
 })
-export class PersonaldetailsComponent {
+export class PersonalDetailsComponent {
   _formStepService = inject(FormService);
   regstore = inject(RegStoreService);
   appservice = inject(ApplicationService);
 
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };
 
   personalInfoForm!: FormGroup;
   backendRegistrationData!: RegistrantDataDTO;
+  draftPersonalData: TPersonalDetailDTO | null = null;
   
   maritalStatusOptions = [
     { label: 'Single', value: 'Single' },
@@ -79,8 +81,10 @@ export class PersonaldetailsComponent {
   residentialLGADropdownOptions: any[] = [];
 
   // Date constraints
-  maxDate: Date = new Date();
+  maxDate: Date = this.createMaxDobDate();
   minDate: Date = new Date(1940, 0, 1);
+  maxBirthYear: number = this.maxDate.getFullYear();
+  isEditable = true;
 
   private formInitialized = false;
   private formSubscriptions = new Subscription();
@@ -98,6 +102,15 @@ export class PersonaldetailsComponent {
   private setupSubscriptions() {
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step;
+    });
+
+    this._formStepService.applicationEditable$.subscribe((editable) => {
+      this.isEditable = editable;
+      this.applyEditableState();
+    });
+
+    this._formStepService.personalform$.subscribe((data) => {
+      this.draftPersonalData = data;
     });
 
     this.regstore.countryData$.subscribe(data => {
@@ -150,39 +163,90 @@ export class PersonaldetailsComponent {
     this.dropdownsHydrated = false;
 
     const data = this.backendRegistrationData?.data;
+    const draftData = this.draftPersonalData;
     
     this.personalInfoForm = this.fb.group({
       // Personal Information
-      firstname: [data?.first_name ?? '', Validators.required],
-      lastname: [data?.last_name ?? '', Validators.required],
-      middlename: [data?.other_names ?? ''],
-      email: [data?.email ?? '', [Validators.required, Validators.email]],
-      phonenumber: [data?.phone_number ?? '', [Validators.required, Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)]],
-      alternativePhoneNumber: [data?.alt_phone_number ?? '', Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)],
-      dateOfBirth: [data?.dob ? new Date(data.dob) : null, Validators.required],
-      maritalStatus: [data?.marital_status ?? null, Validators.required],
-      gender: [data?.gender ?? null, Validators.required],
-      nationality: [data?.nationality ?? 'Nigeria', Validators.required],
-      stateOfOrigin: [null, Validators.required],
-      localGovernment: [null, Validators.required],
-      disability: [data?.disability?.toLowerCase().includes("no") ? 'No' : 'Yes', Validators.required],
-      disabilityDetails: [''],
+      firstname: [draftData?.firstname ?? data?.first_name ?? '', Validators.required],
+      lastname: [draftData?.lastname ?? data?.last_name ?? '', Validators.required],
+      middlename: [draftData?.middlename ?? data?.other_names ?? ''],
+      email: [draftData?.email ?? data?.email ?? '', [Validators.required, Validators.email]],
+      phonenumber: [draftData?.phonenumber ?? data?.phone_number ?? '', [Validators.required, Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)]],
+      alternativePhoneNumber: [draftData?.alternativePhoneNumber ?? data?.alt_phone_number ?? '', Validators.pattern(/^\+?\(?[0-9]{1,4}\)?[-.\s]?[0-9]{1,15}$/)],
+      dateOfBirth: [this.normalizeDateOfBirth(draftData?.dateOfBirth ?? data?.dob ?? null), [Validators.required, this.minimumAgeValidator(16)]],
+      maritalStatus: [draftData?.maritalStatus ?? data?.marital_status ?? null, Validators.required],
+      gender: [draftData?.gender ?? data?.gender ?? null, Validators.required],
+      nationality: [draftData?.nationality ?? data?.nationality ?? 'Nigeria', Validators.required],
+      stateOfOrigin: [draftData?.stateOfOrigin ?? null, Validators.required],
+      localGovernment: [draftData?.localGovernment ?? null, Validators.required],
+      disability: [draftData?.disability ?? (data?.disability?.toLowerCase().includes("no") ? 'No' : 'Yes'), Validators.required],
+      disabilityDetails: [draftData?.disabilityDetails ?? ''],
       // Residential Information
-      houseNumber: [this.getAddressPart(data?.residential_address?.address, 0), Validators.required],
-      streetName: [data?.residential_address?.street_name ?? '', Validators.required],
-      landmark: [data?.residential_address?.land_mark ?? '', Validators.required],
-      areaTown: [data?.residential_address?.city ?? '', Validators.required],
-      residentialState: [null, Validators.required],
-      residentialLocalGovernment: [null, Validators.required],
+      houseNumber: [draftData?.houseNumber ?? this.getAddressPart(data?.residential_address?.address, 0), Validators.required],
+      streetName: [draftData?.streetName ?? data?.residential_address?.street_name ?? '', Validators.required],
+      landmark: [draftData?.landmark ?? data?.residential_address?.land_mark ?? '', Validators.required],
+      areaTown: [draftData?.areaTown ?? data?.residential_address?.city ?? '', Validators.required],
+      residentialState: [draftData?.residentialState ?? null, Validators.required],
+      residentialLocalGovernment: [draftData?.residentialLocalGovernment ?? null, Validators.required],
       
     });
 
 
-    this.handleDisabilityField(data);
+    if (draftData === null) {
+      this.handleDisabilityField(data);
+    }
     this.setupFormSubscriptions();
     this.formInitialized = true;
     
     this.setDropdownValuesIfReady();
+    this.applyEditableState();
+  }
+
+  private createMaxDobDate(): Date {
+    const current = new Date();
+    return new Date(current.getFullYear() - 16, current.getMonth(), current.getDate());
+  }
+
+  private normalizeDateOfBirth(value: Date | string | null): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    return date <= this.maxDate ? date : null;
+  }
+
+  private minimumAgeValidator(minAge: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+      const date = value instanceof Date ? value : new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return null;
+      }
+
+      const threshold = this.createMaxDobDate();
+      return date > threshold ? { minAge: { requiredAge: minAge } } : null;
+    };
+  }
+
+  private applyEditableState(): void {
+    if (!this.personalInfoForm) {
+      return;
+    }
+
+    if (this.isEditable) {
+      this.personalInfoForm.enable({ emitEvent: false });
+      return;
+    }
+
+    this.personalInfoForm.disable({ emitEvent: false });
   }
 
   private handleDisabilityField(data: any) {
@@ -200,7 +264,8 @@ export class PersonaldetailsComponent {
   }
 
   private setDropdownValuesIfReady() {
-    if (!this.formInitialized || !this.backendRegistrationData?.data || this.dropdownsHydrated) return;
+    if (!this.formInitialized || this.dropdownsHydrated || this.draftPersonalData !== null) return;
+    if (!this.backendRegistrationData?.data) return;
 
     const data = this.backendRegistrationData.data;
 
@@ -256,7 +321,7 @@ export class PersonaldetailsComponent {
       }));
       this.regstore.setLGAData(this.localGovOptions);
 
-      const backendLga = this.backendRegistrationData?.data?.lga;
+      const backendLga = this.draftPersonalData === null ? this.backendRegistrationData?.data?.lga : null;
       if (backendLga) {
         const lgaId = this.getLocalGovtIDByName(backendLga);
         if (lgaId && this.personalInfoForm.get('localGovernment')?.value !== lgaId) {
@@ -276,7 +341,7 @@ export class PersonaldetailsComponent {
         }));
         this.regstore.setLGAData(this.localGovOptions);
         
-        const backendLga = this.backendRegistrationData?.data?.lga;
+        const backendLga = this.draftPersonalData === null ? this.backendRegistrationData?.data?.lga : null;
         if (backendLga) {
           const lgaId = this.getLocalGovtIDByName(backendLga);
           if (lgaId && this.personalInfoForm.get('localGovernment')?.value !== lgaId) {
@@ -299,7 +364,7 @@ export class PersonaldetailsComponent {
         value: lga.id
       }));
 
-      const backendResLga = this.backendRegistrationData?.data?.residential_address?.lga?.id;
+      const backendResLga = this.draftPersonalData === null ? this.backendRegistrationData?.data?.residential_address?.lga?.id : null;
       if (backendResLga && this.personalInfoForm.get('residentialLocalGovernment')?.value !== backendResLga) {
         this.personalInfoForm.get('residentialLocalGovernment')?.setValue(backendResLga, { emitEvent: false });
       }
@@ -315,7 +380,7 @@ export class PersonaldetailsComponent {
           value: lga.id
         }));
         
-        const backendResLga = this.backendRegistrationData?.data?.residential_address?.lga?.id;
+        const backendResLga = this.draftPersonalData === null ? this.backendRegistrationData?.data?.residential_address?.lga?.id : null;
         if (backendResLga && this.personalInfoForm.get('residentialLocalGovernment')?.value !== backendResLga) {
           this.personalInfoForm.get('residentialLocalGovernment')?.setValue(backendResLga, { emitEvent: false });
         }
@@ -398,6 +463,7 @@ export class PersonaldetailsComponent {
       if (field.errors['required']) return `${this.getFieldLabel(fieldName)} is required`;
       if (field.errors['email']) return 'Please enter a valid email address';
       if (field.errors['pattern']) return 'Please enter a valid phone number';
+      if (field.errors['minAge']) return 'Applicant must be at least 16 years old';
     }
     return '';
   }

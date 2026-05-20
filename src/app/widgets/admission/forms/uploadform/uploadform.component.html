@@ -1,36 +1,36 @@
 <p-toast position="top-right"></p-toast>
 
-<div class="upload-container">
+<div class="upload-container" [class.readonly]="!isEditable">
   <form class="upload-form">
     
-    <h3 class="form-title">Upload scan copy or PDF file</h3>
+    <h3 class="form-title">Upload Documents</h3>
 
     <!-- Certificate of Birth Upload Section -->
     <div class="upload-section">
       <label class="upload-label">Certificate of Birth <span class="required">*</span></label>
       
-      <div *ngIf="!CertificateFile && !fileObjects?.certificateofbirth?.file_url" class="upload-area" (click)="f1.click()">
+      <div *ngIf="!CertificateFile && !fileObjects?.certificateofbirth?.file_url" class="upload-area" [class.disabled]="!isEditable" (click)="isEditable && f1.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
         <small class="upload-hint">PDF, JPG, PNG (Max 500KB)</small>
       </div>
-      <input #f1 (change)="onCertificateUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" />
+      <input #f1 (change)="onCertificateUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" [disabled]="!isEditable" />
 
       <div *ngIf="CertificateFile || fileObjects?.certificateofbirth?.file_url" class="file-preview">
         <div class="file-info">
-          <img [src]="fileObjects?.certificateofbirth?.file_url || placeholder" alt="document" class="file-icon" />
+          <img [src]="fileObjects.certificateofbirth.file_url || placeholder" alt="document" class="file-icon" />
           <div class="file-details">
             <div class="file-name">
-              {{ fileObjects?.certificateofbirth?.file_url ? getFileName(fileObjects.certificateofbirth.file_url) : CertificateFile?.name }}
+              {{ fileObjects.certificateofbirth.file_url ? getFileName(fileObjects.certificateofbirth.file_url) : CertificateFile?.name }}
             </div>
             <div class="file-size">
-              {{ passSize(fileObjects?.certificateofbirth?.file_size || CertificateFile?.size) }}
+              {{ passSize(fileObjects.certificateofbirth.file_size || CertificateFile?.size) }}
             </div>
           </div>
           <p-progressSpinner *ngIf="isLoadingCertificate" styleClass="file-spinner" 
             [style]="{width: '30px', height: '30px'}" strokeWidth="4"></p-progressSpinner>
         </div>
-        <i class="pi pi-times-circle remove-icon" (click)="removeFile(0)" *ngIf="!isLoadingCertificate"></i>
+        <i class="pi pi-times-circle remove-icon" [class.disabled]="!isEditable" (click)="isEditable && removeFile(0)" *ngIf="!isLoadingCertificate"></i>
       </div>
     </div>
 
@@ -38,12 +38,12 @@
     <div class="upload-section">
       <label class="upload-label">O' Level Result <span class="required">*</span></label>
       
-      <div *ngIf="!ResultFile && !isOlevelFileAvailable()" class="upload-area" (click)="f2.click()">
+      <div *ngIf="!ResultFile && !isOlevelFileAvailable()" class="upload-area" [class.disabled]="!isEditable" (click)="isEditable && f2.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
         <small class="upload-hint">PDF, JPG, PNG (Max 500KB)</small>
       </div>
-      <input #f2 (change)="onOlevelUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" />
+      <input #f2 (change)="onOlevelUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" [disabled]="!isEditable" />
 
       <div *ngIf="ResultFile || isOlevelFileAvailable()" class="file-preview">
         <div class="file-info">
@@ -59,7 +59,7 @@
           <p-progressSpinner *ngIf="isLoadingOlevel" styleClass="file-spinner" 
             [style]="{width: '30px', height: '30px'}" strokeWidth="4"></p-progressSpinner>
         </div>
-        <i class="pi pi-times-circle remove-icon" (click)="removeFile(1)" *ngIf="!isLoadingOlevel"></i>
+        <i class="pi pi-times-circle remove-icon" [class.disabled]="!isEditable" (click)="isEditable && removeFile(1)" *ngIf="!isLoadingOlevel"></i>
       </div>
     </div>
 
@@ -67,28 +67,28 @@
     <div class="upload-section">
       <label class="upload-label">Passport Photograph <span class="required">*</span></label>
       
-      <div *ngIf="!PassportFile && !fileObjects?.passport?.file_url" class="upload-area" (click)="f3.click()">
+      <div *ngIf="!PassportFile && !fileObjects?.passport?.file_url" class="upload-area" [class.disabled]="!isEditable" (click)="isEditable && f3.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
         <small class="upload-hint">JPG, PNG (Max 500KB)</small>
       </div>
-      <input #f3 (change)="onPassportUpload($event)" style="display: none" type="file" accept=".jpg,.jpeg,.png" />
+      <input #f3 (change)="onPassportUpload($event)" style="display: none" type="file" accept=".jpg,.jpeg,.png" [disabled]="!isEditable" />
 
       <div *ngIf="PassportFile || fileObjects?.passport?.file_url" class="file-preview">
         <div class="file-info">
-          <img [src]="fileObjects?.passport?.file_url || placeholder" alt="document" class="file-icon" />
+          <img [src]="fileObjects.passport.file_url || placeholder" alt="document" class="file-icon" />
           <div class="file-details">
             <div class="file-name">
-              {{ fileObjects?.passport?.file_url ? getFileName(fileObjects.passport.file_url) : PassportFile?.name }}
+              {{ fileObjects.passport.file_url ? getFileName(fileObjects.passport.file_url) : PassportFile?.name }}
             </div>
             <div class="file-size">
-              {{ passSize(fileObjects?.passport?.file_size || PassportFile?.size) }}
+              {{ passSize(fileObjects.passport.file_size || PassportFile?.size) }}
             </div>
           </div>
           <p-progressSpinner *ngIf="isLoadingPassport" styleClass="file-spinner" 
             [style]="{width: '30px', height: '30px'}" strokeWidth="4"></p-progressSpinner>
         </div>
-        <i class="pi pi-times-circle remove-icon" (click)="removeFile(2)" *ngIf="!isLoadingPassport"></i>
+        <i class="pi pi-times-circle remove-icon" [class.disabled]="!isEditable" (click)="isEditable && removeFile(2)" *ngIf="!isLoadingPassport"></i>
       </div>
     </div>
 
@@ -96,28 +96,28 @@
     <div class="upload-section">
       <label class="upload-label">UTME Result <span class="required">*</span></label>
       
-      <div *ngIf="!UTMEFile && !fileObjects?.utme?.file_url" class="upload-area" (click)="f4.click()">
+      <div *ngIf="!UTMEFile && !fileObjects?.utme?.file_url" class="upload-area" [class.disabled]="!isEditable" (click)="isEditable && f4.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
         <small class="upload-hint">PDF, JPG, PNG (Max 500KB)</small>
       </div>
-      <input #f4 (change)="onUTMEUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" />
+      <input #f4 (change)="onUTMEUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" [disabled]="!isEditable" />
 
       <div *ngIf="UTMEFile || fileObjects?.utme?.file_url" class="file-preview">
         <div class="file-info">
-          <img [src]="fileObjects?.utme?.file_url || placeholder" alt="document" class="file-icon" />
+          <img [src]="fileObjects.utme.file_url || placeholder" alt="document" class="file-icon" />
           <div class="file-details">
             <div class="file-name">
-              {{ fileObjects?.utme?.file_url ? getFileName(fileObjects.utme.file_url) : UTMEFile?.name }}
+              {{ fileObjects.utme.file_url ? getFileName(fileObjects.utme.file_url) : UTMEFile?.name }}
             </div>
             <div class="file-size">
-              {{ passSize(fileObjects?.utme?.file_size || UTMEFile?.size) }}
+              {{ passSize(fileObjects.utme.file_size || UTMEFile?.size) }}
             </div>
           </div>
           <p-progressSpinner *ngIf="isLoadingUTME" styleClass="file-spinner" 
             [style]="{width: '30px', height: '30px'}" strokeWidth="4"></p-progressSpinner>
         </div>
-        <i class="pi pi-times-circle remove-icon" (click)="removeFile(4)" *ngIf="!isLoadingUTME"></i>
+        <i class="pi pi-times-circle remove-icon" [class.disabled]="!isEditable" (click)="isEditable && removeFile(4)" *ngIf="!isLoadingUTME"></i>
       </div>
     </div>
 
@@ -125,28 +125,28 @@
     <div class="upload-section">
       <label class="upload-label">Certificate of Origin <span class="required">*</span></label>
       
-      <div *ngIf="!OriginFile && !fileObjects?.origin?.file_url" class="upload-area" (click)="f5.click()">
+      <div *ngIf="!OriginFile && !fileObjects?.origin?.file_url" class="upload-area" [class.disabled]="!isEditable" (click)="isEditable && f5.click()">
         <i class="pi pi-cloud-upload upload-icon"></i>
         <div class="upload-desc">Click to upload or drag and drop file</div>
         <small class="upload-hint">PDF, JPG, PNG (Max 500KB)</small>
       </div>
-      <input #f5 (change)="onOriginUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" />
+      <input #f5 (change)="onOriginUpload($event)" style="display: none" type="file" accept=".pdf,.jpg,.jpeg,.png" [disabled]="!isEditable" />
 
       <div *ngIf="OriginFile || fileObjects?.origin?.file_url" class="file-preview">
         <div class="file-info">
-          <img [src]="fileObjects?.origin?.file_url || placeholder" alt="document" class="file-icon" />
+          <img [src]="fileObjects.origin.file_url || placeholder" alt="document" class="file-icon" />
           <div class="file-details">
             <div class="file-name">
-              {{ fileObjects?.origin?.file_url ? getFileName(fileObjects.origin.file_url) : OriginFile?.name }}
+              {{ fileObjects.origin.file_url ? getFileName(fileObjects.origin.file_url) : OriginFile?.name }}
             </div>
             <div class="file-size">
-              {{ passSize(fileObjects?.origin?.file_size || OriginFile?.size) }}
+              {{ passSize(fileObjects.origin.file_size || OriginFile?.size) }}
             </div>
           </div>
           <p-progressSpinner *ngIf="isLoadingOrigin" styleClass="file-spinner" 
             [style]="{width: '30px', height: '30px'}" strokeWidth="4"></p-progressSpinner>
         </div>
-        <i class="pi pi-times-circle remove-icon" (click)="removeFile(3)" *ngIf="!isLoadingOrigin"></i>
+        <i class="pi pi-times-circle remove-icon" [class.disabled]="!isEditable" (click)="isEditable && removeFile(3)" *ngIf="!isLoadingOrigin"></i>
       </div>
     </div>
 

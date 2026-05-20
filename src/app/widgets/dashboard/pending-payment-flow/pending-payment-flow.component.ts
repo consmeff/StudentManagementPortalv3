@@ -4,14 +4,20 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ApplicationService } from '../../../services/application.service';
-import { Datum, OpenApplicationDTO } from '../../../data/application/admission.dto';
+import { Datum, Department, DepartmentsDTO, OpenApplicationDTO } from '../../../data/application/admission.dto';
 import { APPLICATION_GUIDELINE_CONTENT } from '../../../data/dashboard/application-guideline.data';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 import { firstValueFrom } from 'rxjs';
 import { ApplicationGuidelineModalComponent } from '../application-guideline-modal/application-guideline-modal.component';
 import { PaymentWorkflowService } from '../../../services/payment-workflow.service';
 import { RegistrantData } from '../../../data/application/registrantdatadto';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { StatusTone } from '../../../shared/components/status-indicator/status-indicator.component';
+import { ApplicationStatusDefinition, ApplicationStatusKey } from '../../../constants/application-status.types';
+import { getApplicationStatusDefinition, normalizeApplicationStatusKey } from '../../../constants/application-status.utils';
+import { formatStructuredName } from '../../../utility/name-format';
 import {
+  APPROVAL_STATUS_MESSAGES,
   ACTION_LABELS,
   HERO_CONTENT,
   ROUTES,
@@ -32,14 +38,25 @@ interface ApplicationStep {
 
 interface CompletedApplicationDetails {
   applicationNo: string;
-  preferredProgramme: string;
+  preferredprogram: string;
+  preferredCourse: string;
   applicationDate: string;
 }
+
+interface programSelectionOption {
+  applicationId: number;
+  levelName: string;
+  programName: string;
+  sessionName: string;
+  departments: Department[];
+}
+
+type ApprovalStatusTone = 'info' | 'success' | 'warning' | 'danger';
 
 @Component({
   selector: 'app-pending-payment-flow',
   standalone: true,
-  imports: [CommonModule, TraceabilityModule, ApplicationGuidelineModalComponent],
+  imports: [CommonModule, TraceabilityModule, ApplicationGuidelineModalComponent, ButtonComponent],
   templateUrl: './pending-payment-flow.component.html',
   styleUrl: './pending-payment-flow.component.scss',
   providers: [MessageService],
@@ -58,8 +75,10 @@ export class PendingPaymentFlowComponent implements OnInit {
   readonly initializingApplication = signal(false);
   readonly loadingError = signal('');
   readonly applicationOptions = signal<Datum[]>([]);
+  readonly programSelectionOptions = signal<programSelectionOption[]>([]);
   readonly selectedApplicationId = signal<number | null>(null);
-  readonly showProgrammeDialog = signal(false);
+  readonly selectedDepartmentId = signal<number | null>(null);
+  readonly showprogramDialog = signal(false);
   readonly showGuidelineDialog = signal(false);
   readonly guidelinesAccepted = signal(false);
 
@@ -75,6 +94,13 @@ export class PendingPaymentFlowComponent implements OnInit {
   readonly heroDescription = signal<string>(HERO_CONTENT.pending.description);
   readonly primaryActionLabel = signal<string>(HERO_CONTENT.pending.actionLabel);
   readonly applicationSteps = signal<ApplicationStep[]>([]);
+  readonly approvalMessageTitle = signal('');
+  readonly approvalMessageDetail = signal('');
+  readonly approvalMessageTone = signal<ApprovalStatusTone>('info');
+  readonly approvalStatusLabel = signal('');
+  readonly approvalStatusTooltip = signal('');
+  readonly approvalStatusIndicatorTone = signal<StatusTone>('neutral');
+  readonly activeApprovalStatusKey = signal<ApplicationStatusKey>('unknown');
 
   ngOnInit(): void {
     this.dashboardName.set(this.authSessionStore.name() || UI_COPY.defaultApplicantName);
@@ -116,6 +142,10 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.router.navigateByUrl('/pages/summarypage');
   }
 
+  editApplicationDetails(): void {
+    this.navigateToFormStep(1);
+  }
+
   async continueFlow(): Promise<void> {
     if (!this.isPaymentPending()) {
       this.router.navigateByUrl(ROUTES.admissionForm);
@@ -124,7 +154,7 @@ export class PendingPaymentFlowComponent implements OnInit {
 
     await this.loadOpenApplications();
     if (this.applicationOptions().length > 0) {
-      this.showProgrammeDialog.set(true);
+      this.showprogramDialog.set(true);
     }
   }
 
@@ -135,8 +165,11 @@ export class PendingPaymentFlowComponent implements OnInit {
       const response = (await firstValueFrom(this.appService.openApplications())) as OpenApplicationDTO;
       const options = response?.data ?? [];
       this.applicationOptions.set(options);
+      this.programSelectionOptions.set(await this.buildprogramSelectionOptions(options));
+      this.selectedApplicationId.set(null);
+      this.selectedDepartmentId.set(null);
 
-      if (options.length === 0) {
+      if (this.programSelectionOptions().length === 0) {
         this.loadingError.set(UI_COPY.noOpenApplications);
       }
     } catch {
@@ -151,37 +184,36 @@ export class PendingPaymentFlowComponent implements OnInit {
     }
   }
 
-  selectApplication(id: number): void {
-    this.selectedApplicationId.set(id);
+  selectDepartment(applicationId: number, departmentId: number): void {
+    this.selectedApplicationId.set(applicationId);
+    this.selectedDepartmentId.set(departmentId);
   }
 
-  async proceedFromProgramme(): Promise<void> {
-    if (!this.selectedApplicationId()) {
+  async proceedFromprogram(): Promise<void> {
+    if (!this.selectedApplicationId() || !this.selectedDepartmentId()) {
       return;
     }
-    this.showProgrammeDialog.set(false);
+    this.showprogramDialog.set(false);
     this.guidelinesAccepted.set(true);
     this.showGuidelineDialog.set(true);
   }
 
   async proceedToPayment(): Promise<void> {
-    if (!this.selectedApplicationId()) {
+    if (!this.selectedApplicationId() || !this.selectedDepartmentId()) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Programme',
-        detail: UI_COPY.selectProgrammeError,
+        summary: 'program',
+        detail: UI_COPY.selectprogramError,
       });
       return;
     }
 
     this.initializingApplication.set(true);
     try {
-      const selectedOption = this.applicationOptions().find((item) => item.id === this.selectedApplicationId());
-      const departmentId = selectedOption?.department?.id ?? selectedOption?.program?.id ?? 0;
       const initResp = await firstValueFrom(
         this.appService.initializeApplication({
           application_id: this.selectedApplicationId(),
-          department_id: departmentId,
+          department_id: this.selectedDepartmentId(),
         })
       );
       const applicationNo = initResp?.data?.application_no ?? '';
@@ -208,11 +240,6 @@ export class PendingPaymentFlowComponent implements OnInit {
       });
       await this.loadRegistrantSnapshot();
     } catch {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Application',
-        detail: UI_COPY.initializeApplicationError,
-      });
     } finally {
       this.initializingApplication.set(false);
     }
@@ -225,7 +252,7 @@ export class PendingPaymentFlowComponent implements OnInit {
     }
 
     try {
-      const response = await firstValueFrom(this.appService.registratantData(appNo));
+      const response = await firstValueFrom(this.appService.registrantData(appNo));
       const data = response?.data ?? null;
       this.registrantData.set(data);
 
@@ -241,7 +268,11 @@ export class PendingPaymentFlowComponent implements OnInit {
         }
       }
       if (data?.first_name || data?.last_name) {
-        const composedName = `${data.first_name ?? ''} ${data.last_name ?? ''}`.trim();
+        const composedName = formatStructuredName({
+          firstName: data.first_name,
+          lastName: data.last_name,
+          middleName: data.other_names
+        });
         if (composedName) {
           this.dashboardName.set(composedName);
         }
@@ -261,8 +292,12 @@ export class PendingPaymentFlowComponent implements OnInit {
     return typeof value === 'string' ? value.trim().length > 0 : !!value;
   }
 
-  onProgrammeDialogVisibilityChange(visible: boolean): void {
-    this.showProgrammeDialog.set(visible);
+  onprogramDialogVisibilityChange(visible: boolean): void {
+    this.showprogramDialog.set(visible);
+    if (!visible) {
+      this.selectedApplicationId.set(null);
+      this.selectedDepartmentId.set(null);
+    }
   }
 
   onGuidelineDialogVisibilityChange(visible: boolean): void {
@@ -365,8 +400,8 @@ export class PendingPaymentFlowComponent implements OnInit {
       return true;
     }
 
-    const approval = (data.approval_status || '').toLowerCase();
-    return (STATUS_MATCHERS.submissionCompleted as readonly string[]).includes(approval);
+    const approvalStatusKey = normalizeApplicationStatusKey(data.approval_status);
+    return (STATUS_MATCHERS.submissionCompleted as readonly string[]).includes(approvalStatusKey);
   }
 
   private navigateToRelevantFormStep(): void {
@@ -396,6 +431,14 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.navigateToFormStep(5);
   }
 
+  isComplianceIssued(): boolean {
+    return this.activeApprovalStatusKey() === 'compliance_required';
+  }
+
+  hasApprovalMessage(): boolean {
+    return this.activeApprovalStatusKey() !== 'unknown';
+  }
+
   private navigateToFormStep(step: number): void {
     this.router.navigate([ROUTES.admissionForm], {
       queryParams: { step },
@@ -413,10 +456,11 @@ export class PendingPaymentFlowComponent implements OnInit {
     this.completedApplication.set(
       registrant
         ? {
-            applicationNo: registrant.application_no || '—',
-            preferredProgramme: registrant.department?.name || registrant.program?.name || '—',
-            applicationDate: this.formatDisplayDate(registrant.created_at),
-          }
+          applicationNo: registrant.application_no || '—',
+          preferredprogram: registrant.program?.code || registrant.program?.name || '—',
+          preferredCourse: registrant.department?.name || registrant.department?.code || '—',
+          applicationDate: this.formatDisplayDate(registrant.created_at),
+        }
         : null
     );
     this.applicantPhotoUrl.set(registrant?.passport_photo?.file_url || '');
@@ -462,26 +506,134 @@ export class PendingPaymentFlowComponent implements OnInit {
     const completedSteps = steps.filter((step) => step.status === 'completed').length;
     this.applicationSteps.set(steps);
     this.progressPercent.set(submitDone ? 100 : Math.max(20, Math.min(100, completedSteps * 20)));
+    this.applyApprovalStatusMessage(registrant, submitDone);
+    this.applyHeroStatusContent(registrant, submitDone, paymentDone);
 
     const pending = !paymentDone;
     this.isPaymentPending.set(pending);
-    if (pending) {
+  }
+
+  private applyApprovalStatusMessage(registrant: RegistrantData | null, submitDone: boolean): void {
+    const statusDefinition = this.resolveApprovalStatusDefinition(registrant, submitDone);
+    const messageConfig = APPROVAL_STATUS_MESSAGES[statusDefinition.key];
+    this.activeApprovalStatusKey.set(statusDefinition.key);
+    this.approvalStatusLabel.set(statusDefinition.label);
+    this.approvalStatusTooltip.set(statusDefinition.description);
+    this.approvalStatusIndicatorTone.set(statusDefinition.tone);
+    this.approvalMessageTitle.set(messageConfig.title);
+    this.approvalMessageDetail.set(this.resolveApprovalStatusDetail(statusDefinition.key, registrant, messageConfig.detail));
+    this.approvalMessageTone.set(this.resolveApprovalMessageTone(messageConfig.tone));
+  }
+
+  private applyHeroStatusContent(
+    registrant: RegistrantData | null,
+    submitDone: boolean,
+    paymentDone: boolean
+  ): void {
+    const approvalStatusKey = this.resolveApprovalStatusKey(registrant, submitDone);
+    if (approvalStatusKey !== 'unknown') {
+      const messageConfig = APPROVAL_STATUS_MESSAGES[approvalStatusKey];
+      this.heroTitle.set(messageConfig.title);
+      this.heroDescription.set(this.resolveApprovalStatusDetail(approvalStatusKey, registrant, messageConfig.detail));
+      this.primaryActionLabel.set(
+        approvalStatusKey === 'compliance_required'
+          ? ACTION_LABELS.editApplicationDetails
+          : ACTION_LABELS.viewApplicationSummary
+      );
+      return;
+    }
+
+    if (!paymentDone) {
       this.heroTitle.set(HERO_CONTENT.pending.title);
       this.heroDescription.set(HERO_CONTENT.pending.description);
       this.primaryActionLabel.set(HERO_CONTENT.pending.actionLabel);
       return;
     }
 
-    if (submitDone) {
-      this.heroTitle.set('Awaiting Admission');
-      this.heroDescription.set('You have successfully completed your application. Now awaiting admission decision.');
-      this.primaryActionLabel.set('View Application Summary');
-      return;
-    }
-
     this.heroTitle.set(HERO_CONTENT.paid.title);
     this.heroDescription.set(HERO_CONTENT.paid.description);
     this.primaryActionLabel.set(HERO_CONTENT.paid.actionLabel);
+  }
+
+  private resolveApprovalStatusDefinition(
+    registrant: RegistrantData | null,
+    submitDone: boolean
+  ): ApplicationStatusDefinition {
+    const statusKey = this.resolveApprovalStatusKey(registrant, submitDone);
+    return getApplicationStatusDefinition(statusKey);
+  }
+
+  private resolveApprovalStatusKey(
+    registrant: RegistrantData | null,
+    submitDone: boolean
+  ): ApplicationStatusKey {
+    const statusKey = normalizeApplicationStatusKey(registrant?.approval_status);
+    if (statusKey !== 'unknown') {
+      return statusKey;
+    }
+    if (submitDone) {
+      return 'submitted';
+    }
+    return 'unknown';
+  }
+
+  private resolveApprovalStatusDetail(
+    statusKey: ApplicationStatusKey,
+    registrant: RegistrantData | null,
+    fallbackMessage: string
+  ): string {
+    if (statusKey !== 'compliance_required') {
+      return fallbackMessage;
+    }
+    return registrant?.compliance_directive?.trim() ?? fallbackMessage;
+  }
+
+  private resolveApprovalMessageTone(tone: string): ApprovalStatusTone {
+    if (tone === 'success' || tone === 'warning' || tone === 'danger') {
+      return tone;
+    }
+    return 'info';
+  }
+
+  private async buildprogramSelectionOptions(options: Datum[]): Promise<programSelectionOption[]> {
+    const departmentCache = new Map<number, Department[]>();
+
+    const selectionOptions = await Promise.all(options.map(async (option) => ({
+      applicationId: option.id,
+      levelName: option.level.name,
+      programName: option.program.name,
+      sessionName: option.session.name,
+      departments: await this.loadDepartmentsForProgram(option, departmentCache)
+    })));
+
+    return selectionOptions.filter((option) => option.departments.length > 0);
+  }
+
+  private async loadDepartmentsForProgram(
+    option: Datum,
+    departmentCache: Map<number, Department[]>
+  ): Promise<Department[]> {
+    const programId = option.program.id;
+    if (!departmentCache.has(programId)) {
+      try {
+        const response = (await firstValueFrom(this.appService.departments(programId))) as DepartmentsDTO;
+        departmentCache.set(programId, response?.data ?? []);
+      } catch {
+        const fallbackDepartments = option.department ? [option.department] : [];
+        departmentCache.set(programId, fallbackDepartments);
+      }
+    }
+
+    const departments = departmentCache.get(programId) ?? [];
+    return this.removeDuplicateDepartments(departments);
+  }
+
+  private removeDuplicateDepartments(departments: Department[]): Department[] {
+    const uniqueDepartments = new Map<number, Department>();
+    departments.forEach((department) => {
+      uniqueDepartments.set(department.id, department);
+    });
+    return Array.from(uniqueDepartments.values());
   }
 
   private formatDisplayDate(value: string | Date | undefined): string {

@@ -16,7 +16,7 @@ import { ThemeService } from '../../../services/theme.service';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 @Component({
   selector: 'app-sign-up',
-  imports: [ AppFloatingConfigurator, TraceabilityModule],
+  imports: [ TraceabilityModule],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss',
   providers: [MessageService],
@@ -179,30 +179,7 @@ toggleDarkMode() {
             }, 5000);
   
           },
-          error: (err: { error: { errors: { [x: string]: any[] } & { non_field_errors: string[] }; non_field_errors: string[]; message: string; }; }) => {
-            let erMsg = "Profile Creation Failed";
-  
-  
-            if (err.error && err.error?.errors?.non_field_errors) {
-              erMsg = err.error.errors.non_field_errors[0];
-            } else
-              if (err.error && err.error.non_field_errors) {
-                erMsg = err.error.non_field_errors[0];
-              } else if(err.error && err.error?.errors){
-                let _err="";
-                for (const key in err.error?.errors) {
-                  if (err.error?.errors.hasOwnProperty(key)) {
-                      // Concatenate each error message
-                      _err += `${key}: ${err.error?.errors[key].join(' ')} `;
-                  }
-              }
-                erMsg=_err.trim();
-              }
-              else {
-                erMsg = err.error.message;
-              }
-            
-            this.messageService.add({ severity: 'error', summary: 'Profile Creation', detail: erMsg });
+          error: () => {
             this.busy = false;
           },
           complete: () => {

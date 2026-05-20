@@ -1,22 +1,22 @@
-<!-- Programme Selection -->
-<div *ngIf="programmes && toShow === 0" class="selection-container">
+<!-- program Selection -->
+<div *ngIf="programs && toShow === 0" class="selection-container">
     <form [formGroup]="courseForm" class="selection-grid">
       <div 
-        *ngFor="let programme of programmes.data" 
+        *ngFor="let program of programs.data" 
         class="selection-card"
-        [class.selected]="selectedCourse === programme.program.id"
-        (click)="selectProgramme(programme.program.id)"
+        [class.selected]="selectedCourse === program.program.id"
+        (click)="selectprogram(program.program.id)"
       >
         <div class="card-radio">
           <p-radioButton
-            [formControlName]="programme.program.name.toLowerCase()"
-            [value]="programme.program.id"
-            [inputId]="'prog-' + programme.program.id"
+            [formControlName]="program.program.name.toLowerCase()"
+            [value]="program.program.id"
+            [inputId]="'prog-' + program.program.id"
           ></p-radioButton>
         </div>
         <div class="card-content">
           <i class="pi pi-book card-icon"></i>
-          <h3>{{ programme.program.name }}</h3>
+          <h3>{{ program.program.name }}</h3>
         </div>
       </div>
     </form>
@@ -28,7 +28,7 @@
         iconPos="right"
         [disabled]="selectedCourse === 0 || busy"
         [loading]="busy"
-        (onClick)="programmeChoice()"
+        (onClick)="programChoice()"
         styleClass="w-full action-btn"
       ></p-button>
     </div>

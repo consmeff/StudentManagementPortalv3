@@ -31,7 +31,7 @@ import { formatFileSize } from '../../../../utility/yearutil';
   templateUrl: './uploadform.component.html',
   styleUrl: './uploadform.component.scss'
 })
-export class UploadformComponent implements AfterViewInit {
+export class UploadFormComponent implements AfterViewInit {
   private readonly maxFileSizeBytes = 500 * 1024;
   private readonly maxFileSizeLabel = '500KB';
 
@@ -41,12 +41,14 @@ export class UploadformComponent implements AfterViewInit {
 
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };
 
   formValid: boolean = false;
+  isEditable = true;
+  hasDraftFiles = false;
 
   // Loading states
   isLoadingCertificate: boolean = false;
@@ -75,14 +77,25 @@ export class UploadformComponent implements AfterViewInit {
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step || {
         academicValid: false,
-        docuplodValid: false,
+        docUploadValid: false,
         nextofkinValid: false,
         personalinfoValid: false
       };
     });
 
+    this._formStepService.applicationEditable$.subscribe((editable) => {
+      this.isEditable = editable;
+    });
+
+    this._formStepService.uploadFile$.subscribe((data: TUploadFile | null) => {
+      if (data !== null && data !== undefined) {
+        this.hasDraftFiles = true;
+        this.fileObjects = data;
+      }
+    });
+
     this._regService.uploadFile$.subscribe((f: any) => {
-      if (f != null && f != undefined) {
+      if (!this.hasDraftFiles && f != null && f != undefined) {
         this.fileObjects = f as TUploadFile;
         // Ensure nested objects are initialized
         if (!this.fileObjects.certificateofbirth) this.fileObjects.certificateofbirth = {};
@@ -117,6 +130,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onCertificateUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, 'Certificate of Birth');
     if (selectedFile) {
       this.isLoadingCertificate = true;
@@ -132,10 +148,8 @@ export class UploadformComponent implements AfterViewInit {
             }
             this.isLoadingCertificate = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingCertificate = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(0);
             return;
           });
@@ -145,6 +159,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onOlevelUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, "O' Level Result");
     if (selectedFile) {
       this.isLoadingOlevel = true;
@@ -163,10 +180,8 @@ export class UploadformComponent implements AfterViewInit {
             }
             this.isLoadingOlevel = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingOlevel = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(1);
             return;
           });
@@ -176,6 +191,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onPassportUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, 'Passport Photograph');
     if (selectedFile) {
       this.isLoadingPassport = true;
@@ -191,10 +209,8 @@ export class UploadformComponent implements AfterViewInit {
             }
             this.isLoadingPassport = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingPassport = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(2);
             return;
           });
@@ -204,6 +220,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onOriginUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, 'Certificate of Origin');
     if (selectedFile) {
       this.isLoadingOrigin = true;
@@ -219,10 +238,8 @@ export class UploadformComponent implements AfterViewInit {
             }
             this.isLoadingOrigin = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingOrigin = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(3);
             return;
           });
@@ -232,6 +249,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   async onUTMEUpload(event: Event) {
+    if (!this.isEditable) {
+      return;
+    }
     const selectedFile = this.getValidatedFile(event, 'UTME Result');
     if (selectedFile) {
       this.isLoadingUTME = true;
@@ -247,10 +267,8 @@ export class UploadformComponent implements AfterViewInit {
             }
             this.isLoadingUTME = false;
           })
-          .catch(err => {
+          .catch(() => {
             this.isLoadingUTME = false;
-            const errorMessage = err?.error?.non_field_errors?.[0] || 'Upload failed';
-            this.showError('Document Upload', errorMessage);
             this.removeFile(4);
             return;
           });
@@ -260,6 +278,9 @@ export class UploadformComponent implements AfterViewInit {
   }
 
   removeFile(arg: number) {
+    if (!this.isEditable) {
+      return;
+    }
     switch (arg) {
       case 0:
         this.CertificateFile = undefined;
@@ -306,11 +327,11 @@ export class UploadformComponent implements AfterViewInit {
       (this.OriginFile != undefined || this.fileObjects?.origin?.file_url != undefined);
 
     if (hasAllRequiredFiles && this.formStepStatus) {
-      this.formStepStatus.docuplodValid = true;
+      this.formStepStatus.docUploadValid = true;
       this._formStepService.setFormSteps(this.formStepStatus);
-      this._formStepService.setuploadFileFormData(this.fileObjects);
+      this._formStepService.setUploadFileFormData(this.fileObjects);
     } else if (this.formStepStatus) {
-      this.formStepStatus.docuplodValid = false;
+      this.formStepStatus.docUploadValid = false;
       this._formStepService.setFormSteps(this.formStepStatus);
     }
   }

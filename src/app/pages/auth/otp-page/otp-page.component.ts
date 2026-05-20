@@ -137,50 +137,25 @@ export class OtpPageComponent implements OnInit, OnDestroy {
     this.authService.verifyOtp(otpObj).subscribe({
       next: (result) => {
         this.busy = false;
-        if (result) {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'OTP Verification',
-            detail: 'OTP Verified',
-            life: 3000
-          });
-          
-          setTimeout(() => {
-            if (this.isPasswordResetFlow) {
-              this.authSessionStore.setForgotOtp(otp);
-              this.router.navigateByUrl('/auth/passwordreset');
-            } else {
-              this.authSessionStore.clearAuthFlow();
-              this.router.navigateByUrl('/auth/login');
-            }
-          }, 1000);
-        } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'OTP Verification',
-            detail: 'OTP verification failed',
-            life: 5000
-          });
-        }
-      },
-      error: (err) => {
-        this.busy = false;
-        let errorMsg = 'OTP verification failed';
-
-        if (err.error?.errors?.non_field_errors) {
-          errorMsg = err.error.errors.non_field_errors[0];
-        } else if (err.error?.non_field_errors) {
-          errorMsg = err.error.non_field_errors[0];
-        } else if (err.error?.message) {
-          errorMsg = err.error.message;
-        }
-
         this.messageService.add({
-          severity: 'error',
+          severity: 'success',
           summary: 'OTP Verification',
-          detail: errorMsg,
-          life: 5000
+          detail: 'OTP Verified',
+          life: 3000
         });
+        
+        setTimeout(() => {
+          if (this.isPasswordResetFlow) {
+            this.authSessionStore.setForgotOtp(otp);
+            this.router.navigateByUrl('/auth/passwordreset');
+          } else {
+            this.authSessionStore.clearAuthFlow();
+            this.router.navigateByUrl('/auth/login');
+          }
+        }, 1000);
+      },
+      error: () => {
+        this.busy = false;
       }
     });
   }

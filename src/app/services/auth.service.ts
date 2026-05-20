@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginResponse, ProfilePayload, ProfileSuccessResponse } from '../data/auth/auth.data';
 import { AuthSessionStore } from '../store/auth-session.store';
@@ -41,11 +41,7 @@ export class AuthService {
     return this.http.post<any>(`${this.apiRoot}/api/v1/auth/signup/verify-otp`, otpObj)
       .pipe(
         tap(responseObj => { this.storeTokenFromOTP(this.authSessionStore.profileEmail(), responseObj); }),
-        map(() => true),
-        catchError(error => {
-          // alert(error.error);
-          return of(false);
-        }));
+        map(() => true));
   }
 
   verifyEmail(emailObj: any): Observable<boolean> {

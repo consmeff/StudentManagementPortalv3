@@ -1,0 +1,142 @@
+:host {
+  display: block;
+}
+
+.pagination-shell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-top: 1rem;
+}
+
+.page-size-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-shrink: 0;
+}
+
+.page-size-label {
+  color: #6c7f99;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.page-size-select {
+  min-width: 7.8rem;
+  height: 3rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.85rem;
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+  padding: 0 2.5rem 0 0.9rem;
+  font-size: 1rem;
+  outline: none;
+}
+
+.page-size-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pagination-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  border: none;
+  background: transparent;
+  color: #8b9bb4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.25rem 0.4rem;
+  cursor: pointer;
+}
+
+.nav-link:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.page-list {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-chip {
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 1px solid transparent;
+  border-radius: 0.95rem;
+  background: transparent;
+  color: #6c7f99;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.page-chip:hover:not(:disabled):not(.active) {
+  background: var(--app-surface-alt);
+  border-color: var(--app-border);
+}
+
+.page-chip.active {
+  background: #06038d;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(6, 3, 141, 0.18);
+}
+
+.page-chip:disabled {
+  cursor: not-allowed;
+}
+
+.ellipsis {
+  color: #8b9bb4;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+}
+
+.pagination-summary {
+  color: #8b9bb4;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .pagination-shell {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .page-size-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .page-size-select {
+    min-width: 6.5rem;
+  }
+
+  .pagination-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .page-list {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

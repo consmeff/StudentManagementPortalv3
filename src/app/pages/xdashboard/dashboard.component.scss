@@ -1,4 +1,4 @@
-@import '../../../assets/demo/theme';
+@use '../../../assets/demo/theme' as *;
 
 :host ::ng-deep {
   .dashboard-layout {
@@ -457,7 +457,7 @@
   }
 
   // Dialog Styles
-  .programme-dialog,
+  .program-dialog,
   .guidelines-dialog {
     .p-dialog-header {
       background: $bg-primary;
@@ -477,7 +477,7 @@
   }
 
   .dark {
-    .programme-dialog,
+    .program-dialog,
     .guidelines-dialog {
       .p-dialog-header,
       .p-dialog-content,

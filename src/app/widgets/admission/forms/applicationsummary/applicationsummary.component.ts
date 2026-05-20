@@ -1,19 +1,19 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // PrimeNG Imports
 import { AccordionModule } from 'primeng/accordion';
-import { CardModule } from 'primeng/card';
-import { DividerModule } from 'primeng/divider';
-import { ImageModule } from 'primeng/image';
 import { SkeletonModule } from 'primeng/skeleton';
 
 // Services & DTOs
 import { RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { ApplicationService } from '../../../../services/application.service';
+import { FormService } from '../../../services/form.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { AuthSessionStore } from '../../../../store/auth-session.store';
+import { TAcademicHistory, TNextOfKinDTO, TOLevelResult, TPersonalDetailDTO, TUploadFile, TUtmeResultPayload } from '../../../../data/application/transformer.dto';
 import { formatFileSize } from '../../../../utility/yearutil';
 
 interface LabelValueRow {
@@ -28,49 +28,65 @@ interface DocumentRow {
   fileUrl: string;
 }
 
+const SUMMARY_ACCORDION_PANEL_VALUES = {
+  personalInformation: 'personal-information',
+  nextOfKinInformation: 'next-of-kin-information',
+  academicHistory: 'academic-history',
+  documents: 'documents'
+} as const;
+
+const ACTIVE_SUMMARY_ACCORDION_VALUES = Object.values(SUMMARY_ACCORDION_PANEL_VALUES);
+
 @Component({
   selector: 'app-applicationsummary',
   standalone: true,
   imports: [
     CommonModule,
     AccordionModule,
-    CardModule,
-    DividerModule,
-    ImageModule,
     SkeletonModule,
     TraceabilityModule
   ],
   templateUrl: './applicationsummary.component.html',
   styleUrl: './applicationsummary.component.scss'
 })
-export class ApplicationsummaryComponent implements OnInit {
+export class ApplicationSummaryComponent implements OnInit {
 
   registrantData: RegistrantDataDTO = {};
   personalInfoItems: LabelValueRow[] = [];
   nextOfKinItems: LabelValueRow[] = [];
   academicItems: LabelValueRow[] = [];
   documentItems: DocumentRow[] = [];
-  activeAccordionIndexes = [0, 1, 2, 3];
-  placeholder: string = "../../../../assets/doc.png";
+  readonly accordionPanelValues = SUMMARY_ACCORDION_PANEL_VALUES;
+  readonly activeAccordionValues = ACTIVE_SUMMARY_ACCORDION_VALUES;
   isLoading: boolean = true;
+  personalDraft: TPersonalDetailDTO | null = null;
+  nextOfKinDraft: TNextOfKinDTO | null = null;
+  academicDraft: TAcademicHistory[] | null = null;
+  oLevelDraft: TOLevelResult[] | null = null;
+  utmeDraft: TUtmeResultPayload | null = null;
+  uploadDraft: TUploadFile | null = null;
 
   private authSessionStore = inject(AuthSessionStore);
+  private formService = inject(FormService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   constructor(
     private appservice: ApplicationService
   ) { }
 
   ngOnInit(): void {
-    this.dataIntitialization();
+    this.observeDraftChanges();
+    this.dataInitialization();
   }
 
-  async dataIntitialization(): Promise<boolean> {
+  async dataInitialization(): Promise<boolean> {
     let result = false;
     let app_no = this.authSessionStore.applicationNo() || "";
     
     if (app_no != "") {
       this.isLoading = true;
-      await firstValueFrom(this.appservice.registratantData(app_no))
+      await firstValueFrom(this.appservice.registrantData(app_no))
         .then(async (data) => {
           this.registrantData = data;
           this.updateSummaryItems();
@@ -101,91 +117,90 @@ ${residential_address.country?.name || ''}
 `.replace(/\n/g, ' ').replace(/ ,/g, ',').trim();
   }
 
-  getImageUrl(url: string | undefined): string {
-    return url || this.placeholder;
-  }
-
   private updateSummaryItems(): void {
     const data = this.registrantData.data;
-    const disability = data?.disability || '';
+    const disability = this.personalDraft !== null
+      ? this.resolveDisabilityDisplayValue(this.personalDraft)
+      : data?.disability || '';
     const hasDisabilityDetails = disability.toLowerCase().includes('yes') && disability.includes(',');
     const disabilityDetails = hasDisabilityDetails
       ? disability.split(',').slice(1).join(',').trim()
       : '—';
 
     this.personalInfoItems = [
-      { label: 'First Name', value: this.toDisplay(data?.first_name) },
-      { label: 'Last Name', value: this.toDisplay(data?.last_name) },
-      { label: 'Middle Name', value: this.toDisplay(data?.other_names) },
-      { label: 'Email Address', value: this.toDisplay(data?.email) },
-      { label: 'Phone Number', value: this.toDisplay(data?.phone_number) },
-      { label: 'Alternate Phone Number', value: this.toDisplay(data?.alt_phone_number) },
-      { label: 'Date of Birth', value: this.formatDate(data?.dob) },
-      { label: 'Gender', value: this.toDisplay(data?.gender) },
-      { label: 'Marital Status', value: this.toDisplay(data?.marital_status) },
-      { label: 'Nationality', value: this.toDisplay(data?.nationality) },
-      { label: 'State of Origin', value: this.toDisplay(data?.state_of_origin) },
-      { label: 'Local Government Area', value: this.toDisplay(data?.lga) },
+      { label: 'First Name', value: this.toDisplay(this.personalDraft?.firstname ?? data?.first_name) },
+      { label: 'Last Name', value: this.toDisplay(this.personalDraft?.lastname ?? data?.last_name) },
+      { label: 'Middle Name', value: this.toDisplay(this.personalDraft?.middlename ?? data?.other_names) },
+      { label: 'Email Address', value: this.toDisplay(this.personalDraft?.email ?? data?.email) },
+      { label: 'Phone Number', value: this.toDisplay(this.personalDraft?.phonenumber ?? data?.phone_number) },
+      { label: 'Alternate Phone Number', value: this.toDisplay(this.personalDraft?.alternativePhoneNumber ?? data?.alt_phone_number) },
+      { label: 'Date of Birth', value: this.formatDate(this.personalDraft?.dateOfBirth ?? data?.dob) },
+      { label: 'Gender', value: this.toDisplay(this.personalDraft?.gender ?? data?.gender) },
+      { label: 'Marital Status', value: this.toDisplay(this.personalDraft?.maritalStatus ?? data?.marital_status) },
+      { label: 'Nationality', value: this.toDisplay(this.personalDraft?.nationality ?? data?.nationality) },
+      { label: 'State of Origin', value: this.toDisplay(this.personalDraft?.stateOfOrigin ?? data?.state_of_origin) },
+      { label: 'Local Government Area', value: this.toDisplay(this.personalDraft?.localGovernment ?? data?.lga) },
       { label: 'Do you live with a disability?', value: this.toDisplay(disability.split(',')[0]) },
       { label: 'If yes, please specify', value: disabilityDetails },
-      { label: 'Address', value: this.toDisplay(this.fullAddress(data?.residential_address)) }
+      { label: 'Address', value: this.toDisplay(this.resolvePersonalAddress(data)) }
     ];
  
     const nok = this.registrantData.data?.primary_parent_or_guardian;
     this.nextOfKinItems = [
-      { label: 'Title', value: this.toDisplay(nok?.title) },
-      { label: 'First Name', value: this.toDisplay(nok?.first_name) },
-      { label: 'Last Name', value: this.toDisplay(nok?.last_name) },
-      { label: 'Middle Name', value: this.toDisplay(nok?.other_names) },
-      { label: 'Gender', value: this.toDisplay(nok?.gender) },
-      { label: 'Relationship', value: '—' },
-      { label: 'Occupation', value: this.toDisplay(nok?.occupation) },
-      { label: 'Phone Number', value: this.toDisplay(nok?.phone_number) },
-      { label: 'Email address (optional)', value: this.toDisplay(nok?.email) },
-      { label: 'Nationality', value: this.toDisplay(nok?.nationality) },
-      { label: 'State of Origin', value: this.toDisplay(nok?.state_of_origin) },
-      { label: 'Local Government Area', value: this.toDisplay(nok?.lga) },
-      { label: 'Address', value: this.toDisplay(nok?.correspondence_address) }
+      { label: 'Title', value: this.toDisplay(this.nextOfKinDraft?.title ?? nok?.title) },
+      { label: 'First Name', value: this.toDisplay(this.nextOfKinDraft?.firstname ?? nok?.first_name) },
+      { label: 'Last Name', value: this.toDisplay(this.nextOfKinDraft?.lastname ?? nok?.last_name) },
+      { label: 'Middle Name', value: this.toDisplay(this.nextOfKinDraft?.middlename ?? nok?.other_names) },
+      { label: 'Gender', value: this.toDisplay(this.nextOfKinDraft?.gender ?? nok?.gender) },
+      { label: 'Relationship', value: this.toDisplay(this.nextOfKinDraft?.relationship ?? '—') },
+      { label: 'Occupation', value: this.toDisplay(this.nextOfKinDraft?.occupation ?? nok?.occupation) },
+      { label: 'Phone Number', value: this.toDisplay(this.nextOfKinDraft?.phonenumber ?? nok?.phone_number) },
+      { label: 'Email address (optional)', value: this.toDisplay(this.nextOfKinDraft?.email ?? nok?.email) },
+      { label: 'Nationality', value: this.toDisplay(this.nextOfKinDraft?.nationality ?? nok?.nationality) },
+      { label: 'State of Origin', value: this.toDisplay(this.nextOfKinDraft?.stateOfOrigin ?? nok?.state_of_origin) },
+      { label: 'Local Government Area', value: this.toDisplay(this.nextOfKinDraft?.localGovernment ?? nok?.lga) },
+      { label: 'Address', value: this.toDisplay(this.resolveNextOfKinAddress(nok?.correspondence_address)) }
     ];
 
     this.academicItems = this.buildAcademicRows();
+    const uploadData = this.uploadDraft;
     this.documentItems = [
       {
         label: 'Certificate of Birth',
-        fileName: this.extractFileName(data?.certificate_of_birth?.file_url),
-        fileSize: this.toFileSize(data?.certificate_of_birth?.file_size),
-        fileUrl: data?.certificate_of_birth?.file_url || ''
+        fileName: this.extractFileName(uploadData?.certificateofbirth?.file_url ?? data?.certificate_of_birth?.file_url),
+        fileSize: this.toFileSize(uploadData?.certificateofbirth?.file_size ?? data?.certificate_of_birth?.file_size),
+        fileUrl: uploadData?.certificateofbirth?.file_url ?? data?.certificate_of_birth?.file_url ?? ''
       },
       {
         label: "O' Level Result",
-        fileName: this.extractFileName(data?.o_level_result?.[0]?.file?.file_url),
-        fileSize: this.toFileSize(data?.o_level_result?.[0]?.file?.file_size),
-        fileUrl: data?.o_level_result?.[0]?.file?.file_url || ''
+        fileName: this.extractFileName(uploadData?.olevels?.[0]?.file_url ?? data?.o_level_result?.[0]?.file?.file_url),
+        fileSize: this.toFileSize(uploadData?.olevels?.[0]?.file_size ?? data?.o_level_result?.[0]?.file?.file_size),
+        fileUrl: uploadData?.olevels?.[0]?.file_url ?? data?.o_level_result?.[0]?.file?.file_url ?? ''
       },
       {
         label: 'Passport Photograph',
-        fileName: this.extractFileName(data?.passport_photo?.file_url),
-        fileSize: this.toFileSize(data?.passport_photo?.file_size),
-        fileUrl: data?.passport_photo?.file_url || ''
+        fileName: this.extractFileName(uploadData?.passport?.file_url ?? data?.passport_photo?.file_url),
+        fileSize: this.toFileSize(uploadData?.passport?.file_size ?? data?.passport_photo?.file_size),
+        fileUrl: uploadData?.passport?.file_url ?? data?.passport_photo?.file_url ?? ''
       },
       {
         label: 'UTME Result',
-        fileName: this.extractFileName(data?.utme_result?.file?.file_url),
-        fileSize: this.toFileSize(data?.utme_result?.file?.file_size),
-        fileUrl: data?.utme_result?.file?.file_url || ''
+        fileName: this.extractFileName(uploadData?.utme?.file_url ?? data?.utme_result?.file?.file_url),
+        fileSize: this.toFileSize(uploadData?.utme?.file_size ?? data?.utme_result?.file?.file_size),
+        fileUrl: uploadData?.utme?.file_url ?? data?.utme_result?.file?.file_url ?? ''
       },
       {
         label: 'Certificate of Origin',
-        fileName: this.extractFileName(data?.certificate_of_origin?.file_url),
-        fileSize: this.toFileSize(data?.certificate_of_origin?.file_size),
-        fileUrl: data?.certificate_of_origin?.file_url || ''
+        fileName: this.extractFileName(uploadData?.origin?.file_url ?? data?.certificate_of_origin?.file_url),
+        fileSize: this.toFileSize(uploadData?.origin?.file_size ?? data?.certificate_of_origin?.file_size),
+        fileUrl: uploadData?.origin?.file_url ?? data?.certificate_of_origin?.file_url ?? ''
       }
     ].filter((doc) => !!doc.fileUrl);
   }
 
   private buildAcademicRows(): LabelValueRow[] {
     const data = this.registrantData.data;
-    const history = data?.academic_history || [];
+    const history = this.academicDraft ?? data?.academic_history ?? [];
     const primary = history.find((item) =>
       item.certificate_type?.toLowerCase().includes('primary')
     );
@@ -194,7 +209,7 @@ ${residential_address.country?.name || ''}
       || item.certificate_type?.toLowerCase().includes('ssce')
     );
     const others = history.filter((item) => item !== primary && item !== secondary);
-    const attempts = data?.o_level_result || [];
+    const attempts = this.oLevelDraft ?? data?.o_level_result ?? [];
 
     const rows: LabelValueRow[] = [
       { label: 'Primary School', value: this.toDisplay(primary?.institution) },
@@ -231,7 +246,92 @@ ${residential_address.country?.name || ''}
       });
     });
 
+    rows.push({
+      label: 'UTME Registration Number',
+      value: this.toDisplay(this.utmeDraft?.utme_reg_no ?? data?.utme_reg_no)
+    });
+    rows.push({
+      label: 'UTME Score',
+      value: this.toDisplay(this.utmeDraft?.score ?? data?.utme_result?.score)
+    });
+
     return rows;
+  }
+
+  private observeDraftChanges(): void {
+    this.formService.personalform$.subscribe((data) => {
+      this.personalDraft = data;
+      this.refreshSummaryItems();
+    });
+
+    this.formService.nextofkinform$.subscribe((data) => {
+      this.nextOfKinDraft = data;
+      this.refreshSummaryItems();
+    });
+
+    this.formService.academicHistory$.subscribe((data) => {
+      this.academicDraft = data;
+      this.refreshSummaryItems();
+    });
+
+    this.formService.olevelResult$.subscribe((data) => {
+      this.oLevelDraft = data;
+      this.refreshSummaryItems();
+    });
+
+    this.formService.utmeResult$.subscribe((data) => {
+      this.utmeDraft = data;
+      this.refreshSummaryItems();
+    });
+
+    this.formService.uploadFile$.subscribe((data) => {
+      this.uploadDraft = data;
+      this.refreshSummaryItems();
+    });
+  }
+
+  private refreshSummaryItems(): void {
+    if (this.isLoading || !this.registrantData.data) {
+      return;
+    }
+
+    this.updateSummaryItems();
+  }
+
+  private resolveDisabilityDisplayValue(data: TPersonalDetailDTO): string {
+    if (data.disability !== 'Yes') {
+      return data.disability;
+    }
+
+    return data.disabilityDetails.trim().length > 0
+      ? `${data.disability}, ${data.disabilityDetails}`
+      : data.disability;
+  }
+
+  private resolvePersonalAddress(data: RegistrantDataDTO['data']): string {
+    if (this.personalDraft === null) {
+      return this.fullAddress(data?.residential_address);
+    }
+
+    return [
+      this.personalDraft.houseNumber,
+      this.personalDraft.streetName,
+      this.personalDraft.landmark,
+      this.personalDraft.areaTown
+    ].filter((value) => value.trim().length > 0).join(', ');
+  }
+
+  private resolveNextOfKinAddress(fallbackAddress: string | undefined): string {
+    if (this.nextOfKinDraft === null) {
+      return fallbackAddress ?? '—';
+    }
+
+    return [
+      this.nextOfKinDraft.houseNumber,
+      this.nextOfKinDraft.streetName,
+      this.nextOfKinDraft.landmark,
+      this.nextOfKinDraft.areaTown
+    ].filter((value) => value.trim().length > 0).join(', ');
   }
 
   openDocument(fileUrl: string): void {
@@ -239,6 +339,14 @@ ${residential_address.country?.name || ''}
       return;
     }
     window.open(fileUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  editSection(step: number): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { step },
+      queryParamsHandling: 'merge'
+    });
   }
 
   private toDisplay(value: unknown): string {

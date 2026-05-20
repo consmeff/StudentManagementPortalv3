@@ -1,14 +1,14 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LoadingService } from '../services/loading.service';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+
+import { LoadingService } from '../services/loading.service';
 
 
 @Component({
   selector: 'app-global-loading',
   imports: [CommonModule],
   template: `
-    <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-overlay" *ngIf="isLoading()">
       <div class="loading-container">
         <div class="spinner"></div>
         <p class="loading-text">Loading...</p>
@@ -34,7 +34,8 @@ import { CommonModule } from '@angular/common';
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: white;
+      background: var(--app-surface);
+      border: 1px solid var(--app-border);
       padding: 2rem;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -56,7 +57,7 @@ import { CommonModule } from '@angular/common';
 
     .loading-text {
       margin-top: 1rem;
-      color: #333;
+      color: var(--app-text-primary);
       font-size: 16px;
       font-weight: 500;
     }
@@ -86,17 +87,10 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class GlobalLoadingComponent implements OnInit {
-  isLoading = false;
-  private readonly destroyRef = inject(DestroyRef);
+export class GlobalLoadingComponent {
+  readonly isLoading;
 
-  constructor(private loadingService: LoadingService) {}
-
-  ngOnInit(): void {
-    this.loadingService.loading$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(loading => {
-        this.isLoading = loading;
-      });
+  constructor(private readonly loadingService: LoadingService) {
+    this.isLoading = this.loadingService.loading;
   }
 }

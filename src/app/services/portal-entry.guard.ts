@@ -5,5 +5,5 @@ import { UserPortalService } from './user-portal.service';
 export const portalEntryGuard: CanActivateFn = () => {
   const router = inject(Router);
   const userPortalService = inject(UserPortalService);
-  return router.createUrlTree([userPortalService.dashboardUrl()]);
+  return router.createUrlTree([userPortalService.landingUrl()]);
 };

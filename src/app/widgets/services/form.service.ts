@@ -11,12 +11,21 @@ export class FormService {
 
   private readonly _formsteps = signal<formstepDTO>({
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   });
   readonly formsteps = this._formsteps.asReadonly();
   public formsteps$ = toObservable(this._formsteps);
+
+  private readonly _savedFormSteps = signal<formstepDTO>({
+    academicValid: false,
+    docUploadValid: false,
+    nextofkinValid: false,
+    personalinfoValid: false
+  });
+  readonly savedFormSteps = this._savedFormSteps.asReadonly();
+  public savedFormSteps$ = toObservable(this._savedFormSteps);
 
   private readonly _personalform = signal<TPersonalDetailDTO | null>(null);
   readonly personalform = this._personalform.asReadonly();
@@ -42,12 +51,20 @@ export class FormService {
   readonly uploadFile = this._uploadFile.asReadonly();
   public uploadFile$ = toObservable(this._uploadFile);
 
+  private readonly _applicationEditable = signal(true);
+  readonly applicationEditable = this._applicationEditable.asReadonly();
+  public applicationEditable$ = toObservable(this._applicationEditable);
+
 
 
   constructor() { }
 
   setFormSteps(form:formstepDTO){
     this._formsteps.set({ ...form });
+  }
+
+  setSavedFormSteps(form: formstepDTO) {
+    this._savedFormSteps.set({ ...form });
   }
 
   setPersonalFormData(payload:TPersonalDetailDTO){
@@ -80,7 +97,7 @@ export class FormService {
     }
   }
  
-  setuploadFileFormData(payload:TUploadFile){
+  setUploadFileFormData(payload:TUploadFile){
     if(payload !=null){
       this._uploadFile.set({
         certificateofbirth: payload.certificateofbirth,
@@ -92,5 +109,29 @@ export class FormService {
     }
   }
 
-  
+  setApplicationEditable(editable: boolean) {
+    this._applicationEditable.set(!!editable);
+  }
+
+  resetAdmissionFormState() {
+    this._formsteps.set({
+      academicValid: false,
+      docUploadValid: false,
+      nextofkinValid: false,
+      personalinfoValid: false
+    });
+    this._savedFormSteps.set({
+      academicValid: false,
+      docUploadValid: false,
+      nextofkinValid: false,
+      personalinfoValid: false
+    });
+    this._personalform.set(null);
+    this._nextofkinform.set(null);
+    this._academicHistory.set(null);
+    this._olevelResult.set(null);
+    this._utmeResult.set(null);
+    this._uploadFile.set(null);
+    this._applicationEditable.set(true);
+  }
 }

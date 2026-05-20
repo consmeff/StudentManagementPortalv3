@@ -4,8 +4,8 @@ import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 
 // PrimeNG Imports
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ButtonModule } from 'primeng/button';
 
@@ -16,7 +16,8 @@ import { ApplicationService } from '../../../../services/application.service';
 import { formstepDTO } from '../../../../data/application/form.dto';
 import { AcademicHistory, OLevelResult, RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { extractLastYearFromText, getPastYears } from '../../../../utility/yearutil';
-import { ExamRecord, TAcademicHistory, TOLevelResult, TUtmeResultPayload } from '../../../../data/application/transformer.dto';
+import { ExamRecord, TAcademicHistory, TOLevelResult, TPersonalDetailDTO, TUtmeResultPayload } from '../../../../data/application/transformer.dto';
+import { ACADEMIC_HISTORY_RULES } from '../../../../constants/academic-history.constants';
 
 @Component({
   selector: 'app-academichistory',
@@ -26,15 +27,15 @@ import { ExamRecord, TAcademicHistory, TOLevelResult, TUtmeResultPayload } from 
     FormsModule,
     CommonModule,
     InputTextModule,
-    DropdownModule,
-    CalendarModule,
+    SelectModule,
+    DatePickerModule,
     RadioButtonModule,
     ButtonModule
   ],
   templateUrl: './academichistory.component.html',
   styleUrl: './academichistory.component.scss'
 })
-export class AcademichistoryComponent {
+export class AcademicHistoryComponent {
   _formStepService = inject(FormService);
   regstore = inject(RegStoreService);
   appservice = inject(ApplicationService);
@@ -42,7 +43,7 @@ export class AcademichistoryComponent {
 
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };
@@ -54,6 +55,10 @@ export class AcademichistoryComponent {
   academicHistoryOtherQualificationForm!: FormGroup;
 
   backendRegistrationData!: RegistrantDataDTO;
+  draftPersonalData: TPersonalDetailDTO | null = null;
+  draftAcademicHistory: TAcademicHistory[] | null = null;
+  draftOLevelResults: TOLevelResult[] | null = null;
+  draftUtmeResult: TUtmeResultPayload | null = null;
 
   examOptions: string[] = [];
   examDropdownOptions: any[] = [];
@@ -61,12 +66,14 @@ export class AcademichistoryComponent {
   yearDropdownOptions: any[] = [];
   grades: string[] = ['A', 'B'];
   gradeDropdownOptions: any[] = [];
+  readonly academicHistoryRules = ACADEMIC_HISTORY_RULES;
 
   examnumform: FormGroup = new FormGroup({
     attempt: new FormControl('1', Validators.required)
   });
 
   attemptOptions = ['1', '2'];
+  isEditable = true;
 
   constructor(private fb: FormBuilder) {
     this.academicHistoryOtherQualificationForm = this.fb.group({
@@ -79,6 +86,27 @@ export class AcademichistoryComponent {
 
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step;
+    });
+
+    this._formStepService.applicationEditable$.subscribe((editable) => {
+      this.isEditable = editable;
+      this.applyEditableState();
+    });
+
+    this._formStepService.academicHistory$.subscribe((data) => {
+      this.draftAcademicHistory = data;
+    });
+
+    this._formStepService.personalform$.subscribe((data) => {
+      this.draftPersonalData = data;
+    });
+
+    this._formStepService.olevelResult$.subscribe((data) => {
+      this.draftOLevelResults = data;
+    });
+
+    this._formStepService.utmeResult$.subscribe((data) => {
+      this.draftUtmeResult = data;
     });
 
     this.regstore.preRegData$.subscribe(data => {
@@ -125,13 +153,14 @@ export class AcademichistoryComponent {
   }
 
   initializeForm() {
-    let _primary = this.backendRegistrationData?.data?.academic_history
+    const academicHistorySource = this.draftAcademicHistory ?? this.backendRegistrationData?.data?.academic_history ?? [];
+    let _primary = academicHistorySource
       ?.filter(f => f.certificate_type === "Primary School Leaving Certificate")?.[0] ?? null;
 
-    let _sec = this.backendRegistrationData?.data?.academic_history
+    let _sec = academicHistorySource
       ?.filter(f => f.certificate_type === "SSSCE")?.[0] ?? null;
 
-    let _more = this.backendRegistrationData?.data?.academic_history
+    let _more = academicHistorySource
       ?.filter(f => f.certificate_type !== "SSSCE" && f.certificate_type !== "Primary School Leaving Certificate") ?? null;
 
     this.academicHistoryPrimaryForm = this.fb.group({
@@ -151,11 +180,25 @@ export class AcademichistoryComponent {
     const regData = (this.backendRegistrationData?.data as any) ?? {};
     const utmeData = regData.utme_result;
     this.jambDetailsForm = this.fb.group({
-      registrationNumber: [regData.utme_reg_no ?? utmeData?.utme_reg_no ?? '', Validators.required],
-      score: [utmeData?.score ?? null, [Validators.required, Validators.min(0), Validators.max(400)]]
+      registrationNumber: [
+        this.draftUtmeResult?.utme_reg_no ?? regData.utme_reg_no ?? utmeData?.utme_reg_no ?? '',
+        [
+          Validators.required,
+          Validators.maxLength(ACADEMIC_HISTORY_RULES.jambRegistrationNumberMaxLength),
+          Validators.pattern(/^[a-zA-Z0-9]+$/)
+        ]
+      ],
+      score: [
+        this.draftUtmeResult?.score ?? utmeData?.score ?? null,
+        [
+          Validators.required,
+          Validators.min(ACADEMIC_HISTORY_RULES.jambScoreMin),
+          Validators.max(ACADEMIC_HISTORY_RULES.jambScoreMax)
+        ]
+      ]
     });
 
-    let _exams = this.backendRegistrationData?.data?.o_level_result;
+    let _exams = this.draftOLevelResults ?? this.backendRegistrationData?.data?.o_level_result;
     if (_exams != undefined && _exams.length > 0 && _exams[0].subjects != undefined) {
       this.clearExamAttempt();
       _exams.forEach((exam) => this.addExamAttempt(exam));
@@ -168,6 +211,7 @@ export class AcademichistoryComponent {
     }
 
     this.setupListeners();
+    this.applyEditableState();
   }
 
   setupListeners() {
@@ -204,12 +248,14 @@ export class AcademichistoryComponent {
 
   validateAndUpdate() {
     const dateRangesValid = this.areDateRangesValid();
+    const completionAgeValid = this.areCompletionAgeRulesValid();
     const optionalQualificationsValid = this.areOptionalQualificationsValid();
     if (this.academicHistoryPrimaryForm.valid && 
         this.academicHistorySecondaryForm.valid && 
         this.academicHistoryExamsForm.valid &&
         this.jambDetailsForm.valid &&
         dateRangesValid &&
+        completionAgeValid &&
         optionalQualificationsValid) {
       this.formStepStatus.academicValid = true;
       this.preparePayload();
@@ -287,7 +333,7 @@ export class AcademichistoryComponent {
     return this.academicHistoryOtherQualificationForm.get('qualifications') as FormArray;
   }
 
-  createQualificationGroup(item?: AcademicHistory): FormGroup {
+  createQualificationGroup(item?: TAcademicHistory | AcademicHistory): FormGroup {
     return this.fb.group({
       name: [item?.institution ?? ''],
       qualificationType: [item?.certificate_type ?? null],
@@ -296,7 +342,7 @@ export class AcademichistoryComponent {
     });
   }
 
-  createAcademicHistoryGroup(exam?: OLevelResult): FormGroup {
+  createAcademicHistoryGroup(exam?: TOLevelResult | OLevelResult): FormGroup {
     if (exam == undefined) {
       return this.fb.group({
         name: [null, Validators.required],
@@ -320,7 +366,7 @@ export class AcademichistoryComponent {
     }
   }
 
-  addQualification(item?: AcademicHistory): void {
+  addQualification(item?: TAcademicHistory | AcademicHistory): void {
     this.qualificationsArray().push(this.createQualificationGroup(item));
   }
 
@@ -328,7 +374,7 @@ export class AcademichistoryComponent {
     this.qualificationsArray().removeAt(index);
   }
 
-  addExamAttempt(exam?: OLevelResult): void {
+  addExamAttempt(exam?: TOLevelResult | OLevelResult): void {
     this.examAttemptCountArray().push(this.createAcademicHistoryGroup(exam));
   }
 
@@ -338,6 +384,46 @@ export class AcademichistoryComponent {
 
   removeExamAttempt(index: number): void {
     this.examAttemptCountArray().removeAt(index);
+  }
+
+  onJambRegistrationNumberInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const sanitizedValue = input.value
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .slice(0, ACADEMIC_HISTORY_RULES.jambRegistrationNumberMaxLength);
+
+    if (sanitizedValue === input.value) {
+      return;
+    }
+
+    input.value = sanitizedValue;
+    this.jambDetailsForm.get('registrationNumber')?.setValue(sanitizedValue);
+  }
+
+  onJambScoreInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const rawValue = input.value;
+    if (rawValue === '') {
+      this.jambDetailsForm.get('score')?.setValue(null);
+      return;
+    }
+
+    const numericValue = Number(rawValue);
+    if (!Number.isFinite(numericValue)) {
+      return;
+    }
+
+    const normalizedScore = Math.min(
+      Math.max(numericValue, ACADEMIC_HISTORY_RULES.jambScoreMin),
+      ACADEMIC_HISTORY_RULES.jambScoreMax
+    );
+
+    if (normalizedScore === numericValue) {
+      return;
+    }
+
+    input.value = `${normalizedScore}`;
+    this.jambDetailsForm.get('score')?.setValue(normalizedScore);
   }
 
   isFieldInvalid(form: FormGroup, fieldName: string): boolean {
@@ -357,6 +443,20 @@ export class AcademichistoryComponent {
       return false;
     }
     return new Date(end) < new Date(start);
+  }
+
+  isPrimarySchoolCompletionAgeInvalid(): boolean {
+    return this.isSchoolCompletionAgeInvalid(
+      this.academicHistoryPrimaryForm,
+      ACADEMIC_HISTORY_RULES.primarySchoolMinimumCompletionAge
+    );
+  }
+
+  isSecondarySchoolCompletionAgeInvalid(): boolean {
+    return this.isSchoolCompletionAgeInvalid(
+      this.academicHistorySecondaryForm,
+      ACADEMIC_HISTORY_RULES.secondarySchoolMinimumCompletionAge
+    );
   }
 
   isOptionalQualificationIncomplete(index: number): boolean {
@@ -383,6 +483,11 @@ export class AcademichistoryComponent {
       }
       return new Date(end) >= new Date(start);
     });
+  }
+
+  private areCompletionAgeRulesValid(): boolean {
+    return !this.isPrimarySchoolCompletionAgeInvalid()
+      && !this.isSecondarySchoolCompletionAgeInvalid();
   }
 
   private areOptionalQualificationsValid(): boolean {
@@ -412,5 +517,75 @@ export class AcademichistoryComponent {
       return value.trim().length > 0;
     }
     return value !== null && value !== undefined;
+  }
+
+  private isSchoolCompletionAgeInvalid(form: FormGroup, minimumAge: number): boolean {
+    if (!form) {
+      return false;
+    }
+
+    const completionDate = this.normalizeDateValue(form.get('datecompleted')?.value);
+    const applicantDateOfBirth = this.getApplicantDateOfBirth();
+    if (completionDate === null || applicantDateOfBirth === null) {
+      return false;
+    }
+
+    return this.getAgeAtDate(applicantDateOfBirth, completionDate) < minimumAge;
+  }
+
+  private getApplicantDateOfBirth(): Date | null {
+    const rawDateOfBirth = this.draftPersonalData?.dateOfBirth ?? this.backendRegistrationData?.data?.dob ?? null;
+    return this.normalizeDateValue(rawDateOfBirth);
+  }
+
+  private normalizeDateValue(value: Date | string | null | undefined): Date | null {
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+
+    const normalizedDate = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(normalizedDate.getTime())) {
+      return null;
+    }
+
+    return normalizedDate;
+  }
+
+  private getAgeAtDate(dateOfBirth: Date, referenceDate: Date): number {
+    let age = referenceDate.getFullYear() - dateOfBirth.getFullYear();
+    const hasNotReachedBirthday =
+      referenceDate.getMonth() < dateOfBirth.getMonth()
+      || (
+        referenceDate.getMonth() === dateOfBirth.getMonth()
+        && referenceDate.getDate() < dateOfBirth.getDate()
+      );
+
+    if (hasNotReachedBirthday) {
+      age -= 1;
+    }
+
+    return age;
+  }
+
+  private applyEditableState(): void {
+    const forms = [
+      this.academicHistoryPrimaryForm,
+      this.academicHistorySecondaryForm,
+      this.jambDetailsForm,
+      this.academicHistoryExamsForm,
+      this.academicHistoryOtherQualificationForm,
+      this.examnumform
+    ];
+
+    forms.forEach((form) => {
+      if (!form) {
+        return;
+      }
+      if (this.isEditable) {
+        form.enable({ emitEvent: false });
+      } else {
+        form.disable({ emitEvent: false });
+      }
+    });
   }
 }

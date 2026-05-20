@@ -32,7 +32,7 @@ type SidebarMenuItem = {
       <div class="sidebar-top-row">
         @if (!isDesktopCollapsed) {
           <div class="brand-wrap">
-            <img src="../../../assets/sblogo.png" alt="School Logo" />
+            <img src="/assets/consmmefs-logo.png" alt="School Logo" />
           </div>
         }
         <button type="button" class="collapse-btn" (click)="toggleSidebar()">
@@ -162,8 +162,8 @@ type SidebarMenuItem = {
         left: calc(100% + 12px);
         top: 50%;
         transform: translateY(-50%);
-        background: #111827;
-        color: #fff;
+        background: var(--app-surface-alt);
+        color: var(--app-text-primary);
         font-size: 12px;
         font-weight: 600;
         white-space: nowrap;
@@ -223,6 +223,7 @@ export class AppSidebar {
         });
         effect(() => {
             this.authSessionStore.paymentStatus();
+            this.authSessionStore.acceptanceFeeStatus();
             this.authSessionStore.userType();
             this.authSessionStore.matriculationNo();
             this.buildMenu();
@@ -253,6 +254,9 @@ export class AppSidebar {
     }
 
     isRouteActive(route: string): boolean {
+        if (this.isNewCandidateAdmissionProfileRoute(route)) {
+            return true;
+        }
         return this.router.url.startsWith(route);
     }
 
@@ -280,19 +284,29 @@ export class AppSidebar {
             this.createNavItem('Courses', 'pi pi-book', `${baseUrl}/courses`, 'courses')
         ];
 
-        if (activePortal === 'returning') {
+        if (activePortal === 'new') {
+            items = [
+                this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
+                this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile'),
+                this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment')
+            ];
+        } else if (activePortal === 'admitted') {
+            items = [
+                this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
+                this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile'),
+                this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment'),
+                this.createNavItem('Courses', 'pi pi-book', `${baseUrl}/courses`, 'courses')
+            ];
+        } else if (activePortal === 'returning') {
             items = [
                 this.createNavItem('Dashboard', 'pi pi-th-large', `${baseUrl}/dashboard`, 'dashboard'),
                 this.createNavItem('Courses', 'pi pi-book', `${baseUrl}/courses`, 'courses'),
                 this.createNavItem('Results', 'pi pi-file', `${baseUrl}/results`, 'results'),
-                this.createNavItem('CGPA Tracker', 'pi pi-chart-line', `${baseUrl}/cgpa-tracker`, 'cgpaTracker'),
                 this.createNavItem('Payments', 'pi pi-credit-card', `${baseUrl}/payment`, 'payment'),
+                this.createNavItem('CGPA Tracker', 'pi pi-chart-line', `${baseUrl}/cgpa-tracker`, 'cgpaTracker'),
                 this.createNavItem('Hostel', 'pi pi-home', `${baseUrl}/hostel`, 'hostel'),
                 this.createNavItem('Profile', 'pi pi-user', `${baseUrl}/profile`, 'profile')
             ];
-        } else if (activePortal === 'new') {
-            items.splice(2, 0, this.createNavItem('Admission', 'pi pi-book', `${baseUrl}/admissionform`, 'admissionform'));
-            items.splice(4, 1);
         }
         this.menuItems = items;
     }
@@ -327,5 +341,9 @@ export class AppSidebar {
         if (!mobileViewport && viewportChanged && !this.sidebarVisible) {
             this.widgetService.setSidebarState({ isvisible: true });
         }
+    }
+
+    private isNewCandidateAdmissionProfileRoute(route: string): boolean {
+        return route.endsWith('/profile') && this.router.url.startsWith('/new/admissionform');
     }
 }

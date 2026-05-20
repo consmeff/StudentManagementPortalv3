@@ -1,0 +1,154 @@
+:host {
+  display: block;
+  min-height: 0;
+  height: 100%;
+}
+
+.data-table-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--app-surface);
+}
+
+.data-table-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.header-sort-button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+.header-sort-button.active {
+  color: var(--app-text-primary);
+}
+
+.align-start {
+  text-align: left;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-end {
+  text-align: right;
+}
+
+.sort-indicator {
+  font-size: 0.72rem;
+  color: #c0cada;
+}
+
+.sort-indicator-active {
+  color: var(--app-primary);
+}
+
+.table-state-row,
+.table-state-cell {
+  padding: 1.25rem 1rem;
+  color: var(--app-text-muted);
+}
+
+:host ::ng-deep {
+  .p-datatable {
+    height: 100%;
+  }
+
+  .p-datatable-scrollable {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .p-datatable-wrapper {
+    flex: 1 1 auto;
+  }
+
+  .app-data-table-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    .p-datatable-thead > tr {
+      background: var(--app-surface-alt);
+      color: #64748b;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td,
+    .p-datatable-tfoot > tr > td {
+      min-width: 0;
+      padding: 1rem;
+      border: none;
+      background: transparent;
+      color: inherit;
+      vertical-align: middle;
+    }
+
+    .p-datatable-tbody > tr {
+      border-top: 1px solid var(--app-border);
+      color: var(--app-text-secondary);
+      font-size: 0.96rem;
+      min-width: 0;
+    }
+
+    .align-start .data-table-heading {
+      justify-content: flex-start;
+    }
+
+    .align-center .data-table-heading {
+      justify-content: center;
+    }
+
+    .align-end .data-table-heading {
+      justify-content: flex-end;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  :host ::ng-deep {
+    .app-data-table-table {
+      .p-datatable-thead > tr {
+        display: none;
+      }
+
+      .p-datatable-tbody > tr,
+      .p-datatable-tfoot > tr {
+        display: block;
+      }
+
+      .p-datatable-tbody > tr {
+        padding: 1rem;
+      }
+
+      .p-datatable-tbody > tr > td,
+      .p-datatable-tfoot > tr > td {
+        display: block;
+        padding: 0.325rem 0;
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 
 // PrimeNG Imports
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { RadioButtonModule } from 'primeng/radiobutton';
 
 // Services
@@ -14,6 +14,7 @@ import { formstepDTO } from '../../../../data/application/form.dto';
 import { ApplicationService } from '../../../../services/application.service';
 import { LGA, RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { Countries, States } from '../../../../data/application/location.dto';
+import { TNextOfKinDTO } from '../../../../data/application/transformer.dto';
 import { parseAddress } from '../../../../utility/addressparser';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
 
@@ -26,26 +27,27 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
     ReactiveFormsModule,
     FormsModule,
     InputTextModule,
-    DropdownModule,
+    SelectModule,
     RadioButtonModule
   ],
   templateUrl: './nextofkin.component.html',
   styleUrls: ['./nextofkin.component.scss']
 })
-export class NextofkinComponent {
+export class NextOfKinComponent {
   _formStepService = inject(FormService);
   regstore = inject(RegStoreService);
   appservice = inject(ApplicationService);
   
   formStepStatus: formstepDTO = {
     academicValid: false,
-    docuplodValid: false,
+    docUploadValid: false,
     nextofkinValid: false,
     personalinfoValid: false
   };
 
   nextofkinForm!: FormGroup;
   backendRegistrationData!: RegistrantDataDTO;
+  draftNextOfKinData: TNextOfKinDTO | null = null;
   
   genderOptions = ['Male', 'Female', 'Other'];
   
@@ -53,7 +55,7 @@ export class NextofkinComponent {
   stateOptions: States[] | undefined = undefined;
   localGovOptions: LGA[] | undefined = undefined;
   residentialLocalGovernment: LGA[] | undefined = undefined;
-  titleOptions: string[] = ['Mr', 'Mrs', 'Chief'];
+  titleOptions: string[] = ['Mr', 'Miss', 'Mrs','Chief'];
   relationshipOption: string[] = ['Parent', 'Uncle'];
 
   // Transformed options for PrimeNG dropdowns
@@ -62,12 +64,23 @@ export class NextofkinComponent {
   nationalityDropdownOptions: any[] = [];
   stateDropdownOptions: any[] = [];
   localGovDropdownOptions: any[] = [];
+  residentialLocalGovDropdownOptions: any[] = [];
 
   private formInitialized = false;
+  isEditable = true;
 
   constructor(private fb: FormBuilder) {
     this._formStepService.formsteps$.subscribe((step: formstepDTO) => {
       this.formStepStatus = step;
+    });
+
+    this._formStepService.applicationEditable$.subscribe((editable) => {
+      this.isEditable = editable;
+      this.applyEditableState();
+    });
+
+    this._formStepService.nextofkinform$.subscribe((data) => {
+      this.draftNextOfKinData = data;
     });
 
     this.regstore.countryData$.subscribe(data => {
@@ -113,7 +126,6 @@ export class NextofkinComponent {
     this.regstore.regData$.subscribe(data => {
       if (data != null) {
         this.backendRegistrationData = data;
-        console.log(this.backendRegistrationData);
         this.initializeForm();
       }
     });
@@ -126,38 +138,40 @@ export class NextofkinComponent {
 
   initializeForm() {
     let data = this.backendRegistrationData?.data?.primary_parent_or_guardian;
+    const draftData = this.draftNextOfKinData;
     
     this.nextofkinForm = this.fb.group({
-      title: [data?.title ?? null, Validators.required],
-      firstname: [data?.first_name ?? '', Validators.required],
-      lastname: [data?.last_name ?? '', Validators.required],
-      middlename: [data?.other_names ?? ''],
-      gender: [data?.gender ?? '', Validators.required],
-      relationship: [null],
-      occupation: [data?.occupation ?? '', Validators.required],
-      phonenumber: [data?.phone_number ?? '', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      email: [data?.email ?? '', [Validators.email]],
-      nationality: [data?.nationality ?? 'Nigeria', Validators.required],
-      stateOfOrigin: [null, Validators.required],
-      localGovernment: [null, Validators.required],
-      houseNumber: ['', Validators.required],
-      streetName: ['', Validators.required],
-      landmark: ['', Validators.required],
-      areaTown: ['', Validators.required],
-      residentialState: [null, Validators.required],
-      residentialLocalGovernment: [null, Validators.required],
+      title: [draftData?.title ?? data?.title ?? null, Validators.required],
+      firstname: [draftData?.firstname ?? data?.first_name ?? '', Validators.required],
+      lastname: [draftData?.lastname ?? data?.last_name ?? '', Validators.required],
+      middlename: [draftData?.middlename ?? data?.other_names ?? ''],
+      gender: [draftData?.gender ?? data?.gender ?? '', Validators.required],
+      relationship: [draftData?.relationship ?? null],
+      occupation: [draftData?.occupation ?? data?.occupation ?? '', Validators.required],
+      phonenumber: [draftData?.phonenumber ?? data?.phone_number ?? '', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+      email: [draftData?.email ?? data?.email ?? '', [Validators.email]],
+      nationality: [draftData?.nationality ?? data?.nationality ?? 'Nigeria', Validators.required],
+      stateOfOrigin: [draftData?.stateOfOrigin ?? null, Validators.required],
+      localGovernment: [draftData?.localGovernment ?? null, Validators.required],
+      houseNumber: [draftData?.houseNumber ?? '', Validators.required],
+      streetName: [draftData?.streetName ?? '', Validators.required],
+      landmark: [draftData?.landmark ?? '', Validators.required],
+      areaTown: [draftData?.areaTown ?? '', Validators.required],
+      residentialState: [draftData?.residentialState ?? null, Validators.required],
+      residentialLocalGovernment: [draftData?.residentialLocalGovernment ?? null, Validators.required],
     });
 
     this.formInitialized = true;
+    this.applyEditableState();
+    this.initializeLocalGovernmentOptions();
 
     // Set dropdown values with delays for cascading dropdowns
-    if (data) {
+    if (data && draftData === null) {
       setTimeout(() => {
         if (data.state_of_origin) {
           const stateId = this.getStateIDByName(data.state_of_origin);
           if (stateId) {
             this.nextofkinForm.controls['stateOfOrigin'].setValue(stateId);
-            this.nextofkinForm.controls['residentialState'].setValue(stateId);
           }
         }
       }, 1000);
@@ -167,7 +181,6 @@ export class NextofkinComponent {
           const lgaId = this.getLocalGovtIDByName(data.lga);
           if (lgaId) {
             this.nextofkinForm.controls['localGovernment'].setValue(lgaId);
-            this.nextofkinForm.controls['residentialLocalGovernment'].setValue(lgaId);
           }
         }
       }, 2000);
@@ -188,7 +201,6 @@ export class NextofkinComponent {
     this.nextofkinForm.valueChanges.subscribe(val => {
       if (this.nextofkinForm.valid) {
         this.formStepStatus.nextofkinValid = true;
-        console.log(this.nextofkinForm.value);
         this._formStepService.setNextOfKinFormData(this.nextofkinForm.value);
         this._formStepService.setFormSteps(this.formStepStatus);
       } else {
@@ -200,27 +212,61 @@ export class NextofkinComponent {
     this.nextofkinForm.controls["stateOfOrigin"].valueChanges.subscribe((val: number) => {
       if (val > 0) {
         this.nextofkinForm.controls["localGovernment"].setValue(null);
-        this.getLocalGovtByStateID(val);
-        this.nextofkinForm.controls["residentialState"].setValue(val);
+        this.getLocalGovtByStateID(val, 'origin');
       }
     });
 
-    this.nextofkinForm.controls["localGovernment"].valueChanges.subscribe((val: number) => {
+    this.nextofkinForm.controls["residentialState"].valueChanges.subscribe((val: number) => {
       if (val > 0) {
-        this.nextofkinForm.controls["residentialLocalGovernment"].setValue(val);
+        this.nextofkinForm.controls["residentialLocalGovernment"].setValue(null);
+        this.getLocalGovtByStateID(val, 'residential');
       }
     });
   }
 
-  getLocalGovtByStateID(val: number) {
+  private applyEditableState(): void {
+    if (!this.nextofkinForm) {
+      return;
+    }
+
+    if (this.isEditable) {
+      this.nextofkinForm.enable({ emitEvent: false });
+      return;
+    }
+
+    this.nextofkinForm.disable({ emitEvent: false });
+  }
+
+  private initializeLocalGovernmentOptions(): void {
+    const originStateId = Number(this.nextofkinForm.controls['stateOfOrigin'].value);
+    const residentialStateId = Number(this.nextofkinForm.controls['residentialState'].value);
+
+    if (originStateId > 0) {
+      this.getLocalGovtByStateID(originStateId, 'origin');
+    }
+
+    if (residentialStateId > 0) {
+      this.getLocalGovtByStateID(residentialStateId, 'residential');
+    }
+  }
+
+  getLocalGovtByStateID(val: number, target: 'origin' | 'residential') {
     this.appservice.lgas(val).subscribe(data => {
       if (data != undefined) {
-        this.localGovOptions = data.data;
-        this.localGovDropdownOptions = data.data.map(lga => ({
+        const dropdownOptions = data.data.map(lga => ({
           label: lga.name,
           value: lga.id
         }));
-        this.regstore.setLGAData(this.localGovOptions);
+
+        if (target === 'origin') {
+          this.localGovOptions = data.data;
+          this.localGovDropdownOptions = dropdownOptions;
+          this.regstore.setLGAData(this.localGovOptions);
+          return;
+        }
+
+        this.residentialLocalGovernment = data.data;
+        this.residentialLocalGovDropdownOptions = dropdownOptions;
       }
     });
   }

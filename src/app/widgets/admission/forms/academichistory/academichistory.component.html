@@ -11,15 +11,17 @@
 
         <div class="form-field">
           <label for="primaryDateStarted" class="field-label">Date Started <span class="required">*</span></label>
-          <p-calendar inputId="primaryDateStarted" formControlName="datestarted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistoryPrimaryForm, 'datestarted')" styleClass="w-full"></p-calendar>
+          <p-datepicker inputId="primaryDateStarted" formControlName="datestarted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistoryPrimaryForm, 'datestarted') || isDateOrderInvalid(academicHistoryPrimaryForm)" styleClass="w-full"></p-datepicker>
           <small *ngIf="isFieldInvalid(academicHistoryPrimaryForm, 'datestarted')" class="p-error">Start date is required.</small>
+          <small *ngIf="isDateOrderInvalid(academicHistoryPrimaryForm)" class="p-error">Start date cannot be after completion date.</small>
         </div>
 
         <div class="form-field">
           <label for="primaryDateCompleted" class="field-label">Date Completed <span class="required">*</span></label>
-          <p-calendar inputId="primaryDateCompleted" formControlName="datecompleted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistoryPrimaryForm, 'datecompleted') || isDateOrderInvalid(academicHistoryPrimaryForm)" styleClass="w-full"></p-calendar>
+          <p-datepicker inputId="primaryDateCompleted" formControlName="datecompleted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistoryPrimaryForm, 'datecompleted') || isDateOrderInvalid(academicHistoryPrimaryForm) || isPrimarySchoolCompletionAgeInvalid()" styleClass="w-full"></p-datepicker>
           <small *ngIf="isFieldInvalid(academicHistoryPrimaryForm, 'datecompleted')" class="p-error">Completion date is required.</small>
           <small *ngIf="isDateOrderInvalid(academicHistoryPrimaryForm)" class="p-error">Completion date cannot be before start date.</small>
+          <small *ngIf="isPrimarySchoolCompletionAgeInvalid()" class="p-error">Applicant must be at least 6 years old before completing primary school.</small>
         </div>
       </div>
     </div>
@@ -35,20 +37,22 @@
 
         <div class="form-field">
           <label for="secondaryDateStarted" class="field-label">Date Started <span class="required">*</span></label>
-          <p-calendar inputId="secondaryDateStarted" formControlName="datestarted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'datestarted')" styleClass="w-full"></p-calendar>
+          <p-datepicker inputId="secondaryDateStarted" formControlName="datestarted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'datestarted') || isDateOrderInvalid(academicHistorySecondaryForm)" styleClass="w-full"></p-datepicker>
           <small *ngIf="isFieldInvalid(academicHistorySecondaryForm, 'datestarted')" class="p-error">Start date is required.</small>
+          <small *ngIf="isDateOrderInvalid(academicHistorySecondaryForm)" class="p-error">Start date cannot be after completion date.</small>
         </div>
 
         <div class="form-field">
           <label for="secondaryDateCompleted" class="field-label">Date Completed <span class="required">*</span></label>
-          <p-calendar inputId="secondaryDateCompleted" formControlName="datecompleted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'datecompleted') || isDateOrderInvalid(academicHistorySecondaryForm)" styleClass="w-full"></p-calendar>
+          <p-datepicker inputId="secondaryDateCompleted" formControlName="datecompleted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'datecompleted') || isDateOrderInvalid(academicHistorySecondaryForm) || isSecondarySchoolCompletionAgeInvalid()" styleClass="w-full"></p-datepicker>
           <small *ngIf="isFieldInvalid(academicHistorySecondaryForm, 'datecompleted')" class="p-error">Completion date is required.</small>
           <small *ngIf="isDateOrderInvalid(academicHistorySecondaryForm)" class="p-error">Completion date cannot be before start date.</small>
+          <small *ngIf="isSecondarySchoolCompletionAgeInvalid()" class="p-error">Applicant must be at least 12 years old before completing secondary school.</small>
         </div>
 
         <div class="form-field">
           <label for="secondaryQualificationType" class="field-label">Qualification <span class="required">*</span></label>
-          <p-dropdown inputId="secondaryQualificationType" [options]="examDropdownOptions" formControlName="qualificationType" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'qualificationType')" styleClass="w-full"></p-dropdown>
+          <p-select inputId="secondaryQualificationType" [options]="examDropdownOptions" formControlName="qualificationType" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'qualificationType')" styleClass="w-full"></p-select>
           <small *ngIf="isFieldInvalid(academicHistorySecondaryForm, 'qualificationType')" class="p-error">Qualification is required.</small>
         </div>
       </div>
@@ -59,14 +63,15 @@
       <div class="form-grid" [formGroup]="jambDetailsForm">
         <div class="form-field">
           <label for="jambRegistrationNumber" class="field-label">Registration Number <span class="required">*</span></label>
-          <input pInputText id="jambRegistrationNumber" formControlName="registrationNumber" [class.p-invalid]="isFieldInvalid(jambDetailsForm, 'registrationNumber')" />
-          <small *ngIf="isFieldInvalid(jambDetailsForm, 'registrationNumber')" class="p-error">JAMB registration number is required.</small>
+          <input pInputText id="jambRegistrationNumber" formControlName="registrationNumber" [attr.maxlength]="academicHistoryRules.jambRegistrationNumberMaxLength" [class.p-invalid]="isFieldInvalid(jambDetailsForm, 'registrationNumber')" (input)="onJambRegistrationNumberInput($event)" />
+          <small *ngIf="jambDetailsForm.get('registrationNumber')?.hasError('required') && isFieldInvalid(jambDetailsForm, 'registrationNumber')" class="p-error">JAMB registration number is required.</small>
+          <small *ngIf="(jambDetailsForm.get('registrationNumber')?.hasError('maxlength') || jambDetailsForm.get('registrationNumber')?.hasError('pattern')) && isFieldInvalid(jambDetailsForm, 'registrationNumber')" class="p-error">JAMB registration number must not be more than 12 alphanumeric characters.</small>
         </div>
 
         <div class="form-field">
           <label for="jambScore" class="field-label">Score <span class="required">*</span></label>
-          <input pInputText id="jambScore" type="number" min="0" max="400" formControlName="score" [class.p-invalid]="isFieldInvalid(jambDetailsForm, 'score')" />
-          <small *ngIf="isFieldInvalid(jambDetailsForm, 'score')" class="p-error">JAMB score is required and must be between 0 and 400.</small>
+          <input pInputText id="jambScore" type="number" [attr.min]="academicHistoryRules.jambScoreMin" [attr.max]="academicHistoryRules.jambScoreMax" formControlName="score" [class.p-invalid]="isFieldInvalid(jambDetailsForm, 'score')" (input)="onJambScoreInput($event)" />
+          <small *ngIf="isFieldInvalid(jambDetailsForm, 'score')" class="p-error">JAMB score is required and must not be more than 400.</small>
         </div>
       </div>
     </div>
@@ -96,37 +101,37 @@
           <div class="form-grid">
             <div class="form-field">
               <label [for]="'examName' + i" class="field-label">Examination Name <span class="required">*</span></label>
-              <p-dropdown [inputId]="'examName' + i" [options]="examDropdownOptions" formControlName="name" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'name')" styleClass="w-full"></p-dropdown>
+              <p-select [inputId]="'examName' + i" [options]="examDropdownOptions" formControlName="name" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'name')" styleClass="w-full"></p-select>
             </div>
 
             <div class="form-field">
               <label [for]="'examYear' + i" class="field-label">Examination Year <span class="required">*</span></label>
-              <p-dropdown [inputId]="'examYear' + i" [options]="yearDropdownOptions" formControlName="year" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'year')" styleClass="w-full"></p-dropdown>
+              <p-select [inputId]="'examYear' + i" [options]="yearDropdownOptions" formControlName="year" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'year')" styleClass="w-full"></p-select>
             </div>
 
             <div class="form-field">
               <label [for]="'english' + i" class="field-label">English Language <span class="required">*</span></label>
-              <p-dropdown [inputId]="'english' + i" [options]="gradeDropdownOptions" formControlName="english" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'english')" styleClass="w-full"></p-dropdown>
+              <p-select [inputId]="'english' + i" [options]="gradeDropdownOptions" formControlName="english" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'english')" styleClass="w-full"></p-select>
             </div>
 
             <div class="form-field">
               <label [for]="'math' + i" class="field-label">Mathematics <span class="required">*</span></label>
-              <p-dropdown [inputId]="'math' + i" [options]="gradeDropdownOptions" formControlName="math" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'math')" styleClass="w-full"></p-dropdown>
+              <p-select [inputId]="'math' + i" [options]="gradeDropdownOptions" formControlName="math" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'math')" styleClass="w-full"></p-select>
             </div>
 
             <div class="form-field">
               <label [for]="'physics' + i" class="field-label">Physics <span class="required">*</span></label>
-              <p-dropdown [inputId]="'physics' + i" [options]="gradeDropdownOptions" formControlName="physics" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'physics')" styleClass="w-full"></p-dropdown>
+              <p-select [inputId]="'physics' + i" [options]="gradeDropdownOptions" formControlName="physics" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'physics')" styleClass="w-full"></p-select>
             </div>
 
             <div class="form-field">
               <label [for]="'chemistry' + i" class="field-label">Chemistry <span class="required">*</span></label>
-              <p-dropdown [inputId]="'chemistry' + i" [options]="gradeDropdownOptions" formControlName="chemistry" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'chemistry')" styleClass="w-full"></p-dropdown>
+              <p-select [inputId]="'chemistry' + i" [options]="gradeDropdownOptions" formControlName="chemistry" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'chemistry')" styleClass="w-full"></p-select>
             </div>
 
             <div class="form-field">
               <label [for]="'biology' + i" class="field-label">Biology <span class="required">*</span></label>
-              <p-dropdown [inputId]="'biology' + i" [options]="gradeDropdownOptions" formControlName="biology" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'biology')" styleClass="w-full"></p-dropdown>
+              <p-select [inputId]="'biology' + i" [options]="gradeDropdownOptions" formControlName="biology" [class.p-invalid]="isFieldInvalidArray(examAttemptCountArray(), i, 'biology')" styleClass="w-full"></p-select>
             </div>
           </div>
         </div>
@@ -145,17 +150,17 @@
 
             <div class="form-field">
               <label [for]="'qualType' + i" class="field-label">Qualification Type</label>
-              <p-dropdown [inputId]="'qualType' + i" [options]="examDropdownOptions" formControlName="qualificationType" styleClass="w-full"></p-dropdown>
+              <p-select [inputId]="'qualType' + i" [options]="examDropdownOptions" formControlName="qualificationType" styleClass="w-full"></p-select>
             </div>
 
             <div class="form-field">
               <label [for]="'qualStart' + i" class="field-label">Date Started</label>
-              <p-calendar [inputId]="'qualStart' + i" formControlName="dateStarted" [showIcon]="true" dateFormat="dd/mm/yy" styleClass="w-full"></p-calendar>
+              <p-datepicker [inputId]="'qualStart' + i" formControlName="dateStarted" [showIcon]="true" dateFormat="dd/mm/yy" styleClass="w-full"></p-datepicker>
             </div>
 
             <div class="form-field">
               <label [for]="'qualEnd' + i" class="field-label">Date Completed</label>
-              <p-calendar [inputId]="'qualEnd' + i" formControlName="dateCompleted" [showIcon]="true" dateFormat="dd/mm/yy" styleClass="w-full"></p-calendar>
+              <p-datepicker [inputId]="'qualEnd' + i" formControlName="dateCompleted" [showIcon]="true" dateFormat="dd/mm/yy" styleClass="w-full"></p-datepicker>
               <small *ngIf="isOptionalQualificationIncomplete(i)" class="p-error">Fill all qualification fields or leave all blank.</small>
             </div>
           </div>

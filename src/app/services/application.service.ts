@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
-import { PaymentRefResponse } from '../data/application/payment.data';
+import {
+  PaginatedPaymentsResponse,
+  PaymentHistoryItem,
+  PaymentRefResponse
+} from '../data/application/payment.data';
 import { PreRegistrationDataDTO } from '../data/application/preregistrationdatadto';
 import { RegistrantDataDTO } from '../data/application/registrantdatadto';
 
@@ -12,8 +16,8 @@ import { RegistrantDataDTO } from '../data/application/registrantdatadto';
   providedIn: 'root'
 })
 export class ApplicationService {
-
-  apiRoot = environment.apiURL;
+  private readonly apiRoot = environment.apiURL;
+  private readonly paymentsEndpoint = `${this.apiRoot}/api/v1/payments/payments`;
 
   constructor(private http: HttpClient) { }
 
@@ -55,7 +59,7 @@ export class ApplicationService {
       map((response) => this.normalizeCollectionResponse(response))
     );
   }
-  registratantData(app_no: string): Observable<RegistrantDataDTO> {
+  registrantData(app_no: string): Observable<RegistrantDataDTO> {
     return this.http.get<RegistrantDataDTO>(`${this.apiRoot}/api/v1/applicants/single?applicant_no=${app_no}`);
   }
 
@@ -65,8 +69,32 @@ export class ApplicationService {
   verifyPayment(ref: { ref_id: string }): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/callbacks/verify-payment-status`, ref);
   }
-  getPaymentRef( refPayload:{ application_no: string }): Observable<PaymentRefResponse> {
+  getPaymentRef(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/initiate-payment`, refPayload);
+  }
+  acceptanceFeePayment(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
+    return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/acceptance-fee-payment`, refPayload);
+  }
+  getPayments(query: { page: number; pageSize: number; ordering: string | null; search: string | null }): Observable<PaginatedPaymentsResponse> {
+    let params = new HttpParams()
+      .set('page', String(query.page))
+      .set('page_size', String(query.pageSize));
+    if (query.ordering) {
+      params = params.set('ordering', query.ordering);
+    }
+    if (query.search) {
+      params = params.set('search', query.search);
+    }
+
+    return this.http.get<unknown>(`${this.paymentsEndpoint}/users`, { params }).pipe(
+      map((response) => this.normalizePaginatedPaymentsResponse(response))
+    );
+  }
+  getPaymentReceipt(refId: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.apiRoot}/api/v1/payments/payments/${encodeURIComponent(refId)}/receipt`, {
+      observe: 'response',
+      responseType: 'blob'
+    });
   }
 
   submitApplication(payload: { applicant_no: string }): Observable<any> {
@@ -98,5 +126,81 @@ export class ApplicationService {
       gender: Array.isArray(raw.gender) ? raw.gender : [],
       occupations: Array.isArray(raw.occupations) ? raw.occupations : []
     };
+  }
+
+  private normalizePaginatedPaymentsResponse(response: unknown): PaginatedPaymentsResponse {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const resultsSource = Array.isArray(rawResponse['results'])
+      ? rawResponse['results']
+      : Array.isArray(rawResponse['data'])
+        ? rawResponse['data']
+        : [];
+    const primaryCount = this.readNumber(rawResponse, 'count');
+    const fallbackCount = this.readNumber(rawResponse, 'total');
+    const count = primaryCount > 0 ? primaryCount : fallbackCount;
+    const next = this.readNullableString(rawResponse, 'next') ?? this.readNullableString(rawResponse, 'next_page_url');
+    const previous = this.readNullableString(rawResponse, 'previous') ?? this.readNullableString(rawResponse, 'prev_page_url');
+
+    return {
+      count,
+      next,
+      previous,
+      results: resultsSource.map((item) => this.normalizePaymentItem(item))
+    };
+  }
+
+  private normalizePaymentItem(response: unknown): PaymentHistoryItem {
+    const rawResponse = this.toRecord(response);
+    return {
+      ref_id: this.readString(rawResponse, 'ref_id'),
+      payment_type: this.readString(rawResponse, 'payment_type'),
+      amount: this.readNumber(rawResponse, 'amount'),
+      amount_paid: this.readNullableNumber(rawResponse, 'amount_paid'),
+      status: this.readString(rawResponse, 'status'),
+      summary: this.readString(rawResponse, 'summary'),
+      created_at: this.readString(rawResponse, 'created_at'),
+      applicant_no: this.readString(rawResponse, 'applicant_no'),
+      applicant_name: this.readString(rawResponse, 'applicant_name')
+    };
+  }
+
+  private getNestedRecord(source: unknown, key: string): Record<string, unknown> | null {
+    const record = this.toRecord(source);
+    const nestedValue = record[key];
+    if (this.isRecord(nestedValue)) {
+      return nestedValue;
+    }
+    return null;
+  }
+
+  private toRecord(value: unknown): Record<string, unknown> {
+    if (this.isRecord(value)) {
+      return value;
+    }
+    return {};
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+  }
+
+  private readString(source: Record<string, unknown>, key: string): string {
+    const value = source[key];
+    return typeof value === 'string' ? value : '';
+  }
+
+  private readNullableString(source: Record<string, unknown>, key: string): string | null {
+    const value = source[key];
+    return typeof value === 'string' && value.trim().length > 0 ? value : null;
+  }
+
+  private readNumber(source: Record<string, unknown>, key: string): number {
+    const value = source[key];
+    return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+  }
+
+  private readNullableNumber(source: Record<string, unknown>, key: string): number | null {
+    const value = source[key];
+    return typeof value === 'number' && Number.isFinite(value) ? value : null;
   }
 }

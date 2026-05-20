@@ -1,0 +1,61 @@
+<div class="pagination-shell" *ngIf="showPagination()">
+  <div class="page-size-control">
+    <label class="page-size-label" for="app-pagination-page-size">Items per page</label>
+    <select
+      id="app-pagination-page-size"
+      class="page-size-select"
+      [disabled]="disabled()"
+      [value]="pageSize()"
+      (change)="selectPageSize($any($event.target).value)"
+    >
+      <option *ngFor="let pageSizeOption of pageSizeOptions()" [value]="pageSizeOption">
+        {{ pageSizeOption }}
+      </option>
+    </select>
+  </div>
+
+  <div class="pagination-nav">
+    <button
+      type="button"
+      class="nav-link"
+      [disabled]="!canGoToPreviousPage()"
+      (click)="selectPreviousPage()"
+    >
+      <i class="pi pi-arrow-left" aria-hidden="true"></i>
+      <span>Previous</span>
+    </button>
+
+    <div class="page-list" aria-label="Pagination">
+      <ng-container *ngFor="let pageItem of pageItems()">
+        <button
+          *ngIf="pageItem !== 'ellipsis'; else ellipsisItem"
+          type="button"
+          class="page-chip"
+          [class.active]="isCurrentPage(pageItem)"
+          [disabled]="disabled()"
+          (click)="selectPage(pageItem)"
+        >
+          {{ pageItem }}
+        </button>
+
+        <ng-template #ellipsisItem>
+          <span class="ellipsis">...</span>
+        </ng-template>
+      </ng-container>
+    </div>
+
+    <button
+      type="button"
+      class="nav-link nav-link-next"
+      [disabled]="!canGoToNextPage()"
+      (click)="selectNextPage()"
+    >
+      <span>Next</span>
+      <i class="pi pi-arrow-right" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="pagination-summary">
+    Showing {{ startItem() }}-{{ endItem() }} of {{ totalItems() }} items
+  </div>
+</div>

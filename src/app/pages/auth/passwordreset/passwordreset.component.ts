@@ -19,7 +19,7 @@ import { AuthSessionStore } from '../../../store/auth-session.store';
   imports: [TraceabilityModule],
   providers: [MessageService]
 })
-export class PasswordresetComponent implements OnDestroy {
+export class PasswordResetComponent implements OnDestroy {
   busy = false;
   isDarkMode = false;
   visible = false;
@@ -129,14 +129,8 @@ export class PasswordresetComponent implements OnDestroy {
           this.visible = true;
         }, 500);
       },
-      error: (err) => {
+      error: () => {
         this.busy = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Password Reset',
-          detail: 'Reset failed! Try again or contact admin!',
-          life: 5000
-        });
       }
     });
   }

@@ -2,7 +2,6 @@ import { Component, EventEmitter, inject, Input, OnInit, Output, SimpleChanges, 
 import { FormControl, FormGroup } from '@angular/forms';
 import { ApplicationService } from '../../../services/application.service';
 import { AppInitResponseDTO, DepartmentsDTO, OpenApplicationDTO, Program } from '../../../data/application/admission.dto';
-import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { RegStoreService } from '../../../services/regstore.service';
 import { FormService } from '../../services/form.service';
@@ -12,14 +11,14 @@ import { TraceabilityModule } from '../../../shared/traceability.module';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 
 @Component({
-  selector: 'app-programme',
-  templateUrl: './programme.component.html',
-  styleUrl: './programme.component.scss',
+  selector: 'app-program',
+  templateUrl: './program.component.html',
+  styleUrl: './program.component.scss',
   imports: [TraceabilityModule],
   providers: [MessageService]
 })
-export class ProgrammeComponent implements OnInit {
-  programmes!: OpenApplicationDTO;
+export class programComponent implements OnInit {
+  programs!: OpenApplicationDTO;
   departments!: DepartmentsDTO;
   _formStepService = inject(FormService);
   regstore = inject(RegStoreService);
@@ -44,7 +43,7 @@ export class ProgrammeComponent implements OnInit {
   appInitResp!: AppInitResponseDTO;
   toShow: number = 0;
   busy: boolean = false;
-  @Input() backendProgramme: Program | undefined;
+  @Input() backendprogram: Program | undefined;
 
   constructor(
     private appservice: ApplicationService,
@@ -83,27 +82,20 @@ export class ProgrammeComponent implements OnInit {
   ngOnInit(): void {
     this.appservice.openApplications().subscribe({
       next: (data) => {
-        this.programmes = data;
+        this.programs = data;
         this.initializeForm();
       },
-      error: ((err: HttpErrorResponse) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load programmes',
-          life: 5000
-        });
-      })
+      error: () => {}
     });
   }
 
   initializeForm() {
-    if (this.backendProgramme != undefined) {
+    if (this.backendprogram != undefined) {
       // Initialize with backend data if available
-      const programName = this.backendProgramme.name.toLowerCase();
+      const programName = this.backendprogram.name.toLowerCase();
       if (this.courseForm.controls[programName]) {
-        this.courseForm.controls[programName].setValue(this.backendProgramme.id);
-        this.selectedCourse = this.backendProgramme.id;
+        this.courseForm.controls[programName].setValue(this.backendprogram.id);
+        this.selectedCourse = this.backendprogram.id;
       }
     }
   }
@@ -112,12 +104,12 @@ export class ProgrammeComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  selectProgramme(id: number) {
+  selectprogram(id: number) {
     this.selectedCourse = id;
-    // Update form control based on the selected programme
-    const programme = this.programmes.data.find(p => p.program.id === id);
-    if (programme) {
-      const controlName = programme.program.name.toLowerCase();
+    // Update form control based on the selected program
+    const program = this.programs.data.find(p => p.program.id === id);
+    if (program) {
+      const controlName = program.program.name.toLowerCase();
       this.courseForm.patchValue({
         midwifery: null,
         nursing: null,
@@ -222,16 +214,10 @@ export class ProgrammeComponent implements OnInit {
       })
       .catch(err => {
         this.busy = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to initialize application',
-          life: 5000
-        });
       });
   }
 
-  programmeChoice() {
+  programChoice() {
     if (this.selectedCourse === 0) return;
 
     this.getDepartment();
@@ -246,15 +232,9 @@ export class ProgrammeComponent implements OnInit {
         this.toShow = 1;
         this.busy = false;
       },
-      error: ((err: HttpErrorResponse) => {
+      error: () => {
         this.busy = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load departments',
-          life: 5000
-        });
-      })
+      }
     });
   }
 }

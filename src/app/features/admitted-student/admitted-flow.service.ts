@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { ApplicationService } from '../../services/application.service';
 import { RegistrantData } from '../../data/application/registrantdatadto';
 import { AuthSessionStore } from '../../store/auth-session.store';
+import { formatStructuredName } from '../../utility/name-format';
 
 export type VerificationDocument = {
   label: string;
@@ -36,7 +37,11 @@ export class AdmittedFlowService {
   readonly applicantName = computed(() => {
     const data = this.registrantData();
     const fallback = this.authSessionStore.name();
-    const composed = `${data?.first_name || ''} ${data?.last_name || ''}`.trim();
+    const composed = formatStructuredName({
+      firstName: data?.first_name,
+      lastName: data?.last_name,
+      middleName: data?.other_names
+    });
     return composed || fallback || 'Applicant';
   });
 
@@ -44,7 +49,7 @@ export class AdmittedFlowService {
     () => this.registrantData()?.application_no || this.authSessionStore.applicationNo() || '—'
   );
 
-  readonly programmeName = computed(
+  readonly programName = computed(
     () => this.registrantData()?.department?.name || this.registrantData()?.program?.name || '—'
   );
 
@@ -61,7 +66,13 @@ export class AdmittedFlowService {
     return dataStatus || sessionStatus;
   });
 
-  readonly isAcceptancePaid = computed(() => this.isPaidStatus(this.paymentStatus()));
+  readonly acceptanceFeeStatus = computed(() => {
+    const registrantStatus = this.readAcceptanceFeeStatusFromRegistrant();
+    const sessionStatus = this.authSessionStore.acceptanceFeeStatus() || '';
+    return registrantStatus || sessionStatus;
+  });
+
+  readonly isAcceptancePaid = computed(() => this.isPaidStatus(this.acceptanceFeeStatus()));
 
   readonly transactionReference = computed(
     () => this.authSessionStore.paymentRef() || this.applicationNo()
@@ -147,11 +158,15 @@ export class AdmittedFlowService {
 
     this.loadingSnapshot.set(true);
     try {
-      const response = await firstValueFrom(this.appService.registratantData(appNo));
+      const response = await firstValueFrom(this.appService.registrantData(appNo));
       const data = response?.data ?? null;
       this.registrantData.set(data);
       if (data?.payment_status) {
         this.authSessionStore.setPaymentStatus(data.payment_status);
+      }
+      const acceptanceFeeStatus = this.readAcceptanceFeeStatusFromRegistrant();
+      if (acceptanceFeeStatus) {
+        this.authSessionStore.setAcceptanceFeeStatus(acceptanceFeeStatus);
       }
     } finally {
       this.loadingSnapshot.set(false);
@@ -228,6 +243,12 @@ export class AdmittedFlowService {
       return false;
     }
     return normalized.includes('paid') || normalized.includes('complete') || normalized.includes('success');
+  }
+
+  private readAcceptanceFeeStatusFromRegistrant(): string {
+    const registrant = this.registrantData() as unknown as Record<string, unknown> | null;
+    const acceptanceFeeStatus = registrant?.['acceptance_fee_status'];
+    return typeof acceptanceFeeStatus === 'string' ? acceptanceFeeStatus : '';
   }
 
   private formatDate(value: string | Date | undefined): string {

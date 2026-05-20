@@ -1,9 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
 @use './tailwind.css';
 @use './assets/layout/layout.scss';
 @use 'primeicons/primeicons.css';
 @use './assets/demo/demo.scss';
-@import './assets/demo/_theme.scss';
+@use './assets/demo/theme' as *;
 
 :root,
 [data-theme='light'] {
@@ -14,6 +13,11 @@
   --app-text-primary: #0f172a;
   --app-text-secondary: #64748b;
   --app-text-muted: #94a3b8;
+  --text-color: #000000;
+  --text-color-secondary: #334155;
+  --p-text-color: #000000;
+  --p-text-muted-color: #334155;
+  --p-content-color: #000000;
   --app-primary: #000080;
   --app-success: #039855;
   --app-danger: #d92d20;
@@ -23,20 +27,26 @@
   --app-modal-z-index: 3000000;
 }
 
+:root.app-dark,
 [data-theme='dark'],
 .dark {
   --app-bg: #0b1120;
   --app-surface: #111827;
   --app-surface-alt: #1f2937;
   --app-border: #334155;
-  --app-text-primary: #e2e8f0;
-  --app-text-secondary: #94a3b8;
-  --app-text-muted: #64748b;
+  --app-text-primary: #ffffff;
+  --app-text-secondary: #f8fafc;
+  --app-text-muted: #e2e8f0;
   --app-primary: #818cf8;
   --app-success: #34d399;
   --app-danger: #f87171;
   --app-info: #f59e0b;
   --app-link: #60a5fa;
+  --text-color: #ffffff;
+  --text-color-secondary: #f8fafc;
+  --p-text-color: #ffffff;
+  --p-text-muted-color: #f8fafc;
+  --p-content-color: #ffffff;
   --app-shadow-sm: 0 2px 5px rgba(2, 6, 23, 0.45);
   --app-modal-z-index: 3000000;
 }
@@ -53,9 +63,32 @@ body {
   font-family: 'Raleway', 'Inter', 'Montserrat', sans-serif;
 }
 
+
 * {
   box-sizing: border-box;
   outline: none;
+  font-family: "Raleway", "Inter", "Montserrat", sans-serif;
+
+  :disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+ul {
+  list-style: none;
+  padding: 0 !important;
+}
+
+table thead th,
+.p-datatable thead th {
+  font-family: "Raleway", "Inter", "Montserrat", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 120%;
+  letter-spacing: 0;
+  background-color: var(--app-bg);
 }
 
 .p-dialog-mask {
@@ -66,28 +99,75 @@ body {
   z-index: calc(var(--app-modal-z-index) + 1) !important;
 }
 
-.title-large {
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 120%;
-}
-
-.title-medium {
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 120%;
-}
 
 .body-small {
   font-weight: 400;
   font-size: 14px;
   line-height: 150%;
+  gap: 4px;
+  letter-spacing: 0%;
+}
+
+.body-xs,
+.body-xs-500 {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
+  letter-spacing: 0%;
+}
+
+.body-xs-500 {
+  font-weight: 500;
 }
 
 .label-small {
   font-weight: 600;
   font-size: 12px;
   line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-xlarge {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-large {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-medium {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-small {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.title-xsmall {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0%;
+
+}
+.label-m{
+font-weight: 600;
+font-size: 14px;
+line-height: 100%;
+letter-spacing: 0%;
+
 }
 
 a,

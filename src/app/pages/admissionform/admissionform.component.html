@@ -4,9 +4,9 @@
 <div class="content-wrapper" [class.sidebar-visible]="sidebarVisible">
   
     
-    <div class="page-title">Admission Form</div>
+    <div class="page-title title-xlarge">Admission Form</div>
     <div class="lock-notice" *ngIf="isEditLocked">
-      This application is read-only. Editing is only allowed when compliance is issued.
+      This application is read-only. Editing is only allowed when the application status is pending or when compliance has been issued.
       <span *ngIf="complianceDirective">Directive: {{ complianceDirective }}</span>
     </div>
     
@@ -22,13 +22,14 @@
       
       <ng-template pTemplate="header">
         <div class="dialog-header-content">
-          <i class="pi pi-check-circle header-icon"></i>
           <span class="dialog-title">Registration Complete</span>
         </div>
       </ng-template>
 
       <div class="dialog-content">
-        <i class="pi pi-check-circle success-icon"></i>
+        <div class="success-icon-wrap" aria-hidden="true">
+          <i class="pi pi-check-circle success-icon"></i>
+        </div>
         <h2 class="congrats-title">Congratulations!</h2>
         <p class="congrats-message">
           You have successfully completed your registration process.
@@ -41,35 +42,31 @@
         </div>
 
         <div class="dialog-actions">
-          <p-button 
-            label="Got It!" 
-            (onClick)="done()" 
-            styleClass="success-button"
-            icon="pi pi-arrow-right"
-            iconPos="right">
-          </p-button>
+          <app-button variant="primary" class="success-button" iconClass="pi pi-arrow-right" iconPosition="right" (buttonClick)="done()">
+            Got It!
+          </app-button>
         </div>
       </div>
     </p-dialog>
 
     <!-- Stepper Section -->
     <div class="stepper-wrapper">
-      <p-stepper [(value)]="activeStepIndex" [linear]="true">
+      <p-stepper [(value)]="activeStepIndex" [linear]="false">
         
         <p-step-list>
-          <p-step [value]="1">
+          <p-step [value]="1" [class.is-completed-step]="isCompletedStep(1)">
             <span class="step-label">Personal Details</span>
           </p-step>
-          <p-step [value]="2" [disabled]="!canNavigateToStep(2)">
+          <p-step [value]="2" [disabled]="!canNavigateToStep(2)" [class.is-completed-step]="isCompletedStep(2)">
             <span class="step-label">Next of Kin Details</span>
           </p-step>
-          <p-step [value]="3" [disabled]="!canNavigateToStep(3)">
+          <p-step [value]="3" [disabled]="!canNavigateToStep(3)" [class.is-completed-step]="isCompletedStep(3)">
             <span class="step-label">Academic History</span>
           </p-step>
-          <p-step [value]="4" [disabled]="!canNavigateToStep(4)">
+          <p-step [value]="4" [disabled]="!canNavigateToStep(4)" [class.is-completed-step]="isCompletedStep(4)">
             <span class="step-label">Document Upload</span>
           </p-step>
-          <p-step [value]="5" [disabled]="!canNavigateToStep(5)">
+          <p-step [value]="5" [disabled]="!canNavigateToStep(5)" [class.is-completed-step]="isCompletedStep(5)">
             <span class="step-label">Application Summary</span>
           </p-step>
         </p-step-list>
@@ -83,10 +80,10 @@
                 
                 <div class="step-actions">
                   <p-button 
-                    label="Save and Continue" 
-                    [disabled]="isEditLocked || !formStepStatus.personalinfoValid"
+                    label="Continue" 
                     [loading]="isLoadingPersonal"
-                    (onClick)="saveAndMoveToStep(2, savePersonalDetails.bind(this))"
+                    [disabled]="isEditLocked || !formStepStatus.personalinfoValid"
+                    (onClick)="continueToStep(1, 2)"
                     styleClass="primary-btn"
                     icon="pi pi-arrow-right"
                     iconPos="right">
@@ -112,10 +109,10 @@
                   </p-button>
                   
                   <p-button 
-                    label="Save and Continue" 
-                    [disabled]="isEditLocked || !formStepStatus.nextofkinValid"
+                    label="Continue" 
                     [loading]="isLoadingNextOfKin"
-                    (onClick)="saveAndMoveToStep(3, saveNextOfKinDetails.bind(this))"
+                    [disabled]="isEditLocked || !formStepStatus.nextofkinValid"
+                    (onClick)="continueToStep(2, 3)"
                     styleClass="primary-btn"
                     icon="pi pi-arrow-right"
                     iconPos="right">
@@ -141,10 +138,10 @@
                   </p-button>
                   
                   <p-button 
-                    label="Save and Continue" 
-                    [disabled]="isEditLocked || !formStepStatus.academicValid"
+                    label="Continue" 
                     [loading]="isLoadingAcademic"
-                    (onClick)="saveAndMoveToStep(4, saveAcademicHistory.bind(this))"
+                    [disabled]="isEditLocked || !formStepStatus.academicValid"
+                    (onClick)="continueToStep(3, 4)"
                     styleClass="primary-btn"
                     icon="pi pi-arrow-right"
                     iconPos="right">
@@ -154,7 +151,6 @@
             </ng-template>
           </p-step-panel>
 
-          <!-- Step 4: Document Upload -->
           <p-step-panel [value]="4">
             <ng-template #content let-activateCallback="activateCallback">
               <div class="step-content">
@@ -170,10 +166,10 @@
                   </p-button>
                   
                   <p-button 
-                    label="Save and Continue" 
-                    [disabled]="isEditLocked || !formStepStatus.docuplodValid"
+                    label="Continue" 
                     [loading]="isLoadingDocuments"
-                    (onClick)="saveAndMoveToStep(5, saveDocumentUpload.bind(this))"
+                    [disabled]="isEditLocked || !formStepStatus.docUploadValid"
+                    (onClick)="continueToStep(4, 5)"
                     styleClass="primary-btn"
                     icon="pi pi-arrow-right"
                     iconPos="right">
@@ -201,7 +197,7 @@
                   <p-button 
                     label="Submit and Confirm" 
                     [loading]="isSubmittingApplication"
-                    [disabled]="isEditLocked || isSubmittingApplication"
+                    [disabled]="isEditLocked || isSubmittingApplication || !isReadyToSubmit()"
                     (onClick)="confirm()"
                     styleClass="primary-btn"
                     icon="pi pi-check"

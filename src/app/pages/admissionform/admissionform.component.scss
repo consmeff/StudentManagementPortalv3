@@ -1,4 +1,4 @@
-@import '../../../assets/demo/theme';
+@use '../../../assets/demo/theme' as *;
 
 .content-wrapper {
   width: 100%;
@@ -22,8 +22,6 @@
 
 .page-title {
   margin: 0 0 1rem;
-  font-size: 2rem;
-  font-weight: 700;
   color: var(--app-text-primary);
 }
 
@@ -116,7 +114,21 @@
       background: var(--app-border);
     }
 
+    .p-step[data-p-active='true'],
     .p-step-active {
+      .p-step-number {
+        background: var(--app-primary);
+        border-color: var(--app-primary);
+        color: var(--app-surface);
+      }
+
+      .p-step-title {
+        color: var(--app-text-primary);
+        font-weight: 700;
+      }
+    }
+
+    .p-step.is-completed-step {
       .p-step-number {
         background: var(--app-primary);
         border-color: var(--app-primary);
@@ -138,6 +150,22 @@
       background: transparent;
       border: none;
       padding: 0;
+    }
+
+    .p-steppanel {
+      margin: 0;
+      padding: 0;
+      min-height: 0;
+    }
+
+    .p-steppanel-content {
+      padding: 0;
+      margin: 0;
+      min-height: 0;
+    }
+
+    .p-steppanel:not(.p-steppanel-active) {
+      display: none;
     }
   }
 
@@ -161,15 +189,116 @@
     font-size: 0.82rem !important;
     font-weight: 600 !important;
   }
+
+  .success-dialog {
+    .p-dialog-header {
+      justify-content: center;
+      padding: 1.25rem 1.5rem 0.5rem;
+      border-bottom: none;
+      background: var(--app-surface);
+    }
+
+    .p-dialog-header-actions {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .p-dialog-content {
+      padding: 0 1.5rem 1.75rem;
+      background: var(--app-surface);
+    }
+  }
+}
+
+.dialog-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.dialog-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--app-text-primary);
+  text-align: center;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.success-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-primary) 12%, var(--app-surface));
+}
+
+.success-icon {
+  font-size: 2.25rem;
+  color: var(--app-primary);
+}
+
+.congrats-title {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+  color: var(--app-text-primary);
+}
+
+.congrats-message {
+  margin: 0;
+  max-width: 24rem;
+  color: var(--app-text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.next-steps {
+  width: 100%;
+  max-width: 24rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.9rem;
+  background: var(--app-surface-alt);
+}
+
+.next-steps-title {
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--app-text-primary);
+}
+
+.next-steps p {
+  margin: 0;
+  color: var(--app-text-secondary);
+  line-height: 1.55;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.success-button {
+  min-width: 10rem;
 }
 
 @media (max-width: 992px) {
   .content-wrapper {
     padding: 1rem 0.75rem;
-  }
-
-  .page-title {
-    font-size: 1.45rem;
   }
 
   .stepper-wrapper {

@@ -3,33 +3,54 @@ import { AuthSessionStore } from '../store/auth-session.store';
 
 export type PortalSegment = 'new' | 'admitted' | 'returning';
 
+const ADMITTED_USER_TYPES = ['freshman'];
+const RETURNING_USER_TYPES = ['student'];
+const NEW_CANDIDATE_USER_TYPES = ['applicant'];
+const PENDING_ACCEPTANCE_FEE_KEYWORDS = ['pending', 'unpaid', 'not paid', 'fail'];
+
 @Injectable({ providedIn: 'root' })
 export class UserPortalService {
   private readonly authSessionStore = inject(AuthSessionStore);
 
   portalSegment(): PortalSegment {
     const userType = (this.authSessionStore.userType() || '').toLowerCase().trim();
+    const matriculationNo = (this.authSessionStore.matriculationNo() || '').trim();
+    const isAdmitted = this.authSessionStore.isAdmitted();
 
-    // uncomment this guy and fine-tune to determine returning student
-    // const matriculationNo = (this.authSessionStore.matriculationNo() || '').trim();
-    const matriculationNo = '';
+    if (isAdmitted || ADMITTED_USER_TYPES.includes(userType)) {
+      return 'admitted';
+    }
 
-    const admittedKeywords = ['admitted', 'admission', 'fresh', 'new student'];
-    const returningKeywords = ['returning', 'matric', 'student', 'old'];
+    if (RETURNING_USER_TYPES.includes(userType) || !!matriculationNo) {
+      return 'returning';
+    }
 
-    // if (admittedKeywords.some((keyword) => userType.includes(keyword))) {
-    //   return 'admitted';
-    // }
-
-    // if (returningKeywords.some((keyword) => userType.includes(keyword)) || !!matriculationNo) {
-    //   return 'returning';
-    // }
+    if (NEW_CANDIDATE_USER_TYPES.includes(userType)) {
+      return 'new';
+    }
 
     return 'new';
   }
 
   isNewCandidatePortal(): boolean {
     return this.portalSegment() === 'new';
+  }
+
+  isAdmittedPortal(): boolean {
+    return this.portalSegment() === 'admitted';
+  }
+
+  hasPendingAcceptanceFee(): boolean {
+    const acceptanceFeeStatus = (this.authSessionStore.acceptanceFeeStatus() || '').toLowerCase().trim();
+    if (!acceptanceFeeStatus) {
+      return false;
+    }
+
+    return PENDING_ACCEPTANCE_FEE_KEYWORDS.some((keyword) => acceptanceFeeStatus.includes(keyword));
+  }
+
+  landingUrl(): string {
+    return this.dashboardUrl();
   }
 
   dashboardUrl(): string {

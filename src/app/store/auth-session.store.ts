@@ -1,6 +1,7 @@
 import { effect } from '@angular/core';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { LoginResponse } from '../data/auth/auth.data';
+import { normalizeDisplayName } from '../utility/name-format';
 
 type AuthSessionState = {
   name: string;
@@ -8,6 +9,8 @@ type AuthSessionState = {
   matriculationNo: string;
   applicationNo: string;
   paymentStatus: string;
+  acceptanceFeeStatus: string;
+  isAdmitted: boolean;
   jwtToken: string;
   refreshToken: string;
   profileEmail: string;
@@ -23,6 +26,8 @@ const initialAuthSessionState: AuthSessionState = {
   matriculationNo: '',
   applicationNo: '',
   paymentStatus: '',
+  acceptanceFeeStatus: '',
+  isAdmitted: false,
   jwtToken: '',
   refreshToken: '',
   profileEmail: '',
@@ -51,7 +56,9 @@ function writeAuthSessionCookie(state: AuthSessionState): void {
     state.refreshToken ||
     state.applicationNo ||
     state.profileEmail ||
-    state.paymentStatus
+    state.paymentStatus ||
+    state.acceptanceFeeStatus ||
+    state.isAdmitted
   );
 
   if (!hasMeaningfulState) {
@@ -82,6 +89,7 @@ function readAuthSessionCookie(): AuthSessionState | null {
     return {
       ...initialAuthSessionState,
       ...parsed,
+      isAdmitted: !!parsed.isAdmitted,
       registrationComplete: !!parsed.registrationComplete,
     };
   } catch {
@@ -96,11 +104,13 @@ export const AuthSessionStore = signalStore(
     setSessionFromLogin(response: LoginResponse) {
       const nextState: AuthSessionState = {
         ...initialAuthSessionState,
-        name: response.name ?? '',
+        name: normalizeDisplayName(response.name),
         userType: response.user_type ?? '',
         matriculationNo: response.matriculation_no ?? '',
         applicationNo: response.application_no ?? '',
         paymentStatus: response.payment_status ?? '',
+        acceptanceFeeStatus: response.acceptance_fee_status ?? '',
+        isAdmitted: !!response.is_admitted,
         jwtToken: response.access_token ?? '',
         refreshToken: response.refresh_token ?? '',
       };
@@ -122,10 +132,16 @@ export const AuthSessionStore = signalStore(
       patchState(store, { userType: userType ?? '' });
     },
     setName(name: string) {
-      patchState(store, { name: name ?? '' });
+      patchState(store, { name: normalizeDisplayName(name) });
     },
     setPaymentStatus(paymentStatus: string) {
       patchState(store, { paymentStatus: paymentStatus ?? '' });
+    },
+    setAcceptanceFeeStatus(acceptanceFeeStatus: string) {
+      patchState(store, { acceptanceFeeStatus: acceptanceFeeStatus ?? '' });
+    },
+    setIsAdmitted(isAdmitted: boolean) {
+      patchState(store, { isAdmitted: !!isAdmitted });
     },
     setPaymentRef(paymentRef: string) {
       patchState(store, { paymentRef: paymentRef ?? '' });
@@ -166,6 +182,8 @@ export const AuthSessionStore = signalStore(
           matriculationNo: store.matriculationNo(),
           applicationNo: store.applicationNo(),
           paymentStatus: store.paymentStatus(),
+          acceptanceFeeStatus: store.acceptanceFeeStatus(),
+          isAdmitted: store.isAdmitted(),
           jwtToken: store.jwtToken(),
           refreshToken: store.refreshToken(),
           profileEmail: store.profileEmail(),

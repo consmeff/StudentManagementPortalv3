@@ -14,6 +14,7 @@ export interface PaymentWorkflowHooks {
   onError?: (title: string, message: string) => void;
   onWarning?: (title: string, message: string) => void;
   onVerified?: () => void;
+  postVerifyNavigateTo?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +24,26 @@ export class PaymentWorkflowService {
   private readonly authSessionStore = inject(AuthSessionStore);
 
   async startForApplication(applicationNo: string, hooks?: PaymentWorkflowHooks): Promise<void> {
+    await this.startPayment(
+      applicationNo,
+      () => firstValueFrom(this.appService.getPaymentRef({ application_no: applicationNo })),
+      hooks
+    );
+  }
+
+  async startAcceptanceFeePayment(applicationNo: string, hooks?: PaymentWorkflowHooks): Promise<void> {
+    await this.startPayment(
+      applicationNo,
+      () => firstValueFrom(this.appService.acceptanceFeePayment({ application_no: applicationNo })),
+      hooks
+    );
+  }
+
+  private async startPayment(
+    applicationNo: string,
+    paymentRequest: () => Promise<PaymentRefResponse>,
+    hooks?: PaymentWorkflowHooks
+  ): Promise<void> {
     if (!applicationNo) {
       hooks?.onError?.('Error', 'Application number not found');
       return;
@@ -30,7 +51,7 @@ export class PaymentWorkflowService {
 
     hooks?.onProcessingChange?.(true);
     try {
-      const ref = await firstValueFrom(this.appService.getPaymentRef({ application_no: applicationNo }));
+      const ref = await paymentRequest();
       hooks?.onProcessingChange?.(false);
 
       if (!ref?.ref_id) {
@@ -42,9 +63,9 @@ export class PaymentWorkflowService {
       if (!redirected) {
         this.makePayment(applicationNo, ref, hooks);
       }
-    } catch {
+    } catch (error) {
       hooks?.onProcessingChange?.(false);
-      hooks?.onError?.('Payment Error', 'Unable to initialize payment. Please try again.');
+      throw error;
     }
   }
 
@@ -78,15 +99,15 @@ export class PaymentWorkflowService {
           await firstValueFrom(this.appService.verifyPayment({ ref_id: reference }));
           await this.syncPaymentStatus(applicationNo);
           hooks?.onVerifyingChange?.(false);
-          hooks?.onSuccess?.('Payment Successful', 'Your payment has been verified successfully, login to continue.');
+          hooks?.onSuccess?.('Payment Successful', 'Your payment has been verified successfully.');
           hooks?.onVerified?.();
 
+          const postVerifyNavigateTo = hooks?.postVerifyNavigateTo ?? '/auth/login';
           setTimeout(() => {
-            this.router.navigateByUrl('/auth/login');
+            this.router.navigateByUrl(postVerifyNavigateTo);
           }, 1500);
         } catch {
           hooks?.onVerifyingChange?.(false);
-          hooks?.onError?.('Verification Failed', 'Payment verification failed. Please contact support.');
         }
       },
       onClose: () => {
@@ -104,10 +125,15 @@ export class PaymentWorkflowService {
     }
 
     try {
-      const snapshot = await firstValueFrom(this.appService.registratantData(applicantNo));
+      const snapshot = await firstValueFrom(this.appService.registrantData(applicantNo));
       const paymentStatus = snapshot?.data?.payment_status ?? '';
       if (paymentStatus) {
         this.authSessionStore.setPaymentStatus(paymentStatus);
+      }
+      const registrantData = snapshot?.data as Record<string, unknown> | undefined;
+      const acceptanceFeeStatus = registrantData?.['acceptance_fee_status'];
+      if (typeof acceptanceFeeStatus === 'string' && acceptanceFeeStatus.trim().length > 0) {
+        this.authSessionStore.setAcceptanceFeeStatus(acceptanceFeeStatus);
       }
     } catch {
       // Keep payment flow resilient even if status refresh fails.

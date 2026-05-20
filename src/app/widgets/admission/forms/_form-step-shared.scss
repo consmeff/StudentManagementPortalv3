@@ -1,7 +1,7 @@
 .admission-form-card {
   width: 100%;
-  background: var(--app-surface);
-  border: 1px solid var(--app-border);
+  background: var(--app-surface-alt);
+  border: transparent;
   border-radius: 10px;
   padding: 1rem 1rem 1.15rem;
 }
@@ -16,8 +16,11 @@
 
 .admission-section-title {
   margin: 0 0 0.95rem;
-  font-size: 1rem;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0%;
+
   color: var(--app-text-primary);
 }
 
@@ -37,10 +40,11 @@
 }
 
 .admission-label {
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 0%;
   color: var(--app-text-secondary);
-  line-height: 1.2;
 }
 
 .admission-label .required {
@@ -81,7 +85,10 @@
 }
 
 .admission-radio-label {
-  font-size: 0.78rem;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 0%;
   color: var(--app-text-primary);
   cursor: pointer;
   user-select: none;
