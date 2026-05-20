@@ -23,6 +23,7 @@ import { AcademicHistory, CertificateOfBirth, LGA, OLevelResult, RegistrantData,
 import { Address } from '../../data/application/personaldetailsdto';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { TraceabilityModule } from '../../shared/traceability.module';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 import { normalizeApplicationStatusKey } from '../../constants/application-status.utils';
 import { PersonalDetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
 import { NextOfKinComponent } from '../../widgets/admission/forms/nextofkin/nextofkin.component';
@@ -41,6 +42,7 @@ import { ApplicationSummaryComponent } from "../../widgets/admission/forms/appli
     DialogModule,
     ButtonModule,
     StepperModule,
+    ButtonComponent,
     PersonalDetailsComponent,
     NextOfKinComponent,
     AcademicHistoryComponent,
@@ -240,6 +242,27 @@ export class AdmissionFormComponent implements OnInit {
         return this.savedStepStatus.academicValid;
       case 5:
         return this.savedStepStatus.docUploadValid;
+      default:
+        return false;
+    }
+  }
+
+  isCompletedStep(step: number): boolean {
+    if (step >= this.activeStepIndex) {
+      return false;
+    }
+
+    switch (step) {
+      case 1:
+        return this.savedStepStatus.personalinfoValid;
+      case 2:
+        return this.savedStepStatus.nextofkinValid;
+      case 3:
+        return this.savedStepStatus.academicValid;
+      case 4:
+        return this.savedStepStatus.docUploadValid;
+      case 5:
+        return this.isReadyToSubmit();
       default:
         return false;
     }

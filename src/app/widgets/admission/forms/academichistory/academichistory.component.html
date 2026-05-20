@@ -11,15 +11,17 @@
 
         <div class="form-field">
           <label for="primaryDateStarted" class="field-label">Date Started <span class="required">*</span></label>
-          <p-datepicker inputId="primaryDateStarted" formControlName="datestarted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistoryPrimaryForm, 'datestarted')" styleClass="w-full"></p-datepicker>
+          <p-datepicker inputId="primaryDateStarted" formControlName="datestarted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistoryPrimaryForm, 'datestarted') || isDateOrderInvalid(academicHistoryPrimaryForm)" styleClass="w-full"></p-datepicker>
           <small *ngIf="isFieldInvalid(academicHistoryPrimaryForm, 'datestarted')" class="p-error">Start date is required.</small>
+          <small *ngIf="isDateOrderInvalid(academicHistoryPrimaryForm)" class="p-error">Start date cannot be after completion date.</small>
         </div>
 
         <div class="form-field">
           <label for="primaryDateCompleted" class="field-label">Date Completed <span class="required">*</span></label>
-          <p-datepicker inputId="primaryDateCompleted" formControlName="datecompleted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistoryPrimaryForm, 'datecompleted') || isDateOrderInvalid(academicHistoryPrimaryForm)" styleClass="w-full"></p-datepicker>
+          <p-datepicker inputId="primaryDateCompleted" formControlName="datecompleted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistoryPrimaryForm, 'datecompleted') || isDateOrderInvalid(academicHistoryPrimaryForm) || isPrimarySchoolCompletionAgeInvalid()" styleClass="w-full"></p-datepicker>
           <small *ngIf="isFieldInvalid(academicHistoryPrimaryForm, 'datecompleted')" class="p-error">Completion date is required.</small>
           <small *ngIf="isDateOrderInvalid(academicHistoryPrimaryForm)" class="p-error">Completion date cannot be before start date.</small>
+          <small *ngIf="isPrimarySchoolCompletionAgeInvalid()" class="p-error">Applicant must be at least 6 years old before completing primary school.</small>
         </div>
       </div>
     </div>
@@ -35,15 +37,17 @@
 
         <div class="form-field">
           <label for="secondaryDateStarted" class="field-label">Date Started <span class="required">*</span></label>
-          <p-datepicker inputId="secondaryDateStarted" formControlName="datestarted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'datestarted')" styleClass="w-full"></p-datepicker>
+          <p-datepicker inputId="secondaryDateStarted" formControlName="datestarted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'datestarted') || isDateOrderInvalid(academicHistorySecondaryForm)" styleClass="w-full"></p-datepicker>
           <small *ngIf="isFieldInvalid(academicHistorySecondaryForm, 'datestarted')" class="p-error">Start date is required.</small>
+          <small *ngIf="isDateOrderInvalid(academicHistorySecondaryForm)" class="p-error">Start date cannot be after completion date.</small>
         </div>
 
         <div class="form-field">
           <label for="secondaryDateCompleted" class="field-label">Date Completed <span class="required">*</span></label>
-          <p-datepicker inputId="secondaryDateCompleted" formControlName="datecompleted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'datecompleted') || isDateOrderInvalid(academicHistorySecondaryForm)" styleClass="w-full"></p-datepicker>
+          <p-datepicker inputId="secondaryDateCompleted" formControlName="datecompleted" [showIcon]="true" dateFormat="dd/mm/yy" [class.p-invalid]="isFieldInvalid(academicHistorySecondaryForm, 'datecompleted') || isDateOrderInvalid(academicHistorySecondaryForm) || isSecondarySchoolCompletionAgeInvalid()" styleClass="w-full"></p-datepicker>
           <small *ngIf="isFieldInvalid(academicHistorySecondaryForm, 'datecompleted')" class="p-error">Completion date is required.</small>
           <small *ngIf="isDateOrderInvalid(academicHistorySecondaryForm)" class="p-error">Completion date cannot be before start date.</small>
+          <small *ngIf="isSecondarySchoolCompletionAgeInvalid()" class="p-error">Applicant must be at least 12 years old before completing secondary school.</small>
         </div>
 
         <div class="form-field">
@@ -59,14 +63,15 @@
       <div class="form-grid" [formGroup]="jambDetailsForm">
         <div class="form-field">
           <label for="jambRegistrationNumber" class="field-label">Registration Number <span class="required">*</span></label>
-          <input pInputText id="jambRegistrationNumber" formControlName="registrationNumber" [class.p-invalid]="isFieldInvalid(jambDetailsForm, 'registrationNumber')" />
-          <small *ngIf="isFieldInvalid(jambDetailsForm, 'registrationNumber')" class="p-error">JAMB registration number is required.</small>
+          <input pInputText id="jambRegistrationNumber" formControlName="registrationNumber" [attr.maxlength]="academicHistoryRules.jambRegistrationNumberMaxLength" [class.p-invalid]="isFieldInvalid(jambDetailsForm, 'registrationNumber')" (input)="onJambRegistrationNumberInput($event)" />
+          <small *ngIf="jambDetailsForm.get('registrationNumber')?.hasError('required') && isFieldInvalid(jambDetailsForm, 'registrationNumber')" class="p-error">JAMB registration number is required.</small>
+          <small *ngIf="(jambDetailsForm.get('registrationNumber')?.hasError('maxlength') || jambDetailsForm.get('registrationNumber')?.hasError('pattern')) && isFieldInvalid(jambDetailsForm, 'registrationNumber')" class="p-error">JAMB registration number must not be more than 12 alphanumeric characters.</small>
         </div>
 
         <div class="form-field">
           <label for="jambScore" class="field-label">Score <span class="required">*</span></label>
-          <input pInputText id="jambScore" type="number" min="0" max="400" formControlName="score" [class.p-invalid]="isFieldInvalid(jambDetailsForm, 'score')" />
-          <small *ngIf="isFieldInvalid(jambDetailsForm, 'score')" class="p-error">JAMB score is required and must be between 0 and 400.</small>
+          <input pInputText id="jambScore" type="number" [attr.min]="academicHistoryRules.jambScoreMin" [attr.max]="academicHistoryRules.jambScoreMax" formControlName="score" [class.p-invalid]="isFieldInvalid(jambDetailsForm, 'score')" (input)="onJambScoreInput($event)" />
+          <small *ngIf="isFieldInvalid(jambDetailsForm, 'score')" class="p-error">JAMB score is required and must not be more than 400.</small>
         </div>
       </div>
     </div>

@@ -1,18 +1,8 @@
 @use '../../../../../assets/demo/theme' as *;
+@use '../_form-step-shared' as *;
 
 .upload-container {
-  width: 100%;
-  background-color: $bg-secondary;
-  border-radius: $radius-xl;
-  padding: $spacing-6;
-
-  @include responsive($breakpoint-md) {
-    padding: $spacing-10;
-  }
-
-  @include dark-mode {
-    background-color: $dark-bg-secondary;
-  }
+  @extend .admission-form-card;
 }
 
 .upload-container.readonly {
@@ -28,12 +18,8 @@
   font-size: $font-size-xl;
   font-weight: $font-weight-semibold;
   line-height: $line-height-tight;
-  color: $text-primary;
+  color: var(--app-text-primary);
   margin-bottom: $spacing-8;
-
-  @include dark-mode {
-    color: $dark-text-primary;
-  }
 }
 
 .upload-section {
@@ -50,15 +36,11 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   line-height: $line-height-normal;
-  color: $text-primary;
+  color: var(--app-text-primary);
   margin-bottom: $spacing-3;
 
-  @include dark-mode {
-    color: $dark-text-primary;
-  }
-
   .required {
-    color: $danger;
+    color: var(--app-danger);
     margin-left: 2px;
   }
 }
@@ -67,9 +49,9 @@
   width: 100%;
   max-width: 500px;
   height: 160px;
-  border: 2px dashed $border-color;
+  border: 2px dashed var(--app-border);
   border-radius: $radius-lg;
-  background-color: $bg-primary;
+  background-color: var(--app-surface);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -79,26 +61,12 @@
   transition: $transition-all;
 
   &:hover {
-    border-color: $primary;
-    background-color: rgba($primary, 0.02);
+    border-color: var(--app-primary);
+    background-color: color-mix(in srgb, var(--app-primary) 8%, var(--app-surface));
 
     .upload-icon {
-      color: $primary;
+      color: var(--app-primary);
       transform: translateY(-2px);
-    }
-  }
-
-  @include dark-mode {
-    background-color: $dark-bg-primary;
-    border-color: $dark-border-color;
-
-    &:hover {
-      border-color: $primary-light;
-      background-color: rgba($primary-light, 0.05);
-
-      .upload-icon {
-        color: $primary-light;
-      }
     }
   }
 
@@ -115,12 +83,8 @@
 
 .upload-icon {
   font-size: 3rem;
-  color: $text-tertiary;
+  color: var(--app-text-muted);
   transition: $transition-all;
-
-  @include dark-mode {
-    color: $dark-text-tertiary;
-  }
 }
 
 .upload-desc {
@@ -128,22 +92,14 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-normal;
   line-height: $line-height-normal;
-  color: $text-secondary;
+  color: var(--app-text-secondary);
   text-align: center;
-
-  @include dark-mode {
-    color: $dark-text-secondary;
-  }
 }
 
 .upload-hint {
   font-size: $font-size-xs;
-  color: $text-tertiary;
+  color: var(--app-text-muted);
   text-align: center;
-
-  @include dark-mode {
-    color: $dark-text-tertiary;
-  }
 }
 
 .file-preview {
@@ -151,19 +107,14 @@
   align-items: center;
   justify-content: space-between;
   padding: $spacing-4;
-  background-color: $bg-primary;
-  border: 1px solid $border-color;
+  background-color: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: $radius-lg;
   max-width: 500px;
   transition: $transition-all;
 
   &:hover {
     box-shadow: $shadow-md;
-  }
-
-  @include dark-mode {
-    background-color: $dark-bg-primary;
-    border-color: $dark-border-color;
   }
 
   @media (max-width: $breakpoint-sm) {
@@ -200,42 +151,26 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   line-height: $line-height-tight;
-  color: $text-primary;
+  color: var(--app-text-primary);
   @include truncate;
-
-  @include dark-mode {
-    color: $dark-text-primary;
-  }
 }
 
 .file-size {
   font-size: $font-size-xs;
   font-weight: $font-weight-normal;
-  color: $text-secondary;
-
-  @include dark-mode {
-    color: $dark-text-secondary;
-  }
+  color: var(--app-text-secondary);
 }
 
 .remove-icon {
   font-size: 2rem;
-  color: $border-color;
+  color: var(--app-border);
   cursor: pointer;
   transition: $transition-all;
   flex-shrink: 0;
 
   &:hover {
-    color: $danger;
+    color: var(--app-danger);
     transform: scale(1.1);
-  }
-
-  @include dark-mode {
-    color: $dark-border-color;
-
-    &:hover {
-      color: $danger-light;
-    }
   }
 }
 
@@ -245,24 +180,14 @@
   pointer-events: none;
 }
 
-// PrimeNG Component Customization
 ::ng-deep {
   .upload-container {
-    // Progress Spinner in file preview
     .file-spinner {
       .p-progress-spinner-circle {
-        stroke: $primary !important;
+        stroke: var(--app-primary) !important;
         animation: p-progress-spinner-dash 1.5s ease-in-out infinite;
       }
-
-      @include dark-mode {
-        .p-progress-spinner-circle {
-          stroke: $primary-light !important;
-        }
-      }
     }
-
-    // Toast Customization
     .p-toast {
       .p-toast-message {
         border-radius: $radius-md;
@@ -335,9 +260,6 @@
 
 // Responsive Adjustments
 @media (max-width: $breakpoint-md) {
-  .upload-container {
-    padding: $spacing-4;
-  }
 
   .form-title {
     font-size: $font-size-lg;

@@ -22,13 +22,14 @@
       
       <ng-template pTemplate="header">
         <div class="dialog-header-content">
-          <i class="pi pi-check-circle header-icon"></i>
           <span class="dialog-title">Registration Complete</span>
         </div>
       </ng-template>
 
       <div class="dialog-content">
-        <i class="pi pi-check-circle success-icon"></i>
+        <div class="success-icon-wrap" aria-hidden="true">
+          <i class="pi pi-check-circle success-icon"></i>
+        </div>
         <h2 class="congrats-title">Congratulations!</h2>
         <p class="congrats-message">
           You have successfully completed your registration process.
@@ -41,13 +42,9 @@
         </div>
 
         <div class="dialog-actions">
-          <p-button 
-            label="Got It!" 
-            (onClick)="done()" 
-            styleClass="success-button"
-            icon="pi pi-arrow-right"
-            iconPos="right">
-          </p-button>
+          <app-button variant="primary" class="success-button" iconClass="pi pi-arrow-right" iconPosition="right" (buttonClick)="done()">
+            Got It!
+          </app-button>
         </div>
       </div>
     </p-dialog>
@@ -57,19 +54,19 @@
       <p-stepper [(value)]="activeStepIndex" [linear]="false">
         
         <p-step-list>
-          <p-step [value]="1">
+          <p-step [value]="1" [class.is-completed-step]="isCompletedStep(1)">
             <span class="step-label">Personal Details</span>
           </p-step>
-          <p-step [value]="2" [disabled]="!canNavigateToStep(2)">
+          <p-step [value]="2" [disabled]="!canNavigateToStep(2)" [class.is-completed-step]="isCompletedStep(2)">
             <span class="step-label">Next of Kin Details</span>
           </p-step>
-          <p-step [value]="3" [disabled]="!canNavigateToStep(3)">
+          <p-step [value]="3" [disabled]="!canNavigateToStep(3)" [class.is-completed-step]="isCompletedStep(3)">
             <span class="step-label">Academic History</span>
           </p-step>
-          <p-step [value]="4" [disabled]="!canNavigateToStep(4)">
+          <p-step [value]="4" [disabled]="!canNavigateToStep(4)" [class.is-completed-step]="isCompletedStep(4)">
             <span class="step-label">Document Upload</span>
           </p-step>
-          <p-step [value]="5" [disabled]="!canNavigateToStep(5)">
+          <p-step [value]="5" [disabled]="!canNavigateToStep(5)" [class.is-completed-step]="isCompletedStep(5)">
             <span class="step-label">Application Summary</span>
           </p-step>
         </p-step-list>
@@ -154,7 +151,6 @@
             </ng-template>
           </p-step-panel>
 
-          <!-- Step 4: Document Upload -->
           <p-step-panel [value]="4">
             <ng-template #content let-activateCallback="activateCallback">
               <div class="step-content">
