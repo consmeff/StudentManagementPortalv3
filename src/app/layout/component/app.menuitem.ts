@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, OnInit, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
@@ -89,7 +89,7 @@ import { LayoutService } from '../service/layout.service';
     ],
     providers: [LayoutService]
 })
-export class AppMenuitem {
+export class AppMenuitem implements OnInit, OnDestroy {
     @Input() item!: MenuItem;
 
     @Input() index!: number;
@@ -115,14 +115,12 @@ export class AppMenuitem {
         this.menuSourceSubscription = this.layoutService.menuSource$.subscribe((value) => {
             Promise.resolve(null).then(() => {
                 if (value.routeEvent) {
-                    this.active = value.key === this.key || value.key.startsWith(this.key + '-') ? true : false;
+                    this.active = !!(value.key === this.key || value.key.startsWith(`${this.key  }-`));
                     this.syncActiveClass();
-                } else {
-                    if (value.key !== this.key && !value.key.startsWith(this.key + '-')) {
+                } else if (value.key !== this.key && !value.key.startsWith(`${this.key  }-`)) {
                         this.active = false;
                         this.syncActiveClass();
                     }
-                }
             });
         });
 
@@ -139,7 +137,7 @@ export class AppMenuitem {
     }
 
     ngOnInit() {
-        this.key = this.parentKey ? this.parentKey + '-' + this.index : String(this.index);
+        this.key = this.parentKey ? `${this.parentKey  }-${  this.index}` : String(this.index);
 
         if (this.item.routerLink) {
             this.updateActiveStateFromRoute();
@@ -147,7 +145,7 @@ export class AppMenuitem {
     }
 
     updateActiveStateFromRoute() {
-        let activeRoute = this.router.isActive(this.item.routerLink[0], { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' });
+        const activeRoute = this.router.isActive(this.item.routerLink[0], { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' });
 
         if (activeRoute) {
             this.layoutService.onMenuStateChange({ key: this.key, routeEvent: true });

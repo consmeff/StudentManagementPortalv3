@@ -15,17 +15,25 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
 })
 export class AdmittedPaymentComponent implements OnInit {
   private readonly router = inject(Router);
+
   private readonly messageService = inject(MessageService);
+
   readonly flow = inject(AdmittedFlowService);
 
   readonly isProcessing = signal(false);
+
   readonly amountToPay = signal('');
+
   readonly paymentHistory = computed(() => this.flow.schoolFeePayments());
+
   readonly totalPaid = computed(() => this.formatNaira(this.flow.paidSchoolFees()));
+
   readonly remainingAmount = computed(() => this.formatNaira(this.flow.remainingSchoolFees()));
+
   readonly amountFieldLabel = computed(() =>
     this.paymentHistory().length === 0 ? 'Make your 1st payment' : 'Continue with next installment'
   );
+
   readonly suggestedAmount = computed(() => this.formatNaira(this.flow.suggestedInstallmentAmount()));
 
   ngOnInit(): void {

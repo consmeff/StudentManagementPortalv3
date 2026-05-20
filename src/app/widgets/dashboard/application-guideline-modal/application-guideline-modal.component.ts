@@ -12,13 +12,19 @@ import { TraceabilityModule } from '../../../shared/traceability.module';
 })
 export class ApplicationGuidelineModalComponent {
   @Input({ required: true }) content!: ApplicationGuidelineContent;
+
   @Input() visible = false;
+
   @Input() accepted = false;
+
   @Input() loading = false;
+
   @Input() continueLabel = 'Continue to Payment';
 
   @Output() visibleChange = new EventEmitter<boolean>();
+
   @Output() acceptedChange = new EventEmitter<boolean>();
+
   @Output() continueClicked = new EventEmitter<void>();
 
   onVisibleChange(next: boolean): void {
@@ -27,7 +33,7 @@ export class ApplicationGuidelineModalComponent {
   }
 
   onAcceptedToggle(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
+    const {checked} = (event.target as HTMLInputElement);
     this.accepted = checked;
     this.acceptedChange.emit(checked);
   }

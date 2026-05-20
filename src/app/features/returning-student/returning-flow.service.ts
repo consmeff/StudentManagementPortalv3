@@ -138,14 +138,23 @@ export type NextOfKinData = {
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   readonly studentName = signal('ISHOLA, Hassan Gbadebo');
+
   readonly matricNo = signal('CONSMMEFS/NUR/2024/0142');
+
   readonly program = signal('Nursing Science');
+
   readonly session = signal('2025/2026');
+
   readonly level = signal('OND 2');
+
   readonly semester = signal('1st Semester');
+
   readonly selectedResultSemester = signal('OND 1 First Semester');
+
   readonly activeProfileTab = signal<ReturningProfileTab>('overview');
+
   readonly hostelApplicationStatus = signal<HostelApplicationStatus>('locked');
+
   readonly hostelApplicationDraft = signal<HostelApplicationPayload>({
     academicSession: '',
     preferredHostel: '',
@@ -153,7 +162,9 @@ export class ReturningFlowService {
     specialNeeds: '',
     acknowledged: false
   });
+
   readonly hostelApplicationDate = signal<Date | null>(null);
+
   readonly hostelAllocation = signal<HostelAllocation>({
     hostelName: 'Abimbola Hostel',
     block: 'Block A',
@@ -164,19 +175,31 @@ export class ReturningFlowService {
   });
 
   readonly cumulativeGpa = signal(3.78);
+
   readonly gpaClass = signal('Second Class Upper');
+
   readonly gpaDelta = signal('from 3.68');
+
   readonly currentCgpa = signal(3.67);
+
   readonly bestSemesterGpa = signal(3.78);
+
   readonly lowestSemesterGpa = signal(3.56);
+
   readonly semestersCompleted = signal(2);
+
   readonly semestersTotal = signal(4);
 
   readonly totalSchoolFees = 600000;
+
   readonly minimumFirstPayment = 500000;
+
   readonly maxInstallments = 3;
+
   readonly paymentHistory = signal<ReturningPaymentRecord[]>([]);
+
   readonly schoolFeeInstallments = signal<SchoolFeeInstallment[]>([]);
+
   readonly fees = signal<FeeItem[]>([
     { id: 'school-fees', name: 'School Fees', amount: 600000, status: 'remaining', type: 'mandatory' },
     { id: 'faculty-charges', name: 'Faculty Charges', amount: 10000, status: 'paid', type: 'mandatory' },
@@ -263,8 +286,11 @@ export class ReturningFlowService {
   ]);
 
   readonly resultSemesterOptions = signal(['OND 1 First Semester', 'HND 1 First Semester', 'OND 2 First Semester']);
+
   readonly hostelSessionOptions = signal(['2025/2026']);
+
   readonly hostelOptions = signal(['Abimbola Hostel', 'Amina Hostel', 'Legacy Hostel']);
+
   readonly hostelBlockOptions = signal(['Block A', 'Block B', 'Block C']);
 
   readonly cgpaThresholds = signal<CgpaThreshold[]>([
@@ -292,12 +318,16 @@ export class ReturningFlowService {
   readonly paidAmount = computed(() =>
     this.paymentHistory().reduce((sum, entry) => sum + entry.amount, 0)
   );
+
   readonly outstandingAmount = computed(() => Math.max(0, this.totalSchoolFees - this.paidAmount()));
+
   readonly outstandingInstallmentLabel = computed(() => {
     const installmentNo = this.paymentHistory().length + 1;
     return `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`;
   });
+
   readonly hasInternalPayment = computed(() => this.paymentHistory().length > 0);
+
   readonly paymentProgressPercent = computed(() =>
     Math.max(0, Math.min(100, Math.round((this.paidAmount() / this.totalSchoolFees) * 100)))
   );
@@ -305,31 +335,45 @@ export class ReturningFlowService {
   readonly selectedCourses = computed(() =>
     this.coursePool().filter((course) => this.selectedCourseCodes().includes(course.code))
   );
+
   readonly totalUnitsSelected = computed(() =>
     this.selectedCourses().reduce((sum, course) => sum + course.units, 0)
   );
+
   readonly totalCoursesSelected = computed(() => this.selectedCourses().length);
+
   readonly carryoverCourses = computed(() =>
     this.coursePool().filter((course) => course.category === 'carryover')
   );
+
   readonly levelCourses = computed(() =>
     this.coursePool().filter((course) => course.category === 'level')
   );
+
   readonly hasFailedCourse = computed(() => this.carryoverCourses().length > 0);
+
   readonly schoolFeesPaid = computed(() =>
     this.schoolFeeInstallments().reduce((sum, item) => sum + item.amount, 0)
   );
+
   readonly schoolFeesRemaining = computed(() => Math.max(0, this.totalSchoolFees - this.schoolFeesPaid()));
+
   readonly schoolFeesProgressPercent = computed(() =>
     Math.max(0, Math.min(100, Math.round((this.schoolFeesPaid() / this.totalSchoolFees) * 100)))
   );
+
   readonly canAddSchoolFeeInstallment = computed(() =>
     this.schoolFeeInstallments().length < this.maxInstallments && this.schoolFeesRemaining() > 0
   );
+
   readonly mandatoryFees = computed(() => this.fees().filter((fee) => fee.type === 'mandatory'));
+
   readonly optionalFees = computed(() => this.fees().filter((fee) => fee.type === 'optional'));
+
   readonly hostelFeeStatus = computed(() => this.fees().find((fee) => fee.id === 'hostel')?.status ?? 'unpaid');
+
   readonly canAccessHostelApplication = computed(() => this.hostelFeeStatus() === 'paid');
+
   readonly effectiveHostelStatus = computed<HostelApplicationStatus>(() => {
     if (!this.canAccessHostelApplication()) {
       return 'locked';
@@ -339,6 +383,7 @@ export class ReturningFlowService {
   });
 
   readonly semesterResultGpa = computed(() => 3.85);
+
   readonly profileOverview = signal<ProfileOverviewData>({
     fullName: 'ISHOLA, Hassan Gbadebo',
     matricNo: 'CONSMMEFS/NUR/2024/0142',
@@ -346,6 +391,7 @@ export class ReturningFlowService {
     admissionYear: '2024/25',
     status: 'Active'
   });
+
   readonly personalContact = signal<PersonalContactData>({
     fullName: 'ISHOLA, Hassan Gbadebo',
     email: 'igbadeobh@gmail.com',
@@ -360,6 +406,7 @@ export class ReturningFlowService {
     disability: 'No',
     specificDisability: 'None'
   });
+
   readonly residentialAddress = signal<AddressData>({
     houseNumber: '3',
     streetName: 'Akin Bayo close',
@@ -368,6 +415,7 @@ export class ReturningFlowService {
     state: 'Oyo State',
     lga: 'Akinyele'
   });
+
   readonly nextOfKin = signal<NextOfKinData>({
     fullName: 'ISHOLA, Dada Haruna',
     email: 'ihadola@gmail.com',
@@ -380,6 +428,7 @@ export class ReturningFlowService {
     phone: '0707 289 0246',
     alternatePhone: '0702 308 4619'
   });
+
   readonly nextOfKinResidence = signal<AddressData>({
     houseNumber: '3',
     streetName: 'Akin Bayo close',

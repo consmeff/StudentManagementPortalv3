@@ -13,6 +13,7 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
 })
 export class AdmittedDashboardComponent implements OnInit {
   private readonly router = inject(Router);
+
   readonly flow = inject(AdmittedFlowService);
 
   readonly amountPaid = computed(() => {

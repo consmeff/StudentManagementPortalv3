@@ -1,12 +1,12 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, SimpleChanges, ChangeDetectorRef, OnChanges } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
+import { MessageService } from 'primeng/api';
 import { ApplicationService } from '../../../services/application.service';
 import { AppInitResponseDTO, DepartmentsDTO, OpenApplicationDTO, Program } from '../../../data/application/admission.dto';
-import { firstValueFrom } from 'rxjs';
 import { RegStoreService } from '../../../services/regstore.service';
 import { FormService } from '../../services/form.service';
 import { RegistrantDataDTO } from '../../../data/application/registrantdatadto';
-import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 
@@ -17,11 +17,15 @@ import { AuthSessionStore } from '../../../store/auth-session.store';
   imports: [TraceabilityModule],
   providers: [MessageService]
 })
-export class programComponent implements OnInit {
+export class programComponent implements OnInit, OnChanges {
   programs!: OpenApplicationDTO;
+
   departments!: DepartmentsDTO;
+
   _formStepService = inject(FormService);
+
   regstore = inject(RegStoreService);
+
   authSessionStore = inject(AuthSessionStore);
 
   courseForm: FormGroup = new FormGroup({
@@ -35,14 +39,21 @@ export class programComponent implements OnInit {
   });
 
   selectedDept: number = 0;
+
   selectedCourse: number = 0;
+
   @Output() selectedDeptChanged = new EventEmitter<string>();
 
   showGuideline: boolean = false;
+
   @Output() showGuidelineStatus = new EventEmitter<boolean>();
+
   appInitResp!: AppInitResponseDTO;
+
   toShow: number = 0;
+
   busy: boolean = false;
+
   @Input() backendprogram: Program | undefined;
 
   constructor(

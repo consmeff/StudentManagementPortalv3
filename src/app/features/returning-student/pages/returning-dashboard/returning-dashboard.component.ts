@@ -13,6 +13,7 @@ import { ReturningFlowService } from '../../returning-flow.service';
 })
 export class ReturningDashboardComponent {
   private readonly router = inject(Router);
+
   readonly flow = inject(ReturningFlowService);
 
   goToCourses(): void {

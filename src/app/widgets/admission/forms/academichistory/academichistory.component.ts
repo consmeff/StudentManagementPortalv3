@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 // PrimeNG Imports
@@ -35,10 +35,13 @@ import { ACADEMIC_HISTORY_RULES } from '../../../../constants/academic-history.c
   templateUrl: './academichistory.component.html',
   styleUrl: './academichistory.component.scss'
 })
-export class AcademicHistoryComponent {
+export class AcademicHistoryComponent implements OnInit {
   _formStepService = inject(FormService);
+
   regstore = inject(RegStoreService);
+
   appservice = inject(ApplicationService);
+
   cd = inject(ChangeDetectorRef);
 
   formStepStatus: formstepDTO = {
@@ -49,23 +52,37 @@ export class AcademicHistoryComponent {
   };
 
   academicHistoryPrimaryForm!: FormGroup;
+
   academicHistorySecondaryForm!: FormGroup;
+
   jambDetailsForm!: FormGroup;
+
   academicHistoryExamsForm!: FormGroup;
+
   academicHistoryOtherQualificationForm!: FormGroup;
 
   backendRegistrationData!: RegistrantDataDTO;
+
   draftPersonalData: TPersonalDetailDTO | null = null;
+
   draftAcademicHistory: TAcademicHistory[] | null = null;
+
   draftOLevelResults: TOLevelResult[] | null = null;
+
   draftUtmeResult: TUtmeResultPayload | null = null;
 
   examOptions: string[] = [];
+
   examDropdownOptions: any[] = [];
+
   years = getPastYears();
+
   yearDropdownOptions: any[] = [];
+
   grades: string[] = ['A', 'B'];
+
   gradeDropdownOptions: any[] = [];
+
   readonly academicHistoryRules = ACADEMIC_HISTORY_RULES;
 
   examnumform: FormGroup = new FormGroup({
@@ -73,6 +90,7 @@ export class AcademicHistoryComponent {
   });
 
   attemptOptions = ['1', '2'];
+
   isEditable = true;
 
   constructor(private fb: FormBuilder) {
@@ -154,13 +172,13 @@ export class AcademicHistoryComponent {
 
   initializeForm() {
     const academicHistorySource = this.draftAcademicHistory ?? this.backendRegistrationData?.data?.academic_history ?? [];
-    let _primary = academicHistorySource
+    const _primary = academicHistorySource
       ?.filter(f => f.certificate_type === "Primary School Leaving Certificate")?.[0] ?? null;
 
-    let _sec = academicHistorySource
+    const _sec = academicHistorySource
       ?.filter(f => f.certificate_type === "SSSCE")?.[0] ?? null;
 
-    let _more = academicHistorySource
+    const _more = academicHistorySource
       ?.filter(f => f.certificate_type !== "SSSCE" && f.certificate_type !== "Primary School Leaving Certificate") ?? null;
 
     this.academicHistoryPrimaryForm = this.fb.group({
@@ -198,7 +216,7 @@ export class AcademicHistoryComponent {
       ]
     });
 
-    let _exams = this.draftOLevelResults ?? this.backendRegistrationData?.data?.o_level_result;
+    const _exams = this.draftOLevelResults ?? this.backendRegistrationData?.data?.o_level_result;
     if (_exams != undefined && _exams.length > 0 && _exams[0].subjects != undefined) {
       this.clearExamAttempt();
       _exams.forEach((exam) => this.addExamAttempt(exam));
@@ -267,11 +285,11 @@ export class AcademicHistoryComponent {
   }
 
   preparePayload() {
-    let ex: TOLevelResult[] = [];
+    const ex: TOLevelResult[] = [];
     this.academicHistoryExamsForm.value.examattemptcount.forEach((_element: any) => {
-      var element = _element as ExamRecord;
-      let _n = element.name;
-      let _d = element.year;
+      const element = _element as ExamRecord;
+      const _n = element.name;
+      const _d = element.year;
       ex.push({
         name: `${_n}/${_d}`,
         subjects: Object.entries(element)
@@ -291,7 +309,7 @@ export class AcademicHistoryComponent {
     };
     this._formStepService.setUtmeResultFormData(utmePayload);
 
-    let ah: TAcademicHistory[] = [
+    const ah: TAcademicHistory[] = [
       {
         institution: this.academicHistoryPrimaryForm.value.name,
         certificate_type: this.academicHistoryPrimaryForm.value.qualificationType,
@@ -353,7 +371,7 @@ export class AcademicHistoryComponent {
         chemistry: [null, Validators.required],
         biology: [null, Validators.required],
       });
-    } else {
+    } 
       return this.fb.group({
         name: [exam.name.replace(/\/\d{4}/g, ""), Validators.required],
         year: [extractLastYearFromText(exam.name), Validators.required],
@@ -363,7 +381,7 @@ export class AcademicHistoryComponent {
         chemistry: [exam.subjects.find(f => f.subject.includes("chemistry"))?.grade || null, Validators.required],
         biology: [exam.subjects.find(f => f.subject.includes("biology"))?.grade || null, Validators.required],
       });
-    }
+    
   }
 
   addQualification(item?: TAcademicHistory | AcademicHistory): void {
@@ -461,7 +479,7 @@ export class AcademicHistoryComponent {
 
   isOptionalQualificationIncomplete(index: number): boolean {
     const qualification = this.qualificationsArray().at(index) as FormGroup;
-    const value = qualification.value;
+    const {value} = qualification;
     const hasAnyValue = Object.values(value).some((v) => this.hasFilledValue(v));
     const hasAllValue = Object.values(value).every((v) => this.hasFilledValue(v));
     return hasAnyValue && !hasAllValue;
@@ -492,7 +510,7 @@ export class AcademicHistoryComponent {
 
   private areOptionalQualificationsValid(): boolean {
     return this.qualificationsArray().controls.every((group) => {
-      const value = (group as FormGroup).value;
+      const {value} = (group as FormGroup);
       const values = Object.values(value);
       const hasAnyValue = values.some((v) => this.hasFilledValue(v));
       const hasAllValue = values.every((v) => this.hasFilledValue(v));

@@ -2,13 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
+import { Sidebar } from 'primeng/sidebar';
 import { Program } from '../../data/application/admission.dto';
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { ApplicationService } from '../../services/application.service';
 import { RegStoreService } from '../../services/regstore.service';
 import { TraceabilityModule } from '../../shared/traceability.module';
-import { Sidebar } from 'primeng/sidebar';
 import { SidebarComponent } from '../../widgets/sidebar/sidebar.component';
 import { TopbarComponent } from '../../widgets/topbar/topbar.component';
 import { AuthSessionStore } from '../../store/auth-session.store';
@@ -21,26 +21,41 @@ import { AuthSessionStore } from '../../store/auth-session.store';
 })
 export class xDashboardComponent implements OnInit {
   name = '';
+
   sidebarVisible = false;
+
   visible = false;
+
   guidelineVisible = false;
+
   guidelinesAccepted = false;
+
   dialogTitle = 'Choose the course you are applying for';
+
   selectedCourse = '';
+
   backendprogram: Program | undefined;
 
   // Dashboard Stats
   applicationProgress = 20;
+
   paymentStatus = 'Pending';
+
   paymentDate = '-';
+
   daysRemaining = 30;
+
   deadline = 'March 31, 2025';
+
   documentsUploaded = 2;
+
   totalDocuments = 5;
 
   // Chart Data
   chartData: any;
+
   chartOptions: any;
+
   chartPlugins: any;
 
   // Activities
@@ -63,9 +78,13 @@ export class xDashboardComponent implements OnInit {
   ];
 
   _widgetService = inject(WidgetsService);
+
   router = inject(Router);
+
   appService = inject(ApplicationService);
+
   regStore = inject(RegStoreService);
+
   authSessionStore = inject(AuthSessionStore);
 
   constructor() {
@@ -114,7 +133,7 @@ export class xDashboardComponent implements OnInit {
       {
         id: 'centerText',
         beforeDraw: (chart: any) => {
-          const ctx = chart.ctx;
+          const {ctx} = chart;
           const dataset = chart.data.datasets[0];
           const total = dataset.data.reduce((sum: number, value: number) => sum + value, 0);
           const value = dataset.data[0];

@@ -6,9 +6,11 @@ import { toObservable } from '@angular/core/rxjs-interop';
 })
 export class LoadingService {
   private readonly _loading = signal<boolean>(false);
+
   private loadingCounter = 0;
 
   readonly loading = this._loading.asReadonly();
+
   public loading$ = toObservable(this._loading);
 
   show(): void {

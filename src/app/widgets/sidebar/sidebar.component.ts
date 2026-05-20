@@ -19,6 +19,7 @@ type SidebarMenuItem = {
 })
 export class SidebarComponent {
   sidebarVisible = false;
+
   readonly menuItems: SidebarMenuItem[] = [
     { label: 'Dashboard', icon: 'pi pi-th-large', route: '/pages/dashboard' },
     { label: 'Profile', icon: 'pi pi-user', route: '/pages/profile' },
@@ -30,7 +31,9 @@ export class SidebarComponent {
   ];
   
   _widgetService = inject(WidgetsService);
+
   router = inject(Router);
+
   private readonly authSessionStore = inject(AuthSessionStore);
 
   constructor() {

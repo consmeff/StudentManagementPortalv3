@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -6,10 +6,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { RippleModule } from 'primeng/ripple';
+import { MessageService } from 'primeng/api';
 import { AppFloatingConfigurator } from '../../layout/component/app.floatingconfigurator';
 import { AuthService } from '../../services/auth.service';
 
-import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { AuthSessionStore } from '../../store/auth-session.store';
 
@@ -25,10 +25,11 @@ import { AuthSessionStore } from '../../store/auth-session.store';
      
     `
 })
-export class Logout {
+export class Logout implements OnInit {
     
  
     route = inject(Router)
+
     authSessionStore = inject(AuthSessionStore);
 
     constructor(private fb: FormBuilder) {

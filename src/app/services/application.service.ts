@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
 import {
   PaginatedPaymentsResponse,
@@ -17,6 +17,7 @@ import { RegistrantDataDTO } from '../data/application/registrantdatadto';
 })
 export class ApplicationService {
   private readonly apiRoot = environment.apiURL;
+
   private readonly paymentsEndpoint = `${this.apiRoot}/api/v1/payments/payments`;
 
   constructor(private http: HttpClient) { }
@@ -24,9 +25,11 @@ export class ApplicationService {
   openApplications(): Observable<any> {
     return this.http.get<any>(`${this.apiRoot}/api/v1/setup/applications?status=open`);
   }
+
   departments(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiRoot}/api/v1/setup/departments?program_id=${id}`);
   }
+
   initializeApplication(payload: any): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/applicants`, payload);
   }
@@ -34,6 +37,7 @@ export class ApplicationService {
   personalDetails(app_no: string, payload: any): Observable<any> {
     return this.http.patch<any>(`${this.apiRoot}/api/v1/applicants/single?applicant_no=${app_no}`, payload);
   }
+
   makePayment(app_no: string, payload: any): Observable<any> {
     return this.http.patch<any>(`${this.apiRoot}/api/v1/applicants/single?applicant_no=${app_no}`, payload);
   }
@@ -44,21 +48,25 @@ export class ApplicationService {
       map((response) => this.normalizePreRegistrationResponse(response))
     );
   }
+
   countries(): Observable<CountryDTO> {
     return this.http.get<any>(`${this.apiRoot}/api/v1/data/countries`).pipe(
       map((response) => this.normalizeCollectionResponse(response))
     );
   }
+
   states(): Observable<StatesDTO> {
     return this.http.get<any>(`${this.apiRoot}/api/v1/data/countries/NGA/states`).pipe(
       map((response) => this.normalizeCollectionResponse(response))
     );
   }
+
   lgas(id: number): Observable<LGADTO> {
     return this.http.get<any>(`${this.apiRoot}/api/v1/data/states/${id}/lgas`).pipe(
       map((response) => this.normalizeCollectionResponse(response))
     );
   }
+
   registrantData(app_no: string): Observable<RegistrantDataDTO> {
     return this.http.get<RegistrantDataDTO>(`${this.apiRoot}/api/v1/applicants/single?applicant_no=${app_no}`);
   }
@@ -66,15 +74,19 @@ export class ApplicationService {
   uploadFile(fileData: any): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/uploads`, fileData);
   }
+
   verifyPayment(ref: { ref_id: string }): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/callbacks/verify-payment-status`, ref);
   }
+
   getPaymentRef(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/initiate-payment`, refPayload);
   }
+
   acceptanceFeePayment(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/acceptance-fee-payment`, refPayload);
   }
+
   getPayments(query: { page: number; pageSize: number; ordering: string | null; search: string | null }): Observable<PaginatedPaymentsResponse> {
     let params = new HttpParams()
       .set('page', String(query.page))
@@ -90,6 +102,7 @@ export class ApplicationService {
       map((response) => this.normalizePaginatedPaymentsResponse(response))
     );
   }
+
   getPaymentReceipt(refId: string): Observable<HttpResponse<Blob>> {
     return this.http.get(`${this.apiRoot}/api/v1/payments/payments/${encodeURIComponent(refId)}/receipt`, {
       observe: 'response',

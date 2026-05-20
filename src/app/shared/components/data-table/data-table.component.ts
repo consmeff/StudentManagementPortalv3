@@ -15,22 +15,39 @@ import { DataTableColumn, DataTableRowContext } from './data-table.types';
 })
 export class DataTableComponent<TRowData> {
   readonly columns = input.required<ReadonlyArray<DataTableColumn>>();
+
   readonly rows = input.required<ReadonlyArray<TRowData>>();
+
   readonly rowTemplate = input.required<TemplateRef<DataTableRowContext<TRowData>>>();
+
   readonly gridTemplateColumns = input<string>(DATA_TABLE_CONFIG.defaultGridTemplateColumns);
+
   readonly scrollable = input<boolean>(false);
+
   readonly scrollHeight = input<string>('flex');
+
   readonly loading = input<boolean>(false);
+
   readonly loadingMessage = input<string>(DATA_TABLE_CONFIG.defaultLoadingMessage);
+
   readonly emptyMessage = input<string>(DATA_TABLE_CONFIG.defaultEmptyMessage);
+
   readonly trackBy = input<TrackByFunction<TRowData>>((index) => index);
+
   readonly activeSortKey = input<string | null>(null);
+
   readonly activeSortDirection = input<'asc' | 'desc' | null>(null);
+
   readonly hasRows = computed(() => this.rows().length > 0);
+
   readonly tableRows = computed<TRowData[]>(() => [...this.rows()]);
+
   readonly columnCount = computed(() => this.columns().length);
+
   readonly columnWidths = computed(() => this.resolveColumnWidths());
+
   readonly trackByRow: TrackByFunction<TRowData> = (index, row) => this.trackBy()(index, row);
+
   readonly sortChange = output<string>();
 
   resolveHeaderClass(column: DataTableColumn): string {

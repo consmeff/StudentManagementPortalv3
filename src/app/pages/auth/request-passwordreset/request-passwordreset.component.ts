@@ -18,8 +18,11 @@ import { AuthSessionStore } from '../../../store/auth-session.store';
 })
 export class RequestPasswordResetComponent implements OnDestroy {
   busy = false;
+
   isDarkMode = false;
+
   private themeSub?: Subscription;
+
   private authSessionStore = inject(AuthSessionStore);
 
   resetForm = new FormGroup({

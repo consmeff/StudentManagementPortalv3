@@ -54,27 +54,44 @@ import { ApplicationSummaryComponent } from "../../widgets/admission/forms/appli
 export class AdmissionFormComponent implements OnInit {
 
   app_no: string = "";
+
   visible: boolean = false;
+
   sidebarVisible = false;
 
   // Loading states for each step
   isLoadingPersonal: boolean = false;
+
   isLoadingNextOfKin: boolean = false;
+
   isLoadingAcademic: boolean = false;
+
   isLoadingDocuments: boolean = false;
+
   isSubmittingApplication: boolean = false;
+
   isEditLocked: boolean = false;
+
   hasComplianceIssued: boolean = false;
+
   complianceDirective: string = '';
 
   _widgetService = inject(WidgetsService);
+
   _formStepService = inject(FormService);
+
   _appservice = inject(ApplicationService);
+
   _preRegData = inject(RegStoreService);
+
   cd = inject(ChangeDetectorRef);
+
   router = inject(Router);
+
   route = inject(ActivatedRoute);
+
   messageService = inject(MessageService);
+
   authSessionStore = inject(AuthSessionStore);
 
   formStepStatus: formstepDTO = {
@@ -83,6 +100,7 @@ export class AdmissionFormComponent implements OnInit {
     nextofkinValid: false,
     personalinfoValid: false
   };
+
   savedStepStatus: formstepDTO = {
     academicValid: false,
     docUploadValid: false,
@@ -91,16 +109,23 @@ export class AdmissionFormComponent implements OnInit {
   };
 
   _personalFormData: TPersonalDetailDTO | null = null;
+
   _nextofkinFormData: TNextOfKinDTO | null = null;
+
   _academicHistoryFormData: TAcademicHistory[] | null = null;
+
   _olevelFormData: TOLevelResult[] | null = null;
+
   _utmeResultFormData: TUtmeResultPayload | null = null;
+
   _uploadFileFormData: TUploadFile | null = null;
 
   _states: States[] | undefined;
+
   _lgas: LGA[] | undefined;
 
   activeStepIndex: number = 1;
+
   private requestedStep: number = 1;
 
   constructor() {
@@ -455,8 +480,8 @@ export class AdmissionFormComponent implements OnInit {
   showSuccess(summary: string, detail: string) {
     this.messageService.add({
       severity: 'success',
-      summary: summary,
-      detail: detail,
+      summary,
+      detail,
       life: 3000
     });
   }
@@ -464,14 +489,14 @@ export class AdmissionFormComponent implements OnInit {
   showError(summary: string, detail: string) {
     this.messageService.add({
       severity: 'error',
-      summary: summary,
-      detail: detail,
+      summary,
+      detail,
       life: 5000
     });
   }
 
   buildOLevelDetailObj() {
-    let _allAcHistory: TAcademicHistory[] = [];
+    const _allAcHistory: TAcademicHistory[] = [];
     if (this._academicHistoryFormData != null) {
       this._academicHistoryFormData.forEach((val, i) => {
         if (val.institution != "") {
@@ -488,7 +513,7 @@ export class AdmissionFormComponent implements OnInit {
   }
 
   buildAcademicDetailObj() {
-    let _allOlevel: TOLevelResult[] = [];
+    const _allOlevel: TOLevelResult[] = [];
     if (this._olevelFormData != null) {
       this._olevelFormData.forEach((val, i) => {
         _allOlevel.push({
@@ -517,7 +542,7 @@ export class AdmissionFormComponent implements OnInit {
     if (this._uploadFileFormData != null) {
       return this._uploadFileFormData;
     }
-    return;
+    
   }
 
   private async buildPersonalDetailObj(registrant: RegistrantData | undefined): Promise<Record<string, unknown> | undefined> {
@@ -528,21 +553,21 @@ export class AdmissionFormComponent implements OnInit {
         this._personalFormData.localGovernment,
         registrant?.lga
       );
-      let _caddress: Address = {
+      const _caddress: Address = {
         address: `${this._personalFormData.houseNumber}, ${this._personalFormData.streetName}, ${this._personalFormData.areaTown}`,
         street_name: this._personalFormData.streetName,
         land_mark: this._personalFormData.landmark,
         city: this._personalFormData.areaTown,
         lga_id: this._personalFormData.localGovernment
       };
-      let _raddress: Address = {
+      const _raddress: Address = {
         address: `${this._personalFormData.houseNumber}, ${this._personalFormData.streetName}, ${this._personalFormData.areaTown}`,
         street_name: this._personalFormData.streetName,
         land_mark: this._personalFormData.landmark,
         city: this._personalFormData.areaTown,
         lga_id: this._personalFormData.residentialLocalGovernment
       };
-      let _personalDetail: any = {
+      const _personalDetail: any = {
         marital_status: this._personalFormData.maritalStatus,
         disability: this._personalFormData.disability == "Yes" ? `${this._personalFormData.disability}, ${this._personalFormData.disabilityDetails}` : `${this._personalFormData.disability}`,
         residential_address: _raddress,
@@ -571,7 +596,7 @@ export class AdmissionFormComponent implements OnInit {
         this._nextofkinFormData.localGovernment,
         nextOfKinRegistrant?.lga
       );
-      let _nokDetail: any = {
+      const _nokDetail: any = {
         title: this._nextofkinFormData.title,
         first_name: this._nextofkinFormData.firstname,
         last_name: this._nextofkinFormData.lastname,

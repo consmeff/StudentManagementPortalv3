@@ -45,6 +45,7 @@ export class PermissionService {
 
 
     private _isAdmin = signal(this.readRolesFromJWT().length === ALL_ROLES.length);
+
     readonly isAdmin = this._isAdmin.asReadonly();
 
     hasRole(role: RoleId | RoleId[]): boolean {

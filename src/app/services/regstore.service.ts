@@ -18,27 +18,39 @@ export class RegStoreService {
   private authSessionStore = inject(AuthSessionStore);
 
   private readonly _regData = signal<RegistrantDataDTO | null>(null);
+
   readonly regData = this._regData.asReadonly();
+
   public regData$ = toObservable(this._regData);
 
   private readonly _preRegData = signal<PreRegistrationDataDTO | null>(null);
+
   readonly preRegData = this._preRegData.asReadonly();
+
   public preRegData$ = toObservable(this._preRegData);
 
   private readonly _countryData = signal<CountryDTO | null>(null);
+
   readonly countryData = this._countryData.asReadonly();
+
   public countryData$ = toObservable(this._countryData);
 
   private readonly _stateData = signal<StatesDTO | null>(null);
+
   readonly stateData = this._stateData.asReadonly();
+
   public stateData$ = toObservable(this._stateData);
 
   private readonly _lgaData = signal<LGA[] | null>(null);
+
   readonly lgaData = this._lgaData.asReadonly();
+
   public lgaData$ = toObservable(this._lgaData);
 
   private readonly _uploadFile = signal<TUploadFile | null>(null);
+
   readonly uploadFile = this._uploadFile.asReadonly();
+
   public uploadFile$ = toObservable(this._uploadFile);
   
 
@@ -52,13 +64,16 @@ export class RegStoreService {
     this.setUploadFile(payload);
     this._regData.set(payload);
   }
+
   setPreRegData(payload: PreRegistrationDataDTO) {
     
     this._preRegData.set(payload);
   }
+
   setCountryData(payload: CountryDTO) {
     this._countryData.set(payload);
   }
+
   setStateData(payload: StatesDTO) {
     this._stateData.set(payload);
   }
@@ -81,7 +96,7 @@ export class RegStoreService {
   // }
   setUploadFile(payload: RegistrantDataDTO) {
     if (payload.data != null && payload.data != undefined) {
-      let _u: TUploadFile = {
+      const _u: TUploadFile = {
         certificateofbirth: payload.data!.certificate_of_birth!,
         olevels: payload.data!.o_level_result?.map((m) => m.file) || [],
         passport: payload.data!.passport_photo!,
@@ -95,7 +110,7 @@ export class RegStoreService {
   async dataInitialization(): Promise<boolean> {
 
     let result = false;
-    let app_no = this.authSessionStore.applicationNo() || "";
+    const app_no = this.authSessionStore.applicationNo() || "";
     if (app_no != "") {
       await firstValueFrom(this.appservice.registrantData(app_no))
         .then(async (data) => {

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { AuthSessionStore } from '../store/auth-session.store';
 import { Router } from '@angular/router';
+import { AuthSessionStore } from '../store/auth-session.store';
 import { UserPortalService } from './user-portal.service';
 
 export type ProtectedPageFeature =
@@ -17,7 +17,9 @@ export type ProtectedPageFeature =
 @Injectable({ providedIn: 'root' })
 export class NavigationAccessService {
   private readonly authSessionStore = inject(AuthSessionStore);
+
   private readonly router = inject(Router);
+
   private readonly userPortalService = inject(UserPortalService);
 
   canAccess(feature: ProtectedPageFeature): boolean {

@@ -16,12 +16,17 @@ import { ReturningFlowService } from '../../returning-flow.service';
 })
 export class ReturningHostelComponent {
   readonly flow = inject(ReturningFlowService);
+
   private readonly router = inject(Router);
+
   private readonly messageService = inject(MessageService);
 
   readonly isSubmitting = signal(false);
+
   readonly draft = computed(() => this.flow.hostelApplicationDraft());
+
   readonly state = computed(() => this.flow.effectiveHostelStatus());
+
   readonly canSubmit = computed(() => {
     const d = this.draft();
     return !!d.academicSession && !!d.preferredHostel && !!d.preferredBlock && d.acknowledged;
