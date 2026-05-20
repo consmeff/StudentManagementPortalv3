@@ -139,7 +139,7 @@ export type NextOfKinData = {
 export class ReturningFlowService {
   readonly studentName = signal('ISHOLA, Hassan Gbadebo');
   readonly matricNo = signal('CONSMMEFS/NUR/2024/0142');
-  readonly programme = signal('Nursing Science');
+  readonly program = signal('Nursing Science');
   readonly session = signal('2025/2026');
   readonly level = signal('OND 2');
   readonly semester = signal('1st Semester');

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // PrimeNG Imports
 import { AccordionModule } from 'primeng/accordion';
@@ -67,6 +68,8 @@ export class ApplicationSummaryComponent implements OnInit {
 
   private authSessionStore = inject(AuthSessionStore);
   private formService = inject(FormService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   constructor(
     private appservice: ApplicationService
@@ -336,6 +339,14 @@ ${residential_address.country?.name || ''}
       return;
     }
     window.open(fileUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  editSection(step: number): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { step },
+      queryParamsHandling: 'merge'
+    });
   }
 
   private toDisplay(value: unknown): string {

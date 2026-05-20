@@ -9,6 +9,28 @@
   padding: $spacing-4;
 }
 
+.section-action-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: $spacing-4;
+}
+
+.edit-section-btn {
+  border: 1px solid var(--app-border);
+  background: transparent;
+  border-radius: $radius-md;
+  padding: $spacing-2 $spacing-4;
+  color: var(--app-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-section-btn:hover {
+  border-color: var(--app-primary);
+  background: color-mix(in srgb, var(--app-primary) 10%, transparent);
+}
+
 .rows-list {
   display: flex;
   flex-direction: column;

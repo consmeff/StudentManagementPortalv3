@@ -16,7 +16,7 @@ const LOGIN_CAROUSEL_IMAGES = [
   '/assets/images/carousel-image-1.jpeg',
   '/assets/images/carousel-image-2.jpeg'
 ];
-const LOGIN_CAROUSEL_INTERVAL_MS = 4000;
+const LOGIN_CAROUSEL_INTERVAL_MS = 6000;
 
 @Component({
   selector: 'procapx-login',

@@ -89,7 +89,7 @@
                 </div>
                 <div class="progress-item">
                   <div class="progress-item-header">
-                    <span>Programme Selection</span>
+                    <span>program Selection</span>
                     <span class="status pending">⏳</span>
                   </div>
                   <p-progressBar [value]="50" [showValue]="false"></p-progressBar>
@@ -192,19 +192,19 @@
     </div>
   </div>
   
-  <!-- Programme Selection Dialog -->
+  <!-- program Selection Dialog -->
   <p-dialog 
     [header]="dialogTitle" 
     [(visible)]="visible" 
     [modal]="true"
     [style]="{ width: '600px' }"
-    styleClass="programme-dialog"
+    styleClass="program-dialog"
   >
-    <!-- <app-programme 
-      [backendProgramme]="backendProgramme" 
+    <!-- <app-program 
+      [backendprogram]="backendprogram" 
       (showGuidelineStatus)="showGuideline($event)" 
       (selectedDeptChanged)="courseUpdated($event)"
-    ></app-programme> -->
+    ></app-program> -->
   </p-dialog>
   
   <!-- Guidelines Dialog -->

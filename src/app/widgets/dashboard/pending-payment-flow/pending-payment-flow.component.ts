@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ApplicationService } from '../../../services/application.service';
-import { Datum, OpenApplicationDTO } from '../../../data/application/admission.dto';
+import { Datum, Department, DepartmentsDTO, OpenApplicationDTO } from '../../../data/application/admission.dto';
 import { APPLICATION_GUIDELINE_CONTENT } from '../../../data/dashboard/application-guideline.data';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 import { firstValueFrom } from 'rxjs';
@@ -38,9 +38,17 @@ interface ApplicationStep {
 
 interface CompletedApplicationDetails {
   applicationNo: string;
-  preferredProgramme: string;
+  preferredprogram: string;
   preferredCourse: string;
   applicationDate: string;
+}
+
+interface programSelectionOption {
+  applicationId: number;
+  levelName: string;
+  programName: string;
+  sessionName: string;
+  departments: Department[];
 }
 
 type ApprovalStatusTone = 'info' | 'success' | 'warning' | 'danger';
@@ -67,8 +75,10 @@ export class PendingPaymentFlowComponent implements OnInit {
   readonly initializingApplication = signal(false);
   readonly loadingError = signal('');
   readonly applicationOptions = signal<Datum[]>([]);
+  readonly programSelectionOptions = signal<programSelectionOption[]>([]);
   readonly selectedApplicationId = signal<number | null>(null);
-  readonly showProgrammeDialog = signal(false);
+  readonly selectedDepartmentId = signal<number | null>(null);
+  readonly showprogramDialog = signal(false);
   readonly showGuidelineDialog = signal(false);
   readonly guidelinesAccepted = signal(false);
 
@@ -144,7 +154,7 @@ export class PendingPaymentFlowComponent implements OnInit {
 
     await this.loadOpenApplications();
     if (this.applicationOptions().length > 0) {
-      this.showProgrammeDialog.set(true);
+      this.showprogramDialog.set(true);
     }
   }
 
@@ -155,8 +165,11 @@ export class PendingPaymentFlowComponent implements OnInit {
       const response = (await firstValueFrom(this.appService.openApplications())) as OpenApplicationDTO;
       const options = response?.data ?? [];
       this.applicationOptions.set(options);
+      this.programSelectionOptions.set(await this.buildprogramSelectionOptions(options));
+      this.selectedApplicationId.set(null);
+      this.selectedDepartmentId.set(null);
 
-      if (options.length === 0) {
+      if (this.programSelectionOptions().length === 0) {
         this.loadingError.set(UI_COPY.noOpenApplications);
       }
     } catch {
@@ -171,37 +184,36 @@ export class PendingPaymentFlowComponent implements OnInit {
     }
   }
 
-  selectApplication(id: number): void {
-    this.selectedApplicationId.set(id);
+  selectDepartment(applicationId: number, departmentId: number): void {
+    this.selectedApplicationId.set(applicationId);
+    this.selectedDepartmentId.set(departmentId);
   }
 
-  async proceedFromProgramme(): Promise<void> {
-    if (!this.selectedApplicationId()) {
+  async proceedFromprogram(): Promise<void> {
+    if (!this.selectedApplicationId() || !this.selectedDepartmentId()) {
       return;
     }
-    this.showProgrammeDialog.set(false);
+    this.showprogramDialog.set(false);
     this.guidelinesAccepted.set(true);
     this.showGuidelineDialog.set(true);
   }
 
   async proceedToPayment(): Promise<void> {
-    if (!this.selectedApplicationId()) {
+    if (!this.selectedApplicationId() || !this.selectedDepartmentId()) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Programme',
-        detail: UI_COPY.selectProgrammeError,
+        summary: 'program',
+        detail: UI_COPY.selectprogramError,
       });
       return;
     }
 
     this.initializingApplication.set(true);
     try {
-      const selectedOption = this.applicationOptions().find((item) => item.id === this.selectedApplicationId());
-      const departmentId = selectedOption?.department?.id ?? selectedOption?.program?.id ?? 0;
       const initResp = await firstValueFrom(
         this.appService.initializeApplication({
           application_id: this.selectedApplicationId(),
-          department_id: departmentId,
+          department_id: this.selectedDepartmentId(),
         })
       );
       const applicationNo = initResp?.data?.application_no ?? '';
@@ -280,8 +292,12 @@ export class PendingPaymentFlowComponent implements OnInit {
     return typeof value === 'string' ? value.trim().length > 0 : !!value;
   }
 
-  onProgrammeDialogVisibilityChange(visible: boolean): void {
-    this.showProgrammeDialog.set(visible);
+  onprogramDialogVisibilityChange(visible: boolean): void {
+    this.showprogramDialog.set(visible);
+    if (!visible) {
+      this.selectedApplicationId.set(null);
+      this.selectedDepartmentId.set(null);
+    }
   }
 
   onGuidelineDialogVisibilityChange(visible: boolean): void {
@@ -441,7 +457,7 @@ export class PendingPaymentFlowComponent implements OnInit {
       registrant
         ? {
           applicationNo: registrant.application_no || '—',
-          preferredProgramme: registrant.program?.code || registrant.program?.name || '—',
+          preferredprogram: registrant.program?.code || registrant.program?.name || '—',
           preferredCourse: registrant.department?.name || registrant.department?.code || '—',
           applicationDate: this.formatDisplayDate(registrant.created_at),
         }
@@ -577,6 +593,47 @@ export class PendingPaymentFlowComponent implements OnInit {
       return tone;
     }
     return 'info';
+  }
+
+  private async buildprogramSelectionOptions(options: Datum[]): Promise<programSelectionOption[]> {
+    const departmentCache = new Map<number, Department[]>();
+
+    const selectionOptions = await Promise.all(options.map(async (option) => ({
+      applicationId: option.id,
+      levelName: option.level.name,
+      programName: option.program.name,
+      sessionName: option.session.name,
+      departments: await this.loadDepartmentsForProgram(option, departmentCache)
+    })));
+
+    return selectionOptions.filter((option) => option.departments.length > 0);
+  }
+
+  private async loadDepartmentsForProgram(
+    option: Datum,
+    departmentCache: Map<number, Department[]>
+  ): Promise<Department[]> {
+    const programId = option.program.id;
+    if (!departmentCache.has(programId)) {
+      try {
+        const response = (await firstValueFrom(this.appService.departments(programId))) as DepartmentsDTO;
+        departmentCache.set(programId, response?.data ?? []);
+      } catch {
+        const fallbackDepartments = option.department ? [option.department] : [];
+        departmentCache.set(programId, fallbackDepartments);
+      }
+    }
+
+    const departments = departmentCache.get(programId) ?? [];
+    return this.removeDuplicateDepartments(departments);
+  }
+
+  private removeDuplicateDepartments(departments: Department[]): Department[] {
+    const uniqueDepartments = new Map<number, Department>();
+    departments.forEach((department) => {
+      uniqueDepartments.set(department.id, department);
+    });
+    return Array.from(uniqueDepartments.values());
   }
 
   private formatDisplayDate(value: string | Date | undefined): string {

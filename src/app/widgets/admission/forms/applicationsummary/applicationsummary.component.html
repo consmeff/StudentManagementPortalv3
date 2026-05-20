@@ -12,6 +12,9 @@
       <p-accordion-panel [value]="accordionPanelValues.personalInformation">
         <p-accordion-header>Personal Information</p-accordion-header>
         <p-accordion-content>
+        <div class="section-action-bar">
+          <button type="button" class="edit-section-btn" (click)="editSection(1)">Edit section</button>
+        </div>
         <div class="rows-list">
           <div class="row-item" *ngFor="let item of personalInfoItems">
             <span class="row-label">{{ item.label }}:</span>
@@ -24,6 +27,9 @@
       <p-accordion-panel [value]="accordionPanelValues.nextOfKinInformation">
         <p-accordion-header>Next of Kin Information</p-accordion-header>
         <p-accordion-content>
+        <div class="section-action-bar">
+          <button type="button" class="edit-section-btn" (click)="editSection(2)">Edit section</button>
+        </div>
         <div class="rows-list">
           <div class="row-item" *ngFor="let item of nextOfKinItems">
             <span class="row-label">{{ item.label }}:</span>
@@ -36,6 +42,9 @@
       <p-accordion-panel [value]="accordionPanelValues.academicHistory">
         <p-accordion-header>Academic History</p-accordion-header>
         <p-accordion-content>
+        <div class="section-action-bar">
+          <button type="button" class="edit-section-btn" (click)="editSection(3)">Edit section</button>
+        </div>
         <div class="rows-list">
           <div class="row-item" *ngFor="let item of academicItems">
             <span class="row-label">{{ item.label }}:</span>
@@ -48,6 +57,9 @@
       <p-accordion-panel [value]="accordionPanelValues.documents">
         <p-accordion-header>Documents</p-accordion-header>
         <p-accordion-content>
+        <div class="section-action-bar">
+          <button type="button" class="edit-section-btn" (click)="editSection(4)">Edit section</button>
+        </div>
         <div class="documents-list">
           <div class="document-row" *ngFor="let doc of documentItems">
             <span class="doc-label">{{ doc.label }}:</span>

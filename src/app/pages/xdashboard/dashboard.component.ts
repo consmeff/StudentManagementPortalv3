@@ -25,9 +25,9 @@ export class xDashboardComponent implements OnInit {
   visible = false;
   guidelineVisible = false;
   guidelinesAccepted = false;
-  dialogTitle = 'Choose the programme you are applying for';
+  dialogTitle = 'Choose the course you are applying for';
   selectedCourse = '';
-  backendProgramme: Program | undefined;
+  backendprogram: Program | undefined;
 
   // Dashboard Stats
   applicationProgress = 20;
@@ -149,7 +149,7 @@ export class xDashboardComponent implements OnInit {
       await firstValueFrom(this.appService.registrantData(appNo))
         .then(async (data) => {
           this.regStore.setRegData(data);
-          this.backendProgramme = data.data?.program;
+          this.backendprogram = data.data?.program;
           result = true;
         })
         .catch((err) => {

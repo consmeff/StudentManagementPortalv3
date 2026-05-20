@@ -367,13 +367,29 @@ app-button.continue-btn ::ng-deep .app-btn {
   color: var(--app-success);
 }
 
-.programme-grid {
+.program-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.program-section {
+  border: 1px solid var(--app-border);
+  border-radius: 16px;
+  padding: 0.85rem;
+  background: var(--app-surface);
+}
+
+.program-section-header {
+  margin-bottom: 0.75rem;
+}
+
+.department-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.85rem;
 }
 
-.programme-option {
+.program-option {
   border: 1px solid var(--app-border);
   border-radius: 16px;
   padding: 0.8rem 0.9rem;
@@ -394,16 +410,16 @@ app-button.continue-btn ::ng-deep .app-btn {
   flex: 0 0 auto;
 }
 
-.programme-option.selected {
+.program-option.selected {
   background: var(--app-primary);
   border-color: var(--app-primary);
 }
 
-.programme-option.selected .option-radio {
+.program-option.selected .option-radio {
   border-color: var(--app-surface);
 }
 
-.programme-option.selected .option-radio::after {
+.program-option.selected .option-radio::after {
   content: '';
   width: 8px;
   height: 8px;
@@ -414,24 +430,30 @@ app-button.continue-btn ::ng-deep .app-btn {
   left: 4px;
 }
 
-.programme-content {
+.program-content {
   min-width: 0;
 }
 
-.programme-name {
+.program-name {
   color: var(--app-text-primary);
   font-size: 1.1rem;
   font-weight: 600;
 }
 
-.programme-meta {
+.department-name {
+  color: var(--app-text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.program-meta {
   margin-top: 0.1rem;
   color: var(--app-text-secondary);
   font-size: 0.78rem;
 }
 
-.programme-option.selected .programme-name,
-.programme-option.selected .programme-meta {
+.program-option.selected .program-name,
+.program-option.selected .program-meta {
   color: var(--app-surface);
 }
 
@@ -441,7 +463,7 @@ app-button.continue-btn ::ng-deep .app-btn {
   justify-content: center;
 }
 
-::ng-deep .programme-dialog {
+::ng-deep .program-dialog {
   .p-dialog-header {
     padding-bottom: 0.2rem;
   }
@@ -542,7 +564,11 @@ app-button.continue-btn ::ng-deep .app-btn {
     min-width: 0;
   }
 
-  .programme-grid {
+  .program-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .department-list {
     grid-template-columns: 1fr;
   }
 }

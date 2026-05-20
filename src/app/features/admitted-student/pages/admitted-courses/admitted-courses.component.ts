@@ -96,7 +96,7 @@ export class AdmittedCoursesComponent {
       'Course Registration Slip',
       `Student Name: ${this.flow.applicantName()}`,
       `Matric Number: ${this.flow.applicationNo()}`,
-      `Programme: ${this.flow.programmeName()}`,
+      `program: ${this.flow.programName()}`,
       `Academic Session: ${this.flow.academicSession()}`,
       '',
       'Selected Courses:'

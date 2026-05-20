@@ -254,6 +254,9 @@ export class AppSidebar {
     }
 
     isRouteActive(route: string): boolean {
+        if (this.isNewCandidateAdmissionProfileRoute(route)) {
+            return true;
+        }
         return this.router.url.startsWith(route);
     }
 
@@ -338,5 +341,9 @@ export class AppSidebar {
         if (!mobileViewport && viewportChanged && !this.sidebarVisible) {
             this.widgetService.setSidebarState({ isvisible: true });
         }
+    }
+
+    private isNewCandidateAdmissionProfileRoute(route: string): boolean {
+        return route.endsWith('/profile') && this.router.url.startsWith('/new/admissionform');
     }
 }

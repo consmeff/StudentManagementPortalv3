@@ -49,7 +49,7 @@ export class AdmittedFlowService {
     () => this.registrantData()?.application_no || this.authSessionStore.applicationNo() || '—'
   );
 
-  readonly programmeName = computed(
+  readonly programName = computed(
     () => this.registrantData()?.department?.name || this.registrantData()?.program?.name || '—'
   );
 

@@ -22,8 +22,8 @@ export const STEP_CONTENT = {
   chooseCourseAndPay: {
     title: 'Choose course & pay application fee',
     pendingDescription:
-      'Select the programme you want to apply for and pay the non-refundable application fee to proceed.',
-    completedDescription: 'Programme selected and payment completed.',
+      'Select the program you want to apply for and pay the non-refundable application fee to proceed.',
+    completedDescription: 'program selected and payment completed.',
   },
   fillApplicationForm: {
     title: 'Fill your application form',
@@ -127,7 +127,7 @@ export const UI_COPY = {
   defaultPaymentStatus: 'Pending',
   loadApplicationsError: 'Unable to load open applications. Please try again.',
   noOpenApplications: 'No open applications are currently available.',
-  selectProgrammeError: 'Please select a programme before continuing.',
+  selectprogramError: 'Please select a program before continuing.',
   initializeApplicationError: 'Unable to initialize your application for payment. Please try again.',
   missingApplicationNoError: 'Unable to continue because application number was not returned.',
 } as const;

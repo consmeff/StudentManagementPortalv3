@@ -27,8 +27,8 @@
                     <strong class="title-small">{{ details.applicationNo }}</strong>
                 </div>
                 <div class="details-row">
-                    <span class="body-small">Preferred Programme:</span>
-                    <strong class="title-small">{{ details.preferredProgramme }}</strong>
+                    <span class="body-small">Preferred program:</span>
+                    <strong class="title-small">{{ details.preferredprogram }}</strong>
                 </div>
                 <div class="details-row">
                     <span class="body-small">Preferred Course:</span>
@@ -98,28 +98,42 @@
     </ng-template>
 
     <p-dialog
-        header="Choose the programme you are applying for"
+        header="Choose the course you are applying for"
         [modal]="true"
         [closable]="true"
         [draggable]="false"
         [resizable]="false"
         [style]="{ width: '620px' }"
-        styleClass="programme-dialog"
-        [visible]="showProgrammeDialog()"
-        (visibleChange)="onProgrammeDialogVisibilityChange($event)"
+        styleClass="program-dialog"
+        [visible]="showprogramDialog()"
+        (visibleChange)="onprogramDialogVisibilityChange($event)"
     >
-        <div class="programme-grid">
-            <button type="button" class="programme-option" [class.selected]="selectedApplicationId() === app.id" *ngFor="let app of applicationOptions()" (click)="selectApplication(app.id)">
-                <span class="option-radio"></span>
-                <div class="programme-content">
-                    <div class="programme-name">{{ app.program.name }}</div>
-                    <div class="programme-meta">{{ app.level.name }} • {{ app.session.name }}</div>
+        <div class="program-grid">
+            <div class="program-section" *ngFor="let option of programSelectionOptions()">
+                <div class="program-section-header">
+                    <div class="program-name">{{ option.programName }}</div>
+                    <div class="program-meta">{{ option.levelName }} • {{ option.sessionName }}</div>
                 </div>
-            </button>
+                <div class="department-list">
+                    <button
+                        type="button"
+                        class="program-option"
+                        [class.selected]="selectedApplicationId() === option.applicationId && selectedDepartmentId() === department.id"
+                        *ngFor="let department of option.departments"
+                        (click)="selectDepartment(option.applicationId, department.id)"
+                    >
+                        <span class="option-radio"></span>
+                        <div class="program-content">
+                            <div class="department-name">{{ department.name }}</div>
+                            <div class="program-meta">{{ department.code }}</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="dialog-actions">
-            <button pButton type="button" class="continue-btn" [disabled]="!selectedApplicationId() || initializingApplication()" (click)="proceedFromProgramme()">
+            <button pButton type="button" class="continue-btn" [disabled]="!selectedApplicationId() || !selectedDepartmentId() || initializingApplication()" (click)="proceedFromprogram()">
                 {{ initializingApplication() ? 'Please wait...' : 'Continue' }}
             </button>
         </div>

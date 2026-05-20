@@ -99,6 +99,7 @@ export class AdmissionFormComponent implements OnInit {
   _lgas: LGA[] | undefined;
 
   activeStepIndex: number = 1;
+  private requestedStep: number = 1;
 
   constructor() {
     this._widgetService.sidebarState$.subscribe((state: sidebarStateDTO) => {
@@ -151,7 +152,15 @@ export class AdmissionFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const requestedStep = Number(this.route.snapshot.queryParamMap.get('step'));
+    this.requestedStep = Number(this.route.snapshot.queryParamMap.get('step'));
+
+    this.route.queryParamMap.subscribe((queryParams) => {
+      const nextStep = Number(queryParams.get('step'));
+      if (Number.isFinite(nextStep) && nextStep >= 1 && nextStep <= 5) {
+        this.requestedStep = nextStep;
+        this.activateStep(nextStep);
+      }
+    });
 
     this._appservice.registrationData().subscribe({
       next: (data) => {
@@ -196,10 +205,10 @@ export class AdmissionFormComponent implements OnInit {
         this._preRegData.setRegData(data);
         this.computeEditLockState(data);
         this.hydrateFormStateFromRegistrantData(data);
-        this.setInitialStep(requestedStep);
+        this.setInitialStep(this.requestedStep);
       },
       error: () => {
-        this.setInitialStep(requestedStep);
+        this.setInitialStep(this.requestedStep);
       },
     });
   }
@@ -237,10 +246,10 @@ export class AdmissionFormComponent implements OnInit {
   }
 
   isReadyToSubmit(): boolean {
-    return this.formStepStatus.personalinfoValid
-      && this.formStepStatus.nextofkinValid
-      && this.formStepStatus.academicValid
-      && this.formStepStatus.docUploadValid;
+    return this.savedStepStatus.personalinfoValid
+      && this.savedStepStatus.nextofkinValid
+      && this.savedStepStatus.academicValid
+      && this.savedStepStatus.docUploadValid;
   }
 
   private setInitialStep(requestedStep: number): void {
