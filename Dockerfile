@@ -1,7 +1,7 @@
 FROM node:20-alpine AS build
 
 WORKDIR /app
-ENV CONFIG=production
+ARG CONFIG=production
 
 COPY package*.json ./
 RUN npm ci
