@@ -60,7 +60,10 @@ import { AppFooter } from './app.footer';
         min-height: 0;
         overflow: auto;
       }
-      .page-pane > * {
+      .page-pane > router-outlet {
+        display: contents;
+      }
+      .page-pane > :not(router-outlet) {
         flex: 1 1 auto;
         min-height: 0;
       }

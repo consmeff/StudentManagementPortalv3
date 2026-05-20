@@ -12,6 +12,11 @@ import { UserPortalService } from '../../../services/user-portal.service';
 
 import { TraceabilityModule } from '../../../shared/traceability.module';
 
+const LOGIN_CAROUSEL_IMAGES = [
+  '/assets/images/carousel-image-1.jpeg',
+  '/assets/images/carousel-image-2.jpeg'
+];
+const LOGIN_CAROUSEL_INTERVAL_MS = 4000;
 
 @Component({
   selector: 'procapx-login',
@@ -25,13 +30,15 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   email = '';
   password = '';
   
+  readonly carouselImages = LOGIN_CAROUSEL_IMAGES;
   showPassword = signal(false);
   isDarkMode = signal(false);
   isLoading = signal(false);
+  activeSlideIndex = signal(0);
   errorMessage = '';
   private returnUrl = '/';
   loginForm!: FormGroup;
-
+  private carouselIntervalId: ReturnType<typeof setInterval> | null = null;
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -52,6 +59,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
       password: new FormControl('', Validators.required),
       rememberMe: new FormControl(false, Validators.required)
     });
+    this.startCarousel();
   }
 
   togglePasswordVisibility() {
@@ -89,6 +97,24 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.carouselIntervalId !== null) {
+      clearInterval(this.carouselIntervalId);
+    }
     this.themeSub?.unsubscribe();
+  }
+
+  setActiveSlide(index: number): void {
+    this.activeSlideIndex.set(index);
+  }
+
+  private startCarousel(): void {
+    if (this.carouselImages.length <= 1) {
+      return;
+    }
+
+    this.carouselIntervalId = setInterval(() => {
+      const nextSlideIndex = (this.activeSlideIndex() + 1) % this.carouselImages.length;
+      this.activeSlideIndex.set(nextSlideIndex);
+    }, LOGIN_CAROUSEL_INTERVAL_MS);
   }
 }

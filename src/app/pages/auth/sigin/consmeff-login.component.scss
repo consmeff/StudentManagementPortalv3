@@ -8,10 +8,25 @@
   min-height: 100vh;
 }
 
-.slide-item {
-  height: 100vh;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--app-primary) 88%, black) 0%, var(--app-primary) 45%, color-mix(in srgb, var(--app-primary) 68%, black) 100%);
+.carousel-shell {
   position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.slide-item {
+  inset: 0;
+  height: 100vh;
+  position: absolute;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity 0.45s ease-in-out;
+}
+
+.slide-item.active-slide {
+  opacity: 1;
 }
 
 .slide-overlay {
@@ -33,6 +48,29 @@
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
+}
+
+.carousel-indicators {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+.indicator-btn {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+}
+
+.indicator-btn.active-indicator {
+  background: var(--app-surface);
 }
 
 .right-panel {
@@ -135,6 +173,10 @@
   }
 
   .slide-item {
+    height: 280px;
+  }
+
+  .carousel-shell {
     height: 280px;
   }
 
