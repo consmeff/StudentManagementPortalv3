@@ -14,7 +14,7 @@ import { passwordStrength } from '../../../utility/formvalidators';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ThemeService } from '../../../services/theme.service';
 import { AuthSessionStore } from '../../../store/auth-session.store';
-
+import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants';
 @Component({
   selector: 'app-sign-up',
   imports: [ TraceabilityModule],
@@ -28,7 +28,7 @@ export class SignUpComponent implements OnDestroy {
     passToggle2: boolean = false;
 
     busy: boolean = false;
-
+    readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
     private lastRegisterClickAt = 0;
   
     validationCheck: validationCheckDTO[] = [

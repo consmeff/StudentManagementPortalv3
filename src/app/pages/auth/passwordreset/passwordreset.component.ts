@@ -9,6 +9,7 @@ import { passwordStrength } from '../../../utility/formvalidators';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ThemeService } from '../../../services/theme.service';
 import { AuthSessionStore } from '../../../store/auth-session.store';
+import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants';
 
 
 
@@ -25,7 +26,7 @@ export class PasswordResetComponent implements OnDestroy {
   isDarkMode = false;
 
   visible = false;
-
+  readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
   private themeSub?: Subscription;
 
   private authSessionStore = inject(AuthSessionStore);
