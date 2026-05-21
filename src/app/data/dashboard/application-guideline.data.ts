@@ -10,39 +10,44 @@ export interface ApplicationGuidelineContent {
 }
 
 export const APPLICATION_GUIDELINE_CONTENT: ApplicationGuidelineContent = {
-  title: 'APPLICATION GUIDELINE',
+  title: 'ADMISSION REQUIREMENTS FOR ND PROGRAMMES',
   intro:
-    'Kindly read the Application Guideline carefully before you proceed with the application. It is very important to understand and follow the guideline to avoid error in your application.',
+    'Kindly read the admission requirements carefully before you proceed with the application. It is important to understand and follow the requirements to avoid errors in your application.',
   sections: [
     {
       heading:
-        'Candidates for admission into the Basic Midwifery program must possess the Senior Secondary School Certificate (SSCE) or its equivalent at credit level in the following five (5) subjects at not more than two (2) sittings:',
-      items: ['Physics', 'Chemistry', 'Biology', 'English', 'Mathematics'],
+        'Candidates seeking admission into the ND Programmes must possess the Senior Secondary School Certificate (SSCE) or its equivalent with credit passes in the following five (5) subjects:',
+      items: ['Physics', 'Chemistry', 'Biology', 'English Language', 'Mathematics'],
     },
     {
       heading:
-        'Candidates are required to upload the following documents in addition to other relevant documents:',
+        'Results must be obtained in not more than two (2) sittings for SSCE or one (1) sitting for NABTEB.',
+      items: [],
+    },
+    {
+      heading:
+        'In addition to other relevant documents, candidates are required to upload the following:',
       items: [
-        'Certificate of Birth',
-        "O' Level (SSCE) Certificates",
+        'Birth Certificate',
+        'O’ Level (SSCE), NABTEB, or equivalent certificates (where applicable)',
         'Certificate of Origin',
         'Passport Photograph',
-        'Jamb Result'
+        'UTME Result Slip',
       ],
     },
     {
       heading:
-        'Candidates are required to make payment of a non-refundable sum of Fifteen Thousand Naira (NGN25,500.00) as application fee, excluding charges.',
+        'Candidates must have scored a minimum of 165 in the 2026 UTME and must have selected CONSMMEFS or the relevant course as their first choice during UTME registration. Candidates who did not initially select CONSMMEFS or their preferred course as first choice may apply, but must effect a change of institution/course on the JAMB Portal.',
       items: [],
     },
     {
       heading:
-        'Candidate must have a minimum JAMB score of 165 and must have chosen the institution as first choice in the 2024 UTME registration. Moreover, candidates who did not select CONSMMEFS as their first choice can change institution on the JAMB Portal.',
+        'Candidates are required to pay a non-refundable application fee of Twenty Thousand Five Hundred Naira Only (NGN 20,500.00), in addition to NGN 2,488.25 being portal and payment gateway charges. Total application fee is NGN 22,988.25.',
       items: [],
     },
     {
       heading:
-        'Applying candidates must be at least sixteen (16) years of age by October before applying.',
+        'Applicants must be at least sixteen (16) years of age at the time of application.',
       items: [],
     },
   ],
