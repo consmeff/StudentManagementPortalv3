@@ -9,6 +9,7 @@ import { AuthSessionStore } from '../../../store/auth-session.store';
 import { Subscription } from 'rxjs';
 import { ThemeService } from '../../../services/theme.service';
 import { UserPortalService } from '../../../services/user-portal.service';
+import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants';
 
 import { TraceabilityModule } from '../../../shared/traceability.module';
 
@@ -29,6 +30,7 @@ const LOGIN_CAROUSEL_INTERVAL_MS = 6000;
 export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   email = '';
   password = '';
+  readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
   
   readonly carouselImages = LOGIN_CAROUSEL_IMAGES;
   showPassword = signal(false);

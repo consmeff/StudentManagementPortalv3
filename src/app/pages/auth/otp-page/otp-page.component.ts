@@ -8,6 +8,7 @@ import { AuthService } from '../../../services/auth.service';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ThemeService } from '../../../services/theme.service';
 import { AuthSessionStore } from '../../../store/auth-session.store';
+import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants';
 
 @Component({
   selector: 'app-otp-page',
@@ -23,6 +24,7 @@ export class OtpPageComponent implements OnInit, OnDestroy {
   busy = false;
   isDarkMode = false;
   complete = false;
+  readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
   otpForm!: FormGroup;
   email: string = '';
   isPasswordResetFlow = false;

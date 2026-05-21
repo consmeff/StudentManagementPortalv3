@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { TECHNICAL_SUPPORT_MESSAGE } from '../../constants/support.constants';
 
 @Component({
     standalone: true,
     selector: 'app-footer',
-    template: `<div class="layout-footer">
-        Powered By 
-        <a href="https://activpulsespectra.com.ng" target="_blank" rel="noopener noreferrer" class="text-primary font-bold hover:underline">ActivPulse Spectra</a>
-    </div>`
+    templateUrl: './app.footer.html'
 })
-export class AppFooter {}
+export class AppFooter {
+    readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
+}
