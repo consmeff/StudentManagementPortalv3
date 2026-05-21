@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { firstValueFrom } from 'rxjs';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ApplicationService } from '../../../services/application.service';
 import { Datum, Department, DepartmentsDTO, OpenApplicationDTO } from '../../../data/application/admission.dto';
 import { APPLICATION_GUIDELINE_CONTENT } from '../../../data/dashboard/application-guideline.data';
 import { AuthSessionStore } from '../../../store/auth-session.store';
-import { firstValueFrom } from 'rxjs';
 import { ApplicationGuidelineModalComponent } from '../application-guideline-modal/application-guideline-modal.component';
 import { PaymentWorkflowService } from '../../../services/payment-workflow.service';
 import { RegistrantData } from '../../../data/application/registrantdatadto';
@@ -64,42 +64,75 @@ type ApprovalStatusTone = 'info' | 'success' | 'warning' | 'danger';
 })
 export class PendingPaymentFlowComponent implements OnInit {
   private readonly appService = inject(ApplicationService);
+
   private readonly messageService = inject(MessageService);
+
   private readonly router = inject(Router);
+
   private readonly authSessionStore = inject(AuthSessionStore);
+
   private readonly paymentWorkflow = inject(PaymentWorkflowService);
 
   readonly guidelineContent = APPLICATION_GUIDELINE_CONTENT;
+
   readonly actionLabels = ACTION_LABELS;
+
   readonly loadingApplications = signal(false);
+
   readonly initializingApplication = signal(false);
+
   readonly loadingError = signal('');
+
   readonly applicationOptions = signal<Datum[]>([]);
+
   readonly programSelectionOptions = signal<programSelectionOption[]>([]);
+
   readonly selectedApplicationId = signal<number | null>(null);
+
   readonly selectedDepartmentId = signal<number | null>(null);
+
   readonly showprogramDialog = signal(false);
+
   readonly showGuidelineDialog = signal(false);
+
   readonly guidelinesAccepted = signal(false);
 
   readonly dashboardName = signal('');
+
   readonly dashboardPaymentStatus = signal('');
+
   readonly registrantData = signal<RegistrantData | null>(null);
+
   readonly completedApplication = signal<CompletedApplicationDetails | null>(null);
+
   readonly applicantPhotoUrl = signal('');
+
   readonly isApplicationCompleted = signal(false);
+
   readonly isPaymentPending = signal(true);
+
   readonly progressPercent = signal(20);
+
   readonly heroTitle = signal<string>(HERO_CONTENT.pending.title);
+
   readonly heroDescription = signal<string>(HERO_CONTENT.pending.description);
+
   readonly primaryActionLabel = signal<string>(HERO_CONTENT.pending.actionLabel);
+
   readonly applicationSteps = signal<ApplicationStep[]>([]);
+
   readonly approvalMessageTitle = signal('');
+
   readonly approvalMessageDetail = signal('');
+
   readonly approvalMessageTone = signal<ApprovalStatusTone>('info');
+
   readonly approvalStatusLabel = signal('');
+
   readonly approvalStatusTooltip = signal('');
+
   readonly approvalStatusIndicatorTone = signal<StatusTone>('neutral');
+
   readonly activeApprovalStatusKey = signal<ApplicationStatusKey>('unknown');
 
   ngOnInit(): void {

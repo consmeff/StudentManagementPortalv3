@@ -12,11 +12,14 @@ import { AuthSessionStore } from '../store/auth-session.store';
 })
 export class AuthService {
   apiRoot = environment.apiURL;
+
   headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   });
+
   private loggedUser: string | null | undefined;
+
   private readonly authSessionStore = inject(AuthSessionStore);
 
   constructor(private http: HttpClient) { }
@@ -63,6 +66,7 @@ export class AuthService {
   storeAppNo(application_no: string) {
     this.authSessionStore.setApplicationNo(application_no);
   }
+
   storeMatricNo(matric_no: string) {
     this.authSessionStore.setMatriculationNo(matric_no);
   }

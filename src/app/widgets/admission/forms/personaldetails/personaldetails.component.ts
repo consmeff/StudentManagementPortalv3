@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -36,9 +36,11 @@ import { TPersonalDetailDTO } from '../../../../data/application/transformer.dto
   styleUrl: './personaldetails.component.scss',
   providers: []
 })
-export class PersonalDetailsComponent {
+export class PersonalDetailsComponent implements OnInit {
   _formStepService = inject(FormService);
+
   regstore = inject(RegStoreService);
+
   appservice = inject(ApplicationService);
 
   formStepStatus: formstepDTO = {
@@ -49,7 +51,9 @@ export class PersonalDetailsComponent {
   };
 
   personalInfoForm!: FormGroup;
+
   backendRegistrationData!: RegistrantDataDTO;
+
   draftPersonalData: TPersonalDetailDTO | null = null;
   
   maritalStatusOptions = [
@@ -60,6 +64,7 @@ export class PersonalDetailsComponent {
   ];
   
   genderOptions = ['Male', 'Female', 'Other'];
+
   categories: any[] = [
     { name: 'Cheese', key: 'C' },
     { name: 'Mushroom', key: 'M' },
@@ -70,25 +75,37 @@ export class PersonalDetailsComponent {
   disabilityOptions = ['Yes', 'No', 'Prefer not to say'];
 
   nationalityOptions: Countries[] | undefined = undefined;
+
   stateOptions: States[] | undefined = undefined;
+
   localGovOptions: LGA[] | undefined = undefined;
+
   residentialLocalGovernment: LGA[] | undefined = undefined;
 
   // Transformed options for PrimeNG dropdowns
   nationalityDropdownOptions: any[] = [];
+
   stateDropdownOptions: any[] = [];
+
   localGovDropdownOptions: any[] = [];
+
   residentialLGADropdownOptions: any[] = [];
 
   // Date constraints
   maxDate: Date = this.createMaxDobDate();
+
   minDate: Date = new Date(1940, 0, 1);
+
   maxBirthYear: number = this.maxDate.getFullYear();
+
   isEditable = true;
 
   private formInitialized = false;
+
   private formSubscriptions = new Subscription();
+
   private dropdownsHydrated = false;
+
   private lgaCache = new Map<number, LGA[]>();
 
   constructor(private fb: FormBuilder) {
@@ -222,7 +239,7 @@ export class PersonalDetailsComponent {
 
   private minimumAgeValidator(minAge: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value;
+      const {value} = control;
       if (!value) {
         return null;
       }
@@ -267,7 +284,7 @@ export class PersonalDetailsComponent {
     if (!this.formInitialized || this.dropdownsHydrated || this.draftPersonalData !== null) return;
     if (!this.backendRegistrationData?.data) return;
 
-    const data = this.backendRegistrationData.data;
+    const {data} = this.backendRegistrationData;
 
     // Set nationality
     if (this.nationalityOptions) {

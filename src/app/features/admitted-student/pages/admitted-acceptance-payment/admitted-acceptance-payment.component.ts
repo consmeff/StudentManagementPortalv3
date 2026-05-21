@@ -17,11 +17,17 @@ import { PaymentWorkflowService } from '../../../../services/payment-workflow.se
 })
 export class AdmittedAcceptancePaymentComponent implements OnInit {
   private readonly router = inject(Router);
+
   private readonly messageService = inject(MessageService);
+
   private readonly authSessionStore = inject(AuthSessionStore);
+
   private readonly paymentWorkflow = inject(PaymentWorkflowService);
+
   readonly flow = inject(AdmittedFlowService);
+
   readonly isProcessing = signal(false);
+
   readonly isVerifying = signal(false);
 
   ngOnInit(): void {

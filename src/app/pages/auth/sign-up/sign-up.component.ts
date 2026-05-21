@@ -2,14 +2,14 @@ import { ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 
 import { Router, RouterModule } from '@angular/router';
 
+import { MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AppFloatingConfigurator } from '../../../layout/component/app.floatingconfigurator';
 import { AuthService } from '../../../services/auth.service';
 
-import { MessageService } from 'primeng/api';
 
-import { Subscription } from 'rxjs';
 import { ProfilePayload, ProfileSuccessResponse, validationCheckDTO } from '../../../data/auth/auth.data';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { passwordStrength } from '../../../utility/formvalidators';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ThemeService } from '../../../services/theme.service';
@@ -24,7 +24,9 @@ import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants'
 })
 export class SignUpComponent implements OnDestroy {
     passToggle: boolean = false;
+
     passToggle2: boolean = false;
+
     busy: boolean = false;
     readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
     private lastRegisterClickAt = 0;
@@ -53,8 +55,11 @@ export class SignUpComponent implements OnDestroy {
   
   
     ];
+
     isDarkMode = false;
+
     private themeSub?: Subscription;
+
     private authSessionStore = inject(AuthSessionStore);
 
 toggleDarkMode() {
@@ -75,12 +80,19 @@ toggleDarkMode() {
     });
   
     readonly emailControl = this.regForm.controls.email;
+
     readonly firstnameControl = this.regForm.controls.firstname;
+
     readonly middlenameControl = this.regForm.controls.middlename;
+
     readonly lastnameControl = this.regForm.controls.lastname;
+
     readonly passwordControl = this.regForm.controls.password;
+
     readonly cpasswordControl = this.regForm.controls.cpassword;
+
     readonly phonenumberControl = this.regForm.controls.phonenumber;
+
     readonly altphonenumberControl = this.regForm.controls.altphonenumber;
   
   
@@ -133,6 +145,7 @@ toggleDarkMode() {
       this.passToggle = !this.passToggle;
   
     }
+
     showToggle2() {
       this.passToggle2 = !this.passToggle2;
   

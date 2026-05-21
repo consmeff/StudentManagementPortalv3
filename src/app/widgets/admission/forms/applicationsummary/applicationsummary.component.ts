@@ -52,23 +52,39 @@ const ACTIVE_SUMMARY_ACCORDION_VALUES = Object.values(SUMMARY_ACCORDION_PANEL_VA
 export class ApplicationSummaryComponent implements OnInit {
 
   registrantData: RegistrantDataDTO = {};
+
   personalInfoItems: LabelValueRow[] = [];
+
   nextOfKinItems: LabelValueRow[] = [];
+
   academicItems: LabelValueRow[] = [];
+
   documentItems: DocumentRow[] = [];
+
   readonly accordionPanelValues = SUMMARY_ACCORDION_PANEL_VALUES;
+
   readonly activeAccordionValues = ACTIVE_SUMMARY_ACCORDION_VALUES;
+
   isLoading: boolean = true;
+
   personalDraft: TPersonalDetailDTO | null = null;
+
   nextOfKinDraft: TNextOfKinDTO | null = null;
+
   academicDraft: TAcademicHistory[] | null = null;
+
   oLevelDraft: TOLevelResult[] | null = null;
+
   utmeDraft: TUtmeResultPayload | null = null;
+
   uploadDraft: TUploadFile | null = null;
 
   private authSessionStore = inject(AuthSessionStore);
+
   private formService = inject(FormService);
+
   private router = inject(Router);
+
   private route = inject(ActivatedRoute);
 
   constructor(
@@ -82,7 +98,7 @@ export class ApplicationSummaryComponent implements OnInit {
 
   async dataInitialization(): Promise<boolean> {
     let result = false;
-    let app_no = this.authSessionStore.applicationNo() || "";
+    const app_no = this.authSessionStore.applicationNo() || "";
     
     if (app_no != "") {
       this.isLoading = true;
@@ -109,7 +125,7 @@ export class ApplicationSummaryComponent implements OnInit {
     return `
 ${residential_address.address}, 
 ${residential_address.street_name}, 
-${residential_address.land_mark ? residential_address.land_mark + ', ' : ''}
+${residential_address.land_mark ? `${residential_address.land_mark  }, ` : ''}
 ${residential_address.city}, 
 ${residential_address.lga?.name || ''}, 
 ${residential_address.state?.name || ''}, 
@@ -118,7 +134,7 @@ ${residential_address.country?.name || ''}
   }
 
   private updateSummaryItems(): void {
-    const data = this.registrantData.data;
+    const {data} = this.registrantData;
     const disability = this.personalDraft !== null
       ? this.resolveDisabilityDisplayValue(this.personalDraft)
       : data?.disability || '';
@@ -199,7 +215,7 @@ ${residential_address.country?.name || ''}
   }
 
   private buildAcademicRows(): LabelValueRow[] {
-    const data = this.registrantData.data;
+    const {data} = this.registrantData;
     const history = this.academicDraft ?? data?.academic_history ?? [];
     const primary = history.find((item) =>
       item.certificate_type?.toLowerCase().includes('primary')

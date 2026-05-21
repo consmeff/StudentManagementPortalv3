@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { Password } from 'primeng/password';
 import { Access } from './access';
 
 import { Error } from './error';
@@ -9,7 +10,6 @@ import { Logout } from './logout';
 import { ConsmeffLoginComponent } from './sigin/consmeff-login.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { RequestPasswordResetComponent } from './request-passwordreset/request-passwordreset.component';
-import { Password } from 'primeng/password';
 import { PasswordResetComponent } from './passwordreset/passwordreset.component';
 import { OtpPageComponent } from './otp-page/otp-page.component';
 

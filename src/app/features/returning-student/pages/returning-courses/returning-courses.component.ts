@@ -13,14 +13,19 @@ import { ReturningCourse, ReturningFlowService, ResitCourse } from '../../return
 })
 export class ReturningCoursesComponent {
   private readonly router = inject(Router);
+
   readonly flow = inject(ReturningFlowService);
+
   readonly viewMode = signal<'registration' | 'slip' | 'resit-list' | 'resit-detail'>('registration');
+
   readonly selectedResit = signal<ResitCourse | null>(null);
 
   readonly canSubmit = computed(() =>
     this.flow.courseReviewState() === 'open' && this.flow.totalCoursesSelected() > 0
   );
+
   readonly firstSemesterSlipCourses = computed(() => this.flow.selectedCourses().filter((_, i) => i % 2 === 0));
+
   readonly secondSemesterSlipCourses = computed(() => this.flow.selectedCourses().filter((_, i) => i % 2 === 1));
 
   goToPayment(): void {

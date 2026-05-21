@@ -21,17 +21,25 @@ export type SchoolFeePaymentRecord = {
 @Injectable({ providedIn: 'root' })
 export class AdmittedFlowService {
   private readonly appService = inject(ApplicationService);
+
   private readonly authSessionStore = inject(AuthSessionStore);
 
   readonly loadingSnapshot = signal(false);
+
   readonly registrantData = signal<RegistrantData | null>(null);
+
   readonly schoolFeePayments = signal<SchoolFeePaymentRecord[]>([]);
 
   readonly acceptanceFee = 30000;
+
   readonly processingFee = 500;
+
   readonly totalPay = computed(() => this.acceptanceFee + this.processingFee);
+
   readonly totalSchoolFees = 600000;
+
   readonly maxInstallments = 3;
+
   readonly minFirstInstallment = 500000;
 
   readonly applicantName = computed(() => {
@@ -98,16 +106,22 @@ export class AdmittedFlowService {
   });
 
   readonly receiptUrl = computed(() => this.registrantData()?.payment_slip?.file_url || '');
+
   readonly profilePhotoUrl = computed(() => this.registrantData()?.passport_photo?.file_url || '');
+
   readonly paidSchoolFees = computed(() =>
     this.schoolFeePayments().reduce((sum, payment) => sum + payment.amount, 0)
   );
+
   readonly remainingSchoolFees = computed(() => Math.max(0, this.totalSchoolFees - this.paidSchoolFees()));
+
   readonly isSchoolFeesFullyPaid = computed(() => this.remainingSchoolFees() <= 0);
+
   readonly schoolFeeProgressPercent = computed(() => {
     const ratio = this.paidSchoolFees() / this.totalSchoolFees;
     return Math.max(0, Math.min(100, Math.round(ratio * 100)));
   });
+
   readonly schoolFeeCardTitle = computed(() => {
     if (this.isSchoolFeesFullyPaid()) {
       return 'Payment Completed';
@@ -120,16 +134,20 @@ export class AdmittedFlowService {
     }
     return 'Total school fees';
   });
+
   readonly schoolFeeMainValue = computed(() => {
     if (this.isSchoolFeesFullyPaid()) {
       return 'Fully Paid';
     }
     return this.formatCurrency(this.remainingSchoolFees() || this.totalSchoolFees);
   });
+
   readonly canAddInstallment = computed(
     () => this.schoolFeePayments().length < this.maxInstallments && this.remainingSchoolFees() > 0
   );
+
   readonly hasInternalPayment = computed(() => this.schoolFeePayments().length > 0);
+
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
   readonly verificationDocuments = computed<VerificationDocument[]>(() => {

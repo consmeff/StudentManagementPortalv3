@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 export function toYYYYMMDD(value: any): string {
     const date = new Date(value);
     if (isNaN(date.getTime())) {
-      throw new Error("Invalid date value: " + value);
+      throw new Error(`Invalid date value: ${  value}`);
     }
   
     const year = date.getFullYear();
@@ -24,10 +24,10 @@ export function toYYYYMMDD(value: any): string {
         
         return alias || '';
 
-      }else{
+      }
         const { email } = jwtDecode<{ email?: string }>(raw);
         return email || '';
-      }
+      
      
     } catch {
      return '';

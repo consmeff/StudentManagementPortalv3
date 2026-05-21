@@ -143,13 +143,13 @@ class TraceabilitySeeder {
       const companyPrefix = Math.floor(Math.random() * 9000000) + 1000000; // 7 digits
       const serialReference = Math.floor(Math.random() * 900000000000) + 100000000000; // 12 digits
       return `urn:epc:id:sscc:${companyPrefix}.${serialReference}`;
-    } else {
+    } 
       // SGTIN format: urn:epc:id:sgtin:CompanyPrefix.ItemReference.SerialNumber
       const companyPrefix = Math.floor(Math.random() * 9000000) + 1000000; // 7 digits
       const itemReference = Math.floor(Math.random() * 900000) + 100000; // 6 digits
       const serialNumber = Math.floor(Math.random() * 9000000000) + 1000000000; // 10 digits
       return `urn:epc:id:sgtin:${companyPrefix}.${itemReference}.${serialNumber}`;
-    }
+    
   }
 
   private generateTraceabilityEvent(): TraceabilityEvent {

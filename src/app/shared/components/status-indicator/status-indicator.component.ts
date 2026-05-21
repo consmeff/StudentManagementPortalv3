@@ -13,8 +13,12 @@ export type StatusTone = ApplicationStatusTone;
 })
 export class StatusIndicatorComponent {
   @Input() text = '';
+
   @Input() tone: StatusTone = 'neutral';
+
   @Input() tooltip = '';
+
   @Input() dot = true;
+
   @Input() pill = false;
 }

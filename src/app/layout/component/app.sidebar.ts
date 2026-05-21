@@ -208,13 +208,19 @@ type SidebarMenuItem = {
 })
 export class AppSidebar {
     private readonly widgetService = inject(WidgetsService);
+
     private readonly router = inject(Router);
+
     private readonly authSessionStore = inject(AuthSessionStore);
+
     private readonly navigationAccess = inject(NavigationAccessService);
+
     private readonly userPortalService = inject(UserPortalService);
 
     sidebarVisible = true;
+
     isMobileViewport = false;
+
     menuItems: SidebarMenuItem[] = [];
 
     constructor() {

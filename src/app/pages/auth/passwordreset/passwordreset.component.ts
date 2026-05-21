@@ -2,8 +2,8 @@ import { Component, OnDestroy, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'primeng/api';
+import { AuthService } from '../../../services/auth.service';
 import { validationCheckDTO } from '../../../data/auth/auth.data';
 import { passwordStrength } from '../../../utility/formvalidators';
 import { TraceabilityModule } from '../../../shared/traceability.module';
@@ -22,10 +22,13 @@ import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants'
 })
 export class PasswordResetComponent implements OnDestroy {
   busy = false;
+
   isDarkMode = false;
+
   visible = false;
   readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
   private themeSub?: Subscription;
+
   private authSessionStore = inject(AuthSessionStore);
 
   validationCheck: validationCheckDTO[] = [
@@ -42,6 +45,7 @@ export class PasswordResetComponent implements OnDestroy {
   });
 
   readonly passwordControl: AbstractControl = this.resetForm.controls.password;
+
   readonly cpasswordControl: AbstractControl = this.resetForm.controls.cpassword;
 
   constructor(

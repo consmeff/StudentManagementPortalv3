@@ -11,7 +11,10 @@ import { FormsModule } from '@angular/forms';
 })
 export class SearchInputComponent {
   readonly inputId = input<string>('');
+
   readonly placeholder = input<string>('Search');
+
   readonly model = input<string>('');
+
   readonly modelChange = output<string>();
 }

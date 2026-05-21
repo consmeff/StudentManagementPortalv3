@@ -15,14 +15,21 @@ import { AuthSessionStore } from '../../store/auth-session.store';
 })
 export class TopbarComponent implements OnDestroy {
   _widgetService = inject(WidgetsService);
+
   private readonly themeService = inject(ThemeService);
+
   private readonly authSessionStore = inject(AuthSessionStore);
+
   private themeSub?: Subscription;
   
   isDarkMode = false;
+
   username = '';
+
   userInitials = '';
+
   notificationCount = 3;
+
   messageCount = 2;
 
   notifications: MenuItem[] = [

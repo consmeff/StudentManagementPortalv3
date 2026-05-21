@@ -38,7 +38,7 @@ export function passwordComplexity(): ValidationErrors | null {
 export function passwordStrength(): ValidatorFn {
 
   return (control: AbstractControl): { [key: string]: any } | null => {
-    let password: string=control.value;
+    const password: string=control.value;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumber = /\d/.test(password);

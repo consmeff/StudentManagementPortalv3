@@ -15,6 +15,7 @@ import { StatusIndicatorComponent } from '../../../../shared/components/status-i
 })
 export class AdmittedProfileComponent implements OnInit {
   private readonly router = inject(Router);
+
   readonly flow = inject(AdmittedFlowService);
 
   ngOnInit(): void {

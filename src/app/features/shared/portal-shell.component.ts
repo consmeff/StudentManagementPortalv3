@@ -35,6 +35,7 @@ export class PortalShellComponent {
   private readonly route = inject(ActivatedRoute);
 
   readonly title = computed(() => this.route.snapshot.data['title'] || 'Portal');
+
   readonly description = computed(
     () => this.route.snapshot.data['description'] || 'This section will be customized for this student category.'
   );

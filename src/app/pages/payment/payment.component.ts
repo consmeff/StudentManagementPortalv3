@@ -43,24 +43,43 @@ type TPaymentQueryState = {
 })
 export class PaymentComponent implements OnInit {
   readonly sidebarVisible = signal<boolean>(false);
+
   readonly isLoading = signal<boolean>(false);
+
   readonly activeReceiptRefId = signal<string | null>(null);
+
   readonly paymentHistory = signal<PaymentHistoryItem[]>([]);
+
   readonly totalPayments = signal<number>(0);
+
   readonly currentPage = signal<number>(PAYMENT_PAGE_CONFIG.defaultPageNumber);
+
   readonly totalPages = signal<number | null>(null);
+
   readonly currentPageSize = signal<number>(PAYMENT_PAGE_CONFIG.defaultPageSize);
+
   readonly currentOrdering = signal<string | null>(null);
+
   readonly currentSearch = signal<string | null>(null);
+
   readonly searchValue = signal<string>('');
+
   readonly totalRecordsLabel = computed(() => this.resolveTotalRecordsLabel());
+
   readonly pageLabel = computed(() => this.resolvePageLabel());
+
   readonly showPageSummary = computed(() => !this.isLoading() && this.paymentHistory().length > 0);
+
   readonly showPagination = computed(() => !this.isLoading() && this.paymentHistory().length > 0 && this.totalPages() !== null);
+
   readonly activeSortKey = computed(() => this.resolveActiveSortKey());
+
   readonly activeSortDirection = computed(() => this.resolveActiveSortDirection());
+
   readonly paymentTableColumns = PAYMENT_TABLE_COLUMNS;
+
   readonly paymentTableGridTemplate = PAYMENT_TABLE_GRID_TEMPLATE;
+
   private readonly searchValueChange$ = new Subject<string>();
 
   constructor(

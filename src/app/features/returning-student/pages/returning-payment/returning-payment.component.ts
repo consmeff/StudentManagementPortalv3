@@ -15,18 +15,29 @@ import { FeeItem, ReturningFlowService } from '../../returning-flow.service';
 })
 export class ReturningPaymentComponent {
   readonly flow = inject(ReturningFlowService);
+
   private readonly messageService = inject(MessageService);
 
   readonly mode = signal<'overview' | 'invoice' | 'school-fees'>('overview');
+
   readonly isSubmitting = signal(false);
+
   readonly amount = signal(`${this.flow.suggestedAmount()}`);
+
   readonly schoolFeeAmount = signal(`${this.flow.suggestedSchoolFeeAmount()}`);
+
   readonly history = computed(() => this.flow.paymentHistory());
+
   readonly mandatoryFees = computed(() => this.flow.mandatoryFees());
+
   readonly optionalFees = computed(() => this.flow.optionalFees());
+
   readonly paymentType = signal('');
+
   readonly selectedResitCourses = signal<string[]>([]);
+
   readonly invoiceManualAmount = signal('');
+
   readonly processingFee = 500;
 
   readonly paymentTypeOptions = computed(() => [
@@ -37,6 +48,7 @@ export class ReturningPaymentComponent {
   readonly selectedTypeMeta = computed(() =>
     this.paymentTypeOptions().find((item) => item.id === this.paymentType()) || null
   );
+
   readonly resitCourseOptions = computed(() =>
     this.flow.resitCourses().map((item) => ({ id: item.code, label: `${item.code} ${item.title}` }))
   );
@@ -51,18 +63,22 @@ export class ReturningPaymentComponent {
     }
     return this.selectedTypeMeta()?.amount || 0;
   });
+
   readonly invoiceQuantity = computed(() =>
     this.paymentType() === 'exam-resit' ? Math.max(1, this.selectedResitCourses().length) : null
   );
+
   readonly invoiceTotal = computed(() =>
     this.invoiceAmount() > 0 ? this.invoiceAmount() + this.processingFee : 0
   );
+
   readonly schoolFeeCardTitle = computed(() => {
     const count = this.flow.schoolFeeInstallments().length;
     if (count === 0) return 'Total school fees';
     if (count === 1) return 'Outstanding Balance';
     return 'Final Balance';
   });
+
   readonly nextInstallmentLabel = computed(() => {
     const count = this.flow.schoolFeeInstallments().length + 1;
     if (count >= 3) {
@@ -70,6 +86,7 @@ export class ReturningPaymentComponent {
     }
     return count === 1 ? 'Make your 1st payment' : '2nd Installment';
   });
+
   readonly canProceedInvoice = computed(() =>
     !!this.paymentType() && this.invoiceAmount() > 0 && (this.paymentType() !== 'exam-resit' || this.selectedResitCourses().length > 0)
   );

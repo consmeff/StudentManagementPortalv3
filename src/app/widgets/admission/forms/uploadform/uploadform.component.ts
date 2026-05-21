@@ -33,10 +33,13 @@ import { formatFileSize } from '../../../../utility/yearutil';
 })
 export class UploadFormComponent implements AfterViewInit {
   private readonly maxFileSizeBytes = 500 * 1024;
+
   private readonly maxFileSizeLabel = '500KB';
 
   _formStepService = inject(FormService);
+
   _regService = inject(RegStoreService);
+
   messageService = inject(MessageService);
 
   formStepStatus: formstepDTO = {
@@ -47,20 +50,30 @@ export class UploadFormComponent implements AfterViewInit {
   };
 
   formValid: boolean = false;
+
   isEditable = true;
+
   hasDraftFiles = false;
 
   // Loading states
   isLoadingCertificate: boolean = false;
+
   isLoadingOlevel: boolean = false;
+
   isLoadingPassport: boolean = false;
+
   isLoadingOrigin: boolean = false;
+
   isLoadingUTME: boolean = false;
 
   CertificateFile: File | undefined;
+
   ResultFile: File | undefined;
+
   PassportFile: File | undefined;
+
   OriginFile: File | undefined;
+
   UTMEFile: File | undefined;
 
   fileObjects: TUploadFile = {
@@ -138,7 +151,7 @@ export class UploadFormComponent implements AfterViewInit {
       this.isLoadingCertificate = true;
       this.CertificateFile = selectedFile;
       if (this.CertificateFile != undefined) {
-        var _ppFD = new FormData();
+        const _ppFD = new FormData();
         _ppFD.append("file", this.CertificateFile);
         await firstValueFrom(this.appservice.uploadFile(_ppFD))
           .then((data: CertificateOfBirth) => {
@@ -151,7 +164,7 @@ export class UploadFormComponent implements AfterViewInit {
           .catch(() => {
             this.isLoadingCertificate = false;
             this.removeFile(0);
-            return;
+            
           });
       }
       this.validateForm();
@@ -167,7 +180,7 @@ export class UploadFormComponent implements AfterViewInit {
       this.isLoadingOlevel = true;
       this.ResultFile = selectedFile;
       if (this.ResultFile != undefined) {
-        var _ppFD = new FormData();
+        const _ppFD = new FormData();
         _ppFD.append("file", this.ResultFile);
         await firstValueFrom(this.appservice.uploadFile(_ppFD))
           .then((data: CertificateOfBirth) => {
@@ -183,7 +196,7 @@ export class UploadFormComponent implements AfterViewInit {
           .catch(() => {
             this.isLoadingOlevel = false;
             this.removeFile(1);
-            return;
+            
           });
       }
       this.validateForm();
@@ -199,7 +212,7 @@ export class UploadFormComponent implements AfterViewInit {
       this.isLoadingPassport = true;
       this.PassportFile = selectedFile;
       if (this.PassportFile != undefined) {
-        var _ppFD = new FormData();
+        const _ppFD = new FormData();
         _ppFD.append("file", this.PassportFile);
         await firstValueFrom(this.appservice.uploadFile(_ppFD))
           .then((data: CertificateOfBirth) => {
@@ -212,7 +225,7 @@ export class UploadFormComponent implements AfterViewInit {
           .catch(() => {
             this.isLoadingPassport = false;
             this.removeFile(2);
-            return;
+            
           });
       }
       this.validateForm();
@@ -228,7 +241,7 @@ export class UploadFormComponent implements AfterViewInit {
       this.isLoadingOrigin = true;
       this.OriginFile = selectedFile;
       if (this.OriginFile != undefined) {
-        var _ppFD = new FormData();
+        const _ppFD = new FormData();
         _ppFD.append("file", this.OriginFile);
         await firstValueFrom(this.appservice.uploadFile(_ppFD))
           .then((data: CertificateOfBirth) => {
@@ -241,7 +254,7 @@ export class UploadFormComponent implements AfterViewInit {
           .catch(() => {
             this.isLoadingOrigin = false;
             this.removeFile(3);
-            return;
+            
           });
       }
       this.validateForm();
@@ -257,7 +270,7 @@ export class UploadFormComponent implements AfterViewInit {
       this.isLoadingUTME = true;
       this.UTMEFile = selectedFile;
       if (this.UTMEFile != undefined) {
-        var _ppFD = new FormData();
+        const _ppFD = new FormData();
         _ppFD.append("file", this.UTMEFile);
         await firstValueFrom(this.appservice.uploadFile(_ppFD))
           .then((data: CertificateOfBirth) => {
@@ -270,7 +283,7 @@ export class UploadFormComponent implements AfterViewInit {
           .catch(() => {
             this.isLoadingUTME = false;
             this.removeFile(4);
-            return;
+            
           });
       }
       this.validateForm();
@@ -366,7 +379,7 @@ export class UploadFormComponent implements AfterViewInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
-      detail: detail,
+      detail,
       life: 3000
     });
   }
@@ -374,8 +387,8 @@ export class UploadFormComponent implements AfterViewInit {
   showError(summary: string, detail: string) {
     this.messageService.add({
       severity: 'error',
-      summary: summary,
-      detail: detail,
+      summary,
+      detail,
       life: 5000
     });
   }

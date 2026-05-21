@@ -1,21 +1,21 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
+
+const __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P((resolve) => { resolve(value); }); }
+    return new (P || (P = Promise))((resolve, reject) => {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+const __generator = (this && this.__generator) || function (thisArg, body) {
+    let _ = { label: 0, sent() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }; let f; let y; let t; let g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g.throw = verb(1), g.return = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (f = 1, y && (t = op[0] & 2 ? y.return : op[0] ? y.throw || ((t = y.return) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
@@ -36,10 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs = require('fs');
-var path = require('path');
-var crypto = require('crypto');
-var TraceabilitySeeder = /** @class */ (function () {
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+const TraceabilitySeeder = /** @class */ (function () {
     function TraceabilitySeeder() {
         this.businessCases = [
             "Initial packaging of organic coffee beans for retail distribution",
@@ -98,25 +99,25 @@ var TraceabilitySeeder = /** @class */ (function () {
         return crypto.randomUUID();
     };
     TraceabilitySeeder.prototype.generateRandomDateTime = function () {
-        var now = new Date();
-        var randomHours = Math.floor(Math.random() * 48); // Random within last 48 hours
-        var randomMinutes = Math.floor(Math.random() * 60);
-        var randomSeconds = Math.floor(Math.random() * 60);
-        var randomMs = Math.floor(Math.random() * 1000);
-        var randomDate = new Date(now.getTime() - (randomHours * 60 * 60 * 1000) - (randomMinutes * 60 * 1000) - (randomSeconds * 1000) - randomMs);
+        const now = new Date();
+        const randomHours = Math.floor(Math.random() * 48); // Random within last 48 hours
+        const randomMinutes = Math.floor(Math.random() * 60);
+        const randomSeconds = Math.floor(Math.random() * 60);
+        const randomMs = Math.floor(Math.random() * 1000);
+        const randomDate = new Date(now.getTime() - (randomHours * 60 * 60 * 1000) - (randomMinutes * 60 * 1000) - (randomSeconds * 1000) - randomMs);
         return randomDate.toISOString();
     };
     TraceabilitySeeder.prototype.generateRandomItemCount = function () {
-        var ranges = [
+        const ranges = [
             { min: 1, max: 10, weight: 0.2 },
             { min: 11, max: 50, weight: 0.3 },
             { min: 51, max: 150, weight: 0.3 },
             { min: 151, max: 300, weight: 0.2 }
         ];
-        var random = Math.random();
-        var cumulativeWeight = 0;
-        for (var _i = 0, ranges_1 = ranges; _i < ranges_1.length; _i++) {
-            var range = ranges_1[_i];
+        const random = Math.random();
+        let cumulativeWeight = 0;
+        for (let _i = 0, ranges_1 = ranges; _i < ranges_1.length; _i++) {
+            const range = ranges_1[_i];
             cumulativeWeight += range.weight;
             if (random <= cumulativeWeight) {
                 return Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
@@ -126,8 +127,8 @@ var TraceabilitySeeder = /** @class */ (function () {
     };
     TraceabilitySeeder.prototype.generateRandomGLN = function () {
         // Generate 13-digit GLN (Global Location Number)
-        var digits = [];
-        for (var i = 0; i < 13; i++) {
+        const digits = [];
+        for (let i = 0; i < 13; i++) {
             digits.push(Math.floor(Math.random() * 10));
         }
         return digits.join('');
@@ -143,9 +144,9 @@ var TraceabilitySeeder = /** @class */ (function () {
         return Math.random() < 0.7;
     };
     TraceabilitySeeder.prototype.generateRandomHashCode = function () {
-        var chars = '0123456789abcdef';
-        var result = '';
-        for (var i = 0; i < 32; i++) {
+        const chars = '0123456789abcdef';
+        let result = '';
+        for (let i = 0; i < 32; i++) {
             result += chars[Math.floor(Math.random() * chars.length)];
         }
         return result;
@@ -154,19 +155,19 @@ var TraceabilitySeeder = /** @class */ (function () {
         if (codeType === 'sscc') {
             // SSCC format: urn:epc:id:sscc:CompanyPrefix.SerialReference
             var companyPrefix = Math.floor(Math.random() * 9000000) + 1000000; // 7 digits
-            var serialReference = Math.floor(Math.random() * 900000000000) + 100000000000; // 12 digits
+            const serialReference = Math.floor(Math.random() * 900000000000) + 100000000000; // 12 digits
             return "urn:epc:id:sscc:".concat(companyPrefix, ".").concat(serialReference);
         }
-        else {
+        
             // SGTIN format: urn:epc:id:sgtin:CompanyPrefix.ItemReference.SerialNumber
             var companyPrefix = Math.floor(Math.random() * 9000000) + 1000000; // 7 digits
-            var itemReference = Math.floor(Math.random() * 900000) + 100000; // 6 digits
-            var serialNumber = Math.floor(Math.random() * 9000000000) + 1000000000; // 10 digits
+            const itemReference = Math.floor(Math.random() * 900000) + 100000; // 6 digits
+            const serialNumber = Math.floor(Math.random() * 9000000000) + 1000000000; // 10 digits
             return "urn:epc:id:sgtin:".concat(companyPrefix, ".").concat(itemReference, ".").concat(serialNumber);
-        }
+        
     };
     TraceabilitySeeder.prototype.generateTraceabilityEvent = function () {
-        var codeType = this.generateRandomCodeType();
+        const codeType = this.generateRandomCodeType();
         return {
             eventtag: this.generateRandomUUID(),
             createdon: this.generateRandomDateTime(),
@@ -183,20 +184,20 @@ var TraceabilitySeeder = /** @class */ (function () {
     };
     TraceabilitySeeder.prototype.generateEvents = function (count) {
         if (count === void 0) { count = 50; }
-        var events = [];
-        for (var i = 0; i < count; i++) {
+        const events = [];
+        for (let i = 0; i < count; i++) {
             events.push(this.generateTraceabilityEvent());
         }
         return events;
     };
     TraceabilitySeeder.prototype.generateRandomFileName = function () {
-        var timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        var randomString = Math.random().toString(36).substring(2, 8);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+        const randomString = Math.random().toString(36).substring(2, 8);
         return "traceability-events-".concat(timestamp, "-").concat(randomString, ".json");
     };
     TraceabilitySeeder.prototype.saveToFile = function (events_1) {
         return __awaiter(this, arguments, void 0, function (events, outputDir) {
-            var fileName, filePath;
+            let fileName; let filePath;
             if (outputDir === void 0) { outputDir = './output'; }
             return __generator(this, function (_a) {
                 try {
@@ -211,19 +212,19 @@ var TraceabilitySeeder = /** @class */ (function () {
                     console.log("\u2705 Successfully generated ".concat(events.length, " traceability events"));
                     console.log("\uD83D\uDCC1 File saved as: ".concat(filePath));
                     console.log("\uD83D\uDCCA File size: ".concat((fs.statSync(filePath).size / 1024).toFixed(2), " KB"));
-                    return [2 /*return*/, filePath];
+                    return [2 /* return */, filePath];
                 }
                 catch (error) {
                     console.error('❌ Error saving file:', error);
                     throw error;
                 }
-                return [2 /*return*/];
+                return [2 /* return */];
             });
         });
     };
     TraceabilitySeeder.prototype.run = function () {
         return __awaiter(this, arguments, void 0, function (count, outputDir) {
-            var startTime, events, endTime, ssgtnCount, ssccCount, commissionedCount, totalItems, error_1;
+            let startTime; let events; let endTime; let ssgtnCount; let ssccCount; let commissionedCount; let totalItems; let error_1;
             if (count === void 0) { count = 50; }
             if (outputDir === void 0) { outputDir = './output'; }
             return __generator(this, function (_a) {
@@ -236,15 +237,15 @@ var TraceabilitySeeder = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 3, , 4]);
                         events = this.generateEvents(count);
-                        return [4 /*yield*/, this.saveToFile(events, outputDir)];
+                        return [4 /* yield */, this.saveToFile(events, outputDir)];
                     case 2:
                         _a.sent();
                         endTime = Date.now();
                         console.log("\u23F1\uFE0F  Generation completed in ".concat(endTime - startTime, "ms"));
-                        ssgtnCount = events.filter(function (e) { return e.codetype === 'sgtin'; }).length;
-                        ssccCount = events.filter(function (e) { return e.codetype === 'sscc'; }).length;
-                        commissionedCount = events.filter(function (e) { return e.iscommissioned === true; }).length;
-                        totalItems = events.reduce(function (sum, e) { return sum + e.itemcount; }, 0);
+                        ssgtnCount = events.filter((e) => e.codetype === 'sgtin').length;
+                        ssccCount = events.filter((e) => e.codetype === 'sscc').length;
+                        commissionedCount = events.filter((e) => e.iscommissioned === true).length;
+                        totalItems = events.reduce((sum, e) => sum + e.itemcount, 0);
                         console.log("\n\uD83D\uDCC8 Statistics:");
                         console.log("   - SGTIN events: ".concat(ssgtnCount));
                         console.log("   - SSCC events: ".concat(ssccCount));
@@ -252,12 +253,12 @@ var TraceabilitySeeder = /** @class */ (function () {
                         console.log("   - Non-commissioned events: ".concat(count - commissionedCount));
                         console.log("   - Total item count: ".concat(totalItems));
                         console.log("   - Average items per event: ".concat((totalItems / count).toFixed(2)));
-                        return [3 /*break*/, 4];
+                        return [3 /* break */, 4];
                     case 3:
                         error_1 = _a.sent();
                         console.error('❌ Generation failed:', error_1);
                         throw error_1;
-                    case 4: return [2 /*return*/];
+                    case 4: return [2 /* return */];
                 }
             });
         });
@@ -267,14 +268,14 @@ var TraceabilitySeeder = /** @class */ (function () {
 // Main execution
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var seeder, args, countArg, outputArg, count, outputDir, error_2;
-        return __generator(this, function (_a) {
+        let seeder; let args; let countArg; let outputArg; let count; let outputDir; let error_2;
+        return __generator(this, (_a) => {
             switch (_a.label) {
                 case 0:
                     seeder = new TraceabilitySeeder();
                     args = process.argv.slice(2);
-                    countArg = args.find(function (arg) { return arg.startsWith('--count='); });
-                    outputArg = args.find(function (arg) { return arg.startsWith('--output='); });
+                    countArg = args.find((arg) => arg.startsWith('--count='));
+                    outputArg = args.find((arg) => arg.startsWith('--output='));
                     count = countArg ? parseInt(countArg.split('=')[1]) : 50;
                     outputDir = outputArg ? outputArg.split('=')[1] : './output';
                     if (isNaN(count) || count <= 0) {
@@ -284,22 +285,22 @@ function main() {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, seeder.run(count, outputDir)];
+                    return [4 /* yield */, seeder.run(count, outputDir)];
                 case 2:
                     _a.sent();
-                    return [3 /*break*/, 4];
+                    return [3 /* break */, 4];
                 case 3:
                     error_2 = _a.sent();
                     console.error('❌ Seeder execution failed:', error_2);
                     process.exit(1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /* break */, 4];
+                case 4: return [2 /* return */];
             }
         });
     });
 }
 // Export for use as module
-module.exports = { TraceabilitySeeder: TraceabilitySeeder };
+module.exports = { TraceabilitySeeder };
 // Run if this file is executed directly
 if (require.main === module) {
     main().catch(console.error);

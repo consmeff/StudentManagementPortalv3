@@ -19,9 +19,11 @@ import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants'
 })
 export class RequestPasswordResetComponent implements OnDestroy {
   busy = false;
+
   isDarkMode = false;
   readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
   private themeSub?: Subscription;
+
   private authSessionStore = inject(AuthSessionStore);
 
   resetForm = new FormGroup({

@@ -19,12 +19,19 @@ type ButtonType = 'button' | 'submit' | 'reset';
 })
 export class ButtonComponent {
   readonly variant = input<ButtonVariant>('primary');
+
   readonly outline = input(false);
+
   readonly type = input<ButtonType>('button');
+
   readonly disabled = input(false);
+
   readonly fullWidth = input(false);
+
   readonly iconClass = input('');
+
   readonly iconPosition = input<'left' | 'right'>('left');
+
   readonly forwardedClass = input('', { alias: 'class' });
 
   readonly buttonClick = output<MouseEvent>();

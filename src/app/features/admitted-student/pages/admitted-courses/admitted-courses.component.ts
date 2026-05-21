@@ -22,9 +22,11 @@ type CourseItem = {
 })
 export class AdmittedCoursesComponent {
   private readonly router = inject(Router);
+
   readonly flow = inject(AdmittedFlowService);
 
   readonly registrationSubmitted = signal(false);
+
   readonly selectedCodes = signal<string[]>([]);
 
   readonly courses = signal<CourseItem[]>([
@@ -50,16 +52,21 @@ export class AdmittedCoursesComponent {
     const selected = this.selectedCodes();
     return this.courses().filter((course) => selected.includes(course.code));
   });
+
   readonly selectedUnits = computed(() =>
     this.selectedCourses().reduce((sum, course) => sum + course.units, 0)
   );
+
   readonly selectedCount = computed(() => this.selectedCourses().length);
+
   readonly firstSemesterSelected = computed(() =>
     this.selectedCourses().filter((course) => course.semester === 'First Semester')
   );
+
   readonly secondSemesterSelected = computed(() =>
     this.selectedCourses().filter((course) => course.semester === 'Second Semester')
   );
+
   readonly canSubmit = computed(() => this.selectedCount() > 0 && !this.registrationSubmitted());
 
   toggleCourse(course: CourseItem, checked: boolean): void {

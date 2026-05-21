@@ -15,7 +15,9 @@ export class FormService {
     nextofkinValid: false,
     personalinfoValid: false
   });
+
   readonly formsteps = this._formsteps.asReadonly();
+
   public formsteps$ = toObservable(this._formsteps);
 
   private readonly _savedFormSteps = signal<formstepDTO>({
@@ -24,35 +26,51 @@ export class FormService {
     nextofkinValid: false,
     personalinfoValid: false
   });
+
   readonly savedFormSteps = this._savedFormSteps.asReadonly();
+
   public savedFormSteps$ = toObservable(this._savedFormSteps);
 
   private readonly _personalform = signal<TPersonalDetailDTO | null>(null);
+
   readonly personalform = this._personalform.asReadonly();
+
   public personalform$ = toObservable(this._personalform);
  
   private readonly _nextofkinform = signal<TNextOfKinDTO | null>(null);
+
   readonly nextofkinform = this._nextofkinform.asReadonly();
+
   public nextofkinform$ = toObservable(this._nextofkinform);
 
   private readonly _academicHistory = signal<TAcademicHistory[] | null>(null);
+
   readonly academicHistory = this._academicHistory.asReadonly();
+
   public academicHistory$ = toObservable(this._academicHistory);
 
   private readonly _olevelResult = signal<TOLevelResult[] | null>(null);
+
   readonly olevelResult = this._olevelResult.asReadonly();
+
   public olevelResult$ = toObservable(this._olevelResult);
 
   private readonly _utmeResult = signal<TUtmeResultPayload | null>(null);
+
   readonly utmeResult = this._utmeResult.asReadonly();
+
   public utmeResult$ = toObservable(this._utmeResult);
 
   private readonly _uploadFile = signal<TUploadFile | null>(null);
+
   readonly uploadFile = this._uploadFile.asReadonly();
+
   public uploadFile$ = toObservable(this._uploadFile);
 
   private readonly _applicationEditable = signal(true);
+
   readonly applicationEditable = this._applicationEditable.asReadonly();
+
   public applicationEditable$ = toObservable(this._applicationEditable);
 
 

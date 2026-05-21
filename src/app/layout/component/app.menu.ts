@@ -1,12 +1,11 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule , Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
 import { ALL_ROLES, PermissionService } from '../../services/permission.service';
 import { RegStoreService } from '../../services/regstore.service';
 import { RegistrantDataDTO } from '../../data/application/registrantdatadto';
-import { Router } from '@angular/router';
 import { NavigationAccessService, ProtectedPageFeature } from '../../services/navigation-access.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { UserPortalService } from '../../services/user-portal.service';
@@ -22,9 +21,11 @@ import { UserPortalService } from '../../services/user-portal.service';
         </ng-container>
     </ul> `
 })
-export class AppMenu {
+export class AppMenu implements OnInit {
     model: MenuItem[] = [];
+
     private authSessionStore = inject(AuthSessionStore);
+
     private readonly userPortalService = inject(UserPortalService);
 
     constructor(

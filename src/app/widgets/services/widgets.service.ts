@@ -10,7 +10,9 @@ export class WidgetsService {
   
   
   private readonly _sidebarState = signal<sidebarStateDTO>({ isvisible: true });
+
   readonly sidebarState = this._sidebarState.asReadonly();
+
   public sidebarState$ = toObservable(this._sidebarState);
 
   constructor() {   }

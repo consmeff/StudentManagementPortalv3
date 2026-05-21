@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 // PrimeNG Imports
@@ -33,9 +33,11 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
   templateUrl: './nextofkin.component.html',
   styleUrls: ['./nextofkin.component.scss']
 })
-export class NextOfKinComponent {
+export class NextOfKinComponent implements OnInit {
   _formStepService = inject(FormService);
+
   regstore = inject(RegStoreService);
+
   appservice = inject(ApplicationService);
   
   formStepStatus: formstepDTO = {
@@ -46,27 +48,40 @@ export class NextOfKinComponent {
   };
 
   nextofkinForm!: FormGroup;
+
   backendRegistrationData!: RegistrantDataDTO;
+
   draftNextOfKinData: TNextOfKinDTO | null = null;
   
   genderOptions = ['Male', 'Female', 'Other'];
   
   nationalityOptions: Countries[] | undefined = undefined;
+
   stateOptions: States[] | undefined = undefined;
+
   localGovOptions: LGA[] | undefined = undefined;
+
   residentialLocalGovernment: LGA[] | undefined = undefined;
+
   titleOptions: string[] = ['Mr', 'Miss', 'Mrs','Chief'];
+
   relationshipOption: string[] = ['Parent', 'Uncle'];
 
   // Transformed options for PrimeNG dropdowns
   titleDropdownOptions: any[] = [];
+
   relationshipDropdownOptions: any[] = [];
+
   nationalityDropdownOptions: any[] = [];
+
   stateDropdownOptions: any[] = [];
+
   localGovDropdownOptions: any[] = [];
+
   residentialLocalGovDropdownOptions: any[] = [];
 
   private formInitialized = false;
+
   isEditable = true;
 
   constructor(private fb: FormBuilder) {
@@ -137,7 +152,7 @@ export class NextOfKinComponent {
   }
 
   initializeForm() {
-    let data = this.backendRegistrationData?.data?.primary_parent_or_guardian;
+    const data = this.backendRegistrationData?.data?.primary_parent_or_guardian;
     const draftData = this.draftNextOfKinData;
     
     this.nextofkinForm = this.fb.group({
@@ -186,7 +201,7 @@ export class NextOfKinComponent {
       }, 2000);
 
       if (data?.residential_address != null && data?.residential_address != "") {
-        let parser = parseAddress(data?.residential_address!);
+        const parser = parseAddress(data?.residential_address!);
         this.nextofkinForm.controls["houseNumber"].setValue(parser.houseNumber);
         this.nextofkinForm.controls["streetName"].setValue(parser.streetName);
         this.nextofkinForm.controls["landmark"].setValue(parser.landmark);

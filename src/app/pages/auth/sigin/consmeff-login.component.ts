@@ -3,10 +3,10 @@ import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'primeng/api';
-import { AuthSessionStore } from '../../../store/auth-session.store';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../services/auth.service';
+import { AuthSessionStore } from '../../../store/auth-session.store';
 import { ThemeService } from '../../../services/theme.service';
 import { UserPortalService } from '../../../services/user-portal.service';
 import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants';
@@ -29,24 +29,38 @@ const LOGIN_CAROUSEL_INTERVAL_MS = 6000;
 })
 export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   email = '';
+
   password = '';
   readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
   
   readonly carouselImages = LOGIN_CAROUSEL_IMAGES;
+
   showPassword = signal(false);
+
   isDarkMode = signal(false);
+
   isLoading = signal(false);
+
   activeSlideIndex = signal(0);
+
   errorMessage = '';
+
   private returnUrl = '/';
+
   loginForm!: FormGroup;
+
   private carouselIntervalId: ReturnType<typeof setInterval> | null = null;
 
   private router = inject(Router);
+
   private route = inject(ActivatedRoute);
+
   private authSessionStore = inject(AuthSessionStore);
+
   private themeService = inject(ThemeService);
+
   private userPortalService = inject(UserPortalService);
+
   private themeSub?: Subscription;
 
   constructor(private authService: AuthService,private messageService: MessageService,) {
@@ -54,6 +68,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
       this.isDarkMode.set(isDark);
     });
   }
+
   ngOnInit(): void {
     this.authSessionStore.clear();
     this.loginForm = new FormGroup({
@@ -75,7 +90,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   async login() {
     this.isLoading.set(true);
     this.errorMessage = '';
-    let payload: { username: string, password: string } = {
+    const payload: { username: string, password: string } = {
       password: this.loginForm.controls["password"].value,
       username: this.loginForm.controls["email"].value,
     }

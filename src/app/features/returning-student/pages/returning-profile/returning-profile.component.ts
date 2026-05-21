@@ -15,31 +15,49 @@ import { AddressData, NextOfKinData, PersonalContactData, ReturningFlowService, 
 })
 export class ReturningProfileComponent {
   readonly flow = inject(ReturningFlowService);
+
   private readonly messageService = inject(MessageService);
 
   readonly activeTab = computed(() => this.flow.activeProfileTab());
+
   readonly overview = computed(() => this.flow.profileOverview());
+
   readonly personal = computed(() => this.flow.personalContact());
+
   readonly residential = computed(() => this.flow.residentialAddress());
+
   readonly nextOfKin = computed(() => this.flow.nextOfKin());
+
   readonly nextOfKinResidence = computed(() => this.flow.nextOfKinResidence());
 
   readonly currentPassword = signal('');
+
   readonly newPassword = signal('');
+
   readonly confirmPassword = signal('');
+
   readonly showCurrent = signal(false);
+
   readonly showNew = signal(false);
+
   readonly showConfirm = signal(false);
 
   readonly savingSection = signal<string | null>(null);
+
   readonly isEditingPersonal = signal(false);
+
   readonly isEditingResidential = signal(false);
+
   readonly isEditingNextOfKin = signal(false);
+
   readonly isEditingNextOfKinResidence = signal(false);
 
   readonly personalDraft = signal<PersonalContactData>(this.flow.personalContact());
+
   readonly residentialDraft = signal<AddressData>(this.flow.residentialAddress());
+
   readonly nextOfKinDraft = signal<NextOfKinData>(this.flow.nextOfKin());
+
   readonly nextOfKinResidenceDraft = signal<AddressData>(this.flow.nextOfKinResidence());
 
   setTab(tab: ReturningProfileTab): void {

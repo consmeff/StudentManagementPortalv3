@@ -6,7 +6,9 @@ import { debounceTime, fromEvent, merge } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class InactivityService implements OnDestroy {
   private readonly router = inject(Router);
+
   private readonly destroyRef = inject(DestroyRef);
+
   private readonly activity$ = merge(
     fromEvent(window, 'mousemove'),
     fromEvent(window, 'keydown'),

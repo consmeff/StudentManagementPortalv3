@@ -22,13 +22,19 @@ export class OtpPageComponent implements OnInit, OnDestroy {
   inputElements!: QueryList<ElementRef>;
 
   busy = false;
+
   isDarkMode = false;
+
   complete = false;
   readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
   otpForm!: FormGroup;
+
   email: string = '';
+
   isPasswordResetFlow = false;
+
   private themeSub?: Subscription;
+
   private authSessionStore = inject(AuthSessionStore);
 
   constructor(
@@ -66,7 +72,7 @@ export class OtpPageComponent implements OnInit, OnDestroy {
 
   onInput(event: Event, nextBox: number): void {
     const input = event.target as HTMLInputElement;
-    const value = input.value;
+    const {value} = input;
 
     // Only allow digits
     if (!/^\d$/.test(value)) {
@@ -133,7 +139,7 @@ export class OtpPageComponent implements OnInit, OnDestroy {
     const otp = `${this.otpForm.controls['box1'].value}${this.otpForm.controls['box2'].value}${this.otpForm.controls['box3'].value}${this.otpForm.controls['box4'].value}${this.otpForm.controls['box5'].value}${this.otpForm.controls['box6'].value}`;
     const otpObj = { 
       email: this.authSessionStore.profileEmail(), 
-      otp: otp 
+      otp 
     };
 
     this.authService.verifyOtp(otpObj).subscribe({

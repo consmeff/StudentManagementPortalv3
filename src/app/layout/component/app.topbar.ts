@@ -110,14 +110,21 @@ import { AuthSessionStore } from '../../store/auth-session.store';
 })
 export class AppTopbar implements OnDestroy {
     private readonly theme = inject(ThemeService);
+
     private readonly authSessionStore = inject(AuthSessionStore);
+
     private readonly widgetService = inject(WidgetsService);
+
     private readonly router = inject(Router);
+
     private readonly subscriptions = new Subscription();
 
     username = '';
+
     companyName = '';
+
     isDarkMode = false;
+
     currentModuleName = 'Dashboard';
 
     constructor() {

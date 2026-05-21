@@ -20,7 +20,9 @@ export interface PaymentWorkflowHooks {
 @Injectable({ providedIn: 'root' })
 export class PaymentWorkflowService {
   private readonly appService = inject(ApplicationService);
+
   private readonly router = inject(Router);
+
   private readonly authSessionStore = inject(AuthSessionStore);
 
   async startForApplication(applicationNo: string, hooks?: PaymentWorkflowHooks): Promise<void> {
@@ -91,7 +93,7 @@ export class PaymentWorkflowService {
       currency: 'NGN',
       ref: ref.ref_id,
       callback: async (response: any) => {
-        const reference = response.reference;
+        const {reference} = response;
         this.authSessionStore.setPaymentRef(reference);
         hooks?.onVerifyingChange?.(true);
 
