@@ -10,9 +10,9 @@ export interface ApplicationGuidelineContent {
 }
 
 export const APPLICATION_GUIDELINE_CONTENT: ApplicationGuidelineContent = {
-  title: 'ADMISSION REQUIREMENTS FOR ND PROGRAMMES',
+  title: 'ADMISSION GUIDELINE FOR ND PROGRAMMES 2026/2027 ACADEMIC SESSION',
   intro:
-    'Kindly read the admission requirements carefully before you proceed with the application. It is important to understand and follow the requirements to avoid errors in your application.',
+    'Please review all the details below carefully and ensure compliance before proceeding with making payment and filling out application form. No refunds will be issued after payment.',
   sections: [
     {
       heading:
@@ -42,7 +42,7 @@ export const APPLICATION_GUIDELINE_CONTENT: ApplicationGuidelineContent = {
     },
     {
       heading:
-        'Candidates are required to pay a non-refundable application fee of Twenty Thousand Five Hundred Naira Only (NGN 20,500.00), in addition to NGN 2,488.25 being portal and payment gateway charges. Total application fee is NGN 22,988.25.',
+        'Candidates are required to pay a non-refundable application fee of Twenty Thousand Five Hundred Naira Only (NGN 20,500.00), in addition to NGN 2,500 being portal and payment gateway charges. Total application fee is NGN 23,000.00.',
       items: [],
     },
     {
