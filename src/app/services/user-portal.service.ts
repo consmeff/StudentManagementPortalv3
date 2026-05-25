@@ -16,8 +16,9 @@ export class UserPortalService {
     const userType = (this.authSessionStore.userType() || '').toLowerCase().trim();
     const matriculationNo = (this.authSessionStore.matriculationNo() || '').trim();
     const isAdmitted = this.authSessionStore.isAdmitted();
+    const acceptanceFeeStatus = (this.authSessionStore.acceptanceFeeStatus() || '').trim();
 
-    if (isAdmitted || ADMITTED_USER_TYPES.includes(userType)) {
+    if (isAdmitted || ADMITTED_USER_TYPES.includes(userType) || acceptanceFeeStatus.length > 0) {
       return 'admitted';
     }
 

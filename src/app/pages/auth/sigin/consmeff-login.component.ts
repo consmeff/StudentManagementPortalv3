@@ -1,7 +1,6 @@
 
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
@@ -20,7 +19,7 @@ const LOGIN_CAROUSEL_IMAGES = [
 const LOGIN_CAROUSEL_INTERVAL_MS = 6000;
 
 @Component({
-  selector: 'procapx-login',
+  selector: 'app-consmeff-login',
   standalone: true,
   imports: [TraceabilityModule],
   templateUrl: './consmeff-login.component.html',
@@ -31,8 +30,9 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   email = '';
 
   password = '';
+
   readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
-  
+
   readonly carouselImages = LOGIN_CAROUSEL_IMAGES;
 
   showPassword = signal(false);
@@ -63,7 +63,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
 
   private themeSub?: Subscription;
 
-  constructor(private authService: AuthService,private messageService: MessageService,) {
+  constructor(private authService: AuthService, private messageService: MessageService) {
     this.themeSub = this.themeService.darkMode$.subscribe((isDark) => {
       this.isDarkMode.set(isDark);
     });
@@ -96,8 +96,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
     }
 
     this.authService.login(payload).subscribe({
-      next: (result) => {
-        this.authSessionStore.setSessionFromLogin(result);
+      next: () => {
         this.messageService.add({ severity: 'success', summary: 'Login', detail: 'Login Successful' });
         this.isLoading.set(false);
         this.router.navigateByUrl(this.userPortalService.landingUrl());

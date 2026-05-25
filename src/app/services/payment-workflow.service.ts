@@ -5,7 +5,29 @@ import { ApplicationService } from './application.service';
 import { PaymentRefResponse } from '../data/dashboard/payment.data';
 import { AuthSessionStore } from '../store/auth-session.store';
 
-declare let PaystackPop: any;
+type PaystackCallbackResponse = {
+  reference: string;
+};
+
+type PaystackHandler = {
+  openIframe: () => void;
+};
+
+type PaystackSetupConfig = {
+  key: string;
+  email: string;
+  amount: number;
+  currency: string;
+  ref: string;
+  callback: (response: PaystackCallbackResponse) => Promise<void>;
+  onClose: () => void;
+};
+
+type PaystackPopType = {
+  setup: (config: PaystackSetupConfig) => PaystackHandler;
+};
+
+declare const PaystackPop: PaystackPopType;
 
 export interface PaymentWorkflowHooks {
   onProcessingChange?: (processing: boolean) => void;
@@ -81,7 +103,7 @@ export class PaymentWorkflowService {
 
     this.authSessionStore.setPaymentRef(ref.ref_id);
     hooks?.onSuccess?.('Redirecting to Payment', 'Taking you to the secure payment page...');
-    window.location.assign(sanitizedUrl);
+    globalThis.location.assign(sanitizedUrl);
     return true;
   }
 
@@ -92,7 +114,7 @@ export class PaymentWorkflowService {
       amount: +ref.amount * 100,
       currency: 'NGN',
       ref: ref.ref_id,
-      callback: async (response: any) => {
+      callback: async (response) => {
         const {reference} = response;
         this.authSessionStore.setPaymentRef(reference);
         hooks?.onVerifyingChange?.(true);
@@ -128,15 +150,7 @@ export class PaymentWorkflowService {
 
     try {
       const snapshot = await firstValueFrom(this.appService.registrantData(applicantNo));
-      const paymentStatus = snapshot?.data?.payment_status ?? '';
-      if (paymentStatus) {
-        this.authSessionStore.setPaymentStatus(paymentStatus);
-      }
-      const registrantData = snapshot?.data as Record<string, unknown> | undefined;
-      const acceptanceFeeStatus = registrantData?.['acceptance_fee_status'];
-      if (typeof acceptanceFeeStatus === 'string' && acceptanceFeeStatus.trim().length > 0) {
-        this.authSessionStore.setAcceptanceFeeStatus(acceptanceFeeStatus);
-      }
+      this.authSessionStore.syncRegistrantSession(snapshot?.data ?? null);
     } catch {
       // Keep payment flow resilient even if status refresh fails.
     }

@@ -5,6 +5,17 @@ import { environment } from '../../environments/environment';
 import { LoginResponse, ProfilePayload, ProfileSuccessResponse } from '../data/auth/auth.data';
 import { AuthSessionStore } from '../store/auth-session.store';
 
+type AuthOtpPayload = Record<string, unknown>;
+
+type AuthOtpTokenResponse = {
+  jwt?: string;
+  refreshToken?: string;
+};
+
+type RefreshTokenResponse = {
+  jwt?: string;
+};
+
 
 
 @Injectable({
@@ -29,7 +40,6 @@ export class AuthService {
     .pipe(
       tap(tokens => {
         this.doLoginUser(user.username, tokens);
-        console.log(tokens);
       }),
       map((tokens) => tokens),
       catchError((error) => throwError(() => error)));
@@ -40,25 +50,22 @@ export class AuthService {
     return this.http.post<ProfileSuccessResponse>(`${this.apiRoot}/api/v1/auth/signup`, payload, { headers: this.headers });
   }
 
-  verifyOtp(otpObj: any): Observable<boolean> {
-    return this.http.post<any>(`${this.apiRoot}/api/v1/auth/signup/verify-otp`, otpObj)
+  verifyOtp(otpObj: AuthOtpPayload): Observable<boolean> {
+    return this.http.post<AuthOtpTokenResponse>(`${this.apiRoot}/api/v1/auth/signup/verify-otp`, otpObj)
       .pipe(
         tap(responseObj => { this.storeTokenFromOTP(this.authSessionStore.profileEmail(), responseObj); }),
         map(() => true));
   }
 
-  verifyEmail(emailObj: any): Observable<boolean> {
-    return this.http.post<any>(`${this.apiRoot}/api/v1/auth/password/forgot`, emailObj)
-
+  verifyEmail(emailObj: AuthOtpPayload): Observable<boolean> {
+    return this.http.post(`${this.apiRoot}/api/v1/auth/password/forgot`, emailObj).pipe(map(() => true));
   }
 
-  updatePassword(otpObj: any): Observable<boolean> {
-
-    return this.http.post<any>(`${this.apiRoot}/api/v1/auth/password/reset`, otpObj, { headers: this.headers })
-
+  updatePassword(otpObj: AuthOtpPayload): Observable<boolean> {
+    return this.http.post(`${this.apiRoot}/api/v1/auth/password/reset`, otpObj, { headers: this.headers }).pipe(map(() => true));
   }
 
-  storeTokenFromOTP(username: string, token: any) {
+  storeTokenFromOTP(username: string, token: AuthOtpTokenResponse) {
     this.loggedUser = username;
     this.authSessionStore.setTokens(token.jwt ?? '', token.refreshToken ?? '');
   }
@@ -76,10 +83,10 @@ export class AuthService {
   }
 
   refreshToken() {
-    return this.http.post<any>(`${this.apiRoot}/refresh`, {
+    return this.http.post<RefreshTokenResponse>(`${this.apiRoot}/refresh`, {
       'refreshToken': this.getRefreshToken()
-    }).pipe(tap((tokens: any) => {
-      this.storeJwtToken(tokens.jwt);
+    }).pipe(tap((tokens) => {
+      this.storeJwtToken(tokens.jwt ?? '');
     }));
   }
 
@@ -95,7 +102,7 @@ export class AuthService {
     return this.authSessionStore.jwtToken();
   }
 
-  private storeTokens(tokens: any) {
+  private storeTokens(tokens: LoginResponse) {
     this.authSessionStore.setTokens(tokens.access_token ?? '', tokens.refresh_token ?? '');
   }
 
@@ -103,19 +110,8 @@ export class AuthService {
     this.authSessionStore.setTokens('', '');
   }
 
-  private doLoginUser(username: string, tokens: any) {
+  private doLoginUser(username: string, tokens: LoginResponse) {
     this.loggedUser = username;
-    this.storeTokens(tokens);
-    this.storeRole(tokens.user_type);
-
-    if (tokens.application_no) {
-      this.storeAppNo(tokens.application_no);
-      this.authSessionStore.setName(tokens.name ?? '');
-    }
-    if (tokens.matriculation_no) {
-      this.storeMatricNo(tokens.matriculation_no);
-    }
-    this.authSessionStore.setPaymentStatus(tokens.payment_status ?? '');
-
+    this.authSessionStore.setSessionFromLogin(tokens);
   }
 }

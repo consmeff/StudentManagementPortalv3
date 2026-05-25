@@ -179,13 +179,7 @@ export class AdmittedFlowService {
       const response = await firstValueFrom(this.appService.registrantData(appNo));
       const data = response?.data ?? null;
       this.registrantData.set(data);
-      if (data?.payment_status) {
-        this.authSessionStore.setPaymentStatus(data.payment_status);
-      }
-      const acceptanceFeeStatus = this.readAcceptanceFeeStatusFromRegistrant();
-      if (acceptanceFeeStatus) {
-        this.authSessionStore.setAcceptanceFeeStatus(acceptanceFeeStatus);
-      }
+      this.authSessionStore.syncRegistrantSession(data);
     } finally {
       this.loadingSnapshot.set(false);
     }
@@ -264,9 +258,7 @@ export class AdmittedFlowService {
   }
 
   private readAcceptanceFeeStatusFromRegistrant(): string {
-    const registrant = this.registrantData() as unknown as Record<string, unknown> | null;
-    const acceptanceFeeStatus = registrant?.['acceptance_fee_status'];
-    return typeof acceptanceFeeStatus === 'string' ? acceptanceFeeStatus : '';
+    return this.registrantData()?.acceptance_fee_status ?? '';
   }
 
   private formatDate(value: string | Date | undefined): string {
