@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ApplicationService } from './application.service';
+import { StudentFeePaymentPayload } from '../data/application/student-fees.dto';
 import { PaymentRefResponse } from '../data/dashboard/payment.data';
 import { AuthSessionStore } from '../store/auth-session.store';
 
@@ -35,7 +36,7 @@ export interface PaymentWorkflowHooks {
   onSuccess?: (title: string, message: string) => void;
   onError?: (title: string, message: string) => void;
   onWarning?: (title: string, message: string) => void;
-  onVerified?: () => void;
+  onVerified?: (reference?: string) => void;
   postVerifyNavigateTo?: string;
 }
 
@@ -49,30 +50,37 @@ export class PaymentWorkflowService {
 
   async startForApplication(applicationNo: string, hooks?: PaymentWorkflowHooks): Promise<void> {
     await this.startPayment(
-      applicationNo,
       () => firstValueFrom(this.appService.getPaymentRef({ application_no: applicationNo })),
-      hooks
+      hooks,
+      applicationNo
     );
   }
 
   async startAcceptanceFeePayment(applicationNo: string, hooks?: PaymentWorkflowHooks): Promise<void> {
     await this.startPayment(
-      applicationNo,
       () => firstValueFrom(this.appService.acceptanceFeePayment({ application_no: applicationNo })),
-      hooks
+      hooks,
+      applicationNo
+    );
+  }
+
+  async startStudentFeesPayment(
+    payload: StudentFeePaymentPayload,
+    hooks?: PaymentWorkflowHooks,
+    applicantNo?: string
+  ): Promise<void> {
+    await this.startPayment(
+      () => firstValueFrom(this.appService.initiateStudentFeePayment(payload)),
+      hooks,
+      applicantNo
     );
   }
 
   private async startPayment(
-    applicationNo: string,
     paymentRequest: () => Promise<PaymentRefResponse>,
-    hooks?: PaymentWorkflowHooks
+    hooks?: PaymentWorkflowHooks,
+    applicantNo?: string
   ): Promise<void> {
-    if (!applicationNo) {
-      hooks?.onError?.('Error', 'Application number not found');
-      return;
-    }
-
     hooks?.onProcessingChange?.(true);
     try {
       const ref = await paymentRequest();
@@ -85,7 +93,7 @@ export class PaymentWorkflowService {
 
       const redirected = this.redirectToHostedPayment(ref, hooks);
       if (!redirected) {
-        this.makePayment(applicationNo, ref, hooks);
+        this.makePayment(applicantNo, ref, hooks);
       }
     } catch (error) {
       hooks?.onProcessingChange?.(false);
@@ -107,7 +115,7 @@ export class PaymentWorkflowService {
     return true;
   }
 
-  private makePayment(applicationNo: string, ref: PaymentRefResponse, hooks?: PaymentWorkflowHooks): void {
+  private makePayment(applicantNo: string | undefined, ref: PaymentRefResponse, hooks?: PaymentWorkflowHooks): void {
     const handler = PaystackPop.setup({
       key: 'pk_test_3303a8dc18ea2a4b2728543b34813870ba6f8bd6',
       email: ref.email || 'solixzdev@gmail.com',
@@ -121,10 +129,10 @@ export class PaymentWorkflowService {
 
         try {
           await firstValueFrom(this.appService.verifyPayment({ ref_id: reference }));
-          await this.syncPaymentStatus(applicationNo);
+          await this.syncPaymentStatus(applicantNo ?? '');
           hooks?.onVerifyingChange?.(false);
           hooks?.onSuccess?.('Payment Successful', 'Your payment has been verified successfully.');
-          hooks?.onVerified?.();
+          hooks?.onVerified?.(reference);
 
           const postVerifyNavigateTo = hooks?.postVerifyNavigateTo ?? '/auth/login';
           setTimeout(() => {

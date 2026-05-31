@@ -11,6 +11,13 @@ import {
 } from '../data/application/payment.data';
 import { PreRegistrationDataDTO } from '../data/application/preregistrationdatadto';
 import { RegistrantDataDTO } from '../data/application/registrantdatadto';
+import {
+  StudentFeePartPaymentConfig,
+  StudentFeePartPaymentEntry,
+  StudentFeePaymentPayload,
+  StudentFeePlan,
+  StudentFeePlanResponse
+} from '../data/application/student-fees.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +26,10 @@ export class ApplicationService {
   private readonly apiRoot = environment.apiURL;
 
   private readonly paymentsEndpoint = `${this.apiRoot}/api/v1/payments/payments`;
+
+  private readonly studentFeesEndpoint = `${this.apiRoot}/api/v1/payments/student-fees`;
+
+  private readonly payStudentFeeEndpoint = `${this.apiRoot}/api/v1/students/pay-fee`;
 
   constructor(private http: HttpClient) { }
 
@@ -85,6 +96,16 @@ export class ApplicationService {
 
   acceptanceFeePayment(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/acceptance-fee-payment`, refPayload);
+  }
+
+  getStudentFeePlans(): Observable<StudentFeePlanResponse> {
+    return this.http.get<unknown>(this.studentFeesEndpoint).pipe(
+      map((response) => this.normalizeStudentFeePlansResponse(response))
+    );
+  }
+
+  initiateStudentFeePayment(payload: StudentFeePaymentPayload): Observable<PaymentRefResponse> {
+    return this.http.post<PaymentRefResponse>(this.payStudentFeeEndpoint, payload);
   }
 
   getPayments(query: { page: number; pageSize: number; ordering: string | null; search: string | null }): Observable<PaginatedPaymentsResponse> {
@@ -177,6 +198,40 @@ export class ApplicationService {
     };
   }
 
+  private normalizeStudentFeePlansResponse(response: unknown): StudentFeePlanResponse {
+    const rawResponse = this.toRecord(response);
+    const source = Array.isArray(rawResponse['data'])
+      ? rawResponse['data']
+      : Array.isArray(response)
+        ? response
+        : [];
+
+    return {
+      data: source.map((plan) => this.normalizeStudentFeePlan(plan))
+    };
+  }
+
+  private normalizeStudentFeePlan(response: unknown): StudentFeePlan {
+    const rawResponse = this.toRecord(response);
+    return {
+      id: this.readNumber(rawResponse, 'id'),
+      deleted_at: this.readNullableString(rawResponse, 'deleted_at'),
+      created_at: this.readString(rawResponse, 'created_at'),
+      updated_at: this.readString(rawResponse, 'updated_at'),
+      display_order: this.readNumber(rawResponse, 'display_order'),
+      label: this.readString(rawResponse, 'label'),
+      name: this.readString(rawResponse, 'name'),
+      amount: this.readNumber(rawResponse, 'amount'),
+      allow_partial_payment: this.readBoolean(rawResponse, 'allow_partial_payment'),
+      part_payment_config: this.readStudentFeePartPaymentConfig(rawResponse, 'part_payment_config'),
+      created_by: this.readNullableNumber(rawResponse, 'created_by'),
+      updated_by: this.readNullableNumber(rawResponse, 'updated_by'),
+      deleted_by: this.readNullableNumber(rawResponse, 'deleted_by'),
+      department: this.readNumber(rawResponse, 'department'),
+      level: this.readNumber(rawResponse, 'level'),
+    };
+  }
+
   private getNestedRecord(source: unknown, key: string): Record<string, unknown> | null {
     const record = this.toRecord(source);
     const nestedValue = record[key];
@@ -215,5 +270,33 @@ export class ApplicationService {
   private readNullableNumber(source: Record<string, unknown>, key: string): number | null {
     const value = source[key];
     return typeof value === 'number' && Number.isFinite(value) ? value : null;
+  }
+
+  private readBoolean(source: Record<string, unknown>, key: string): boolean {
+    return source[key] === true;
+  }
+
+  private readStudentFeePartPaymentConfig(
+    source: Record<string, unknown>,
+    key: string
+  ): StudentFeePartPaymentConfig {
+    const value = source[key];
+    if (!this.isRecord(value)) {
+      return {};
+    }
+
+    return Object.entries(value).reduce<StudentFeePartPaymentConfig>((accumulator, [configKey, configValue]) => {
+      if (!Array.isArray(configValue) || configValue.length < 2) {
+        return accumulator;
+      }
+
+      const [amount, mode] = configValue;
+      if (typeof amount !== 'number' || !Number.isFinite(amount) || typeof mode !== 'string') {
+        return accumulator;
+      }
+
+      accumulator[configKey] = [amount, mode] satisfies StudentFeePartPaymentEntry;
+      return accumulator;
+    }, {});
   }
 }

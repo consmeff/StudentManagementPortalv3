@@ -126,6 +126,10 @@
   overflow: hidden;
 }
 
+.amount-input-error {
+  border-color: var(--app-danger);
+}
+
 .currency {
   padding: 0.9rem;
   background: var(--app-surface-alt);
@@ -146,6 +150,11 @@
   display: block;
   margin-top: 0.3rem;
   color: var(--app-text-secondary);
+}
+
+.hint-error {
+  color: var(--app-danger);
+  font-weight: 600;
 }
 
 .actions {

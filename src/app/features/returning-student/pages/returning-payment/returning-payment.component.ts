@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
+import { PaymentWorkflowService } from '../../../../services/payment-workflow.service';
+import { buildStudentFeePaymentPayloadForAmount } from '../../../../utility/student-fees-plan';
 import { ReturningFlowService } from '../../returning-flow.service';
 
 @Component({
@@ -14,16 +16,18 @@ import { ReturningFlowService } from '../../returning-flow.service';
   templateUrl: './returning-payment.component.html',
   styleUrl: './returning-payment.component.scss'
 })
-export class ReturningPaymentComponent {
+export class ReturningPaymentComponent implements OnInit {
   private readonly router = inject(Router);
 
   private readonly messageService = inject(MessageService);
+
+  private readonly paymentWorkflow = inject(PaymentWorkflowService);
 
   readonly flow = inject(ReturningFlowService);
 
   readonly isProcessing = signal(false);
 
-  readonly amountToPay = signal(`${this.flow.suggestedSchoolFeeAmount()}`);
+  readonly amountToPay = signal('');
 
   readonly paymentHistory = computed(() => this.flow.schoolFeeInstallments());
 
@@ -35,7 +39,15 @@ export class ReturningPaymentComponent {
     this.paymentHistory().length === 0 ? 'Make your 1st payment' : 'Continue with next installment'
   );
 
+  readonly minimumAllowedAmount = computed(() => this.flow.suggestedSchoolFeeAmount());
+
+  readonly maximumAllowedAmount = computed(() => this.flow.schoolFeesRemaining());
+
   readonly suggestedAmount = computed(() => this.formatNaira(this.flow.suggestedSchoolFeeAmount()));
+
+  readonly paymentValidationMessage = computed(() => this.validateAmountInput(this.amountToPay()));
+
+  readonly canSubmitPayment = computed(() => this.paymentValidationMessage() === null && !!this.flow.studentFeePlan());
 
   readonly schoolFeeCardTitle = computed(() => {
     if (!this.flow.canAddSchoolFeeInstallment()) {
@@ -54,26 +66,64 @@ export class ReturningPaymentComponent {
     if (!this.flow.canAddSchoolFeeInstallment()) {
       return 'Fully Paid';
     }
-    return this.formatNaira(this.flow.schoolFeesRemaining() || this.flow.totalSchoolFees);
+    return this.formatNaira(this.flow.schoolFeesRemaining() || this.flow.configuredTotalSchoolFees());
   });
 
+  ngOnInit(): void {
+    this.flow.loadStudentFeePlan()
+      .then(() => {
+        this.amountToPay.set(`${this.flow.suggestedSchoolFeeAmount()}`);
+      })
+      .catch(() => {});
+  }
+
   async proceedToPayment(): Promise<void> {
-    const value = this.parseAmount(this.amountToPay());
-    const fallback = this.flow.suggestedSchoolFeeAmount();
-    const amount = value > 0 ? value : fallback;
-
-    this.isProcessing.set(true);
-    await this.pause(300);
-    const result = this.flow.addSchoolFeeInstallment(amount);
-    this.isProcessing.set(false);
-
-    if (!result.ok) {
-      this.messageService.add({ severity: 'warn', summary: 'Payment', detail: result.message });
+    const plan = this.flow.studentFeePlan();
+    if (!plan) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Payment',
+        detail: 'School fee installment plan is not available right now.'
+      });
       return;
     }
 
-    this.amountToPay.set(`${this.flow.suggestedSchoolFeeAmount()}`);
-    this.messageService.add({ severity: 'success', summary: 'Payment', detail: result.message });
+    const amount = this.parseAmount(this.amountToPay());
+    const validationMessage = this.validateAmountValue(amount);
+    if (validationMessage) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Payment',
+        detail: validationMessage
+      });
+      return;
+    }
+
+    const payload = buildStudentFeePaymentPayloadForAmount(plan, amount);
+
+    try {
+      await this.paymentWorkflow.startStudentFeesPayment(payload, {
+        onProcessingChange: (processing) => this.isProcessing.set(processing),
+        onVerifyingChange: (verifying) => this.isProcessing.set(verifying),
+        onSuccess: (title, message) => this.messageService.add({ severity: 'success', summary: title, detail: message }),
+        onError: (title, message) => this.messageService.add({ severity: 'error', summary: title, detail: message }),
+        onWarning: (title, message) => this.messageService.add({ severity: 'warn', summary: title, detail: message }),
+        onVerified: (reference) => {
+          const result = this.flow.recordVerifiedSchoolFeeInstallment(amount, reference);
+          if (!result.ok) {
+            this.messageService.add({ severity: 'warn', summary: 'Payment', detail: result.message });
+          }
+          this.amountToPay.set(`${this.flow.suggestedSchoolFeeAmount()}`);
+        },
+        postVerifyNavigateTo: '/returning/payment'
+      });
+    } catch {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Payment',
+        detail: 'Unable to start school fee payment right now.'
+      });
+    }
   }
 
   proceedToCourseRegistration(): void {
@@ -109,14 +159,63 @@ export class ReturningPaymentComponent {
     URL.revokeObjectURL(url);
   }
 
-  private pause(delayMs: number): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, delayMs);
-    });
+  onAmountChange(value: string): void {
+    this.amountToPay.set(this.keepNumericValue(value));
+  }
+
+  onAmountKeyDown(event: KeyboardEvent): void {
+    if (this.isAllowedControlKey(event)) {
+      return;
+    }
+
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  onAmountPaste(event: ClipboardEvent): void {
+    const pastedValue = event.clipboardData?.getData('text') ?? '';
+    if (!/^\d+$/.test(pastedValue)) {
+      event.preventDefault();
+    }
+  }
+
+  minimumAmountHint(): string {
+    return this.formatNaira(this.minimumAllowedAmount());
+  }
+
+  maximumAmountHint(): string {
+    return this.formatNaira(this.maximumAllowedAmount());
+  }
+
+  private validateAmountInput(value: string): string | null {
+    return this.validateAmountValue(this.parseAmount(value));
+  }
+
+  private validateAmountValue(value: number): string | null {
+    if (!Number.isFinite(value) || value <= 0) {
+      return 'Enter a valid numeric amount.';
+    }
+    if (value < this.minimumAllowedAmount()) {
+      return `Amount cannot be less than ${this.minimumAmountHint()}.`;
+    }
+    if (value > this.maximumAllowedAmount()) {
+      return `Amount cannot be more than ${this.maximumAmountHint()}.`;
+    }
+    return null;
+  }
+
+  private keepNumericValue(value: string): string {
+    return (value || '').replace(/[^\d]/g, '');
+  }
+
+  private isAllowedControlKey(event: KeyboardEvent): boolean {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    return allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey;
   }
 
   private parseAmount(value: string): number {
-    const normalized = (value || '').replace(/[^\d]/g, '');
+    const normalized = this.keepNumericValue(value);
     return normalized ? Number(normalized) : 0;
   }
 

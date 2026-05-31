@@ -1,9 +1,15 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { StudentFeePlan } from '../../data/application/student-fees.dto';
 import { ApplicationService } from '../../services/application.service';
 import { RegistrantData } from '../../data/application/registrantdatadto';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatStructuredName } from '../../utility/name-format';
+import {
+  readStudentFeeInstallmentAmount,
+  readStudentFeeInstallmentNumbers,
+  selectMatchingStudentFeePlan,
+} from '../../utility/student-fees-plan';
 
 export type VerificationDocument = {
   label: string;
@@ -18,6 +24,11 @@ export type SchoolFeePaymentRecord = {
   paidAt: Date;
 };
 
+const DEFAULT_STUDENT_FEE_TOTAL = 600000;
+const DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT = 500000;
+const DEFAULT_STUDENT_FEE_INSTALLMENTS = 3;
+const ADMITTED_LEVEL_ID = 1;
+
 @Injectable({ providedIn: 'root' })
 export class AdmittedFlowService {
   private readonly appService = inject(ApplicationService);
@@ -26,7 +37,11 @@ export class AdmittedFlowService {
 
   readonly loadingSnapshot = signal(false);
 
+  readonly loadingStudentFeePlan = signal(false);
+
   readonly registrantData = signal<RegistrantData | null>(null);
+
+  readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly schoolFeePayments = signal<SchoolFeePaymentRecord[]>([]);
 
@@ -36,11 +51,16 @@ export class AdmittedFlowService {
 
   readonly totalPay = computed(() => this.acceptanceFee + this.processingFee);
 
-  readonly totalSchoolFees = 600000;
+  readonly totalSchoolFees = computed(() => this.studentFeePlan()?.amount || DEFAULT_STUDENT_FEE_TOTAL);
 
-  readonly maxInstallments = 3;
+  readonly maxInstallments = computed(() => {
+    const configuredInstallments = readStudentFeeInstallmentNumbers(this.studentFeePlan());
+    return configuredInstallments.length || DEFAULT_STUDENT_FEE_INSTALLMENTS;
+  });
 
-  readonly minFirstInstallment = 500000;
+  readonly minFirstInstallment = computed(() =>
+    readStudentFeeInstallmentAmount(this.studentFeePlan(), 1) ?? DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT
+  );
 
   readonly applicantName = computed(() => {
     const data = this.registrantData();
@@ -113,12 +133,12 @@ export class AdmittedFlowService {
     this.schoolFeePayments().reduce((sum, payment) => sum + payment.amount, 0)
   );
 
-  readonly remainingSchoolFees = computed(() => Math.max(0, this.totalSchoolFees - this.paidSchoolFees()));
+  readonly remainingSchoolFees = computed(() => Math.max(0, this.totalSchoolFees() - this.paidSchoolFees()));
 
   readonly isSchoolFeesFullyPaid = computed(() => this.remainingSchoolFees() <= 0);
 
   readonly schoolFeeProgressPercent = computed(() => {
-    const ratio = this.paidSchoolFees() / this.totalSchoolFees;
+    const ratio = this.paidSchoolFees() / this.totalSchoolFees();
     return Math.max(0, Math.min(100, Math.round(ratio * 100)));
   });
 
@@ -139,11 +159,13 @@ export class AdmittedFlowService {
     if (this.isSchoolFeesFullyPaid()) {
       return 'Fully Paid';
     }
-    return this.formatCurrency(this.remainingSchoolFees() || this.totalSchoolFees);
+    return this.formatCurrency(this.remainingSchoolFees() || this.totalSchoolFees());
   });
 
   readonly canAddInstallment = computed(
-    () => this.schoolFeePayments().length < this.maxInstallments && this.remainingSchoolFees() > 0
+    () => this.resolveNextInstallmentAmount() > 0
+      && this.schoolFeePayments().length < this.maxInstallments()
+      && this.remainingSchoolFees() > 0
   );
 
   readonly hasInternalPayment = computed(() => this.schoolFeePayments().length > 0);
@@ -180,12 +202,25 @@ export class AdmittedFlowService {
       const data = response?.data ?? null;
       this.registrantData.set(data);
       this.authSessionStore.syncRegistrantSession(data);
+      await this.loadStudentFeePlan();
     } finally {
       this.loadingSnapshot.set(false);
     }
   }
 
-  addDummySchoolFeePayment(amount: number): { ok: boolean; message: string } {
+  async loadStudentFeePlan(): Promise<void> {
+    this.loadingStudentFeePlan.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getStudentFeePlans());
+      const departmentId = this.registrantData()?.department?.id ?? null;
+      const selectedPlan = selectMatchingStudentFeePlan(response.data, departmentId, ADMITTED_LEVEL_ID);
+      this.studentFeePlan.set(selectedPlan);
+    } finally {
+      this.loadingStudentFeePlan.set(false);
+    }
+  }
+
+  recordVerifiedSchoolFeePayment(amount: number, reference?: string): { ok: boolean; message: string } {
     if (!this.canAddInstallment()) {
       return { ok: false, message: 'No pending installment at the moment.' };
     }
@@ -198,8 +233,8 @@ export class AdmittedFlowService {
       return { ok: false, message: 'Enter a valid amount.' };
     }
 
-    if (paymentCount === 0 && trimmedAmount < this.minFirstInstallment) {
-      return { ok: false, message: `First payment minimum is ${this.formatCurrency(this.minFirstInstallment)}.` };
+    if (paymentCount === 0 && trimmedAmount < this.minFirstInstallment()) {
+      return { ok: false, message: `First payment minimum is ${this.formatCurrency(this.minFirstInstallment())}.` };
     }
 
     if (trimmedAmount > remaining) {
@@ -207,43 +242,31 @@ export class AdmittedFlowService {
     }
 
     const installmentNo = paymentCount + 1;
-    const finalInstallment = remaining - trimmedAmount <= 0 || installmentNo >= this.maxInstallments;
+    const finalInstallment = remaining - trimmedAmount <= 0 || installmentNo >= this.maxInstallments();
     const installmentLabel = finalInstallment
-      ? `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment${installmentNo >= 3 ? ' (Final Payment)' : ''}`
+      ? `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment${installmentNo >= this.maxInstallments() ? ' (Final Payment)' : ''}`
       : `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`;
     const createdAt = new Date();
-    const reference = this.generateReference(createdAt);
+    const resolvedReference = reference || this.authSessionStore.paymentRef() || this.generateReference(createdAt);
 
     const nextList = [
       ...this.schoolFeePayments(),
       {
         installmentLabel,
-        referenceNo: reference,
+        referenceNo: resolvedReference,
         amount: trimmedAmount,
         paidAt: createdAt
       }
     ];
     this.schoolFeePayments.set(nextList);
-    this.authSessionStore.setPaymentRef(reference);
+    this.authSessionStore.setPaymentRef(resolvedReference);
     this.authSessionStore.setPaymentStatus('paid');
 
     return { ok: true, message: `${installmentLabel} recorded successfully.` };
   }
 
   suggestedInstallmentAmount(): number {
-    const paymentCount = this.schoolFeePayments().length;
-    const remaining = this.remainingSchoolFees();
-
-    if (remaining <= 0) {
-      return 0;
-    }
-    if (paymentCount === 0) {
-      return Math.min(this.minFirstInstallment, remaining);
-    }
-    if (paymentCount === 1 && remaining > 50000) {
-      return 50000;
-    }
-    return remaining;
+    return this.resolveNextInstallmentAmount();
   }
 
   private isPaidStatus(status: string): boolean {
@@ -274,6 +297,23 @@ export class AdmittedFlowService {
 
   private formatCurrency(value: number): string {
     return `₦${value.toLocaleString('en-NG')}`;
+  }
+
+  private resolveNextInstallmentAmount(): number {
+    const nextInstallmentNumber = this.schoolFeePayments().length + 1;
+    const configuredAmount = readStudentFeeInstallmentAmount(this.studentFeePlan(), nextInstallmentNumber);
+    if (configuredAmount !== null) {
+      return configuredAmount;
+    }
+
+    const remaining = this.remainingSchoolFees();
+    if (remaining <= 0) {
+      return 0;
+    }
+    if (this.schoolFeePayments().length === 0) {
+      return Math.min(this.minFirstInstallment(), remaining);
+    }
+    return remaining;
   }
 
   private generateReference(date: Date): string {

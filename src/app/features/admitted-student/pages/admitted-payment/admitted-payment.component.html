@@ -37,21 +37,32 @@
   <section class="payment-form" *ngIf="flow.canAddInstallment()">
     <h3>{{ amountFieldLabel() }}</h3>
     <label>Amount to pay</label>
-    <div class="amount-input">
+    <div class="amount-input" [class.amount-input-error]="!!paymentValidationMessage()">
       <span class="currency">₦</span>
-      <input pInputText [ngModel]="amountToPay()" (ngModelChange)="amountToPay.set($event)" placeholder="Enter amount" />
+      <input
+        pInputText
+        [ngModel]="amountToPay()"
+        (ngModelChange)="onAmountChange($event)"
+        (keydown)="onAmountKeyDown($event)"
+        (paste)="onAmountPaste($event)"
+        placeholder="Enter amount"
+        inputmode="numeric"
+      />
     </div>
     <small class="hint">Maximum of 3 payments allowed across the full academic session</small>
+    <small class="hint" *ngIf="flow.studentFeePlan()">Minimum amount: {{ minimumAmountHint() }}</small>
+    <small class="hint" *ngIf="flow.studentFeePlan()">Maximum amount: {{ maximumAmountHint() }}</small>
     <small class="hint" *ngIf="paymentHistory().length === 0">
-      First payment minimum is ₦500,000 - you can pay more
+      First payment minimum is {{ minimumAmountHint() }}. You can pay more.
     </small>
     <small class="hint" *ngIf="paymentHistory().length > 0">
       Suggested amount: {{ suggestedAmount() }}
     </small>
+    <small class="hint hint-error" *ngIf="paymentValidationMessage()">{{ paymentValidationMessage() }}</small>
   </section>
 
   <div class="actions" *ngIf="!flow.isSchoolFeesFullyPaid(); else fullyPaidAction">
-    <button pButton type="button" class="primary-btn" [disabled]="isProcessing()" (click)="proceedToPayment()">
+    <button pButton type="button" class="primary-btn" [disabled]="isProcessing() || !canSubmitPayment()" (click)="proceedToPayment()">
       {{ isProcessing() ? "Processing..." : "Continue to Payment" }}
     </button>
     <button
