@@ -47,18 +47,19 @@
         (paste)="onAmountPaste($event)"
         placeholder="Enter amount"
         inputmode="numeric"
+        class="title-xlarge!"
       />
     </div>
-    <small class="hint">Maximum of 3 payments allowed across the full academic session</small>
-    <small class="hint" *ngIf="flow.studentFeePlan()">Minimum amount: {{ minimumAmountHint() }}</small>
-    <small class="hint" *ngIf="flow.studentFeePlan()">Maximum amount: {{ maximumAmountHint() }}</small>
-    <small class="hint" *ngIf="paymentHistory().length === 0">
+    <small class="hint body-small">Maximum of 3 payments allowed across the full academic session</small>
+    <small class="hint body-small" *ngIf="flow.studentFeePlan()">Minimum amount: {{ minimumAmountHint() }}</small>
+    <small class="hint body-small" *ngIf="flow.studentFeePlan()">Maximum amount: {{ maximumAmountHint() }}</small>
+    <small class="hint body-small" *ngIf="paymentHistory().length === 0">
       First payment minimum is {{ minimumAmountHint() }}. You can pay more.
     </small>
-    <small class="hint" *ngIf="paymentHistory().length > 0">
+    <small class="hint body-small" *ngIf="paymentHistory().length > 0">
       Suggested amount: {{ suggestedAmount() }}
     </small>
-    <small class="hint hint-error" *ngIf="paymentValidationMessage()">{{ paymentValidationMessage() }}</small>
+    <small class="hint hint-error body-small" *ngIf="paymentValidationMessage()">{{ paymentValidationMessage() }}</small>
   </section>
 
   <div class="actions" *ngIf="flow.canAddSchoolFeeInstallment(); else fullyPaidAction">
