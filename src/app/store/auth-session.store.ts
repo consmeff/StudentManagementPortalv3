@@ -97,14 +97,6 @@ function buildPortalSessionPatch(update: PortalSessionStateUpdate): Partial<Auth
     nextState.isAdmitted = !!update.isAdmitted;
   }
 
-  if (
-    !nextState.isAdmitted
-    && 'acceptanceFeeStatus' in update
-    && normalizeSessionValue(update.acceptanceFeeStatus).trim().length > 0
-  ) {
-    nextState.isAdmitted = true;
-  }
-
   return nextState;
 }
 

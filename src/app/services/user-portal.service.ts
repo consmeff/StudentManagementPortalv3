@@ -14,15 +14,12 @@ export class UserPortalService {
 
   portalSegment(): PortalSegment {
     const userType = (this.authSessionStore.userType() || '').toLowerCase().trim();
-    const matriculationNo = (this.authSessionStore.matriculationNo() || '').trim();
-    const isAdmitted = this.authSessionStore.isAdmitted();
-    const acceptanceFeeStatus = (this.authSessionStore.acceptanceFeeStatus() || '').trim();
 
-    if (isAdmitted || ADMITTED_USER_TYPES.includes(userType) || acceptanceFeeStatus.length > 0) {
+    if (ADMITTED_USER_TYPES.includes(userType)) {
       return 'admitted';
     }
 
-    if (RETURNING_USER_TYPES.includes(userType) || !!matriculationNo) {
+    if (RETURNING_USER_TYPES.includes(userType)) {
       return 'returning';
     }
 
