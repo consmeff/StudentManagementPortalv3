@@ -9,6 +9,8 @@ export interface RegistrantData {
 
   id:                           number;
   application_no:               string;
+  matriculation_no?:            string | null;
+  user_type?:                   string | null;
   first_name:                   string;
   last_name:                    string;
   other_names:                  string;
@@ -23,6 +25,8 @@ export interface RegistrantData {
   marital_status:               string;
   disability:               string;
   payment_status:               string;
+  acceptance_fee_status?:       string | null;
+  is_admitted?:                 boolean | null;
   utme_result:                  UtmeResult|undefined;
   utme_reg_no?:                 string | null;
   residential_address:          Address|undefined;
@@ -132,4 +136,3 @@ export interface UtmeResult {
   score?: number;
   file:  CertificateOfBirth;
 }
-

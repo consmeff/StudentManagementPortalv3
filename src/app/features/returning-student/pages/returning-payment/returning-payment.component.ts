@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
-import { FeeItem, ReturningFlowService } from '../../returning-flow.service';
+import { PaymentWorkflowService } from '../../../../services/payment-workflow.service';
+import { buildStudentFeePaymentPayloadForAmount } from '../../../../utility/student-fees-plan';
+import { ReturningFlowService } from '../../returning-flow.service';
 
 @Component({
   selector: 'app-returning-payment',
@@ -13,241 +16,214 @@ import { FeeItem, ReturningFlowService } from '../../returning-flow.service';
   templateUrl: './returning-payment.component.html',
   styleUrl: './returning-payment.component.scss'
 })
-export class ReturningPaymentComponent {
-  readonly flow = inject(ReturningFlowService);
+export class ReturningPaymentComponent implements OnInit {
+  private readonly router = inject(Router);
 
   private readonly messageService = inject(MessageService);
 
-  readonly mode = signal<'overview' | 'invoice' | 'school-fees'>('overview');
+  private readonly paymentWorkflow = inject(PaymentWorkflowService);
 
-  readonly isSubmitting = signal(false);
+  readonly flow = inject(ReturningFlowService);
 
-  readonly amount = signal(`${this.flow.suggestedAmount()}`);
+  readonly isProcessing = signal(false);
 
-  readonly schoolFeeAmount = signal(`${this.flow.suggestedSchoolFeeAmount()}`);
+  readonly amountToPay = signal('');
 
-  readonly history = computed(() => this.flow.paymentHistory());
+  readonly paymentHistory = computed(() => this.flow.schoolFeeInstallments());
 
-  readonly mandatoryFees = computed(() => this.flow.mandatoryFees());
+  readonly totalPaid = computed(() => this.formatNaira(this.flow.schoolFeesPaid()));
 
-  readonly optionalFees = computed(() => this.flow.optionalFees());
+  readonly remainingAmount = computed(() => this.formatNaira(this.flow.schoolFeesRemaining()));
 
-  readonly paymentType = signal('');
-
-  readonly selectedResitCourses = signal<string[]>([]);
-
-  readonly invoiceManualAmount = signal('');
-
-  readonly processingFee = 500;
-
-  readonly paymentTypeOptions = computed(() => [
-    ...this.mandatoryFees().map((f) => ({ id: f.id, label: f.name, amount: f.amount })),
-    ...this.optionalFees().map((f) => ({ id: f.id, label: f.name, amount: f.amount }))
-  ]);
-
-  readonly selectedTypeMeta = computed(() =>
-    this.paymentTypeOptions().find((item) => item.id === this.paymentType()) || null
+  readonly amountFieldLabel = computed(() =>
+    this.paymentHistory().length === 0 ? 'Make your 1st payment' : 'Continue with next installment'
   );
 
-  readonly resitCourseOptions = computed(() =>
-    this.flow.resitCourses().map((item) => ({ id: item.code, label: `${item.code} ${item.title}` }))
-  );
+  readonly minimumAllowedAmount = computed(() => this.flow.suggestedSchoolFeeAmount());
 
-  readonly invoiceAmount = computed(() => {
-    const manual = this.parseAmount(this.invoiceManualAmount());
-    if (manual > 0) {
-      return manual;
-    }
-    if (this.paymentType() === 'exam-resit') {
-      return this.selectedResitCourses().length * 8000;
-    }
-    return this.selectedTypeMeta()?.amount || 0;
-  });
+  readonly maximumAllowedAmount = computed(() => this.flow.schoolFeesRemaining());
 
-  readonly invoiceQuantity = computed(() =>
-    this.paymentType() === 'exam-resit' ? Math.max(1, this.selectedResitCourses().length) : null
-  );
+  readonly suggestedAmount = computed(() => this.formatNaira(this.flow.suggestedSchoolFeeAmount()));
 
-  readonly invoiceTotal = computed(() =>
-    this.invoiceAmount() > 0 ? this.invoiceAmount() + this.processingFee : 0
-  );
+  readonly paymentValidationMessage = computed(() => this.validateAmountInput(this.amountToPay()));
+
+  readonly canSubmitPayment = computed(() => this.paymentValidationMessage() === null && !!this.flow.studentFeePlan());
 
   readonly schoolFeeCardTitle = computed(() => {
-    const count = this.flow.schoolFeeInstallments().length;
-    if (count === 0) return 'Total school fees';
-    if (count === 1) return 'Outstanding Balance';
-    return 'Final Balance';
+    if (!this.flow.canAddSchoolFeeInstallment()) {
+      return 'Payment Completed';
+    }
+    if (this.flow.schoolFeesRemaining() <= 50000 && this.paymentHistory().length >= 2) {
+      return 'Final Balance';
+    }
+    if (this.paymentHistory().length > 0) {
+      return 'Outstanding Balance';
+    }
+    return 'Total school fees';
   });
 
-  readonly nextInstallmentLabel = computed(() => {
-    const count = this.flow.schoolFeeInstallments().length + 1;
-    if (count >= 3) {
-      return `3rd Installment (Final Payment)`;
+  readonly schoolFeeMainValue = computed(() => {
+    if (!this.flow.canAddSchoolFeeInstallment()) {
+      return 'Fully Paid';
     }
-    return count === 1 ? 'Make your 1st payment' : '2nd Installment';
+    return this.formatNaira(this.flow.schoolFeesRemaining() || this.flow.configuredTotalSchoolFees());
   });
 
-  readonly canProceedInvoice = computed(() =>
-    !!this.paymentType() && this.invoiceAmount() > 0 && (this.paymentType() !== 'exam-resit' || this.selectedResitCourses().length > 0)
-  );
+  ngOnInit(): void {
+    this.flow.loadStudentFeePlan()
+      .then(() => {
+        this.amountToPay.set(`${this.flow.suggestedSchoolFeeAmount()}`);
+      })
+      .catch(() => {});
+  }
 
-  async recordPayment(): Promise<void> {
-    const amount = this.parseAmount(this.amount());
-    const fallback = this.flow.suggestedAmount();
-    const finalAmount = amount > 0 ? amount : fallback;
-
-    this.isSubmitting.set(true);
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const result = this.flow.addDummyPayment(finalAmount);
-    this.isSubmitting.set(false);
-
-    if (!result.ok) {
-      this.messageService.add({ severity: 'warn', summary: 'Payment', detail: result.message });
+  async proceedToPayment(): Promise<void> {
+    const plan = this.flow.studentFeePlan();
+    if (!plan) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Payment',
+        detail: 'School fee installment plan is not available right now.'
+      });
       return;
     }
 
-    this.amount.set(`${this.flow.suggestedAmount()}`);
-    this.messageService.add({ severity: 'success', summary: 'Payment', detail: result.message });
-  }
-
-  async payFee(fee: FeeItem): Promise<void> {
-    this.isSubmitting.set(true);
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    const result = this.flow.payFee(fee.id);
-    this.isSubmitting.set(false);
-
-    this.messageService.add({
-      severity: result.ok ? 'success' : 'warn',
-      summary: 'Payment',
-      detail: result.message
-    });
-  }
-
-  openInvoiceForFee(fee: FeeItem): void {
-    this.paymentType.set(fee.id);
-    this.invoiceManualAmount.set(`${fee.amount}`);
-    if (fee.id !== 'exam-resit') {
-      this.selectedResitCourses.set([]);
-    }
-    this.mode.set('invoice');
-  }
-
-  onPaymentTypeChange(type: string): void {
-    this.paymentType.set(type || '');
-    const picked = this.paymentTypeOptions().find((item) => item.id === type);
-    this.invoiceManualAmount.set(picked ? `${picked.amount}` : '');
-    if (type !== 'exam-resit') {
-      this.selectedResitCourses.set([]);
-    }
-  }
-
-  toggleResitCourse(code: string, checked: boolean): void {
-    const current = this.selectedResitCourses();
-    if (checked && !current.includes(code)) {
-      this.selectedResitCourses.set([...current, code]);
-      return;
-    }
-    if (!checked && current.includes(code)) {
-      this.selectedResitCourses.set(current.filter((c) => c !== code));
-    }
-  }
-
-  async proceedInvoicePayment(): Promise<void> {
-    if (!this.canProceedInvoice()) {
-      return;
-    }
-    if (this.paymentType() === 'school-fees') {
-      this.schoolFeeAmount.set(`${this.flow.suggestedSchoolFeeAmount()}`);
-      this.mode.set('school-fees');
+    const amount = this.parseAmount(this.amountToPay());
+    const validationMessage = this.validateAmountValue(amount);
+    if (validationMessage) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Payment',
+        detail: validationMessage
+      });
       return;
     }
 
-    const feeId = this.paymentType();
-    const picked = this.paymentTypeOptions().find((item) => item.id === feeId);
-    if (!picked) {
-      return;
-    }
-    this.isSubmitting.set(true);
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    const result = this.flow.payFee(feeId);
-    this.isSubmitting.set(false);
-    this.messageService.add({
-      severity: result.ok ? 'success' : 'warn',
-      summary: 'Payment',
-      detail: result.message
-    });
-    if (result.ok) {
-      this.mode.set('overview');
-    }
-  }
+    const payload = buildStudentFeePaymentPayloadForAmount(plan, amount);
 
-  async continueSchoolFeesPayment(): Promise<void> {
-    const input = this.parseAmount(this.schoolFeeAmount());
-    const fallback = this.flow.suggestedSchoolFeeAmount();
-    const amount = input > 0 ? input : fallback;
-
-    this.isSubmitting.set(true);
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const result = this.flow.addSchoolFeeInstallment(amount);
-    this.isSubmitting.set(false);
-    this.messageService.add({
-      severity: result.ok ? 'success' : 'warn',
-      summary: 'School Fees',
-      detail: result.message
-    });
-    if (result.ok) {
-      this.schoolFeeAmount.set(`${this.flow.suggestedSchoolFeeAmount()}`);
+    try {
+      await this.paymentWorkflow.startStudentFeesPayment(payload, {
+        onProcessingChange: (processing) => this.isProcessing.set(processing),
+        onVerifyingChange: (verifying) => this.isProcessing.set(verifying),
+        onSuccess: (title, message) => this.messageService.add({ severity: 'success', summary: title, detail: message }),
+        onError: (title, message) => this.messageService.add({ severity: 'error', summary: title, detail: message }),
+        onWarning: (title, message) => this.messageService.add({ severity: 'warn', summary: title, detail: message }),
+        onVerified: (reference) => {
+          const result = this.flow.recordVerifiedSchoolFeeInstallment(amount, reference);
+          if (!result.ok) {
+            this.messageService.add({ severity: 'warn', summary: 'Payment', detail: result.message });
+          }
+          this.amountToPay.set(`${this.flow.suggestedSchoolFeeAmount()}`);
+        },
+        postVerifyNavigateTo: '/returning/payment'
+      });
+    } catch {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Payment',
+        detail: 'Unable to start school fee payment right now.'
+      });
     }
   }
 
-  goToOverview(): void {
-    this.mode.set('overview');
+  proceedToCourseRegistration(): void {
+    this.router.navigateByUrl('/returning/courses').catch(() => {});
   }
 
-  goToInvoice(): void {
-    this.paymentType.set('');
-    this.invoiceManualAmount.set('');
-    this.selectedResitCourses.set([]);
-    this.mode.set('invoice');
-  }
+  downloadReceipt(referenceNo?: string): void {
+    const selected = referenceNo
+      ? this.paymentHistory().find((item) => item.referenceNo === referenceNo) || null
+      : null;
+    const entries = selected ? [selected] : this.paymentHistory();
+    const title = selected ? 'School Fees Receipt' : 'Full School Fees Receipt';
 
-  goToSchoolFees(): void {
-    this.schoolFeeAmount.set(`${this.flow.suggestedSchoolFeeAmount()}`);
-    this.mode.set('school-fees');
-  }
-
-  isResitSelected(code: string): boolean {
-    return this.selectedResitCourses().includes(code);
-  }
-
-  statusLabel(fee: FeeItem): string {
-    if (fee.status === 'remaining') {
-      return `${this.flow.formatCurrency(fee.amount)} remaining`;
-    }
-    return fee.status === 'paid' ? 'Paid' : 'Unpaid';
-  }
-
-  downloadReceipt(referenceNo: string): void {
-    const item = this.history().find((entry) => entry.referenceNo === referenceNo);
-    if (!item) return;
     const lines = [
-      'Payment Receipt',
+      title,
       `Student: ${this.flow.studentName()}`,
-      `Reference: ${item.referenceNo}`,
-      `Amount: ${this.flow.formatCurrency(item.amount)}`,
-      `Date: ${item.paidAt.toLocaleDateString('en-GB')}`
+      `Matric No: ${this.flow.matricNo()}`,
+      ...entries.flatMap((entry) => [
+        `${entry.installmentLabel}`,
+        `Ref No: ${entry.referenceNo}`,
+        `Amount: ${this.formatNaira(entry.amount)}`,
+        `Date: ${this.formatDate(entry.paidAt)}`
+      ]),
+      `Total Paid: ${this.totalPaid()}`,
+      `Outstanding: ${this.remainingAmount()}`
     ];
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `receipt-${item.referenceNo}.txt`;
-    a.click();
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = selected ? `receipt-${selected.referenceNo}.txt` : 'school-fees-full-receipt.txt';
+    anchor.click();
     URL.revokeObjectURL(url);
   }
 
+  onAmountChange(value: string): void {
+    this.amountToPay.set(this.keepNumericValue(value));
+  }
+
+  onAmountKeyDown(event: KeyboardEvent): void {
+    if (this.isAllowedControlKey(event)) {
+      return;
+    }
+
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  onAmountPaste(event: ClipboardEvent): void {
+    const pastedValue = event.clipboardData?.getData('text') ?? '';
+    if (!/^\d+$/.test(pastedValue)) {
+      event.preventDefault();
+    }
+  }
+
+  minimumAmountHint(): string {
+    return this.formatNaira(this.minimumAllowedAmount());
+  }
+
+  maximumAmountHint(): string {
+    return this.formatNaira(this.maximumAllowedAmount());
+  }
+
+  private validateAmountInput(value: string): string | null {
+    return this.validateAmountValue(this.parseAmount(value));
+  }
+
+  private validateAmountValue(value: number): string | null {
+    if (!Number.isFinite(value) || value <= 0) {
+      return 'Enter a valid numeric amount.';
+    }
+    if (value < this.minimumAllowedAmount()) {
+      return `Amount cannot be less than ${this.minimumAmountHint()}.`;
+    }
+    if (value > this.maximumAllowedAmount()) {
+      return `Amount cannot be more than ${this.maximumAmountHint()}.`;
+    }
+    return null;
+  }
+
+  private keepNumericValue(value: string): string {
+    return (value || '').replace(/[^\d]/g, '');
+  }
+
+  private isAllowedControlKey(event: KeyboardEvent): boolean {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    return allowedKeys.includes(event.key) || event.ctrlKey || event.metaKey;
+  }
+
   private parseAmount(value: string): number {
-    const cleaned = (value || '').replace(/[^\d]/g, '');
-    return cleaned ? Number(cleaned) : 0;
+    const normalized = this.keepNumericValue(value);
+    return normalized ? Number(normalized) : 0;
+  }
+
+  private formatDate(value: Date): string {
+    return value.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  private formatNaira(value: number): string {
+    return `₦${value.toLocaleString('en-NG')}`;
   }
 }

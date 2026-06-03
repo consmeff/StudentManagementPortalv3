@@ -288,6 +288,7 @@ export class PendingPaymentFlowComponent implements OnInit {
       const response = await firstValueFrom(this.appService.registrantData(appNo));
       const data = response?.data ?? null;
       this.registrantData.set(data);
+      this.authSessionStore.syncRegistrantSession(data);
 
       if (data?.payment_status) {
         const incomingStatus = data.payment_status;
@@ -297,7 +298,6 @@ export class PendingPaymentFlowComponent implements OnInit {
 
         if (shouldApplyIncomingStatus) {
           this.dashboardPaymentStatus.set(incomingStatus);
-          this.authSessionStore.setPaymentStatus(incomingStatus);
         }
       }
       if (data?.first_name || data?.last_name) {

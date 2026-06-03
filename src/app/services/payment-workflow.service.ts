@@ -2,10 +2,33 @@ import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ApplicationService } from './application.service';
+import { StudentFeePaymentPayload } from '../data/application/student-fees.dto';
 import { PaymentRefResponse } from '../data/dashboard/payment.data';
 import { AuthSessionStore } from '../store/auth-session.store';
 
-declare let PaystackPop: any;
+type PaystackCallbackResponse = {
+  reference: string;
+};
+
+type PaystackHandler = {
+  openIframe: () => void;
+};
+
+type PaystackSetupConfig = {
+  key: string;
+  email: string;
+  amount: number;
+  currency: string;
+  ref: string;
+  callback: (response: PaystackCallbackResponse) => Promise<void>;
+  onClose: () => void;
+};
+
+type PaystackPopType = {
+  setup: (config: PaystackSetupConfig) => PaystackHandler;
+};
+
+declare const PaystackPop: PaystackPopType;
 
 export interface PaymentWorkflowHooks {
   onProcessingChange?: (processing: boolean) => void;
@@ -13,7 +36,7 @@ export interface PaymentWorkflowHooks {
   onSuccess?: (title: string, message: string) => void;
   onError?: (title: string, message: string) => void;
   onWarning?: (title: string, message: string) => void;
-  onVerified?: () => void;
+  onVerified?: (reference?: string) => void;
   postVerifyNavigateTo?: string;
 }
 
@@ -27,30 +50,37 @@ export class PaymentWorkflowService {
 
   async startForApplication(applicationNo: string, hooks?: PaymentWorkflowHooks): Promise<void> {
     await this.startPayment(
-      applicationNo,
       () => firstValueFrom(this.appService.getPaymentRef({ application_no: applicationNo })),
-      hooks
+      hooks,
+      applicationNo
     );
   }
 
   async startAcceptanceFeePayment(applicationNo: string, hooks?: PaymentWorkflowHooks): Promise<void> {
     await this.startPayment(
-      applicationNo,
       () => firstValueFrom(this.appService.acceptanceFeePayment({ application_no: applicationNo })),
-      hooks
+      hooks,
+      applicationNo
+    );
+  }
+
+  async startStudentFeesPayment(
+    payload: StudentFeePaymentPayload,
+    hooks?: PaymentWorkflowHooks,
+    applicantNo?: string
+  ): Promise<void> {
+    await this.startPayment(
+      () => firstValueFrom(this.appService.initiateStudentFeePayment(payload)),
+      hooks,
+      applicantNo
     );
   }
 
   private async startPayment(
-    applicationNo: string,
     paymentRequest: () => Promise<PaymentRefResponse>,
-    hooks?: PaymentWorkflowHooks
+    hooks?: PaymentWorkflowHooks,
+    applicantNo?: string
   ): Promise<void> {
-    if (!applicationNo) {
-      hooks?.onError?.('Error', 'Application number not found');
-      return;
-    }
-
     hooks?.onProcessingChange?.(true);
     try {
       const ref = await paymentRequest();
@@ -63,7 +93,7 @@ export class PaymentWorkflowService {
 
       const redirected = this.redirectToHostedPayment(ref, hooks);
       if (!redirected) {
-        this.makePayment(applicationNo, ref, hooks);
+        this.makePayment(applicantNo, ref, hooks);
       }
     } catch (error) {
       hooks?.onProcessingChange?.(false);
@@ -81,28 +111,28 @@ export class PaymentWorkflowService {
 
     this.authSessionStore.setPaymentRef(ref.ref_id);
     hooks?.onSuccess?.('Redirecting to Payment', 'Taking you to the secure payment page...');
-    window.location.assign(sanitizedUrl);
+    globalThis.location.assign(sanitizedUrl);
     return true;
   }
 
-  private makePayment(applicationNo: string, ref: PaymentRefResponse, hooks?: PaymentWorkflowHooks): void {
+  private makePayment(applicantNo: string | undefined, ref: PaymentRefResponse, hooks?: PaymentWorkflowHooks): void {
     const handler = PaystackPop.setup({
       key: 'pk_test_3303a8dc18ea2a4b2728543b34813870ba6f8bd6',
       email: ref.email || 'solixzdev@gmail.com',
       amount: +ref.amount * 100,
       currency: 'NGN',
       ref: ref.ref_id,
-      callback: async (response: any) => {
+      callback: async (response) => {
         const {reference} = response;
         this.authSessionStore.setPaymentRef(reference);
         hooks?.onVerifyingChange?.(true);
 
         try {
           await firstValueFrom(this.appService.verifyPayment({ ref_id: reference }));
-          await this.syncPaymentStatus(applicationNo);
+          await this.syncPaymentStatus(applicantNo ?? '');
           hooks?.onVerifyingChange?.(false);
           hooks?.onSuccess?.('Payment Successful', 'Your payment has been verified successfully.');
-          hooks?.onVerified?.();
+          hooks?.onVerified?.(reference);
 
           const postVerifyNavigateTo = hooks?.postVerifyNavigateTo ?? '/auth/login';
           setTimeout(() => {
@@ -128,15 +158,7 @@ export class PaymentWorkflowService {
 
     try {
       const snapshot = await firstValueFrom(this.appService.registrantData(applicantNo));
-      const paymentStatus = snapshot?.data?.payment_status ?? '';
-      if (paymentStatus) {
-        this.authSessionStore.setPaymentStatus(paymentStatus);
-      }
-      const registrantData = snapshot?.data as Record<string, unknown> | undefined;
-      const acceptanceFeeStatus = registrantData?.['acceptance_fee_status'];
-      if (typeof acceptanceFeeStatus === 'string' && acceptanceFeeStatus.trim().length > 0) {
-        this.authSessionStore.setAcceptanceFeeStatus(acceptanceFeeStatus);
-      }
+      this.authSessionStore.syncRegistrantSession(snapshot?.data ?? null);
     } catch {
       // Keep payment flow resilient even if status refresh fails.
     }

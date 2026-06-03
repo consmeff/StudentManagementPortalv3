@@ -1,6 +1,7 @@
 import { effect } from '@angular/core';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { LoginResponse } from '../data/auth/auth.data';
+import { RegistrantData } from '../data/application/registrantdatadto';
 import { normalizeDisplayName } from '../utility/name-format';
 
 type AuthSessionState = {
@@ -38,6 +39,74 @@ const initialAuthSessionState: AuthSessionState = {
 };
 
 const AUTH_SESSION_COOKIE_KEY = 'auth_session_store';
+
+type PortalSessionStateUpdate = {
+  userType?: string | null;
+  matriculationNo?: string | null;
+  applicationNo?: string | null;
+  paymentStatus?: string | null;
+  acceptanceFeeStatus?: string | null;
+  isAdmitted?: boolean | null;
+};
+
+function normalizeSessionValue(value: string | null | undefined): string {
+  return value ?? '';
+}
+
+function hasPaidStatus(status: string | null | undefined): boolean {
+  const normalizedStatus = normalizeSessionValue(status).toLowerCase().trim();
+  if (!normalizedStatus) {
+    return false;
+  }
+
+  if (
+    normalizedStatus.includes('unpaid')
+    || normalizedStatus.includes('pending')
+    || normalizedStatus.includes('not paid')
+    || normalizedStatus.includes('fail')
+  ) {
+    return false;
+  }
+
+  return (
+    normalizedStatus.includes('paid')
+    || normalizedStatus.includes('complete')
+    || normalizedStatus.includes('success')
+  );
+}
+
+function buildPortalSessionPatch(update: PortalSessionStateUpdate): Partial<AuthSessionState> {
+  const nextState: Partial<AuthSessionState> = {};
+
+  if ('userType' in update) {
+    nextState.userType = normalizeSessionValue(update.userType);
+  }
+  if ('matriculationNo' in update) {
+    nextState.matriculationNo = normalizeSessionValue(update.matriculationNo);
+  }
+  if ('applicationNo' in update) {
+    nextState.applicationNo = normalizeSessionValue(update.applicationNo);
+  }
+  if ('paymentStatus' in update) {
+    nextState.paymentStatus = normalizeSessionValue(update.paymentStatus);
+  }
+  if ('acceptanceFeeStatus' in update) {
+    nextState.acceptanceFeeStatus = normalizeSessionValue(update.acceptanceFeeStatus);
+  }
+  if ('isAdmitted' in update) {
+    nextState.isAdmitted = !!update.isAdmitted;
+  }
+
+  if (
+    !nextState.isAdmitted
+    && 'acceptanceFeeStatus' in update
+    && normalizeSessionValue(update.acceptanceFeeStatus).trim().length > 0
+  ) {
+    nextState.isAdmitted = true;
+  }
+
+  return nextState;
+}
 
 function clearAuthSessionCookie(): void {
   if (typeof document === 'undefined') {
@@ -105,15 +174,40 @@ export const AuthSessionStore = signalStore(
       const nextState: AuthSessionState = {
         ...initialAuthSessionState,
         name: normalizeDisplayName(response.name),
-        userType: response.user_type ?? '',
-        matriculationNo: response.matriculation_no ?? '',
-        applicationNo: response.application_no ?? '',
-        paymentStatus: response.payment_status ?? '',
-        acceptanceFeeStatus: response.acceptance_fee_status ?? '',
-        isAdmitted: !!response.is_admitted,
         jwtToken: response.access_token ?? '',
         refreshToken: response.refresh_token ?? '',
+        ...buildPortalSessionPatch({
+          userType: response.user_type,
+          matriculationNo: response.matriculation_no,
+          applicationNo: response.application_no,
+          paymentStatus: response.payment_status,
+          acceptanceFeeStatus: response.acceptance_fee_status,
+          isAdmitted: response.is_admitted,
+        }),
       };
+      patchState(store, nextState);
+    },
+    syncPortalState(update: PortalSessionStateUpdate) {
+      patchState(store, buildPortalSessionPatch(update));
+    },
+    syncRegistrantSession(registrant: RegistrantData | null) {
+      if (!registrant) {
+        return;
+      }
+
+      const nextState = buildPortalSessionPatch({
+        userType: registrant.user_type,
+        matriculationNo: registrant.matriculation_no,
+        applicationNo: registrant.application_no,
+        acceptanceFeeStatus: registrant.acceptance_fee_status,
+        isAdmitted: registrant.is_admitted,
+      });
+      const currentPaymentStatus = store.paymentStatus();
+      const incomingPaymentStatus = registrant.payment_status;
+      if (incomingPaymentStatus && (!hasPaidStatus(currentPaymentStatus) || hasPaidStatus(incomingPaymentStatus))) {
+        nextState.paymentStatus = incomingPaymentStatus;
+      }
+
       patchState(store, nextState);
     },
     setTokens(jwtToken: string, refreshToken: string) {

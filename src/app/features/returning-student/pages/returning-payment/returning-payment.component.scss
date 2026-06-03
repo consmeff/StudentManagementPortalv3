@@ -1,381 +1,181 @@
-.returning-payment-page {
-  padding: 1rem;
+.payment-page {
+  padding: 1.5rem;
 }
 
-.page-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.8rem;
-}
-
-.returning-payment-page h1 {
+.payment-page h1 {
   margin: 0;
   color: var(--app-text-primary);
 }
 
-.returning-payment-page p {
-  margin: 0.35rem 0 0;
+.page-copy {
+  margin: 0.4rem 0 1rem;
   color: var(--app-text-secondary);
 }
 
-.history-btn {
-  border: 1px solid var(--app-border);
-  background: var(--app-surface);
-  color: var(--app-text-primary);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.mode-actions {
-  display: flex;
-  gap: 0.45rem;
-}
-
-.section-head {
-  margin: 1rem 0 0.6rem;
-  color: var(--app-text-primary);
-  font-size: 1.25rem;
-}
-
-.fee-table-wrap {
-  border: 1px solid var(--app-border);
-  border-radius: 0.95rem;
-  overflow: hidden;
-  background: var(--app-surface);
-}
-
-.fee-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.fee-table th,
-.fee-table td {
-  padding: 0.75rem 0.8rem;
-  border-bottom: 1px solid var(--app-border);
-  text-align: left;
-}
-
-.fee-table th {
-  color: var(--app-text-secondary);
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.fee-table td {
-  color: var(--app-text-primary);
-}
-
-.fee-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.status-chip {
-  display: inline-block;
-  padding: 0.23rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.76rem;
-  font-weight: 700;
-}
-
-.status-chip.paid {
-  background: color-mix(in srgb, var(--app-success) 16%, transparent);
-  color: var(--app-success);
-}
-
-.status-chip.unpaid {
-  background: color-mix(in srgb, var(--app-danger) 14%, transparent);
-  color: var(--app-danger);
-}
-
-.status-chip.remaining {
-  background: color-mix(in srgb, var(--app-warning) 16%, transparent);
-  color: var(--app-warning);
-}
-
-.action-link {
-  border: none;
-  background: transparent;
-  color: var(--app-text-secondary);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0;
-}
-
-.invoice-layout {
-  margin-top: 1rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.invoice-form label {
-  display: block;
-  margin-bottom: 0.35rem;
-  color: var(--app-text-primary);
-  font-weight: 600;
-}
-
-.invoice-form label:not(:first-child) {
-  margin-top: 0.95rem;
-}
-
-.invoice-form select {
-  width: 100%;
-  border: 1px solid var(--app-border);
-  background: var(--app-surface);
-  color: var(--app-text-secondary);
-  border-radius: 0.65rem;
-  padding: 0.7rem;
-}
-
-.resit-select-wrap {
-  border: 1px solid var(--app-border);
-  border-radius: 0.65rem;
-  background: var(--app-surface);
-  padding: 0.55rem;
-  display: grid;
-  gap: 0.35rem;
-}
-
-.resit-option {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--app-text-primary);
-}
-
-.invoice-card {
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  overflow: hidden;
-  background: var(--app-surface);
-}
-
-.invoice-card header {
+.summary-card {
   background: var(--app-primary);
+  border-radius: 1.2rem;
   color: var(--app-surface);
-  padding: 0.8rem 1rem;
+  padding: 1rem 1.25rem;
 }
 
-.invoice-card header h3 {
+.summary-top h3 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.6rem;
+  color: white;
 }
 
-.invoice-card header p {
+.summary-top p {
   margin: 0.2rem 0 0;
-  color: color-mix(in srgb, var(--app-surface) 92%, transparent);
+  opacity: 0.9;
 }
 
-.invoice-card .body {
-  padding: 0.85rem 1rem;
+.summary-amount {
+  margin-top: 0.7rem;
+  font-size: 3rem;
+  font-weight: 700;
 }
 
-.invoice-card .body > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.9rem;
-  padding: 0.4rem 0;
-}
-
-.invoice-card .body span {
-  color: var(--app-text-secondary);
-}
-
-.invoice-card .body strong {
-  color: var(--app-text-primary);
-}
-
-.invoice-card footer {
-  border-top: 1px solid var(--app-border);
-  padding: 0.8rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.invoice-card footer span {
-  color: var(--app-text-primary);
-}
-
-.invoice-card footer strong {
-  font-size: 2rem;
-  color: var(--app-text-primary);
-}
-
-.quick-pay-box {
-  margin-top: 1rem;
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  background: var(--app-surface);
-  padding: 1rem;
-}
-
-.quick-pay-box label {
-  display: block;
-  color: var(--app-text-primary);
-  margin-bottom: 0.35rem;
-}
-
-.school-fee-hero {
-  margin-top: 1rem;
-  background: var(--app-primary);
-  border-radius: 1.7rem;
-  padding: 1rem;
-  color: var(--app-surface);
-}
-
-.school-fee-hero h3 {
-  margin: 0;
-  font-size: 1.45rem;
-}
-
-.school-fee-hero p {
-  margin: 0.35rem 0 0;
-  color: color-mix(in srgb, var(--app-surface) 92%, transparent);
-}
-
-.school-fee-hero strong {
-  margin-top: 0.9rem;
-  display: block;
-  font-size: 3.8rem;
-  line-height: 1;
-}
-
-.hero-progress-track {
-  margin-top: 0.9rem;
-  height: 0.45rem;
-  background: color-mix(in srgb, var(--app-surface) 36%, transparent);
+.progress-track {
+  margin-top: 0.7rem;
+  width: 100%;
+  height: 0.5rem;
   border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
   overflow: hidden;
 }
 
-.hero-progress-fill {
+.progress-fill {
   display: block;
   height: 100%;
   background: var(--app-surface);
 }
 
-.hero-meta {
+.summary-bottom {
   margin-top: 0.45rem;
   display: flex;
   justify-content: space-between;
-  gap: 0.8rem;
-  font-weight: 700;
-}
-
-.amount-input {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--app-border);
-  border-radius: 0.65rem;
-  overflow: hidden;
-  margin-bottom: 0.8rem;
-}
-
-.amount-input span {
-  padding: 0.7rem;
-  background: var(--app-surface-alt);
-  color: var(--app-text-primary);
-}
-
-.amount-input input {
-  width: 100%;
-  border: none;
-  box-shadow: none;
-}
-
-.quick-btn {
-  background: var(--app-primary);
-  border-color: var(--app-primary);
-  min-width: 300px;
+  gap: 0.75rem;
 }
 
 .history-card {
-  margin-top: 1rem;
+  margin-top: 1.1rem;
   border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  background: var(--app-surface);
+  border-radius: 0.9rem;
   overflow: hidden;
 }
 
-.history-card h2 {
+.history-card h3 {
   margin: 0;
-  color: var(--app-text-primary);
   padding: 0.8rem 1rem;
+  color: var(--app-text-primary);
   border-bottom: 1px solid var(--app-border);
 }
 
 .history-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.75rem 1rem;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
   border-bottom: 1px solid var(--app-border);
-}
-
-.history-amount {
-  text-align: right;
 }
 
 .history-row:last-child {
   border-bottom: none;
 }
 
-.history-row span {
+.left strong,
+.right strong {
   display: block;
-  color: var(--app-text-secondary);
-}
-
-.history-row strong {
   color: var(--app-text-primary);
 }
 
-.icon-download {
-  border: none;
-  background: transparent;
+.left span,
+.right span {
   color: var(--app-text-secondary);
+}
+
+.right {
+  text-align: right;
+}
+
+.icon-btn {
+  color: var(--app-primary);
+}
+
+.payment-form {
+  margin-top: 1.25rem;
+}
+
+.payment-form h3 {
+  margin: 0 0 0.35rem;
+  color: var(--app-text-primary);
+}
+
+.payment-form label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--app-text-primary);
+}
+
+.amount-input {
+  display: flex;
+  border: 1px solid var(--app-border);
+  border-radius: 0.55rem;
+  overflow: hidden;
+}
+
+.amount-input-error {
+  border-color: var(--app-danger);
+}
+
+.currency {
+  padding: 0.9rem;
+  background: var(--app-surface-alt);
+  color: var(--app-text-primary);
+}
+
+.amount-input input {
+  border: none;
+  width: 100%;
+  box-shadow: none;
+}
+
+.amount-input input:focus {
+  box-shadow: none;
 }
 
 .hint {
   display: block;
-  margin-top: 0.2rem;
+  margin-top: 0.3rem;
   color: var(--app-text-secondary);
 }
 
-input,
-select {
-  font-family: inherit;
+.hint-error {
+  color: var(--app-danger);
+  font-weight: 600;
 }
 
-.action-row {
-  margin-top: 1rem;
+.actions {
+  margin-top: 1.3rem;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
 }
 
-@media (max-width: 900px) {
-  .page-head {
-    flex-direction: column;
-  }
-  .mode-actions {
-    flex-wrap: wrap;
-  }
-  .invoice-layout {
-    grid-template-columns: 1fr;
-  }
-  .fee-table th,
-  .fee-table td {
-    padding: 0.6rem;
-    font-size: 0.9rem;
-  }
-  .school-fee-hero strong,
-  .invoice-card footer strong {
-    font-size: 3rem;
-  }
+.primary-btn {
+  min-width: 260px;
+  border-radius: 0.55rem;
+  background: var(--app-primary);
+  border-color: var(--app-primary);
+}
+
+.secondary-btn {
+  min-width: 260px;
+  border-radius: 0.55rem;
+  color: var(--app-primary);
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
 }
