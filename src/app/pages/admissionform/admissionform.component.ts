@@ -809,6 +809,8 @@ export class AdmissionFormComponent implements OnInit {
     }
 
     const payload: Record<string, unknown> = {};
+    const oLevelResults = this.resolveOLevelResultPayload(registrant);
+    const utmeResult = this.resolveUtmeResultPayload(registrant);
     const certificateOfBirth = this.resolveUploadedDocument(
       this._uploadFileFormData.certificateofbirth,
       registrant?.certificate_of_birth
@@ -834,7 +836,20 @@ export class AdmissionFormComponent implements OnInit {
       payload['certificate_of_origin'] = certificateOfOrigin;
     }
 
+    if (oLevelResults.some((item) => !!item.file?.file_url)) {
+      payload['o_level_result'] = oLevelResults;
+    }
+
+    if (this.hasUtmeResultFile(utmeResult)) {
+      payload['utme_result'] = utmeResult;
+    }
+
     return payload;
+  }
+
+  private hasUtmeResultFile(payload: Record<string, unknown>): boolean {
+    const file = payload['file'];
+    return typeof file === 'object' && file !== null && 'file_url' in file && typeof file.file_url === 'string' && file.file_url.length > 0;
   }
 
   private resolveUploadedDocument(
