@@ -235,6 +235,16 @@ export class ReturningFlowService {
     this.studentSchoolFeeStatus()?.payment_status.number_of_payments ?? this.schoolFeeInstallments().length
   );
 
+  readonly hasPaidFirstSchoolFeeInstallment = computed(() =>
+    this.schoolFeePaymentCount() > 0 || this.schoolFeesPaid() > 0
+  );
+
+  readonly canAccessCoursesModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
+
+  readonly canAccessProfileModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
+
+  readonly canAccessHostelModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
+
   readonly fees = signal<FeeItem[]>([
     { id: 'school-fees', name: 'School Fees', amount: 600000, status: 'remaining', type: 'mandatory' },
     { id: 'faculty-charges', name: 'Faculty Charges', amount: 10000, status: 'paid', type: 'mandatory' },
@@ -361,7 +371,7 @@ export class ReturningFlowService {
     return `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`;
   });
 
-  readonly hasInternalPayment = computed(() => this.paymentHistory().length > 0);
+  readonly hasInternalPayment = computed(() => this.hasPaidFirstSchoolFeeInstallment());
 
   readonly paymentProgressPercent = computed(() =>
     Math.max(0, Math.min(100, Math.round((this.paidAmount() / this.totalSchoolFees) * 100)))
@@ -638,9 +648,11 @@ export class ReturningFlowService {
       const response = await firstValueFrom(this.appService.getStudentSchoolFeeStatus());
       this.studentSchoolFeeStatus.set(response);
       this.studentFeePlan.set(response);
+      this.syncReturningModuleAccess();
     } catch {
       const response = await firstValueFrom(this.appService.getStudentFeePlans());
       this.studentFeePlan.set(response.data[0] ?? null);
+      this.syncReturningModuleAccess();
     } finally {
       this.loadingStudentFeePlan.set(false);
     }
@@ -700,6 +712,7 @@ export class ReturningFlowService {
     this.authSessionStore.setPaymentRef(entry.referenceNo);
     this.authSessionStore.setPaymentStatus('paid');
     this.updateStudentSchoolFeeStatus(normalizedAmount);
+    this.syncReturningModuleAccess();
     if (this.courseReviewState() === 'locked') {
       this.courseReviewState.set('waiting');
     }
@@ -742,6 +755,31 @@ export class ReturningFlowService {
         number_of_payments: currentStatus.payment_status.number_of_payments + 1
       }
     });
+  }
+
+  private syncReturningModuleAccess(): void {
+    if (this.hasPaidFirstSchoolFeeInstallment()) {
+      if (this.courseReviewState() === 'locked') {
+        this.courseReviewState.set('waiting');
+      }
+      if (!this.hasPaidStatus(this.authSessionStore.paymentStatus())) {
+        this.authSessionStore.setPaymentStatus('paid');
+      }
+      return;
+    }
+
+    this.courseReviewState.set('locked');
+  }
+
+  private hasPaidStatus(status: string): boolean {
+    const normalized = status.toLowerCase().trim();
+    if (!normalized) {
+      return false;
+    }
+
+    return normalized.includes('paid')
+      || normalized.includes('complete')
+      || normalized.includes('success');
   }
 
   private readCurrentLevelNumber(): number | null {

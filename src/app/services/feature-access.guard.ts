@@ -9,9 +9,11 @@ export const featureAccessGuard: CanActivateFn = (route) => {
   const userPortalService = inject(UserPortalService);
   const feature = route.data?.['feature'] as ProtectedPageFeature | undefined;
 
-  if (!feature || access.canAccess(feature)) {
+  if (!feature) {
     return true;
   }
 
-  return router.createUrlTree([userPortalService.dashboardUrl()]);
+  return access.canAccessAsync(feature).then((allowed) =>
+    allowed ? true : router.createUrlTree([userPortalService.dashboardUrl()])
+  );
 };
