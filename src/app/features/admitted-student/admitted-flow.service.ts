@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { StudentFeePlan } from '../../data/application/student-fees.dto';
+import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
 import { ApplicationService } from '../../services/application.service';
 import { RegistrantData } from '../../data/application/registrantdatadto';
 import { AuthSessionStore } from '../../store/auth-session.store';
@@ -27,7 +27,6 @@ export type SchoolFeePaymentRecord = {
 const DEFAULT_STUDENT_FEE_TOTAL = 600000;
 const DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT = 500000;
 const DEFAULT_STUDENT_FEE_INSTALLMENTS = 3;
-const ADMITTED_LEVEL_ID = 1;
 
 @Injectable({ providedIn: 'root' })
 export class AdmittedFlowService {
@@ -43,6 +42,8 @@ export class AdmittedFlowService {
 
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
+  readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
+
   readonly schoolFeePayments = signal<SchoolFeePaymentRecord[]>([]);
 
   readonly acceptanceFee = 30000;
@@ -51,7 +52,9 @@ export class AdmittedFlowService {
 
   readonly totalPay = computed(() => this.acceptanceFee + this.processingFee);
 
-  readonly totalSchoolFees = computed(() => this.studentFeePlan()?.amount || DEFAULT_STUDENT_FEE_TOTAL);
+  readonly totalSchoolFees = computed(() =>
+    this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? DEFAULT_STUDENT_FEE_TOTAL
+  );
 
   readonly maxInstallments = computed(() => {
     const configuredInstallments = readStudentFeeInstallmentNumbers(this.studentFeePlan());
@@ -60,6 +63,10 @@ export class AdmittedFlowService {
 
   readonly minFirstInstallment = computed(() =>
     readStudentFeeInstallmentAmount(this.studentFeePlan(), 1) ?? DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT
+  );
+
+  readonly schoolFeePaymentCount = computed(() =>
+    this.studentSchoolFeeStatus()?.payment_status.number_of_payments ?? this.schoolFeePayments().length
   );
 
   readonly applicantName = computed(() => {
@@ -130,10 +137,14 @@ export class AdmittedFlowService {
   readonly profilePhotoUrl = computed(() => this.registrantData()?.passport_photo?.file_url || '');
 
   readonly paidSchoolFees = computed(() =>
-    this.schoolFeePayments().reduce((sum, payment) => sum + payment.amount, 0)
+    this.studentSchoolFeeStatus()?.payment_status.total_paid
+    ?? this.schoolFeePayments().reduce((sum, payment) => sum + payment.amount, 0)
   );
 
-  readonly remainingSchoolFees = computed(() => Math.max(0, this.totalSchoolFees() - this.paidSchoolFees()));
+  readonly remainingSchoolFees = computed(() =>
+    this.studentSchoolFeeStatus()?.payment_status.total_due
+    ?? Math.max(0, this.totalSchoolFees() - this.paidSchoolFees())
+  );
 
   readonly isSchoolFeesFullyPaid = computed(() => this.remainingSchoolFees() <= 0);
 
@@ -146,10 +157,10 @@ export class AdmittedFlowService {
     if (this.isSchoolFeesFullyPaid()) {
       return 'Payment Completed';
     }
-    if (this.remainingSchoolFees() <= 50000 && this.schoolFeePayments().length >= 2) {
+    if (this.remainingSchoolFees() <= 50000 && this.schoolFeePaymentCount() >= 2) {
       return 'Final Balance';
     }
-    if (this.schoolFeePayments().length > 0) {
+    if (this.schoolFeePaymentCount() > 0) {
       return 'Outstanding Balance';
     }
     return 'Total school fees';
@@ -164,11 +175,11 @@ export class AdmittedFlowService {
 
   readonly canAddInstallment = computed(
     () => this.resolveNextInstallmentAmount() > 0
-      && this.schoolFeePayments().length < this.maxInstallments()
+      && this.schoolFeePaymentCount() < this.maxInstallments()
       && this.remainingSchoolFees() > 0
   );
 
-  readonly hasInternalPayment = computed(() => this.schoolFeePayments().length > 0);
+  readonly hasInternalPayment = computed(() => this.schoolFeePaymentCount() > 0);
 
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
@@ -211,9 +222,13 @@ export class AdmittedFlowService {
   async loadStudentFeePlan(): Promise<void> {
     this.loadingStudentFeePlan.set(true);
     try {
+      const response = await firstValueFrom(this.appService.getStudentSchoolFeeStatus());
+      this.studentSchoolFeeStatus.set(response);
+      this.studentFeePlan.set(response);
+    } catch {
       const response = await firstValueFrom(this.appService.getStudentFeePlans());
       const departmentId = this.registrantData()?.department?.id ?? null;
-      const selectedPlan = selectMatchingStudentFeePlan(response.data, departmentId, ADMITTED_LEVEL_ID);
+      const selectedPlan = selectMatchingStudentFeePlan(response.data, departmentId, null);
       this.studentFeePlan.set(selectedPlan);
     } finally {
       this.loadingStudentFeePlan.set(false);
@@ -226,7 +241,7 @@ export class AdmittedFlowService {
     }
 
     const trimmedAmount = Math.floor(amount);
-    const paymentCount = this.schoolFeePayments().length;
+    const paymentCount = this.schoolFeePaymentCount();
     const remaining = this.remainingSchoolFees();
 
     if (!Number.isFinite(trimmedAmount) || trimmedAmount <= 0) {
@@ -259,6 +274,7 @@ export class AdmittedFlowService {
       }
     ];
     this.schoolFeePayments.set(nextList);
+    this.updateStudentSchoolFeeStatus(trimmedAmount);
     this.authSessionStore.setPaymentRef(resolvedReference);
     this.authSessionStore.setPaymentStatus('paid');
 
@@ -300,20 +316,38 @@ export class AdmittedFlowService {
   }
 
   private resolveNextInstallmentAmount(): number {
-    const nextInstallmentNumber = this.schoolFeePayments().length + 1;
+    const nextInstallmentNumber = this.schoolFeePaymentCount() + 1;
     const configuredAmount = readStudentFeeInstallmentAmount(this.studentFeePlan(), nextInstallmentNumber);
+    const remaining = this.remainingSchoolFees();
     if (configuredAmount !== null) {
-      return configuredAmount;
+      return Math.min(configuredAmount, remaining);
     }
 
-    const remaining = this.remainingSchoolFees();
     if (remaining <= 0) {
       return 0;
     }
-    if (this.schoolFeePayments().length === 0) {
+    if (this.schoolFeePaymentCount() === 0) {
       return Math.min(this.minFirstInstallment(), remaining);
     }
     return remaining;
+  }
+
+  private updateStudentSchoolFeeStatus(amount: number): void {
+    const currentStatus = this.studentSchoolFeeStatus();
+    if (!currentStatus) {
+      return;
+    }
+
+    const totalPaid = currentStatus.payment_status.total_paid + amount;
+    const totalDue = Math.max(0, currentStatus.payment_status.total_due - amount);
+    this.studentSchoolFeeStatus.set({
+      ...currentStatus,
+      payment_status: {
+        total_paid: totalPaid,
+        total_due: totalDue,
+        number_of_payments: currentStatus.payment_status.number_of_payments + 1
+      }
+    });
   }
 
   private generateReference(date: Date): string {

@@ -26,6 +26,16 @@ export type StudentFeePlanResponse = {
   data: StudentFeePlan[];
 };
 
+export type StudentSchoolFeePaymentStatus = {
+  total_paid: number;
+  total_due: number;
+  number_of_payments: number;
+};
+
+export type StudentSchoolFeeStatus = StudentFeePlan & {
+  payment_status: StudentSchoolFeePaymentStatus;
+};
+
 export type StudentFeePaymentPayload = {
   fee_id: string;
   amount: number;

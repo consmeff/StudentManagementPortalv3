@@ -36,7 +36,7 @@ export class ReturningPaymentComponent implements OnInit {
   readonly remainingAmount = computed(() => this.formatNaira(this.flow.schoolFeesRemaining()));
 
   readonly amountFieldLabel = computed(() =>
-    this.paymentHistory().length === 0 ? 'Make your 1st payment' : 'Continue with next installment'
+    this.flow.schoolFeePaymentCount() === 0 ? 'Make your 1st payment' : 'Continue with next installment'
   );
 
   readonly minimumAllowedAmount = computed(() => this.flow.suggestedSchoolFeeAmount());
@@ -53,10 +53,10 @@ export class ReturningPaymentComponent implements OnInit {
     if (!this.flow.canAddSchoolFeeInstallment()) {
       return 'Payment Completed';
     }
-    if (this.flow.schoolFeesRemaining() <= 50000 && this.paymentHistory().length >= 2) {
+    if (this.flow.schoolFeesRemaining() <= 50000 && this.flow.schoolFeePaymentCount() >= 2) {
       return 'Final Balance';
     }
-    if (this.paymentHistory().length > 0) {
+    if (this.flow.schoolFeePaymentCount() > 0) {
       return 'Outstanding Balance';
     }
     return 'Total school fees';
