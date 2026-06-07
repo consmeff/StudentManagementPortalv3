@@ -78,22 +78,22 @@ function hasPaidStatus(status: string | null | undefined): boolean {
 function buildPortalSessionPatch(update: PortalSessionStateUpdate): Partial<AuthSessionState> {
   const nextState: Partial<AuthSessionState> = {};
 
-  if ('userType' in update) {
+  if ('userType' in update && update.userType != null) {
     nextState.userType = normalizeSessionValue(update.userType);
   }
-  if ('matriculationNo' in update) {
+  if ('matriculationNo' in update && update.matriculationNo != null) {
     nextState.matriculationNo = normalizeSessionValue(update.matriculationNo);
   }
-  if ('applicationNo' in update) {
+  if ('applicationNo' in update && update.applicationNo != null) {
     nextState.applicationNo = normalizeSessionValue(update.applicationNo);
   }
-  if ('paymentStatus' in update) {
+  if ('paymentStatus' in update && update.paymentStatus != null) {
     nextState.paymentStatus = normalizeSessionValue(update.paymentStatus);
   }
-  if ('acceptanceFeeStatus' in update) {
+  if ('acceptanceFeeStatus' in update && update.acceptanceFeeStatus != null) {
     nextState.acceptanceFeeStatus = normalizeSessionValue(update.acceptanceFeeStatus);
   }
-  if ('isAdmitted' in update) {
+  if ('isAdmitted' in update && update.isAdmitted != null) {
     nextState.isAdmitted = !!update.isAdmitted;
   }
 
