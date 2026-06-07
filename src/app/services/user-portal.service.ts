@@ -13,7 +13,16 @@ export class UserPortalService {
   private readonly authSessionStore = inject(AuthSessionStore);
 
   portalSegment(): PortalSegment {
-    const userType = (this.authSessionStore.userType() || '').toLowerCase().trim();
+    const userType =
+      (this.authSessionStore.userType() || '')
+        .toLowerCase()
+        .trim();
+
+    console.log('Portal resolution:', {
+      userType,
+      matricNo: this.authSessionStore.matriculationNo(),
+      applicationNo: this.authSessionStore.applicationNo()
+    });
 
     if (ADMITTED_USER_TYPES.includes(userType)) {
       return 'admitted';

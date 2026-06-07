@@ -45,10 +45,10 @@ export class NavigationAccessService {
       case 'admissionform':
         return this.hasAnyPayment();
       case 'payment':
-        if (this.isAdmittedPortalRoute()) {
+        if (this.isAdmittedPortalUser()) {
           return !this.userPortalService.hasPendingAcceptanceFee();
         }
-        if (!this.isNewPortalRoute()) {
+        if (!this.isNewPortalUser()) {
           return true;
         }
         return this.hasAnyPayment();
@@ -99,22 +99,19 @@ export class NavigationAccessService {
       || normalizedStatus.includes('success');
   }
 
-  private isNewPortalRoute(): boolean {
-    const firstSegment = this.router.url.split('/').filter(Boolean)[0];
-    return firstSegment === 'new' || firstSegment === 'pages';
+  private isNewPortalUser(): boolean {
+    return this.userPortalService.portalSegment() === 'new';
   }
 
-  private isAdmittedPortalRoute(): boolean {
-    const firstSegment = this.router.url.split('/').filter(Boolean)[0];
-    return firstSegment === 'admitted';
+  private isAdmittedPortalUser(): boolean {
+    return this.userPortalService.portalSegment() === 'admitted';
   }
 
-  private isReturningPortalRoute(): boolean {
-    const firstSegment = this.router.url.split('/').filter(Boolean)[0];
-    return firstSegment === 'returning';
+  private isReturningPortalUser(): boolean {
+    return this.userPortalService.portalSegment() === 'returning';
   }
 
   private requiresReturningFirstInstallment(feature: ProtectedPageFeature): boolean {
-    return this.isReturningPortalRoute() && RETURNING_FIRST_INSTALLMENT_FEATURES.includes(feature);
+    return this.isReturningPortalUser() && RETURNING_FIRST_INSTALLMENT_FEATURES.includes(feature);
   }
 }

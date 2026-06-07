@@ -70,7 +70,6 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.authSessionStore.clear();
     this.loginForm = new FormGroup({
       email: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),

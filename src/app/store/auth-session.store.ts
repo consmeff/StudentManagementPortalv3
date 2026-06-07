@@ -112,17 +112,7 @@ function writeAuthSessionCookie(state: AuthSessionState): void {
     return;
   }
 
-  const hasMeaningfulState = !!(
-    state.jwtToken ||
-    state.refreshToken ||
-    state.applicationNo ||
-    state.profileEmail ||
-    state.paymentStatus ||
-    state.acceptanceFeeStatus ||
-    state.isAdmitted
-  );
-
-  if (!hasMeaningfulState) {
+  if (!state.jwtToken && !state.refreshToken) {
     clearAuthSessionCookie();
     return;
   }
@@ -257,7 +247,7 @@ export const AuthSessionStore = signalStore(
   withHooks({
     onInit(store) {
       const persisted = readAuthSessionCookie();
-      if (persisted) {
+      if (persisted && !store.jwtToken()) {
         patchState(store, persisted);
       }
 
