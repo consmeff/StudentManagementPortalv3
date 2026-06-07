@@ -54,12 +54,11 @@
     <article class="tasks-pane">
       <h2>Quick Tasks</h2>
       <div class="task-grid">
-        <app-button variant="muted" iconClass="pi pi-book" (buttonClick)="goToCourses()">Register Courses</app-button>
+        <app-button variant="muted" iconClass="pi pi-book" [disabled]="!canAccessCourses()" (buttonClick)="goToCourses()">Register Courses</app-button>
         <app-button variant="muted" iconClass="pi pi-file" (buttonClick)="goToResults()">My Results</app-button>
         <app-button variant="muted" iconClass="pi pi-credit-card" (buttonClick)="goToPayments()">Make Payment</app-button>
-        <app-button variant="muted" iconClass="pi pi-user" (buttonClick)="goToProfile()">Profile</app-button>
+        <app-button variant="muted" iconClass="pi pi-user" [disabled]="!canAccessProfile()" (buttonClick)="goToProfile()">Profile</app-button>
       </div>
     </article>
   </section>
 </div>
-

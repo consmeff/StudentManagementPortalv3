@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { ReturningFlowService } from '../../returning-flow.service';
@@ -11,12 +11,23 @@ import { ReturningFlowService } from '../../returning-flow.service';
   templateUrl: './returning-dashboard.component.html',
   styleUrl: './returning-dashboard.component.scss'
 })
-export class ReturningDashboardComponent {
+export class ReturningDashboardComponent implements OnInit {
   private readonly router = inject(Router);
 
   readonly flow = inject(ReturningFlowService);
 
+  readonly canAccessCourses = computed(() => this.flow.canAccessCoursesModule());
+
+  readonly canAccessProfile = computed(() => this.flow.canAccessProfileModule());
+
+  ngOnInit(): void {
+    this.flow.loadStudentFeePlan().catch(() => {});
+  }
+
   goToCourses(): void {
+    if (!this.canAccessCourses()) {
+      return;
+    }
     void this.router.navigateByUrl('/returning/courses');
   }
 
@@ -29,7 +40,9 @@ export class ReturningDashboardComponent {
   }
 
   goToProfile(): void {
+    if (!this.canAccessProfile()) {
+      return;
+    }
     void this.router.navigateByUrl('/returning/profile');
   }
 }
-

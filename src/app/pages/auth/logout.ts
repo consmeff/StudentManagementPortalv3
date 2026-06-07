@@ -1,14 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
-import { RippleModule } from 'primeng/ripple';
-import { MessageService } from 'primeng/api';
-import { AppFloatingConfigurator } from '../../layout/component/app.floatingconfigurator';
-import { AuthService } from '../../services/auth.service';
+import { FormBuilder} from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { AuthSessionStore } from '../../store/auth-session.store';
@@ -25,7 +17,7 @@ import { AuthSessionStore } from '../../store/auth-session.store';
      
     `
 })
-export class Logout implements OnInit {
+export class Logout {
     
  
     route = inject(Router)
@@ -34,12 +26,5 @@ export class Logout implements OnInit {
 
     constructor(private fb: FormBuilder) {
       
-    }
-
-    ngOnInit(): void {
-        this.authSessionStore.clear();
-        setTimeout(() => {
-            this.route.navigate(['/auth/login']);
-        }, 1000);
     }
 }

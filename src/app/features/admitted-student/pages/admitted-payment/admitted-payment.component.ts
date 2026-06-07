@@ -35,7 +35,7 @@ export class AdmittedPaymentComponent implements OnInit {
   readonly remainingAmount = computed(() => this.formatNaira(this.flow.remainingSchoolFees()));
 
   readonly amountFieldLabel = computed(() =>
-    this.paymentHistory().length === 0 ? 'Make your 1st payment' : 'Continue with next installment'
+    this.flow.schoolFeePaymentCount() === 0 ? 'Make your 1st payment' : 'Continue with next installment'
   );
 
   readonly minimumAllowedAmount = computed(() => this.flow.suggestedInstallmentAmount());

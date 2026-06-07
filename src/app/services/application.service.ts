@@ -16,7 +16,9 @@ import {
   StudentFeePartPaymentEntry,
   StudentFeePaymentPayload,
   StudentFeePlan,
-  StudentFeePlanResponse
+  StudentFeePlanResponse,
+  StudentSchoolFeePaymentStatus,
+  StudentSchoolFeeStatus
 } from '../data/application/student-fees.dto';
 
 @Injectable({
@@ -28,6 +30,8 @@ export class ApplicationService {
   private readonly paymentsEndpoint = `${this.apiRoot}/api/v1/payments/payments`;
 
   private readonly studentFeesEndpoint = `${this.apiRoot}/api/v1/payments/student-fees`;
+
+  private readonly studentSchoolFeeEndpoint = `${this.apiRoot}/api/v1/payments/student-school-fee`;
 
   private readonly payStudentFeeEndpoint = `${this.apiRoot}/api/v1/students/pay-fee`;
 
@@ -101,6 +105,12 @@ export class ApplicationService {
   getStudentFeePlans(): Observable<StudentFeePlanResponse> {
     return this.http.get<unknown>(this.studentFeesEndpoint).pipe(
       map((response) => this.normalizeStudentFeePlansResponse(response))
+    );
+  }
+
+  getStudentSchoolFeeStatus(): Observable<StudentSchoolFeeStatus> {
+    return this.http.get<unknown>(this.studentSchoolFeeEndpoint).pipe(
+      map((response) => this.normalizeStudentSchoolFeeStatusResponse(response))
     );
   }
 
@@ -232,6 +242,14 @@ export class ApplicationService {
     };
   }
 
+  private normalizeStudentSchoolFeeStatusResponse(response: unknown): StudentSchoolFeeStatus {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    return {
+      ...this.normalizeStudentFeePlan(rawResponse),
+      payment_status: this.readStudentSchoolFeePaymentStatus(rawResponse, 'payment_status')
+    };
+  }
+
   private getNestedRecord(source: unknown, key: string): Record<string, unknown> | null {
     const record = this.toRecord(source);
     const nestedValue = record[key];
@@ -298,5 +316,25 @@ export class ApplicationService {
       accumulator[configKey] = [amount, mode] satisfies StudentFeePartPaymentEntry;
       return accumulator;
     }, {});
+  }
+
+  private readStudentSchoolFeePaymentStatus(
+    source: Record<string, unknown>,
+    key: string
+  ): StudentSchoolFeePaymentStatus {
+    const value = source[key];
+    if (!this.isRecord(value)) {
+      return {
+        total_paid: 0,
+        total_due: 0,
+        number_of_payments: 0
+      };
+    }
+
+    return {
+      total_paid: this.readNumber(value, 'total_paid'),
+      total_due: this.readNumber(value, 'total_due'),
+      number_of_payments: this.readNumber(value, 'number_of_payments')
+    };
   }
 }
