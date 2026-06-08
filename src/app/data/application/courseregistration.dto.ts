@@ -1,0 +1,34 @@
+export interface CourseInfo {
+  id: number;
+  code: string;
+  title: string;
+  description: string;
+  units: string;
+  department: number;
+}
+
+export interface AvailableCourse {
+  id: number;
+  department_name: string;
+  level_name: string;
+  semester: unknown;
+  course: CourseInfo;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
+  is_elective: boolean;
+  units: number;
+  created_by: number;
+  updated_by: number;
+  deleted_by: number | null;
+  department: number;
+  level: number;
+}
+
+export interface AvailableCoursesResponse {
+  data: AvailableCourse[];
+}
+
+export interface RegisterCoursesPayload {
+  course_ids: number[];
+}

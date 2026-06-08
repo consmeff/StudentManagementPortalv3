@@ -20,6 +20,10 @@ import {
   StudentSchoolFeePaymentStatus,
   StudentSchoolFeeStatus
 } from '../data/application/student-fees.dto';
+import {
+  AvailableCoursesResponse,
+  RegisterCoursesPayload
+} from '../data/application/courseregistration.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -143,6 +147,14 @@ export class ApplicationService {
 
   submitApplication(payload: { applicant_no: string }): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/applicants/submit-application`, payload);
+  }
+
+  getAvailableCourses(): Observable<AvailableCoursesResponse> {
+    return this.http.get<AvailableCoursesResponse>(`${this.apiRoot}/api/v1/students/register-courses`);
+  }
+
+  registerCourses(payload: RegisterCoursesPayload): Observable<any> {
+    return this.http.post<any>(`${this.apiRoot}/api/v1/students/register-courses`, payload);
   }
 
   private normalizeCollectionResponse(response: any): { data: any[] } {

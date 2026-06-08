@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { ReturningCourse, ReturningFlowService, ResitCourse } from '../../returning-flow.service';
@@ -11,7 +11,7 @@ import { ReturningCourse, ReturningFlowService, ResitCourse } from '../../return
   templateUrl: './returning-courses.component.html',
   styleUrl: './returning-courses.component.scss'
 })
-export class ReturningCoursesComponent {
+export class ReturningCoursesComponent implements OnInit {
   private readonly router = inject(Router);
 
   readonly flow = inject(ReturningFlowService);
@@ -21,25 +21,30 @@ export class ReturningCoursesComponent {
   readonly selectedResit = signal<ResitCourse | null>(null);
 
   readonly canSubmit = computed(() =>
-    this.flow.courseReviewState() === 'open' && this.flow.totalCoursesSelected() > 0
+    this.flow.courseReviewState() === 'open' && this.flow.totalCoursesSelectedFromApi() > 0
   );
 
-  readonly firstSemesterSlipCourses = computed(() => this.flow.selectedCourses().filter((_, i) => i % 2 === 0));
+  readonly firstSemesterSlipCourses = computed(() => this.flow.selectedCoursesFromApi().filter((_, i) => i % 2 === 0));
 
-  readonly secondSemesterSlipCourses = computed(() => this.flow.selectedCourses().filter((_, i) => i % 2 === 1));
+  readonly secondSemesterSlipCourses = computed(() => this.flow.selectedCoursesFromApi().filter((_, i) => i % 2 === 1));
+
+  ngOnInit(): void {
+    this.flow.loadAvailableCourses();
+  }
 
   goToPayment(): void {
     void this.router.navigateByUrl('/returning/payment');
   }
 
-  toggle(course: ReturningCourse, checked: boolean): void {
-    this.flow.toggleCourseSelection(course, checked);
+  toggle(courseId: number, checked: boolean): void {
+    this.flow.toggleCourseSelectionFromApi(courseId, checked);
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (!this.canSubmit()) {
       return;
     }
+    await this.flow.submitCourseRegistrationFromApi();
     this.viewMode.set('slip');
   }
 
@@ -73,12 +78,12 @@ export class ReturningCoursesComponent {
       `Level: ${this.flow.level()}`,
       ''
     ];
-    this.flow.selectedCourses().forEach((course) => {
-      lines.push(`${course.code} - ${course.title} (${course.units} Units)`);
+    this.flow.selectedCoursesFromApi().forEach((course) => {
+      lines.push(`${course.course.code} - ${course.course.title} (${course.units} Units)`);
     });
     lines.push('');
-    lines.push(`Total Courses: ${this.flow.totalCoursesSelected()}`);
-    lines.push(`Total Units: ${this.flow.totalUnitsSelected()}`);
+    lines.push(`Total Courses: ${this.flow.totalCoursesSelectedFromApi()}`);
+    lines.push(`Total Units: ${this.flow.totalUnitsSelectedFromApi()}`);
 
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);

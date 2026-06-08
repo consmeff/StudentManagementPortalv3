@@ -27,17 +27,17 @@
       </section>
 
       <section class="course-list">
-        <label class="course-row" *ngFor="let course of courses()" [class.locked]="course.locked">
+        <label class="course-row" *ngFor="let course of availableCourses()">
           <input
             type="checkbox"
-            [checked]="isChecked(course.code)"
-            [disabled]="course.locked || registrationSubmitted()"
-            (change)="toggleCourse(course, $any($event.target).checked)"
+            [checked]="isChecked(course.id)"
+            [disabled]="registrationSubmitted()"
+            (change)="toggleCourse(course.id, $any($event.target).checked)"
           />
           <div class="meta">
-            <strong>{{ course.code }}</strong>
-            <span>{{ course.title }}</span>
-            <small class="warn" *ngIf="course.locked">Prerequisite not met</small>
+            <strong>{{ course.course.code }}</strong>
+            <span>{{ course.course.title }}</span>
+            <span *ngIf="course.is_elective" style="color: var(--app-primary); font-size: 0.8rem; font-style: italic;">(Elective)</span>
           </div>
           <div class="units">{{ course.units }}<span>Units</span></div>
         </label>
@@ -73,16 +73,9 @@
       </div>
       <div class="semesters">
         <div class="semester">
-          <h3>First Semester</h3>
+          <h3>Registered Courses</h3>
           <div class="row" *ngFor="let course of firstSemesterSelected()">
-            <span>{{ course.code }} - {{ course.title }}</span>
-            <strong>{{ course.units }} Units</strong>
-          </div>
-        </div>
-        <div class="semester">
-          <h3>Second Semester</h3>
-          <div class="row" *ngFor="let course of secondSemesterSelected()">
-            <span>{{ course.code }} - {{ course.title }}</span>
+            <span>{{ course.course.code }} - {{ course.course.title }}</span>
             <strong>{{ course.units }} Units</strong>
           </div>
         </div>

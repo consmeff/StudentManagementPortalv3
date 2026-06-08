@@ -10,6 +10,7 @@ import {
   readStudentFeeInstallmentNumbers,
   selectMatchingStudentFeePlan,
 } from '../../utility/student-fees-plan';
+import { AvailableCourse } from '../../data/application/courseregistration.dto';
 
 export type VerificationDocument = {
   label: string;
@@ -39,6 +40,8 @@ export class AdmittedFlowService {
 
   readonly loadingStudentFeePlan = signal(false);
 
+  readonly loadingCourses = signal(false);
+
   readonly registrantData = signal<RegistrantData | null>(null);
 
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
@@ -46,6 +49,12 @@ export class AdmittedFlowService {
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
 
   readonly schoolFeePayments = signal<SchoolFeePaymentRecord[]>([]);
+
+  readonly availableCourses = signal<AvailableCourse[]>([]);
+
+  readonly selectedCourseIds = signal<number[]>([]);
+
+  readonly registrationSubmitted = signal(false);
 
   readonly acceptanceFee = 30000;
 
@@ -229,6 +238,33 @@ export class AdmittedFlowService {
     return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: testimonialUrl, uploaded: !!testimonialFile };
   });
 
+  readonly selectedCourses = computed(() => {
+    const selectedIds = this.selectedCourseIds();
+    return this.availableCourses().filter((course) => selectedIds.includes(course.id));
+  });
+
+  readonly selectedUnits = computed(() => {
+    return this.selectedCourses().reduce((sum, course) => sum + course.units, 0);
+  });
+
+  readonly selectedCount = computed(() => this.selectedCourses().length);
+
+  readonly firstSemesterCourses = computed(() => {
+    return this.availableCourses();
+  });
+
+  readonly secondSemesterCourses = computed(() => {
+    return [];
+  });
+
+  readonly firstSemesterSelected = computed(() => {
+    return this.selectedCourses();
+  });
+
+  readonly secondSemesterSelected = computed(() => {
+    return [];
+  });
+
   async loadSnapshot(): Promise<void> {
     const appNo = this.authSessionStore.applicationNo() || '';
     if (!appNo) {
@@ -243,9 +279,37 @@ export class AdmittedFlowService {
       this.registrantData.set(data);
       this.authSessionStore.syncRegistrantSession(data);
       await this.loadStudentFeePlan();
+      await this.loadCourses();
     } finally {
       this.loadingSnapshot.set(false);
     }
+  }
+
+  async loadCourses(): Promise<void> {
+    this.loadingCourses.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getAvailableCourses());
+      this.availableCourses.set(response.data);
+    } finally {
+      this.loadingCourses.set(false);
+    }
+  }
+
+  toggleCourseSelection(courseId: number, checked: boolean): void {
+    const current = this.selectedCourseIds();
+    if (checked) {
+      if (!current.includes(courseId)) {
+        this.selectedCourseIds.set([...current, courseId]);
+      }
+    } else {
+      this.selectedCourseIds.set(current.filter(id => id !== courseId));
+    }
+  }
+
+  async submitCourseRegistration(): Promise<void> {
+    const payload = { course_ids: this.selectedCourseIds() };
+    await firstValueFrom(this.appService.registerCourses(payload));
+    this.registrationSubmitted.set(true);
   }
 
   async loadStudentFeePlan(): Promise<void> {

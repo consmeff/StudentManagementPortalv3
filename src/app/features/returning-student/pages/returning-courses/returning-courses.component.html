@@ -14,20 +14,13 @@
         <div><small>Current Level</small><strong>{{ flow.level() }}</strong></div>
         <div><small>program</small><strong>{{ flow.program() }}</strong></div>
         <div><small>Academic Session</small><strong>{{ flow.session() }}</strong></div>
-        <div><small>Date</small><strong>{{ '10 October 2025' }}</strong></div>
+        <div><small>Date</small><strong>{{ '14 October 2025' }}</strong></div>
       </div>
       <div class="semesters-grid">
         <div class="semester-card">
-          <h3>First Semester</h3>
+          <h3>Registered Courses</h3>
           <div class="row" *ngFor="let course of firstSemesterSlipCourses()">
-            <span>{{ course.code }} &nbsp; {{ course.title }}</span>
-            <strong>{{ course.units }} Units</strong>
-          </div>
-        </div>
-        <div class="semester-card">
-          <h3>Second Semester</h3>
-          <div class="row" *ngFor="let course of secondSemesterSlipCourses()">
-            <span>{{ course.code }} &nbsp; {{ course.title }}</span>
+            <span>{{ course.course.code }} &nbsp; {{ course.course.title }}</span>
             <strong>{{ course.units }} Units</strong>
           </div>
         </div>
@@ -132,38 +125,27 @@
 
       <section class="summary-card">
         <div>
-          <strong>{{ flow.totalUnitsSelected() }}</strong>
+          <strong>{{ flow.totalUnitsSelectedFromApi() }}</strong>
           <span>Total Units Selected</span>
         </div>
         <div>
-          <strong>{{ flow.totalCoursesSelected() }}</strong>
-          <span>No. of courses</span>
+          <strong>{{ flow.totalCoursesSelectedFromApi() }}</strong>
+          <span>No. of Courses</span>
         </div>
       </section>
 
       <section class="course-list">
-        <h3>Carryover Courses</h3>
-        <label class="course-row carryover" *ngFor="let course of flow.carryoverCourses()">
-          <input type="checkbox" [checked]="flow.isSelected(course.code)" disabled />
-          <div class="meta">
-            <strong>{{ course.code }}</strong>
-            <span>{{ course.title }}</span>
-          </div>
-          <div class="units">{{ course.units }}<span>Units</span></div>
-        </label>
-
-        <h3>200 level courses</h3>
-        <label class="course-row" *ngFor="let course of flow.levelCourses()" [class.locked]="course.locked">
+        <label class="course-row" *ngFor="let course of flow.availableCourses()">
           <input
             type="checkbox"
-            [checked]="flow.isSelected(course.code)"
-            [disabled]="course.locked || flow.courseReviewState() !== 'open'"
-            (change)="toggle(course, $any($event.target).checked)"
+            [checked]="flow.isCourseSelectedFromApi(course.id)"
+            [disabled]="flow.courseReviewState() !== 'open'"
+            (change)="toggle(course.id, $any($event.target).checked)"
           />
           <div class="meta">
-            <strong>{{ course.code }}</strong>
-            <span>{{ course.title }}</span>
-            <small class="warn" *ngIf="course.locked">Prerequisite not met</small>
+            <strong>{{ course.course.code }}</strong>
+            <span>{{ course.course.title }}</span>
+            <span *ngIf="course.is_elective" style="color: var(--app-primary); font-size: 0.8rem; font-style: italic;">(Elective)</span>
           </div>
           <div class="units">{{ course.units }}<span>Units</span></div>
         </label>
