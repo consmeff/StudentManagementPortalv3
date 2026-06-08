@@ -14,6 +14,7 @@ import {
 export type VerificationDocument = {
   label: string;
   fileName: string;
+  fileUrl: string;
   uploaded: boolean;
 };
 
@@ -183,21 +184,49 @@ export class AdmittedFlowService {
 
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
-  readonly verificationDocuments = computed<VerificationDocument[]>(() => {
+  readonly isAllDocumentsVerified = computed(() => {
     const data = this.registrantData();
     const oLevelFile = data?.o_level_result?.[0]?.file?.file_name || '';
     const utmeFile = data?.utme_result?.file?.file_name || '';
     const birthFile = data?.certificate_of_birth?.file_name || '';
-    const recFile = data?.academic_history?.[0]?.certificate?.file_name || '';
-    const testimonialFile = data?.certificate_of_origin?.file_name || '';
+    return !!(oLevelFile && utmeFile && birthFile);
+  });
+
+  readonly coreDocuments = computed<VerificationDocument[]>(() => {
+    const data = this.registrantData();
+    const oLevelFile = data?.o_level_result?.[0]?.file?.file_name || '';
+    const oLevelUrl = data?.o_level_result?.[0]?.file?.file_url || '';
+    const utmeFile = data?.utme_result?.file?.file_name || '';
+    const utmeUrl = data?.utme_result?.file?.file_url || '';
+    const birthFile = data?.certificate_of_birth?.file_name || '';
+    const birthUrl = data?.certificate_of_birth?.file_url || '';
 
     return [
-      { label: 'Client Result', fileName: oLevelFile, uploaded: !!oLevelFile },
-      { label: 'Certificate of Birth', fileName: birthFile, uploaded: !!birthFile },
-      { label: 'UTME Result', fileName: utmeFile, uploaded: !!utmeFile },
-      { label: 'Letter of Recommendation', fileName: recFile, uploaded: !!recFile },
-      { label: 'Secondary School Testimonial', fileName: testimonialFile, uploaded: !!testimonialFile }
+      { label: 'O Level Result', fileName: oLevelFile, fileUrl: oLevelUrl, uploaded: !!oLevelFile },
+      { label: 'Certificate of Birth', fileName: birthFile, fileUrl: birthUrl, uploaded: !!birthFile },
+      { label: 'UTME Result', fileName: utmeFile, fileUrl: utmeUrl, uploaded: !!utmeFile }
     ];
+  });
+
+  readonly recommendationLetters = computed<VerificationDocument[]>(() => {
+    const data = this.registrantData();
+    const recFile1 = data?.academic_history?.[0]?.certificate?.file_name || '';
+    const recUrl1 = data?.academic_history?.[0]?.certificate?.file_url || '';
+    const recFile2 = data?.academic_history?.[1]?.certificate?.file_name || '';
+    const recUrl2 = data?.academic_history?.[1]?.certificate?.file_url || '';
+
+    return [
+      { label: 'Letter of Recommendation 1', fileName: recFile1, fileUrl: recUrl1, uploaded: !!recFile1 },
+      { label: 'Letter of Recommendation 2', fileName: recFile2, fileUrl: recUrl2, uploaded: !!recFile2 }
+    ];
+  });
+
+  readonly testimonialDocument = computed<VerificationDocument>(() => {
+    const data = this.registrantData();
+    const testimonialFile = data?.certificate_of_origin?.file_name || '';
+    const testimonialUrl = data?.certificate_of_origin?.file_url || '';
+
+    return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: testimonialUrl, uploaded: !!testimonialFile };
   });
 
   async loadSnapshot(): Promise<void> {
@@ -338,13 +367,11 @@ export class AdmittedFlowService {
       return;
     }
 
-    const totalPaid = currentStatus.payment_status.total_paid + amount;
-    const totalDue = Math.max(0, currentStatus.payment_status.total_due - amount);
     this.studentSchoolFeeStatus.set({
       ...currentStatus,
       payment_status: {
-        total_paid: totalPaid,
-        total_due: totalDue,
+        total_paid: currentStatus.payment_status.total_paid + amount,
+        total_due: Math.max(0, currentStatus.payment_status.total_due - amount),
         number_of_payments: currentStatus.payment_status.number_of_payments + 1
       }
     });
