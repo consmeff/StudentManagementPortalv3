@@ -10,7 +10,7 @@ import {
   readStudentFeeInstallmentNumbers,
   selectMatchingStudentFeePlan,
 } from '../../utility/student-fees-plan';
-import { AvailableCourse } from '../../data/application/courseregistration.dto';
+import { AvailableCourse, RegisteredCourse } from '../../data/application/courseregistration.dto';
 
 export type VerificationDocument = {
   label: string;
@@ -56,6 +56,8 @@ export class AdmittedFlowService {
 
   readonly registrationSubmitted = signal(false);
 
+  readonly registeredCourses = signal<RegisteredCourse[]>([]);
+
   readonly acceptanceFee = 30000;
 
   readonly processingFee = 500;
@@ -99,6 +101,8 @@ export class AdmittedFlowService {
   );
 
   readonly academicSession = computed(() => this.registrantData()?.session?.name || '—');
+
+  readonly levelName = computed(() => 'ND 1');
 
   readonly admissionDate = computed(() => {
     const data = this.registrantData();
@@ -280,6 +284,7 @@ export class AdmittedFlowService {
       this.authSessionStore.syncRegistrantSession(data);
       await this.loadStudentFeePlan();
       await this.loadCourses();
+      await this.loadRegisteredCourses();
     } finally {
       this.loadingSnapshot.set(false);
     }
@@ -292,6 +297,16 @@ export class AdmittedFlowService {
       this.availableCourses.set(response.data);
     } finally {
       this.loadingCourses.set(false);
+    }
+  }
+
+  async loadRegisteredCourses(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.appService.getCurrentCourses());
+      this.registeredCourses.set(response.data);
+    } catch (e) {
+      // Ignore if not logged in or not allowed to fetch yet
+      this.registeredCourses.set([]);
     }
   }
 

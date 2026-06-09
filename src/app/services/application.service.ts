@@ -22,7 +22,8 @@ import {
 } from '../data/application/student-fees.dto';
 import {
   AvailableCoursesResponse,
-  RegisterCoursesPayload
+  RegisterCoursesPayload,
+  RegisteredCoursesResponse
 } from '../data/application/courseregistration.dto';
 
 @Injectable({
@@ -151,6 +152,10 @@ export class ApplicationService {
 
   getAvailableCourses(): Observable<AvailableCoursesResponse> {
     return this.http.get<AvailableCoursesResponse>(`${this.apiRoot}/api/v1/students/register-courses`);
+  }
+
+  getCurrentCourses(): Observable<RegisteredCoursesResponse> {
+    return this.http.get<RegisteredCoursesResponse>(`${this.apiRoot}/api/v1/students/current-courses`);
   }
 
   registerCourses(payload: RegisterCoursesPayload): Observable<any> {

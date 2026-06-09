@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AdmittedFlowService } from '../../admitted-flow.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { RegisteredCourse } from '../../../../data/application/courseregistration.dto';
 
 @Component({
   selector: 'app-admitted-courses',
@@ -25,11 +26,34 @@ export class AdmittedCoursesComponent {
   readonly registrationSubmitted = this.flow.registrationSubmitted;
   readonly availableCourses = this.flow.availableCourses;
   readonly selectedCourseIds = this.flow.selectedCourseIds;
+  readonly registeredCourses = this.flow.registeredCourses;
 
-  readonly canSubmit = computed(() => this.selectedCount() > 0 && !this.registrationSubmitted());
+  readonly hasRegisteredCourses = computed(() => this.registeredCourses().length > 0);
+
+  readonly firstSemesterRegistered = computed(() => {
+    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('first'));
+  });
+
+  readonly secondSemesterRegistered = computed(() => {
+    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('second'));
+  });
+
+  readonly totalRegisteredUnits = computed(() => 
+    this.registeredCourses().reduce((sum, course) => sum + course.units, 0)
+  );
+
+  readonly totalRegisteredCount = computed(() => this.registeredCourses().length);
+
+  readonly canSubmit = computed(() => this.selectedCount() > 0 && !this.registrationSubmitted() && !this.hasRegisteredCourses());
+
+  readonly currentDate = new Date().toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
 
   toggleCourse(courseId: number, checked: boolean): void {
-    if (this.registrationSubmitted()) {
+    if (this.registrationSubmitted() || this.hasRegisteredCourses()) {
       return;
     }
     this.flow.toggleCourseSelection(courseId, checked);
@@ -44,6 +68,8 @@ export class AdmittedCoursesComponent {
       return;
     }
     await this.flow.submitCourseRegistration();
+    // Refresh registered courses
+    await this.flow.loadRegisteredCourses();
   }
 
   goToPayment(): void {
@@ -55,17 +81,36 @@ export class AdmittedCoursesComponent {
       'Course Registration Slip',
       `Student Name: ${this.flow.applicantName()}`,
       `Matric Number: ${this.flow.applicationNo()}`,
-      `program: ${this.flow.programName()}`,
+      `Programme: ${this.flow.programName()}`,
       `Academic Session: ${this.flow.academicSession()}`,
+      `Date: ${this.currentDate}`,
       '',
-      'Selected Courses:'
+      'Registered Courses:'
     ];
-    this.selectedCourses().forEach((course) => {
-      lines.push(`${course.course.code} - ${course.course.title} (${course.units} Units)`);
+    const coursesToUse = this.hasRegisteredCourses() ? this.registeredCourses() : this.selectedCourses();
+    coursesToUse.forEach((course) => {
+      let code: string;
+      let title: string;
+      if ('course' in course && course.course && 'course' in (course.course as any)) {
+        // RegisteredCourse
+        code = (course.course as any).course.code;
+        title = (course.course as any).course.title;
+      } else if ('course' in course && course.course) {
+        // AvailableCourse
+        code = (course.course as any).code;
+        title = (course.course as any).title;
+      } else {
+        // Fallback
+        code = (course as any).code || 'N/A';
+        title = (course as any).title || 'N/A';
+      }
+      lines.push(`${code} - ${title} (${course.units} Units)`);
     });
     lines.push('');
-    lines.push(`Total Courses: ${this.selectedCount()}`);
-    lines.push(`Total Units: ${this.selectedUnits()}`);
+    const totalCount = this.hasRegisteredCourses() ? this.totalRegisteredCount() : this.selectedCount();
+    const totalUnits = this.hasRegisteredCourses() ? this.totalRegisteredUnits() : this.selectedUnits();
+    lines.push(`Total Courses: ${totalCount}`);
+    lines.push(`Total Units: ${totalUnits}`);
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');

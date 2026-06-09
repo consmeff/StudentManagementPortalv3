@@ -1,427 +1,447 @@
 .returning-courses-page {
-  padding: 1rem;
-}
-
-.returning-courses-page h1 {
-  margin: 0;
-  color: var(--app-text-primary);
-}
-
-.returning-courses-page > p {
-  margin: 0.3rem 0 1rem;
-  color: var(--app-text-secondary);
-}
-
-.slip-card {
-  border: 1px solid var(--app-border);
-  border-radius: 1rem;
-  background: var(--app-surface);
-  padding: 1rem;
-}
-
-.slip-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.9rem;
-}
-
-.slip-head h2 {
-  margin: 0;
-  color: var(--app-text-primary);
-}
-
-.level-chip {
-  border: 1px solid var(--app-border);
-  border-radius: 0.55rem;
-  padding: 0.35rem 0.55rem;
-  color: var(--app-text-secondary);
-  font-size: 0.82rem;
-}
-
-.slip-student-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem 1.2rem;
-  border-top: 1px solid var(--app-border);
-  border-bottom: 1px solid var(--app-border);
-  padding: 0.8rem 0;
-}
-
-.slip-student-grid small {
-  display: block;
-  color: var(--app-text-secondary);
-}
-
-.slip-student-grid strong {
-  color: var(--app-text-primary);
-}
-
-.semesters-grid {
-  margin-top: 0.9rem;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  border: 1px solid var(--app-border);
-  border-radius: 0.85rem;
-  overflow: hidden;
-}
-
-.semester-card:first-child {
-  border-right: 1px solid var(--app-border);
-}
-
-.semester-card h3 {
-  margin: 0;
-  padding: 0.7rem 0.8rem;
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 0.84rem;
-  color: var(--app-surface);
-  background: var(--app-primary);
-}
-
-.semester-card .row {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.7rem;
-  padding: 0.65rem 0.8rem;
-  border-bottom: 1px solid var(--app-border);
-}
-
-.semester-card .row:last-child {
-  border-bottom: none;
-}
-
-.semester-card span {
-  color: var(--app-text-secondary);
-}
-
-.semester-card strong {
-  color: var(--app-text-primary);
-  white-space: nowrap;
-}
-
-.signature-row {
-  margin-top: 1rem;
-  display: grid;
-  gap: 0.8rem;
-}
-
-.signature-row > div {
-  color: var(--app-text-primary);
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.signature-row > div span {
-  flex: 1;
-  border-bottom: 1px solid var(--app-text-muted);
+  padding: 1.5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .locked-state {
-  min-height: 50vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   text-align: center;
-}
+  margin-top: 3rem;
 
-.state-icon {
-  font-size: 3rem;
-}
+  .state-icon {
+    font-size: 3.5rem;
+    margin-bottom: 0.75rem;
+  }
 
-.locked-state h2 {
-  margin: 0.75rem 0 0.35rem;
-  color: var(--app-text-primary);
-}
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
 
-.locked-state p {
-  margin: 0 0 1rem;
-  color: var(--app-text-secondary);
-  max-width: 640px;
-}
-
-.info-banner {
-  border: 1px solid color-mix(in srgb, var(--app-danger) 20%, transparent);
-  color: var(--app-danger);
-  background: color-mix(in srgb, var(--app-danger) 8%, transparent);
-  border-radius: 0.7rem;
-  text-align: center;
-  font-weight: 600;
-  padding: 0.8rem;
-  margin-bottom: 1rem;
+  p {
+    color: var(--app-text-secondary);
+    max-width: 600px;
+    margin: 0 auto 1.5rem auto;
+  }
 }
 
 .summary-card {
-  border-radius: 0.9rem;
-  background: var(--app-primary);
-  color: var(--app-surface);
-  padding: 1rem;
   display: flex;
-  gap: 4rem;
-}
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem 1.5rem;
+  background: var(--app-surface);
+  border-radius: 0.5rem;
 
-.summary-card strong {
-  display: block;
-  font-size: 2rem;
-}
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 
-.summary-card span {
-  opacity: 0.9;
+    strong {
+      font-size: 1.75rem;
+    }
+
+    span {
+      font-size: 0.875rem;
+      color: var(--app-text-secondary);
+    }
+  }
 }
 
 .course-list {
-  margin-top: 1rem;
-}
+  margin-bottom: 1.5rem;
 
-.course-list h3 {
-  margin: 1rem 0 0.5rem;
-  color: var(--app-text-primary);
-}
+  .course-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.75rem;
+    background: var(--app-surface);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
 
-.course-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.85rem 0.2rem;
-  border-bottom: 1px solid var(--app-border);
-}
+    &:hover {
+      background: color-mix(in srgb, var(--app-primary) 5%, var(--app-surface));
+    }
 
-.course-row.locked {
-  opacity: 0.45;
-}
+    input[type="checkbox"] {
+      width: 1.25rem;
+      height: 1.25rem;
+      accent-color: var(--app-primary);
+    }
 
-.course-row.carryover {
-  color: var(--app-danger);
-}
+    .meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
 
-.meta strong {
-  display: block;
-  color: var(--app-text-primary);
-}
+      strong {
+        font-size: 1rem;
+        color: var(--app-text-primary);
+      }
 
-.meta span {
-  color: var(--app-text-secondary);
-}
+      span {
+        font-size: 0.875rem;
+        color: var(--app-text-secondary);
+      }
+    }
 
-.course-row.carryover .meta strong,
-.course-row.carryover .meta span {
-  color: var(--app-danger);
-}
+    .units {
+      font-weight: 600;
+      font-size: 1rem;
 
-.warn {
-  display: inline-block;
-  margin-top: 0.3rem;
-  color: var(--app-danger);
-  font-weight: 700;
-}
-
-.units {
-  text-align: right;
-  color: var(--app-text-primary);
-  font-weight: 700;
-}
-
-.units span {
-  display: block;
-  color: var(--app-text-secondary);
-  font-weight: 500;
+      span {
+        font-weight: 400;
+        font-size: 0.875rem;
+        margin-left: 0.25rem;
+        color: var(--app-text-secondary);
+      }
+    }
+  }
 }
 
 .action-row {
-  margin-top: 1.2rem;
   display: flex;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 1rem;
+
+  &.secondary {
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
 }
 
-.action-row.secondary {
-  margin-top: 0.65rem;
-}
-
-.resit-list-card {
-  border: 1px solid var(--app-border);
+/* Course Slip Page Styles */
+.slip-page {
+  background: white;
   border-radius: 1rem;
-  background: var(--app-surface);
-  padding: 1rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.resit-list-card h3 {
-  margin: 0 0 0.7rem;
-  color: var(--app-text-primary);
-}
-
-.resit-item {
-  border: 1px solid var(--app-border);
-  border-radius: 0.7rem;
-  padding: 0.75rem;
-  margin-bottom: 0.7rem;
-}
-
-.title-row {
+.slip-header {
   display: flex;
   justify-content: space-between;
-  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--app-border);
+
+  h2 {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .level-selector {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--app-border);
+    border-radius: 0.5rem;
+    font-weight: 500;
+  }
 }
 
-.title-row strong {
-  color: var(--app-text-primary);
-  display: block;
+.student-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 200px;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--app-border);
+
+  .info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .label {
+        font-size: 0.875rem;
+        color: var(--app-text-secondary);
+      }
+
+      .value {
+        font-weight: 600;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .profile-photo {
+    display: flex;
+    justify-content: flex-end;
+
+    img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+    }
+  }
 }
 
-.title-row span {
-  color: var(--app-text-secondary);
+.semesters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+
+  .semester-card {
+    display: flex;
+    flex-direction: column;
+
+    .semester-header {
+      background: var(--app-primary);
+      color: white;
+      padding: 0.75rem 1rem;
+      text-align: center;
+
+      h3 {
+        margin: 0;
+        font-size: 1rem;
+      }
+    }
+
+    .courses-list {
+      flex: 1;
+      padding: 1rem;
+
+      .course-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--app-border);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .course-code {
+          font-weight: 600;
+          width: 100px;
+        }
+
+        .course-title {
+          flex: 1;
+          margin: 0 1rem;
+        }
+
+        .course-units {
+          font-weight: 500;
+        }
+      }
+    }
+
+    &:first-child {
+      border-right: 1px solid var(--app-border);
+    }
+  }
 }
 
-.title-row small {
-  color: var(--app-success);
-  font-weight: 700;
-}
-
-.meta-row {
-  margin-top: 0.35rem;
+.signatures-section {
   display: flex;
-  gap: 1rem;
-  color: var(--app-text-secondary);
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  .signature-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+
+    .label {
+      font-weight: 500;
+    }
+
+    .signature-line {
+      height: 2px;
+      background: var(--app-border);
+      width: 100%;
+      max-width: 300px;
+    }
+  }
 }
 
-.view-btn {
-  margin-top: 0.6rem;
-  width: 100%;
-  border: none;
-  border-radius: 0.45rem;
-  padding: 0.5rem;
-  background: var(--app-primary);
-  color: var(--app-surface);
-  font-weight: 600;
+/* Resit Styles */
+.resit-list-card {
+  background: var(--app-surface);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  .resit-item {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        strong {
+          font-size: 1.125rem;
+        }
+
+        span {
+          color: var(--app-text-secondary);
+        }
+      }
+
+      small {
+        background: var(--app-primary);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+      }
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 1.5rem;
+
+      span {
+        color: var(--app-text-secondary);
+      }
+    }
+
+    .view-btn {
+      align-self: flex-end;
+      background: none;
+      border: none;
+      color: var(--app-primary);
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.5rem 0;
+    }
+  }
 }
 
 .resit-detail-page {
-  border-top: 1px solid var(--app-border);
-  padding-top: 1rem;
-}
-
-.resit-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.9rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 1px solid var(--app-border);
-}
-
-.score-badge {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--app-danger) 30%, transparent);
-  color: var(--app-danger);
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.resit-head small {
-  color: var(--app-text-secondary);
-}
-
-.resit-head h3 {
-  margin: 0.2rem 0 0;
-  color: var(--app-text-primary);
-}
-
-.download-schedule {
-  border: none;
-  background: transparent;
-  color: var(--app-text-secondary);
-  font-size: 1.45rem;
-}
-
-.countdown-box {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-.countdown-box span {
-  background: var(--app-primary);
-  color: var(--app-surface);
-  border-radius: 0.3rem;
-  padding: 0.3rem 0.45rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.countdown-box small {
-  display: block;
-  opacity: 0.8;
-  text-transform: uppercase;
-}
-
-.resit-detail-page h4 {
-  margin: 1rem 0 0.6rem;
-  color: var(--app-text-primary);
-}
-
-.exam-card {
-  border: 1px solid var(--app-border);
-  border-radius: 0.7rem;
-  background: var(--app-surface);
-  padding: 0.8rem 0.9rem;
-  max-width: 700px;
-}
-
-.exam-card > div {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 0.6rem;
-}
-
-.exam-card > div:last-child {
-  margin-bottom: 0;
-}
-
-.exam-card span {
-  min-width: 105px;
-  color: var(--app-text-secondary);
-}
-
-.exam-card strong {
-  color: var(--app-text-primary);
-}
-
-@media (max-width: 960px) {
-  .slip-student-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  .semesters-grid {
-    grid-template-columns: 1fr;
-  }
-  .semester-card:first-child {
-    border-right: none;
-    border-bottom: 1px solid var(--app-border);
-  }
-}
-
-@media (max-width: 720px) {
-  .slip-student-grid {
-    grid-template-columns: 1fr;
-  }
   .resit-head {
-    flex-wrap: wrap;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    .score-badge {
+      background: var(--app-error);
+      color: white;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    div {
+      flex: 1;
+
+      small {
+        color: var(--app-text-secondary);
+      }
+
+      h3 {
+        margin: 0.25rem 0 0 0;
+      }
+    }
+
+    .download-schedule {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: 1px solid var(--app-border);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
   }
+
   .countdown-box {
-    justify-content: flex-start;
+    background: var(--app-surface);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+
+    span {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: bold;
+
+      small {
+        font-size: 0.875rem;
+        font-weight: normal;
+      }
+    }
+  }
+
+  h4 {
+    margin-top: 0;
+  }
+
+  .exam-card {
+    background: var(--app-surface);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+
+      span {
+        color: var(--app-text-secondary);
+      }
+
+      strong {
+        font-size: 1.125rem;
+      }
+    }
   }
 }
 
-/* Keeping this block empty for now to avoid style drift for future controls. */
-.state-switcher {
-  margin-top: 1rem;
+.info-banner {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0 0.5rem 0.5rem 0;
 }

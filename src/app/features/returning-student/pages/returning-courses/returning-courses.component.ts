@@ -30,6 +30,7 @@ export class ReturningCoursesComponent implements OnInit {
 
   ngOnInit(): void {
     this.flow.loadAvailableCourses();
+    this.flow.loadRegisteredCourses();
   }
 
   goToPayment(): void {
@@ -69,6 +70,12 @@ export class ReturningCoursesComponent implements OnInit {
     this.viewMode.set('resit-list');
   }
 
+  readonly currentDate = new Date().toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+
   downloadCourseSlip(): void {
     const lines = [
       'Course Registration Slip',
@@ -78,12 +85,30 @@ export class ReturningCoursesComponent implements OnInit {
       `Level: ${this.flow.level()}`,
       ''
     ];
-    this.flow.selectedCoursesFromApi().forEach((course) => {
-      lines.push(`${course.course.code} - ${course.course.title} (${course.units} Units)`);
+    const courses = this.flow.hasRegisteredCourses() ? this.flow.registeredCourses() : this.flow.selectedCoursesFromApi();
+    courses.forEach((course) => {
+      let code: string;
+      let title: string;
+      if ('course' in course && course.course && 'course' in (course.course as any)) {
+        // RegisteredCourse
+        code = (course.course as any).course.code;
+        title = (course.course as any).course.title;
+      } else if ('course' in course && course.course) {
+        // AvailableCourse
+        code = (course.course as any).code;
+        title = (course.course as any).title;
+      } else {
+        // Fallback
+        code = (course as any).code || 'N/A';
+        title = (course as any).title || 'N/A';
+      }
+      lines.push(`${code} - ${title} (${course.units} Units)`);
     });
     lines.push('');
-    lines.push(`Total Courses: ${this.flow.totalCoursesSelectedFromApi()}`);
-    lines.push(`Total Units: ${this.flow.totalUnitsSelectedFromApi()}`);
+    const totalCount = this.flow.hasRegisteredCourses() ? this.flow.totalRegisteredCount() : this.flow.totalCoursesSelectedFromApi();
+    const totalUnits = this.flow.hasRegisteredCourses() ? this.flow.totalRegisteredUnits() : this.flow.totalUnitsSelectedFromApi();
+    lines.push(`Total Courses: ${totalCount}`);
+    lines.push(`Total Units: ${totalUnits}`);
 
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);

@@ -7,7 +7,7 @@ import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
 } from '../../utility/student-fees-plan';
-import { AvailableCourse } from '../../data/application/courseregistration.dto';
+import { AvailableCourse, RegisteredCourse } from '../../data/application/courseregistration.dto';
 
 export type ReturningCourse = {
   code: string;
@@ -236,6 +236,24 @@ export class ReturningFlowService {
   readonly totalCoursesSelectedFromApi = computed(() =>
     this.selectedCoursesFromApi().length
   );
+
+  readonly registeredCourses = signal<RegisteredCourse[]>([]);
+
+  readonly hasRegisteredCourses = computed(() => this.registeredCourses().length > 0);
+
+  readonly firstSemesterRegistered = computed(() => {
+    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('first'));
+  });
+
+  readonly secondSemesterRegistered = computed(() => {
+    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('second'));
+  });
+
+  readonly totalRegisteredUnits = computed(() => 
+    this.registeredCourses().reduce((sum, course) => sum + course.units, 0)
+  );
+
+  readonly totalRegisteredCount = computed(() => this.registeredCourses().length);
 
   readonly configuredTotalSchoolFees = computed(() =>
     this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? this.totalSchoolFees
@@ -687,6 +705,21 @@ export class ReturningFlowService {
     }
   }
 
+  async loadRegisteredCourses(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.appService.getCurrentCourses());
+      this.registeredCourses.set(response.data);
+    } catch (e) {
+      this.registeredCourses.set([]);
+    }
+  }
+
+  async submitCourseRegistrationFromApi(): Promise<void> {
+    const payload = { course_ids: this.selectedCourseIds() };
+    await firstValueFrom(this.appService.registerCourses(payload));
+    await this.loadRegisteredCourses();
+  }
+
   toggleCourseSelectionFromApi(courseId: number, checked: boolean): void {
     const current = this.selectedCourseIds();
     if (checked) {
@@ -700,11 +733,6 @@ export class ReturningFlowService {
 
   isCourseSelectedFromApi(courseId: number): boolean {
     return this.selectedCourseIds().includes(courseId);
-  }
-
-  async submitCourseRegistrationFromApi(): Promise<void> {
-    const payload = { course_ids: this.selectedCourseIds() };
-    await firstValueFrom(this.appService.registerCourses(payload));
   }
 
   suggestedAmount(): number {

@@ -1,20 +1,111 @@
 <div class="courses-page">
-  <h1>Course Registration</h1>
-
   <ng-container *ngIf="!flow.hasInternalPayment(); else unlockedCourses">
     <section class="locked-state">
-      <div class="lock-icon">🔒</div>
+      <div class="state-icon">🔒</div>
       <h2>Course registration is locked</h2>
-      <p>
-        You need to make your first school fees payment before registering courses. Minimum first payment is
-        ₦500,000.
-      </p>
+      <p>You need to make your first school fees payment before you can register for courses. Your minimum first payment is ₦500,000.</p>
       <app-button iconClass="pi pi-credit-card" (buttonClick)="goToPayment()">Make Payment</app-button>
     </section>
   </ng-container>
 
   <ng-template #unlockedCourses>
-    <ng-container *ngIf="!registrationSubmitted(); else courseSlip">
+    <ng-container *ngIf="hasRegisteredCourses(); else registerNewCourses">
+      <!-- Course Registration Slip View -->
+      <section class="slip-page">
+        <div class="slip-header">
+          <h1>Course Registration Slip</h1>
+          <div class="level-selector">
+            <!-- Placeholder for level selector from UI -->
+            <span>{{ flow.levelName || '100 Level' }}</span>
+          </div>
+        </div>
+
+        <div class="slip-content">
+          <div class="student-info-grid">
+            <div class="info-column">
+              <div class="info-item">
+                <span class="label">Student Name</span>
+                <span class="value">{{ flow.applicantName() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Current Level</span>
+                <span class="value">{{ flow.levelName || 'ND 1' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Academic Session</span>
+                <span class="value">{{ flow.academicSession() }}</span>
+              </div>
+            </div>
+            <div class="info-column">
+              <div class="info-item">
+                <span class="label">Matric Number</span>
+                <span class="value">{{ flow.applicationNo() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Programme</span>
+                <span class="value">{{ flow.programName() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date</span>
+                <span class="value">{{ currentDate }}</span>
+              </div>
+            </div>
+            <div class="profile-photo">
+              <!-- Placeholder for profile photo -->
+              <img [src]="flow.profilePhotoUrl() || 'https://via.placeholder.com/150'" alt="Profile Photo" />
+            </div>
+          </div>
+
+          <div class="semesters-grid">
+            <div class="semester-card">
+              <div class="semester-header">
+                <h3>First Semester</h3>
+              </div>
+              <div class="courses-list">
+                <div class="course-row" *ngFor="let course of firstSemesterRegistered()">
+                  <span class="course-code">{{ course.course.course.code }}</span>
+                  <span class="course-title">{{ course.course.course.title }}</span>
+                  <span class="course-units">{{ course.units }} Units</span>
+                </div>
+              </div>
+            </div>
+            <div class="semester-card">
+              <div class="semester-header">
+                <h3>Second Semester</h3>
+              </div>
+              <div class="courses-list">
+                <div class="course-row" *ngFor="let course of secondSemesterRegistered()">
+                  <span class="course-code">{{ course.course.course.code }}</span>
+                  <span class="course-title">{{ course.course.course.title }}</span>
+                  <span class="course-units">{{ course.units }} Units</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="signatures-section">
+            <div class="signature-item">
+              <span class="label">Student's Signature:</span>
+              <span class="signature-line"></span>
+            </div>
+            <div class="signature-item">
+              <span class="label">Course Coordinator's Signature:</span>
+              <span class="signature-line"></span>
+            </div>
+          </div>
+
+          <div class="slip-footer">
+            <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">
+              Download Course Slip
+            </app-button>
+          </div>
+        </div>
+      </section>
+    </ng-container>
+
+    <ng-template #registerNewCourses>
+      <h1>Course Registration</h1>
+
       <section class="summary-card">
         <div>
           <strong>{{ selectedUnits() }}</strong>
@@ -22,7 +113,7 @@
         </div>
         <div>
           <strong>{{ selectedCount() }}</strong>
-          <span>No. of courses</span>
+          <span>No. of Courses</span>
         </div>
       </section>
 
@@ -48,44 +139,6 @@
           Submit Course Registration
         </app-button>
       </div>
-    </ng-container>
-  </ng-template>
-
-  <ng-template #courseSlip>
-    <section class="slip">
-      <div class="slip-head">
-        <h2>Course Registration Slip</h2>
-        <p>{{ flow.academicSession() }}</p>
-      </div>
-      <div class="student-grid">
-        <div>
-          <small>Student Name</small>
-          <strong>{{ flow.applicantName() }}</strong>
-        </div>
-        <div>
-          <small>Matric Number</small>
-          <strong>{{ flow.applicationNo() }}</strong>
-        </div>
-        <div>
-          <small>program</small>
-          <strong>{{ flow.programName() }}</strong>
-        </div>
-      </div>
-      <div class="semesters">
-        <div class="semester">
-          <h3>Registered Courses</h3>
-          <div class="row" *ngFor="let course of firstSemesterSelected()">
-            <span>{{ course.course.code }} - {{ course.course.title }}</span>
-            <strong>{{ course.units }} Units</strong>
-          </div>
-        </div>
-      </div>
-      <div class="slip-footer">
-        <strong>Total: {{ selectedCount() }} courses / {{ selectedUnits() }} units</strong>
-      </div>
-      <div class="action-row">
-        <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">Download Course Slip</app-button>
-      </div>
-    </section>
+    </ng-template>
   </ng-template>
 </div>
