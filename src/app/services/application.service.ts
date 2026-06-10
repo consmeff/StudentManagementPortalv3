@@ -162,6 +162,16 @@ export class ApplicationService {
     return this.http.post<any>(`${this.apiRoot}/api/v1/students/register-courses`, payload);
   }
 
+  submitProfileDocuments(payload: {
+    documents: {
+      recommendation_letter_1: any;
+      recommendation_letter_2: any;
+      testimonial: any;
+    };
+  }): Observable<any> {
+    return this.http.post<any>(`${this.apiRoot}/api/v1/students/profile/recommendation-letter`, payload);
+  }
+
   private normalizeCollectionResponse(response: any): { data: any[] } {
     if (Array.isArray(response)) {
       return { data: response };

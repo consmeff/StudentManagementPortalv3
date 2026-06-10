@@ -42,6 +42,16 @@ export class AdmittedFlowService {
 
   readonly loadingCourses = signal(false);
 
+  readonly uploadingDocument = signal<string | null>(null);
+
+  readonly uploadedRecommendationLetter1 = signal<any>(null);
+
+  readonly uploadedRecommendationLetter2 = signal<any>(null);
+
+  readonly uploadedTestimonial = signal<any>(null);
+
+  readonly submittingProfileDocuments = signal(false);
+
   readonly registrantData = signal<RegistrantData | null>(null);
 
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
@@ -223,10 +233,10 @@ export class AdmittedFlowService {
 
   readonly recommendationLetters = computed<VerificationDocument[]>(() => {
     const data = this.registrantData();
-    const recFile1 = data?.academic_history?.[0]?.certificate?.file_name || '';
-    const recUrl1 = data?.academic_history?.[0]?.certificate?.file_url || '';
-    const recFile2 = data?.academic_history?.[1]?.certificate?.file_name || '';
-    const recUrl2 = data?.academic_history?.[1]?.certificate?.file_url || '';
+    const recFile1 = this.uploadedRecommendationLetter1()?.file_name || data?.academic_history?.[0]?.certificate?.file_name || '';
+    const recUrl1 = this.uploadedRecommendationLetter1()?.file_url || data?.academic_history?.[0]?.certificate?.file_url || '';
+    const recFile2 = this.uploadedRecommendationLetter2()?.file_name || data?.academic_history?.[1]?.certificate?.file_name || '';
+    const recUrl2 = this.uploadedRecommendationLetter2()?.file_url || data?.academic_history?.[1]?.certificate?.file_url || '';
 
     return [
       { label: 'Letter of Recommendation 1', fileName: recFile1, fileUrl: recUrl1, uploaded: !!recFile1 },
@@ -236,11 +246,59 @@ export class AdmittedFlowService {
 
   readonly testimonialDocument = computed<VerificationDocument>(() => {
     const data = this.registrantData();
-    const testimonialFile = data?.certificate_of_origin?.file_name || '';
-    const testimonialUrl = data?.certificate_of_origin?.file_url || '';
+    const testimonialFile = this.uploadedTestimonial()?.file_name || data?.certificate_of_origin?.file_name || '';
+    const testimonialUrl = this.uploadedTestimonial()?.file_url || data?.certificate_of_origin?.file_url || '';
 
     return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: testimonialUrl, uploaded: !!testimonialFile };
   });
+
+  readonly canSubmitProfileDocuments = computed(() =>
+    this.recommendationLetters().every((document) => document.uploaded)
+    && this.testimonialDocument().uploaded
+  );
+
+  async uploadDocument(file: File, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
+    this.uploadingDocument.set(documentType);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await firstValueFrom(this.appService.uploadFile(formData));
+      switch (documentType) {
+        case 'recommendation_letter_1':
+          this.uploadedRecommendationLetter1.set(response);
+          break;
+        case 'recommendation_letter_2':
+          this.uploadedRecommendationLetter2.set(response);
+          break;
+        case 'testimonial':
+          this.uploadedTestimonial.set(response);
+          break;
+      }
+    } finally {
+      this.uploadingDocument.set(null);
+    }
+  }
+
+  async submitProfileDocuments(): Promise<void> {
+    if (!this.canSubmitProfileDocuments()) {
+      return;
+    }
+    this.submittingProfileDocuments.set(true);
+    try {
+      const data = this.registrantData();
+      const payload = {
+        documents: {
+          recommendation_letter_1: this.uploadedRecommendationLetter1() || data?.academic_history?.[0]?.certificate || {},
+          recommendation_letter_2: this.uploadedRecommendationLetter2() || data?.academic_history?.[1]?.certificate || {},
+          testimonial: this.uploadedTestimonial() || data?.certificate_of_origin || {}
+        }
+      };
+      await firstValueFrom(this.appService.submitProfileDocuments(payload));
+      await this.loadSnapshot();
+    } finally {
+      this.submittingProfileDocuments.set(false);
+    }
+  }
 
   readonly selectedCourses = computed(() => {
     const selectedIds = this.selectedCourseIds();
