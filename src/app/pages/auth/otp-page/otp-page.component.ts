@@ -23,17 +23,24 @@ export class OtpPageComponent implements OnInit, OnDestroy {
 
   busy = false;
 
+  resendBusy = false;
+
   isDarkMode = false;
 
   complete = false;
   readonly technicalSupportMessage = TECHNICAL_SUPPORT_MESSAGE;
+  readonly resendCooldownSeconds = 30;
   otpForm!: FormGroup;
 
   email: string = '';
 
   isPasswordResetFlow = false;
 
+  resendCountdown = 0;
+
   private themeSub?: Subscription;
+
+  private resendCountdownIntervalId: ReturnType<typeof globalThis.setInterval> | null = null;
 
   private authSessionStore = inject(AuthSessionStore);
 
@@ -47,6 +54,7 @@ export class OtpPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.email = this.authSessionStore.profileEmail() || 'your email';
     this.isPasswordResetFlow = this.authSessionStore.authFlow() === 'password_reset';
+    this.startResendCooldown();
     
     this.otpForm = new FormGroup({
       box1: new FormControl('', [Validators.required, Validators.pattern(/^\d$/)]),
@@ -168,7 +176,68 @@ export class OtpPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  resendOtp(): void {
+    if (!this.email || this.email === 'your email' || this.resendBusy || this.resendCountdown > 0) {
+      return;
+    }
+
+    this.resendBusy = true;
+    const resendRequest = this.isPasswordResetFlow
+      ? this.authService.verifyEmail({ email: this.email })
+      : this.authService.resendSignupOtp({ email: this.email });
+
+    resendRequest.subscribe({
+      next: () => {
+        this.resendBusy = false;
+        this.startResendCooldown();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'OTP Resent',
+          detail: this.isPasswordResetFlow
+            ? 'A new password reset OTP has been sent to your email.'
+            : 'A new account verification OTP has been sent to your email.',
+          life: 3000
+        });
+      },
+      error: () => {
+        this.resendBusy = false;
+      }
+    });
+  }
+
+  readResendButtonLabel(): string {
+    if (this.resendBusy) {
+      return 'Resending...';
+    }
+    if (this.resendCountdown > 0) {
+      return `Resend OTP in ${this.resendCountdown}s`;
+    }
+    return 'Resend OTP';
+  }
+
+  private startResendCooldown(): void {
+    this.clearResendCountdown();
+    this.resendCountdown = this.resendCooldownSeconds;
+    this.resendCountdownIntervalId = globalThis.setInterval(() => {
+      if (this.resendCountdown <= 1) {
+        this.resendCountdown = 0;
+        this.clearResendCountdown();
+        return;
+      }
+      this.resendCountdown -= 1;
+    }, 1000);
+  }
+
+  private clearResendCountdown(): void {
+    if (this.resendCountdownIntervalId === null) {
+      return;
+    }
+    globalThis.clearInterval(this.resendCountdownIntervalId);
+    this.resendCountdownIntervalId = null;
+  }
+
   ngOnDestroy(): void {
+    this.clearResendCountdown();
     this.themeSub?.unsubscribe();
   }
 }

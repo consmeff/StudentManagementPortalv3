@@ -5,7 +5,14 @@ import { environment } from '../../environments/environment';
 import { LoginResponse, ProfilePayload, ProfileSuccessResponse } from '../data/auth/auth.data';
 import { AuthSessionStore } from '../store/auth-session.store';
 
-type AuthOtpPayload = Record<string, unknown>;
+type AuthEmailPayload = {
+  email: string;
+};
+
+type AuthOtpPayload = {
+  email: string;
+  otp: string;
+};
 
 type AuthOtpTokenResponse = {
   jwt?: string;
@@ -57,7 +64,11 @@ export class AuthService {
         map(() => true));
   }
 
-  verifyEmail(emailObj: AuthOtpPayload): Observable<boolean> {
+  resendSignupOtp(emailObj: AuthEmailPayload): Observable<boolean> {
+    return this.http.post(`${this.apiRoot}/api/v1/auth/signup/resend-otp`, emailObj, { headers: this.headers }).pipe(map(() => true));
+  }
+
+  verifyEmail(emailObj: AuthEmailPayload): Observable<boolean> {
     return this.http.post(`${this.apiRoot}/api/v1/auth/password/forgot`, emailObj).pipe(map(() => true));
   }
 

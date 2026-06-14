@@ -81,6 +81,19 @@
         {{ busy ? "Verifying..." : (isPasswordResetFlow ? "Continue" : "Verify OTP") }}
       </button>
     </form>
+    <div class="resend-row">
+      <span class="helper-text resend-copy">Didn't receive the code?</span>
+      <button
+        pButton
+        type="button"
+        class="resend-btn"
+        [text]="true"
+        [disabled]="resendBusy || resendCountdown > 0"
+        (click)="resendOtp()"
+      >
+        {{ readResendButtonLabel() }}
+      </button>
+    </div>
     <p class="helper-text mt-4">{{ technicalSupportMessage }}</p>
   </div>
 </div>

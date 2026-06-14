@@ -50,7 +50,7 @@ export class RequestPasswordResetComponent implements OnDestroy {
 
     this.busy = true;
     this.authService.verifyEmail({ 
-      email: this.resetForm.controls.email.value 
+      email: this.resetForm.controls.email.value?.trim() ?? ''
     }).subscribe({
       next: (data: any) => {
         this.busy = false;
