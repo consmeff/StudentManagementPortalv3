@@ -26,7 +26,16 @@ export class AdmittedProfileComponent implements OnInit {
     void this.router.navigateByUrl('/admitted/payment');
   }
 
-  continueToNextStep(): void {
-    void this.router.navigateByUrl('/admitted/dashboard');
+  async onFileUpload(event: Event, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+    await this.flow.uploadDocument(file, documentType);
+  }
+
+  async submitForVerification(): Promise<void> {
+    await this.flow.submitProfileDocuments();
   }
 }

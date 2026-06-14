@@ -7,6 +7,7 @@ import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
 } from '../../utility/student-fees-plan';
+import { AvailableCourse, RegisteredCourse } from '../../data/application/courseregistration.dto';
 
 export type ReturningCourse = {
   code: string;
@@ -214,9 +215,45 @@ export class ReturningFlowService {
 
   readonly loadingStudentFeePlan = signal(false);
 
+  readonly loadingCourses = signal(false);
+
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
+
+  readonly availableCourses = signal<AvailableCourse[]>([]);
+
+  readonly selectedCourseIds = signal<number[]>([]);
+
+  readonly selectedCoursesFromApi = computed(() =>
+    this.availableCourses().filter(course => this.selectedCourseIds().includes(course.id))
+  );
+
+  readonly totalUnitsSelectedFromApi = computed(() =>
+    this.selectedCoursesFromApi().reduce((sum, course) => sum + course.units, 0)
+  );
+
+  readonly totalCoursesSelectedFromApi = computed(() =>
+    this.selectedCoursesFromApi().length
+  );
+
+  readonly registeredCourses = signal<RegisteredCourse[]>([]);
+
+  readonly hasRegisteredCourses = computed(() => this.registeredCourses().length > 0);
+
+  readonly firstSemesterRegistered = computed(() => {
+    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('first'));
+  });
+
+  readonly secondSemesterRegistered = computed(() => {
+    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('second'));
+  });
+
+  readonly totalRegisteredUnits = computed(() => 
+    this.registeredCourses().reduce((sum, course) => sum + course.units, 0)
+  );
+
+  readonly totalRegisteredCount = computed(() => this.registeredCourses().length);
 
   readonly configuredTotalSchoolFees = computed(() =>
     this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? this.totalSchoolFees
@@ -656,6 +693,46 @@ export class ReturningFlowService {
     } finally {
       this.loadingStudentFeePlan.set(false);
     }
+  }
+
+  async loadAvailableCourses(): Promise<void> {
+    this.loadingCourses.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getAvailableCourses());
+      this.availableCourses.set(response.data);
+    } finally {
+      this.loadingCourses.set(false);
+    }
+  }
+
+  async loadRegisteredCourses(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.appService.getCurrentCourses());
+      this.registeredCourses.set(response.data);
+    } catch (e) {
+      this.registeredCourses.set([]);
+    }
+  }
+
+  async submitCourseRegistrationFromApi(): Promise<void> {
+    const payload = { course_ids: this.selectedCourseIds() };
+    await firstValueFrom(this.appService.registerCourses(payload));
+    await this.loadRegisteredCourses();
+  }
+
+  toggleCourseSelectionFromApi(courseId: number, checked: boolean): void {
+    const current = this.selectedCourseIds();
+    if (checked) {
+      if (!current.includes(courseId)) {
+        this.selectedCourseIds.set([...current, courseId]);
+      }
+    } else {
+      this.selectedCourseIds.set(current.filter(id => id !== courseId));
+    }
+  }
+
+  isCourseSelectedFromApi(courseId: number): boolean {
+    return this.selectedCourseIds().includes(courseId);
   }
 
   suggestedAmount(): number {

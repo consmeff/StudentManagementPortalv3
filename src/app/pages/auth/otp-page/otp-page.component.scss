@@ -61,3 +61,20 @@
   border-color: var(--app-primary);
   margin-top: 0.5rem;
 }
+
+.resend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.resend-copy {
+  margin: 0;
+}
+
+.resend-btn {
+  padding: 0;
+}

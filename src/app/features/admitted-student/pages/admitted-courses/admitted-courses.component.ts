@@ -1,17 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdmittedFlowService } from '../../admitted-flow.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-
-type CourseItem = {
-  code: string;
-  title: string;
-  units: number;
-  semester: 'First Semester' | 'Second Semester';
-  locked?: boolean;
-};
+import { RegisteredCourse } from '../../../../data/application/courseregistration.dto';
 
 @Component({
   selector: 'app-admitted-courses',
@@ -25,73 +18,58 @@ export class AdmittedCoursesComponent {
 
   readonly flow = inject(AdmittedFlowService);
 
-  readonly registrationSubmitted = signal(false);
+  readonly selectedCourses = this.flow.selectedCourses;
+  readonly selectedUnits = this.flow.selectedUnits;
+  readonly selectedCount = this.flow.selectedCount;
+  readonly firstSemesterSelected = this.flow.firstSemesterSelected;
+  readonly secondSemesterSelected = this.flow.secondSemesterSelected;
+  readonly registrationSubmitted = this.flow.registrationSubmitted;
+  readonly availableCourses = this.flow.availableCourses;
+  readonly selectedCourseIds = this.flow.selectedCourseIds;
+  readonly registeredCourses = this.flow.registeredCourses;
 
-  readonly selectedCodes = signal<string[]>([]);
+  readonly hasRegisteredCourses = computed(() => this.registeredCourses().length > 0);
 
-  readonly courses = signal<CourseItem[]>([
-    { code: 'NUR 101', title: 'Introduction to Nursing Science', units: 3, semester: 'First Semester' },
-    { code: 'ANA 101', title: 'General Human Anatomy', units: 3, semester: 'First Semester' },
-    { code: 'PHY 101', title: 'General Physics for Health Sciences', units: 3, semester: 'First Semester' },
-    { code: 'CHM 101', title: 'Basic Chemistry', units: 3, semester: 'First Semester' },
-    { code: 'GST 111', title: 'Communication in English', units: 2, semester: 'First Semester' },
-    { code: 'NUR 102', title: 'Foundations of Professional Nursing', units: 3, semester: 'Second Semester' },
-    { code: 'BIO 102', title: 'General Biology', units: 3, semester: 'Second Semester' },
-    { code: 'BCH 102', title: 'Introduction to Biochemistry', units: 3, semester: 'Second Semester' },
-    { code: 'GST 112', title: 'Logic and Critical Thinking', units: 2, semester: 'Second Semester' },
-    {
-      code: 'NUR 201',
-      title: 'Clinical Nursing Practice I',
-      units: 3,
-      semester: 'Second Semester',
-      locked: true
-    }
-  ]);
-
-  readonly selectedCourses = computed(() => {
-    const selected = this.selectedCodes();
-    return this.courses().filter((course) => selected.includes(course.code));
+  readonly firstSemesterRegistered = computed(() => {
+    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('first'));
   });
 
-  readonly selectedUnits = computed(() =>
-    this.selectedCourses().reduce((sum, course) => sum + course.units, 0)
+  readonly secondSemesterRegistered = computed(() => {
+    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('second'));
+  });
+
+  readonly totalRegisteredUnits = computed(() => 
+    this.registeredCourses().reduce((sum, course) => sum + course.units, 0)
   );
 
-  readonly selectedCount = computed(() => this.selectedCourses().length);
+  readonly totalRegisteredCount = computed(() => this.registeredCourses().length);
 
-  readonly firstSemesterSelected = computed(() =>
-    this.selectedCourses().filter((course) => course.semester === 'First Semester')
-  );
+  readonly canSubmit = computed(() => this.selectedCount() > 0 && !this.registrationSubmitted() && !this.hasRegisteredCourses());
 
-  readonly secondSemesterSelected = computed(() =>
-    this.selectedCourses().filter((course) => course.semester === 'Second Semester')
-  );
+  readonly currentDate = new Date().toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
 
-  readonly canSubmit = computed(() => this.selectedCount() > 0 && !this.registrationSubmitted());
-
-  toggleCourse(course: CourseItem, checked: boolean): void {
-    if (course.locked || this.registrationSubmitted()) {
+  toggleCourse(courseId: number, checked: boolean): void {
+    if (this.registrationSubmitted() || this.hasRegisteredCourses()) {
       return;
     }
-    const current = this.selectedCodes();
-    if (checked) {
-      if (!current.includes(course.code)) {
-        this.selectedCodes.set([...current, course.code]);
-      }
-      return;
-    }
-    this.selectedCodes.set(current.filter((code) => code !== course.code));
+    this.flow.toggleCourseSelection(courseId, checked);
   }
 
-  isChecked(code: string): boolean {
-    return this.selectedCodes().includes(code);
+  isChecked(courseId: number): boolean {
+    return this.selectedCourseIds().includes(courseId);
   }
 
-  submitRegistration(): void {
+  async submitRegistration(): Promise<void> {
     if (!this.canSubmit()) {
       return;
     }
-    this.registrationSubmitted.set(true);
+    await this.flow.submitCourseRegistration();
+    // Refresh registered courses
+    await this.flow.loadRegisteredCourses();
   }
 
   goToPayment(): void {
@@ -103,17 +81,36 @@ export class AdmittedCoursesComponent {
       'Course Registration Slip',
       `Student Name: ${this.flow.applicantName()}`,
       `Matric Number: ${this.flow.applicationNo()}`,
-      `program: ${this.flow.programName()}`,
+      `Programme: ${this.flow.programName()}`,
       `Academic Session: ${this.flow.academicSession()}`,
+      `Date: ${this.currentDate}`,
       '',
-      'Selected Courses:'
+      'Registered Courses:'
     ];
-    this.selectedCourses().forEach((course) => {
-      lines.push(`${course.semester} - ${course.code} - ${course.title} (${course.units} Units)`);
+    const coursesToUse = this.hasRegisteredCourses() ? this.registeredCourses() : this.selectedCourses();
+    coursesToUse.forEach((course) => {
+      let code: string;
+      let title: string;
+      if ('course' in course && course.course && 'course' in (course.course as any)) {
+        // RegisteredCourse
+        code = (course.course as any).course.code;
+        title = (course.course as any).course.title;
+      } else if ('course' in course && course.course) {
+        // AvailableCourse
+        code = (course.course as any).code;
+        title = (course.course as any).title;
+      } else {
+        // Fallback
+        code = (course as any).code || 'N/A';
+        title = (course as any).title || 'N/A';
+      }
+      lines.push(`${code} - ${title} (${course.units} Units)`);
     });
     lines.push('');
-    lines.push(`Total Courses: ${this.selectedCount()}`);
-    lines.push(`Total Units: ${this.selectedUnits()}`);
+    const totalCount = this.hasRegisteredCourses() ? this.totalRegisteredCount() : this.selectedCount();
+    const totalUnits = this.hasRegisteredCourses() ? this.totalRegisteredUnits() : this.selectedUnits();
+    lines.push(`Total Courses: ${totalCount}`);
+    lines.push(`Total Units: ${totalUnits}`);
     const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');

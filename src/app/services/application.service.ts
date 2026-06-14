@@ -20,6 +20,11 @@ import {
   StudentSchoolFeePaymentStatus,
   StudentSchoolFeeStatus
 } from '../data/application/student-fees.dto';
+import {
+  AvailableCoursesResponse,
+  RegisterCoursesPayload,
+  RegisteredCoursesResponse
+} from '../data/application/courseregistration.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -143,6 +148,28 @@ export class ApplicationService {
 
   submitApplication(payload: { applicant_no: string }): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/applicants/submit-application`, payload);
+  }
+
+  getAvailableCourses(): Observable<AvailableCoursesResponse> {
+    return this.http.get<AvailableCoursesResponse>(`${this.apiRoot}/api/v1/students/register-courses`);
+  }
+
+  getCurrentCourses(): Observable<RegisteredCoursesResponse> {
+    return this.http.get<RegisteredCoursesResponse>(`${this.apiRoot}/api/v1/students/current-courses`);
+  }
+
+  registerCourses(payload: RegisterCoursesPayload): Observable<any> {
+    return this.http.post<any>(`${this.apiRoot}/api/v1/students/register-courses`, payload);
+  }
+
+  submitProfileDocuments(payload: {
+    documents: {
+      recommendation_letter_1: any;
+      recommendation_letter_2: any;
+      testimonial: any;
+    };
+  }): Observable<any> {
+    return this.http.post<any>(`${this.apiRoot}/api/v1/students/profile/recommendation-letter`, payload);
   }
 
   private normalizeCollectionResponse(response: any): { data: any[] } {

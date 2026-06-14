@@ -10,10 +10,12 @@ import {
   readStudentFeeInstallmentNumbers,
   selectMatchingStudentFeePlan,
 } from '../../utility/student-fees-plan';
+import { AvailableCourse, RegisteredCourse } from '../../data/application/courseregistration.dto';
 
 export type VerificationDocument = {
   label: string;
   fileName: string;
+  fileUrl: string;
   uploaded: boolean;
 };
 
@@ -38,6 +40,18 @@ export class AdmittedFlowService {
 
   readonly loadingStudentFeePlan = signal(false);
 
+  readonly loadingCourses = signal(false);
+
+  readonly uploadingDocument = signal<string | null>(null);
+
+  readonly uploadedRecommendationLetter1 = signal<any>(null);
+
+  readonly uploadedRecommendationLetter2 = signal<any>(null);
+
+  readonly uploadedTestimonial = signal<any>(null);
+
+  readonly submittingProfileDocuments = signal(false);
+
   readonly registrantData = signal<RegistrantData | null>(null);
 
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
@@ -45,6 +59,14 @@ export class AdmittedFlowService {
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
 
   readonly schoolFeePayments = signal<SchoolFeePaymentRecord[]>([]);
+
+  readonly availableCourses = signal<AvailableCourse[]>([]);
+
+  readonly selectedCourseIds = signal<number[]>([]);
+
+  readonly registrationSubmitted = signal(false);
+
+  readonly registeredCourses = signal<RegisteredCourse[]>([]);
 
   readonly acceptanceFee = 30000;
 
@@ -89,6 +111,8 @@ export class AdmittedFlowService {
   );
 
   readonly academicSession = computed(() => this.registrantData()?.session?.name || '—');
+
+  readonly levelName = computed(() => 'ND 1');
 
   readonly admissionDate = computed(() => {
     const data = this.registrantData();
@@ -183,21 +207,124 @@ export class AdmittedFlowService {
 
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
-  readonly verificationDocuments = computed<VerificationDocument[]>(() => {
+  readonly isAllDocumentsVerified = computed(() => {
     const data = this.registrantData();
     const oLevelFile = data?.o_level_result?.[0]?.file?.file_name || '';
     const utmeFile = data?.utme_result?.file?.file_name || '';
     const birthFile = data?.certificate_of_birth?.file_name || '';
-    const recFile = data?.academic_history?.[0]?.certificate?.file_name || '';
-    const testimonialFile = data?.certificate_of_origin?.file_name || '';
+    return !!(oLevelFile && utmeFile && birthFile);
+  });
+
+  readonly coreDocuments = computed<VerificationDocument[]>(() => {
+    const data = this.registrantData();
+    const oLevelFile = data?.o_level_result?.[0]?.file?.file_name || '';
+    const oLevelUrl = data?.o_level_result?.[0]?.file?.file_url || '';
+    const utmeFile = data?.utme_result?.file?.file_name || '';
+    const utmeUrl = data?.utme_result?.file?.file_url || '';
+    const birthFile = data?.certificate_of_birth?.file_name || '';
+    const birthUrl = data?.certificate_of_birth?.file_url || '';
 
     return [
-      { label: 'Client Result', fileName: oLevelFile, uploaded: !!oLevelFile },
-      { label: 'Certificate of Birth', fileName: birthFile, uploaded: !!birthFile },
-      { label: 'UTME Result', fileName: utmeFile, uploaded: !!utmeFile },
-      { label: 'Letter of Recommendation', fileName: recFile, uploaded: !!recFile },
-      { label: 'Secondary School Testimonial', fileName: testimonialFile, uploaded: !!testimonialFile }
+      { label: 'O Level Result', fileName: oLevelFile, fileUrl: oLevelUrl, uploaded: !!oLevelFile },
+      { label: 'Certificate of Birth', fileName: birthFile, fileUrl: birthUrl, uploaded: !!birthFile },
+      { label: 'UTME Result', fileName: utmeFile, fileUrl: utmeUrl, uploaded: !!utmeFile }
     ];
+  });
+
+  readonly recommendationLetters = computed<VerificationDocument[]>(() => {
+    const data = this.registrantData();
+    const recFile1 = this.uploadedRecommendationLetter1()?.file_name || data?.academic_history?.[0]?.certificate?.file_name || '';
+    const recUrl1 = this.uploadedRecommendationLetter1()?.file_url || data?.academic_history?.[0]?.certificate?.file_url || '';
+    const recFile2 = this.uploadedRecommendationLetter2()?.file_name || data?.academic_history?.[1]?.certificate?.file_name || '';
+    const recUrl2 = this.uploadedRecommendationLetter2()?.file_url || data?.academic_history?.[1]?.certificate?.file_url || '';
+
+    return [
+      { label: 'Letter of Recommendation 1', fileName: recFile1, fileUrl: recUrl1, uploaded: !!recFile1 },
+      { label: 'Letter of Recommendation 2', fileName: recFile2, fileUrl: recUrl2, uploaded: !!recFile2 }
+    ];
+  });
+
+  readonly testimonialDocument = computed<VerificationDocument>(() => {
+    const data = this.registrantData();
+    const testimonialFile = this.uploadedTestimonial()?.file_name || data?.certificate_of_origin?.file_name || '';
+    const testimonialUrl = this.uploadedTestimonial()?.file_url || data?.certificate_of_origin?.file_url || '';
+
+    return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: testimonialUrl, uploaded: !!testimonialFile };
+  });
+
+  readonly canSubmitProfileDocuments = computed(() =>
+    this.recommendationLetters().every((document) => document.uploaded)
+    && this.testimonialDocument().uploaded
+  );
+
+  async uploadDocument(file: File, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
+    this.uploadingDocument.set(documentType);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await firstValueFrom(this.appService.uploadFile(formData));
+      switch (documentType) {
+        case 'recommendation_letter_1':
+          this.uploadedRecommendationLetter1.set(response);
+          break;
+        case 'recommendation_letter_2':
+          this.uploadedRecommendationLetter2.set(response);
+          break;
+        case 'testimonial':
+          this.uploadedTestimonial.set(response);
+          break;
+      }
+    } finally {
+      this.uploadingDocument.set(null);
+    }
+  }
+
+  async submitProfileDocuments(): Promise<void> {
+    if (!this.canSubmitProfileDocuments()) {
+      return;
+    }
+    this.submittingProfileDocuments.set(true);
+    try {
+      const data = this.registrantData();
+      const payload = {
+        documents: {
+          recommendation_letter_1: this.uploadedRecommendationLetter1() || data?.academic_history?.[0]?.certificate || {},
+          recommendation_letter_2: this.uploadedRecommendationLetter2() || data?.academic_history?.[1]?.certificate || {},
+          testimonial: this.uploadedTestimonial() || data?.certificate_of_origin || {}
+        }
+      };
+      await firstValueFrom(this.appService.submitProfileDocuments(payload));
+      await this.loadSnapshot();
+    } finally {
+      this.submittingProfileDocuments.set(false);
+    }
+  }
+
+  readonly selectedCourses = computed(() => {
+    const selectedIds = this.selectedCourseIds();
+    return this.availableCourses().filter((course) => selectedIds.includes(course.id));
+  });
+
+  readonly selectedUnits = computed(() => {
+    return this.selectedCourses().reduce((sum, course) => sum + course.units, 0);
+  });
+
+  readonly selectedCount = computed(() => this.selectedCourses().length);
+
+  readonly firstSemesterCourses = computed(() => {
+    return this.availableCourses();
+  });
+
+  readonly secondSemesterCourses = computed(() => {
+    return [];
+  });
+
+  readonly firstSemesterSelected = computed(() => {
+    return this.selectedCourses();
+  });
+
+  readonly secondSemesterSelected = computed(() => {
+    return [];
   });
 
   async loadSnapshot(): Promise<void> {
@@ -214,9 +341,48 @@ export class AdmittedFlowService {
       this.registrantData.set(data);
       this.authSessionStore.syncRegistrantSession(data);
       await this.loadStudentFeePlan();
+      await this.loadCourses();
+      await this.loadRegisteredCourses();
     } finally {
       this.loadingSnapshot.set(false);
     }
+  }
+
+  async loadCourses(): Promise<void> {
+    this.loadingCourses.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getAvailableCourses());
+      this.availableCourses.set(response.data);
+    } finally {
+      this.loadingCourses.set(false);
+    }
+  }
+
+  async loadRegisteredCourses(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.appService.getCurrentCourses());
+      this.registeredCourses.set(response.data);
+    } catch (e) {
+      // Ignore if not logged in or not allowed to fetch yet
+      this.registeredCourses.set([]);
+    }
+  }
+
+  toggleCourseSelection(courseId: number, checked: boolean): void {
+    const current = this.selectedCourseIds();
+    if (checked) {
+      if (!current.includes(courseId)) {
+        this.selectedCourseIds.set([...current, courseId]);
+      }
+    } else {
+      this.selectedCourseIds.set(current.filter(id => id !== courseId));
+    }
+  }
+
+  async submitCourseRegistration(): Promise<void> {
+    const payload = { course_ids: this.selectedCourseIds() };
+    await firstValueFrom(this.appService.registerCourses(payload));
+    this.registrationSubmitted.set(true);
   }
 
   async loadStudentFeePlan(): Promise<void> {
@@ -338,13 +504,11 @@ export class AdmittedFlowService {
       return;
     }
 
-    const totalPaid = currentStatus.payment_status.total_paid + amount;
-    const totalDue = Math.max(0, currentStatus.payment_status.total_due - amount);
     this.studentSchoolFeeStatus.set({
       ...currentStatus,
       payment_status: {
-        total_paid: totalPaid,
-        total_due: totalDue,
+        total_paid: currentStatus.payment_status.total_paid + amount,
+        total_due: Math.max(0, currentStatus.payment_status.total_due - amount),
         number_of_payments: currentStatus.payment_status.number_of_payments + 1
       }
     });

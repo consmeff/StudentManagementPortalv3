@@ -14,26 +14,106 @@
   </ng-container>
 
   <ng-template #unlockedVerification>
-    <section class="docs-list">
-      <div class="doc-row" *ngFor="let item of flow.verificationDocuments()">
-        <div class="doc-meta">
-          <strong>{{ item.label }}</strong>
-          <small>{{ item.fileName || "No file uploaded yet" }}</small>
+    <!-- Core Documents (O Level, Birth Cert, UTME) -->
+    <section class="docs-section">
+      <div class="doc-card" *ngFor="let doc of flow.coreDocuments()">
+        <div class="doc-icon">
+          <span class="pi pi-file-o"></span>
+        </div>
+        <div class="doc-info">
+          <strong>{{ doc.label }}</strong>
+          <small>{{ doc.fileName || 'No file uploaded yet' }}</small>
         </div>
         <div class="doc-actions">
           <app-status-indicator
-            [text]="item.uploaded ? 'Verified' : 'Pending Upload'"
-            [tone]="item.uploaded ? 'shortlisted' : 'pending'"
+            [text]="doc.uploaded ? 'Verified' : 'Pending Upload'"
+            [tone]="doc.uploaded ? 'shortlisted' : 'pending'"
             [pill]="true"
             [dot]="false"
           ></app-status-indicator>
-          <button pButton type="button" class="view-btn" [disabled]="!item.uploaded">View</button>
+          <a *ngIf="doc.uploaded" [href]="doc.fileUrl" target="_blank" rel="noopener noreferrer" class="view-link">View</a>
         </div>
       </div>
     </section>
 
-    <div class="continue-row">
-      <app-button iconClass="pi pi-check" (buttonClick)="continueToNextStep()">Confirm and Proceed</app-button>
+    <!-- Letters of Recommendation -->
+    <section class="docs-section">
+      <h3>Letters of Recommendation</h3>
+      <div class="upload-grid">
+        <div class="upload-box" *ngFor="let doc of flow.recommendationLetters(); let i = index">
+          <input
+            #recInput
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png"
+            (change)="onFileUpload($event, i === 0 ? 'recommendation_letter_1' : 'recommendation_letter_2')"
+            style="display: none"
+          />
+          <ng-container *ngIf="doc.uploaded; else uploadPlaceholder">
+            <div class="uploaded-doc">
+              <div class="doc-icon-small">
+                <span class="pi pi-file-o"></span>
+              </div>
+              <div class="doc-info-small">
+                <strong>{{ doc.label }}</strong>
+                <small>{{ doc.fileName }}</small>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #uploadPlaceholder>
+            <div class="upload-placeholder" (click)="recInput.click()">
+              <span class="pi pi-upload"></span>
+              <p>{{ doc.label }}</p>
+              <small>Click to upload or drag and drop file (JPG/PNG/PDF)</small>
+              <span *ngIf="flow.uploadingDocument() === (i === 0 ? 'recommendation_letter_1' : 'recommendation_letter_2')" class="loading-text">
+                Uploading...
+              </span>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </section>
+
+    <!-- Secondary School Testimonial -->
+    <section class="docs-section">
+      <h3>Secondary School Testimonial</h3>
+      <div class="upload-box single">
+        <input
+          #testimonialInput
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          (change)="onFileUpload($event, 'testimonial')"
+          style="display: none"
+        />
+        <ng-container *ngIf="flow.testimonialDocument().uploaded; else testimonialPlaceholder">
+          <div class="uploaded-doc">
+            <div class="doc-icon-small">
+              <span class="pi pi-file-o"></span>
+            </div>
+            <div class="doc-info-small">
+              <strong>{{ flow.testimonialDocument().label }}</strong>
+              <small>{{ flow.testimonialDocument().fileName }}</small>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #testimonialPlaceholder>
+          <div class="upload-placeholder" (click)="testimonialInput.click()">
+            <span class="pi pi-upload"></span>
+            <p>{{ flow.testimonialDocument().label }}</p>
+            <small>Click to upload or drag and drop file (JPG/PNG/PDF)</small>
+            <span *ngIf="flow.uploadingDocument() === 'testimonial'" class="loading-text">
+              Uploading...
+            </span>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+
+    <div class="continue-row" *ngIf="flow.canSubmitProfileDocuments()">
+      <app-button
+        iconClass="pi pi-check"
+        (buttonClick)="submitForVerification()"
+        [disabled]="flow.submittingProfileDocuments()"
+      >{{ flow.submittingProfileDocuments() ? 'Submitting...' : 'Submit for Verification' }}</app-button>
     </div>
   </ng-template>
 </div>

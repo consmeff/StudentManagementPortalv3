@@ -2,40 +2,106 @@
   <h1>{{ viewMode() === 'resit-list' || viewMode() === 'resit-detail' ? 'Course Resit' : 'Course Registration' }}</h1>
   <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
 
+  <!-- Course Slip View -->
   <ng-container *ngIf="viewMode() === 'slip'">
-    <section class="slip-card">
-      <div class="slip-head">
+    <section class="slip-page">
+      <div class="slip-header">
         <h2>Course Registration Slip</h2>
-        <div class="level-chip">{{ flow.level() }}</div>
+        <div class="level-selector">
+          {{ flow.level() }}
+        </div>
       </div>
-      <div class="slip-student-grid">
-        <div><small>Student Name</small><strong>{{ flow.studentName() }}</strong></div>
-        <div><small>Matric Number</small><strong>{{ flow.matricNo() }}</strong></div>
-        <div><small>Current Level</small><strong>{{ flow.level() }}</strong></div>
-        <div><small>program</small><strong>{{ flow.program() }}</strong></div>
-        <div><small>Academic Session</small><strong>{{ flow.session() }}</strong></div>
-        <div><small>Date</small><strong>{{ '10 October 2025' }}</strong></div>
+
+      <div class="student-info-grid">
+        <div class="info-column">
+          <div class="info-item">
+            <span class="label">Student Name</span>
+            <span class="value">{{ flow.studentName() }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Current Level</span>
+            <span class="value">{{ flow.level() }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Academic Session</span>
+            <span class="value">{{ flow.session() }}</span>
+          </div>
+        </div>
+        <div class="info-column">
+          <div class="info-item">
+            <span class="label">Matric Number</span>
+            <span class="value">{{ flow.matricNo() }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Programme</span>
+            <span class="value">{{ flow.program() }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Date</span>
+            <span class="value">{{ currentDate }}</span>
+          </div>
+        </div>
+        <div class="profile-photo">
+          <img src="https://via.placeholder.com/150" alt="Profile Photo" />
+        </div>
       </div>
+
       <div class="semesters-grid">
         <div class="semester-card">
-          <h3>First Semester</h3>
-          <div class="row" *ngFor="let course of firstSemesterSlipCourses()">
-            <span>{{ course.code }} &nbsp; {{ course.title }}</span>
-            <strong>{{ course.units }} Units</strong>
+          <div class="semester-header">
+            <h3>First Semester</h3>
+          </div>
+          <div class="courses-list">
+            <ng-container *ngIf="flow.hasRegisteredCourses(); else selectedFirstSem">
+              <div class="course-row" *ngFor="let course of flow.firstSemesterRegistered()">
+                <span class="course-code">{{ course.course.course.code }}</span>
+                <span class="course-title">{{ course.course.course.title }}</span>
+                <span class="course-units">{{ course.units }} Units</span>
+              </div>
+            </ng-container>
+            <ng-template #selectedFirstSem>
+              <div class="course-row" *ngFor="let course of firstSemesterSlipCourses()">
+                <span class="course-code">{{ course.course.code }}</span>
+                <span class="course-title">{{ course.course.title }}</span>
+                <span class="course-units">{{ course.units }} Units</span>
+              </div>
+            </ng-template>
           </div>
         </div>
         <div class="semester-card">
-          <h3>Second Semester</h3>
-          <div class="row" *ngFor="let course of secondSemesterSlipCourses()">
-            <span>{{ course.code }} &nbsp; {{ course.title }}</span>
-            <strong>{{ course.units }} Units</strong>
+          <div class="semester-header">
+            <h3>Second Semester</h3>
+          </div>
+          <div class="courses-list">
+            <ng-container *ngIf="flow.hasRegisteredCourses(); else selectedSecondSem">
+              <div class="course-row" *ngFor="let course of flow.secondSemesterRegistered()">
+                <span class="course-code">{{ course.course.course.code }}</span>
+                <span class="course-title">{{ course.course.course.title }}</span>
+                <span class="course-units">{{ course.units }} Units</span>
+              </div>
+            </ng-container>
+            <ng-template #selectedSecondSem>
+              <div class="course-row" *ngFor="let course of secondSemesterSlipCourses()">
+                <span class="course-code">{{ course.course.code }}</span>
+                <span class="course-title">{{ course.course.title }}</span>
+                <span class="course-units">{{ course.units }} Units</span>
+              </div>
+            </ng-template>
           </div>
         </div>
       </div>
-      <div class="signature-row">
-        <div>Student's Signature:<span></span></div>
-        <div>Course Coordinator's Signature:<span></span></div>
+
+      <div class="signatures-section">
+        <div class="signature-item">
+          <span class="label">Student's Signature:</span>
+          <span class="signature-line"></span>
+        </div>
+        <div class="signature-item">
+          <span class="label">Course Coordinator's Signature:</span>
+          <span class="signature-line"></span>
+        </div>
       </div>
+
       <div class="action-row">
         <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">Download Course Slip</app-button>
       </div>
@@ -46,6 +112,7 @@
     </section>
   </ng-container>
 
+  <!-- Resit List View -->
   <ng-container *ngIf="viewMode() === 'resit-list'">
     <section class="resit-list-card">
       <h3>Failed courses to Resit</h3>
@@ -69,6 +136,7 @@
     </section>
   </ng-container>
 
+  <!-- Resit Detail View -->
   <ng-container *ngIf="viewMode() === 'resit-detail' && selectedResit() as detail">
     <section class="resit-detail-page">
       <div class="resit-head">
@@ -108,6 +176,7 @@
     </section>
   </ng-container>
 
+  <!-- Registration View -->
   <ng-container [ngSwitch]="flow.courseReviewState()" *ngIf="viewMode() === 'registration'">
     <section class="locked-state" *ngSwitchCase="'locked'">
       <div class="state-icon">🔒</div>
@@ -130,50 +199,130 @@
         Your course registration was rejected. Please contact the Head of Department for reasons.
       </section>
 
-      <section class="summary-card">
-        <div>
-          <strong>{{ flow.totalUnitsSelected() }}</strong>
-          <span>Total Units Selected</span>
-        </div>
-        <div>
-          <strong>{{ flow.totalCoursesSelected() }}</strong>
-          <span>No. of courses</span>
-        </div>
-      </section>
-
-      <section class="course-list">
-        <h3>Carryover Courses</h3>
-        <label class="course-row carryover" *ngFor="let course of flow.carryoverCourses()">
-          <input type="checkbox" [checked]="flow.isSelected(course.code)" disabled />
-          <div class="meta">
-            <strong>{{ course.code }}</strong>
-            <span>{{ course.title }}</span>
+      <!-- If we have registered courses, show slip, else show registration form -->
+      <ng-container *ngIf="flow.hasRegisteredCourses(); else registerCourses">
+        <section class="slip-page">
+          <div class="slip-header">
+            <h2>Course Registration Slip</h2>
+            <div class="level-selector">{{ flow.level() }}</div>
           </div>
-          <div class="units">{{ course.units }}<span>Units</span></div>
-        </label>
 
-        <h3>200 level courses</h3>
-        <label class="course-row" *ngFor="let course of flow.levelCourses()" [class.locked]="course.locked">
-          <input
-            type="checkbox"
-            [checked]="flow.isSelected(course.code)"
-            [disabled]="course.locked || flow.courseReviewState() !== 'open'"
-            (change)="toggle(course, $any($event.target).checked)"
-          />
-          <div class="meta">
-            <strong>{{ course.code }}</strong>
-            <span>{{ course.title }}</span>
-            <small class="warn" *ngIf="course.locked">Prerequisite not met</small>
+          <div class="student-info-grid">
+            <div class="info-column">
+              <div class="info-item">
+                <span class="label">Student Name</span>
+                <span class="value">{{ flow.studentName() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Current Level</span>
+                <span class="value">{{ flow.level() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Academic Session</span>
+                <span class="value">{{ flow.session() }}</span>
+              </div>
+            </div>
+            <div class="info-column">
+              <div class="info-item">
+                <span class="label">Matric Number</span>
+                <span class="value">{{ flow.matricNo() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Programme</span>
+                <span class="value">{{ flow.program() }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Date</span>
+                <span class="value">{{ currentDate }}</span>
+              </div>
+            </div>
+            <div class="profile-photo">
+              <img src="https://via.placeholder.com/150" alt="Profile Photo" />
+            </div>
           </div>
-          <div class="units">{{ course.units }}<span>Units</span></div>
-        </label>
-      </section>
 
-      <div class="action-row">
-        <app-button [disabled]="!canSubmit()" iconClass="pi pi-check" (buttonClick)="submit()">
-          Submit Course Registration
-        </app-button>
-      </div>
+          <div class="semesters-grid">
+            <div class="semester-card">
+              <div class="semester-header">
+                <h3>First Semester</h3>
+              </div>
+              <div class="courses-list">
+                <div class="course-row" *ngFor="let course of flow.firstSemesterRegistered()">
+                  <span class="course-code">{{ course.course.course.code }}</span>
+                  <span class="course-title">{{ course.course.course.title }}</span>
+                  <span class="course-units">{{ course.units }} Units</span>
+                </div>
+              </div>
+            </div>
+            <div class="semester-card">
+              <div class="semester-header">
+                <h3>Second Semester</h3>
+              </div>
+              <div class="courses-list">
+                <div class="course-row" *ngFor="let course of flow.secondSemesterRegistered()">
+                  <span class="course-code">{{ course.course.course.code }}</span>
+                  <span class="course-title">{{ course.course.course.title }}</span>
+                  <span class="course-units">{{ course.units }} Units</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="signatures-section">
+            <div class="signature-item">
+              <span class="label">Student's Signature:</span>
+              <span class="signature-line"></span>
+            </div>
+            <div class="signature-item">
+              <span class="label">Course Coordinator's Signature:</span>
+              <span class="signature-line"></span>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">Download Course Slip</app-button>
+          </div>
+          <div class="action-row secondary">
+            <app-button variant="neutral" iconClass="pi pi-file" (buttonClick)="openResitList()">Course Resit</app-button>
+          </div>
+        </section>
+      </ng-container>
+
+      <ng-template #registerCourses>
+        <section class="summary-card">
+          <div>
+            <strong>{{ flow.totalUnitsSelectedFromApi() }}</strong>
+            <span>Total Units Selected</span>
+          </div>
+          <div>
+            <strong>{{ flow.totalCoursesSelectedFromApi() }}</strong>
+            <span>No. of Courses</span>
+          </div>
+        </section>
+
+        <section class="course-list">
+          <label class="course-row" *ngFor="let course of flow.availableCourses()">
+            <input
+              type="checkbox"
+              [checked]="flow.isCourseSelectedFromApi(course.id)"
+              [disabled]="flow.courseReviewState() !== 'open'"
+              (change)="toggle(course.id, $any($event.target).checked)"
+            />
+            <div class="meta">
+              <strong>{{ course.course.code }}</strong>
+              <span>{{ course.course.title }}</span>
+              <span *ngIf="course.is_elective" style="color: var(--app-primary); font-size: 0.8rem; font-style: italic;">(Elective)</span>
+            </div>
+            <div class="units">{{ course.units }}<span>Units</span></div>
+          </label>
+        </section>
+
+        <div class="action-row">
+          <app-button [disabled]="!canSubmit()" iconClass="pi pi-check" (buttonClick)="submit()">
+            Submit Course Registration
+          </app-button>
+        </div>
+      </ng-template>
     </ng-container>
   </ng-container>
 </div>
