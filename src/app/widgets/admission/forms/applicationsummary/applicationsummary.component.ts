@@ -14,6 +14,7 @@ import { FormService } from '../../../services/form.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { AuthSessionStore } from '../../../../store/auth-session.store';
 import { TAcademicHistory, TNextOfKinDTO, TOLevelResult, TPersonalDetailDTO, TUploadFile, TUtmeResultPayload } from '../../../../data/application/transformer.dto';
+import { LGA, States } from '../../../../data/application/location.dto';
 import { formatFileSize } from '../../../../utility/yearutil';
 
 interface LabelValueRow {
@@ -79,6 +80,10 @@ export class ApplicationSummaryComponent implements OnInit {
 
   uploadDraft: TUploadFile | null = null;
 
+  private stateOptions: States[] = [];
+
+  private readonly lgaCache = new Map<number, LGA[]>();
+
   private authSessionStore = inject(AuthSessionStore);
 
   private formService = inject(FormService);
@@ -93,7 +98,7 @@ export class ApplicationSummaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.observeDraftChanges();
-    this.dataInitialization();
+    void this.dataInitialization();
   }
 
   async dataInitialization(): Promise<boolean> {
@@ -102,10 +107,11 @@ export class ApplicationSummaryComponent implements OnInit {
     
     if (app_no != "") {
       this.isLoading = true;
+      await this.ensureStateOptions();
       await firstValueFrom(this.appservice.registrantData(app_no))
         .then(async (data) => {
           this.registrantData = data;
-          this.updateSummaryItems();
+          await this.updateSummaryItems();
           result = true;
           this.isLoading = false;
         })
@@ -133,7 +139,7 @@ ${residential_address.country?.name || ''}
 `.replace(/\n/g, ' ').replace(/ ,/g, ',').trim();
   }
 
-  private updateSummaryItems(): void {
+  private async updateSummaryItems(): Promise<void> {
     const {data} = this.registrantData;
     const disability = this.personalDraft !== null
       ? this.resolveDisabilityDisplayValue(this.personalDraft)
@@ -142,6 +148,15 @@ ${residential_address.country?.name || ''}
     const disabilityDetails = hasDisabilityDetails
       ? disability.split(',').slice(1).join(',').trim()
       : '—';
+    const personalStateOfOrigin = await this.resolveStateName(
+      this.personalDraft?.stateOfOrigin,
+      data?.state_of_origin
+    );
+    const personalLga = await this.resolveLgaName(
+      this.personalDraft?.stateOfOrigin,
+      this.personalDraft?.localGovernment,
+      data?.lga
+    );
 
     this.personalInfoItems = [
       { label: 'First Name', value: this.toDisplay(this.personalDraft?.firstname ?? data?.first_name) },
@@ -154,14 +169,23 @@ ${residential_address.country?.name || ''}
       { label: 'Gender', value: this.toDisplay(this.personalDraft?.gender ?? data?.gender) },
       { label: 'Marital Status', value: this.toDisplay(this.personalDraft?.maritalStatus ?? data?.marital_status) },
       { label: 'Nationality', value: this.toDisplay(this.personalDraft?.nationality ?? data?.nationality) },
-      { label: 'State of Origin', value: this.toDisplay(this.personalDraft?.stateOfOrigin ?? data?.state_of_origin) },
-      { label: 'Local Government Area', value: this.toDisplay(this.personalDraft?.localGovernment ?? data?.lga) },
+      { label: 'State of Origin', value: this.toDisplay(personalStateOfOrigin) },
+      { label: 'Local Government Area', value: this.toDisplay(personalLga) },
       { label: 'Do you live with a disability?', value: this.toDisplay(disability.split(',')[0]) },
       { label: 'If yes, please specify', value: disabilityDetails },
       { label: 'Address', value: this.toDisplay(this.resolvePersonalAddress(data)) }
     ];
  
     const nok = this.registrantData.data?.primary_parent_or_guardian;
+    const nextOfKinStateOfOrigin = await this.resolveStateName(
+      this.nextOfKinDraft?.stateOfOrigin,
+      nok?.state_of_origin
+    );
+    const nextOfKinLga = await this.resolveLgaName(
+      this.nextOfKinDraft?.stateOfOrigin,
+      this.nextOfKinDraft?.localGovernment,
+      nok?.lga
+    );
     this.nextOfKinItems = [
       { label: 'Title', value: this.toDisplay(this.nextOfKinDraft?.title ?? nok?.title) },
       { label: 'First Name', value: this.toDisplay(this.nextOfKinDraft?.firstname ?? nok?.first_name) },
@@ -173,8 +197,8 @@ ${residential_address.country?.name || ''}
       { label: 'Phone Number', value: this.toDisplay(this.nextOfKinDraft?.phonenumber ?? nok?.phone_number) },
       { label: 'Email address (optional)', value: this.toDisplay(this.nextOfKinDraft?.email ?? nok?.email) },
       { label: 'Nationality', value: this.toDisplay(this.nextOfKinDraft?.nationality ?? nok?.nationality) },
-      { label: 'State of Origin', value: this.toDisplay(this.nextOfKinDraft?.stateOfOrigin ?? nok?.state_of_origin) },
-      { label: 'Local Government Area', value: this.toDisplay(this.nextOfKinDraft?.localGovernment ?? nok?.lga) },
+      { label: 'State of Origin', value: this.toDisplay(nextOfKinStateOfOrigin) },
+      { label: 'Local Government Area', value: this.toDisplay(nextOfKinLga) },
       { label: 'Address', value: this.toDisplay(this.resolveNextOfKinAddress(nok?.correspondence_address)) }
     ];
 
@@ -311,7 +335,60 @@ ${residential_address.country?.name || ''}
       return;
     }
 
-    this.updateSummaryItems();
+    void this.updateSummaryItems();
+  }
+
+  private async ensureStateOptions(): Promise<void> {
+    if (this.stateOptions.length > 0) {
+      return;
+    }
+    const response = await firstValueFrom(this.appservice.states());
+    this.stateOptions = response.data ?? [];
+  }
+
+  private async resolveStateName(rawStateValue: string | undefined, fallbackStateName: string | undefined): Promise<string> {
+    if (!rawStateValue) {
+      return fallbackStateName ?? '';
+    }
+    const stateId = Number(rawStateValue);
+    if (!Number.isFinite(stateId)) {
+      return rawStateValue;
+    }
+    await this.ensureStateOptions();
+    const matchedState = this.stateOptions.find((state) => state.id === stateId);
+    return matchedState?.name ?? fallbackStateName ?? rawStateValue;
+  }
+
+  private async resolveLgaName(
+    rawStateValue: string | undefined,
+    rawLgaValue: string | undefined,
+    fallbackLgaName: string | undefined
+  ): Promise<string> {
+    if (!rawLgaValue) {
+      return fallbackLgaName ?? '';
+    }
+    const lgaId = Number(rawLgaValue);
+    if (!Number.isFinite(lgaId)) {
+      return rawLgaValue;
+    }
+    const stateId = Number(rawStateValue);
+    if (!Number.isFinite(stateId)) {
+      return fallbackLgaName ?? rawLgaValue;
+    }
+    const lgaOptions = await this.readLgaOptions(stateId);
+    const matchedLga = lgaOptions.find((lga) => lga.id === lgaId);
+    return matchedLga?.name ?? fallbackLgaName ?? rawLgaValue;
+  }
+
+  private async readLgaOptions(stateId: number): Promise<LGA[]> {
+    const cachedLgas = this.lgaCache.get(stateId);
+    if (cachedLgas) {
+      return cachedLgas;
+    }
+    const response = await firstValueFrom(this.appservice.lgas(stateId));
+    const lgaOptions = response.data ?? [];
+    this.lgaCache.set(stateId, lgaOptions);
+    return lgaOptions;
   }
 
   private resolveDisabilityDisplayValue(data: TPersonalDetailDTO): string {
