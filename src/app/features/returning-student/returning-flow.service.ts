@@ -7,7 +7,7 @@ import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
 } from '../../utility/student-fees-plan';
-import { AvailableCourse, RegisteredCourse } from '../../data/application/courseregistration.dto';
+import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
 
 export type ReturningCourse = {
   code: string;
@@ -708,7 +708,7 @@ export class ReturningFlowService {
   async loadRegisteredCourses(): Promise<void> {
     try {
       const response = await firstValueFrom(this.appService.getCurrentCourses());
-      this.registeredCourses.set(response.data);
+      this.registeredCourses.set(flattenRegisteredCoursesResponse(response));
     } catch (e) {
       this.registeredCourses.set([]);
     }

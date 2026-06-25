@@ -10,13 +10,11 @@
 
   <ng-template #unlockedCourses>
     <ng-container *ngIf="hasRegisteredCourses(); else registerNewCourses">
-      <!-- Course Registration Slip View -->
       <section class="slip-page">
         <div class="slip-header">
           <h1>Course Registration Slip</h1>
           <div class="level-selector">
-            <!-- Placeholder for level selector from UI -->
-            <span>{{ flow.levelName || '100 Level' }}</span>
+            <span>{{ flow.levelName() || '100 Level' }}</span>
           </div>
         </div>
 
@@ -29,7 +27,7 @@
               </div>
               <div class="info-item">
                 <span class="label">Current Level</span>
-                <span class="value">{{ flow.levelName || 'ND 1' }}</span>
+                <span class="value">{{ flow.levelName() || 'ND 1' }}</span>
               </div>
               <div class="info-item">
                 <span class="label">Academic Session</span>
@@ -51,8 +49,7 @@
               </div>
             </div>
             <div class="profile-photo">
-              <!-- Placeholder for profile photo -->
-              <img [src]="flow.profilePhotoUrl() || 'https://via.placeholder.com/150'" alt="Profile Photo" />
+              <img [src]="flow.profilePhotoUrl() || 'assets/logo.png'" alt="Profile Photo" />
             </div>
           </div>
 
