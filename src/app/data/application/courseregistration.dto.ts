@@ -5,6 +5,7 @@ export interface CourseInfo {
   description: string;
   units: string;
   department: number;
+  school_semester?: string;
 }
 
 export interface AvailableCourse {
@@ -35,12 +36,15 @@ export interface RegisteredCourse {
   created_at: string;
   updated_at: string;
   is_elective: boolean;
+  is_outstanding: boolean;
   units: number;
   test_score: number;
   exam_score: number;
   grade: string | null;
   status: string;
   is_approved: boolean;
+  result_approved: boolean;
+  result_released: boolean;
   created_by: number | null;
   updated_by: number | null;
   deleted_by: number | null;
@@ -53,7 +57,15 @@ export interface AvailableCoursesResponse {
 }
 
 export interface RegisteredCoursesResponse {
-  data: RegisteredCourse[];
+  first_semester: RegisteredCourse[];
+  second_semester: RegisteredCourse[];
+}
+
+export function flattenRegisteredCoursesResponse(response: RegisteredCoursesResponse): RegisteredCourse[] {
+  return [
+    ...(response.first_semester ?? []),
+    ...(response.second_semester ?? [])
+  ];
 }
 
 export interface RegisterCoursesPayload {

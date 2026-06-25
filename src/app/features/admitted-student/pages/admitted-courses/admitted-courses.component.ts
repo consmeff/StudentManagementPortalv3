@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdmittedFlowService } from '../../admitted-flow.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
@@ -13,7 +13,7 @@ import { RegisteredCourse } from '../../../../data/application/courseregistratio
   templateUrl: './admitted-courses.component.html',
   styleUrl: './admitted-courses.component.scss'
 })
-export class AdmittedCoursesComponent {
+export class AdmittedCoursesComponent implements OnInit {
   private readonly router = inject(Router);
 
   readonly flow = inject(AdmittedFlowService);
@@ -28,21 +28,21 @@ export class AdmittedCoursesComponent {
   readonly selectedCourseIds = this.flow.selectedCourseIds;
   readonly registeredCourses = this.flow.registeredCourses;
 
-  readonly hasRegisteredCourses = computed(() => this.registeredCourses().length > 0);
+  readonly hasRegisteredCourses = computed(() => this.readRegisteredCourses().length > 0);
 
   readonly firstSemesterRegistered = computed(() => {
-    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('first'));
+    return this.readRegisteredCourses().filter((course) => this.isFirstSemesterCourse(course));
   });
 
   readonly secondSemesterRegistered = computed(() => {
-    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('second'));
+    return this.readRegisteredCourses().filter((course) => this.isSecondSemesterCourse(course));
   });
 
   readonly totalRegisteredUnits = computed(() => 
-    this.registeredCourses().reduce((sum, course) => sum + course.units, 0)
+    this.readRegisteredCourses().reduce((sum, course) => sum + course.units, 0)
   );
 
-  readonly totalRegisteredCount = computed(() => this.registeredCourses().length);
+  readonly totalRegisteredCount = computed(() => this.readRegisteredCourses().length);
 
   readonly canSubmit = computed(() => this.selectedCount() > 0 && !this.registrationSubmitted() && !this.hasRegisteredCourses());
 
@@ -51,6 +51,10 @@ export class AdmittedCoursesComponent {
     month: 'long',
     year: 'numeric'
   });
+
+  ngOnInit(): void {
+    void this.flow.loadSnapshot();
+  }
 
   toggleCourse(courseId: number, checked: boolean): void {
     if (this.registrationSubmitted() || this.hasRegisteredCourses()) {
@@ -87,7 +91,7 @@ export class AdmittedCoursesComponent {
       '',
       'Registered Courses:'
     ];
-    const coursesToUse = this.hasRegisteredCourses() ? this.registeredCourses() : this.selectedCourses();
+    const coursesToUse = this.hasRegisteredCourses() ? this.readRegisteredCourses() : this.selectedCourses();
     coursesToUse.forEach((course) => {
       let code: string;
       let title: string;
@@ -118,5 +122,27 @@ export class AdmittedCoursesComponent {
     anchor.download = `course-slip-${this.flow.applicationNo()}.txt`;
     anchor.click();
     URL.revokeObjectURL(url);
+  }
+
+  private readRegisteredCourses(): RegisteredCourse[] {
+    return this.registeredCourses?.() ?? [];
+  }
+
+  private isFirstSemesterCourse(course: RegisteredCourse): boolean {
+    const semesterKey = this.readSemesterKey(course);
+    return semesterKey.includes('first') || semesterKey.includes('1st');
+  }
+
+  private isSecondSemesterCourse(course: RegisteredCourse): boolean {
+    const semesterKey = this.readSemesterKey(course);
+    return semesterKey.includes('second') || semesterKey.includes('2nd');
+  }
+
+  private readSemesterKey(course: RegisteredCourse): string {
+    return (
+      course.course?.course?.school_semester
+      ?? course.semester
+      ?? ''
+    ).toLowerCase();
   }
 }

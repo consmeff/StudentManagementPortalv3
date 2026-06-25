@@ -10,7 +10,7 @@ import {
   readStudentFeeInstallmentNumbers,
   selectMatchingStudentFeePlan,
 } from '../../utility/student-fees-plan';
-import { AvailableCourse, RegisteredCourse } from '../../data/application/courseregistration.dto';
+import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
 
 export type VerificationDocument = {
   label: string;
@@ -203,7 +203,15 @@ export class AdmittedFlowService {
       && this.remainingSchoolFees() > 0
   );
 
-  readonly hasInternalPayment = computed(() => this.schoolFeePaymentCount() > 0);
+  readonly hasInternalPayment = computed(() => {
+    if (this.schoolFeePaymentCount() > 0) {
+      return true;
+    }
+    if (this.paidSchoolFees() > 0) {
+      return true;
+    }
+    return this.studentSchoolFeeStatus()?.payment_status.total_due === 0;
+  });
 
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
@@ -361,10 +369,13 @@ export class AdmittedFlowService {
   async loadRegisteredCourses(): Promise<void> {
     try {
       const response = await firstValueFrom(this.appService.getCurrentCourses());
-      this.registeredCourses.set(response.data);
+      const registeredCourses = flattenRegisteredCoursesResponse(response);
+      this.registeredCourses.set(registeredCourses);
+      this.registrationSubmitted.set(registeredCourses.length > 0);
     } catch (e) {
       // Ignore if not logged in or not allowed to fetch yet
       this.registeredCourses.set([]);
+      this.registrationSubmitted.set(false);
     }
   }
 
