@@ -91,6 +91,12 @@ export class ApplicationService {
     return this.http.get<RegistrantDataDTO>(`${this.apiRoot}/api/v1/applicants/single?applicant_no=${app_no}`);
   }
 
+  studentData(): Observable<RegistrantDataDTO> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/single`).pipe(
+      map((response) => this.normalizeRegistrantResponse(response))
+    );
+  }
+
   uploadFile(fileData: any): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/uploads`, fileData);
   }
@@ -197,6 +203,15 @@ export class ApplicationService {
       gender: Array.isArray(raw.gender) ? raw.gender : [],
       occupations: Array.isArray(raw.occupations) ? raw.occupations : []
     };
+  }
+
+  private normalizeRegistrantResponse(response: unknown): RegistrantDataDTO {
+    const raw = this.getNestedRecord(response, 'data');
+    if (raw) {
+      return { data: raw as unknown as RegistrantDataDTO['data'] };
+    }
+    const root = this.toRecord(response);
+    return { data: Object.keys(root).length > 0 ? root as unknown as RegistrantDataDTO['data'] : undefined };
   }
 
   private normalizePaginatedPaymentsResponse(response: unknown): PaginatedPaymentsResponse {

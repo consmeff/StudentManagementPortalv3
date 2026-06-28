@@ -344,11 +344,9 @@ export class AdmittedFlowService {
 
     this.loadingSnapshot.set(true);
     try {
-      const response = await firstValueFrom(this.appService.registrantData(appNo));
-      const data = response?.data ?? null;
-      this.registrantData.set(data);
-      this.authSessionStore.syncRegistrantSession(data);
+      await this.loadApplicantSnapshot(appNo);
       await this.loadStudentFeePlan();
+      await this.loadStudentSnapshotAfterFirstInstallment();
       await this.loadCourses();
       await this.loadRegisteredCourses();
     } finally {
@@ -454,6 +452,7 @@ export class AdmittedFlowService {
     this.updateStudentSchoolFeeStatus(trimmedAmount);
     this.authSessionStore.setPaymentRef(resolvedReference);
     this.authSessionStore.setPaymentStatus('paid');
+    void this.loadStudentSnapshotAfterFirstInstallment();
 
     return { ok: true, message: `${installmentLabel} recorded successfully.` };
   }
@@ -523,6 +522,28 @@ export class AdmittedFlowService {
         number_of_payments: currentStatus.payment_status.number_of_payments + 1
       }
     });
+  }
+
+  private async loadApplicantSnapshot(appNo: string): Promise<void> {
+    const response = await firstValueFrom(this.appService.registrantData(appNo));
+    this.applyRegistrantSnapshot(response?.data ?? null);
+  }
+
+  private async loadStudentSnapshotAfterFirstInstallment(): Promise<void> {
+    if (!this.hasInternalPayment()) {
+      return;
+    }
+    try {
+      const response = await firstValueFrom(this.appService.studentData());
+      this.applyRegistrantSnapshot(response?.data ?? null);
+    } catch {
+      // Keep the applicant snapshot when the student profile is not ready yet.
+    }
+  }
+
+  private applyRegistrantSnapshot(data: RegistrantData | null): void {
+    this.registrantData.set(data);
+    this.authSessionStore.syncRegistrantSession(data);
   }
 
   private generateReference(date: Date): string {
