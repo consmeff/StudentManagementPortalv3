@@ -12,6 +12,8 @@ import {
 } from '../../utility/student-fees-plan';
 import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
 
+type AdmissionDocumentType = 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial';
+
 export type VerificationDocument = {
   label: string;
   fileName: string;
@@ -55,6 +57,8 @@ export class AdmittedFlowService {
   readonly registrantData = signal<RegistrantData | null>(null);
 
   readonly studentProfile = computed(() => this.authSessionStore.studentProfile());
+
+  readonly removedAdmissionDocuments = signal<AdmissionDocumentType[]>([]);
 
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
@@ -238,6 +242,8 @@ export class AdmittedFlowService {
 
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
+  readonly isAdmissionDocumentsVerified = computed(() => !!this.studentProfile()?.admission_document_verified);
+
   readonly isAllDocumentsVerified = computed(() => {
     const data = this.registrantData();
     const oLevelFile = data?.o_level_result?.[0]?.file?.file_name || '';
@@ -266,20 +272,22 @@ export class AdmittedFlowService {
     const student = this.studentProfile();
     const admissionDocuments = student?.admission_documents;
     const data = this.registrantData();
+    const rec1Removed = this.isAdmissionDocumentRemoved('recommendation_letter_1');
+    const rec2Removed = this.isAdmissionDocumentRemoved('recommendation_letter_2');
     const recFile1 = this.uploadedRecommendationLetter1()?.file_name
-      || admissionDocuments?.recommendation_letter_1?.file_name
+      || (rec1Removed ? '' : admissionDocuments?.recommendation_letter_1?.file_name)
       || data?.academic_history?.[0]?.certificate?.file_name
       || '';
     const recUrl1 = this.uploadedRecommendationLetter1()?.file_url
-      || admissionDocuments?.recommendation_letter_1?.file_url
+      || (rec1Removed ? '' : admissionDocuments?.recommendation_letter_1?.file_url)
       || data?.academic_history?.[0]?.certificate?.file_url
       || '';
     const recFile2 = this.uploadedRecommendationLetter2()?.file_name
-      || admissionDocuments?.recommendation_letter_2?.file_name
+      || (rec2Removed ? '' : admissionDocuments?.recommendation_letter_2?.file_name)
       || data?.academic_history?.[1]?.certificate?.file_name
       || '';
     const recUrl2 = this.uploadedRecommendationLetter2()?.file_url
-      || admissionDocuments?.recommendation_letter_2?.file_url
+      || (rec2Removed ? '' : admissionDocuments?.recommendation_letter_2?.file_url)
       || data?.academic_history?.[1]?.certificate?.file_url
       || '';
 
@@ -293,12 +301,13 @@ export class AdmittedFlowService {
     const student = this.studentProfile();
     const admissionDocuments = student?.admission_documents;
     const data = this.registrantData();
+    const testimonialRemoved = this.isAdmissionDocumentRemoved('testimonial');
     const testimonialFile = this.uploadedTestimonial()?.file_name
-      || admissionDocuments?.testimonial?.file_name
+      || (testimonialRemoved ? '' : admissionDocuments?.testimonial?.file_name)
       || data?.certificate_of_origin?.file_name
       || '';
     const testimonialUrl = this.uploadedTestimonial()?.file_url
-      || admissionDocuments?.testimonial?.file_url
+      || (testimonialRemoved ? '' : admissionDocuments?.testimonial?.file_url)
       || data?.certificate_of_origin?.file_url
       || '';
 
@@ -310,7 +319,12 @@ export class AdmittedFlowService {
     && this.testimonialDocument().uploaded
   );
 
+  readonly canShowSubmitProfileDocumentsButton = computed(() => !this.isAdmissionDocumentsVerified());
+
   async uploadDocument(file: File, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
+    if (this.isAdmissionDocumentsVerified()) {
+      return;
+    }
     this.uploadingDocument.set(documentType);
     try {
       const formData = new FormData();
@@ -327,23 +341,41 @@ export class AdmittedFlowService {
           this.uploadedTestimonial.set(response);
           break;
       }
+      this.clearRemovedAdmissionDocument(documentType);
     } finally {
       this.uploadingDocument.set(null);
     }
   }
 
   async submitProfileDocuments(): Promise<void> {
+    if (this.isAdmissionDocumentsVerified()) {
+      return;
+    }
     if (!this.canSubmitProfileDocuments()) {
       return;
     }
     this.submittingProfileDocuments.set(true);
     try {
       const data = this.registrantData();
+      const student = this.studentProfile();
+      const admissionDocuments = student?.admission_documents;
       const payload = {
         documents: {
-          recommendation_letter_1: this.uploadedRecommendationLetter1() || data?.academic_history?.[0]?.certificate || {},
-          recommendation_letter_2: this.uploadedRecommendationLetter2() || data?.academic_history?.[1]?.certificate || {},
-          testimonial: this.uploadedTestimonial() || data?.certificate_of_origin || {}
+          recommendation_letter_1: this.resolveAdmissionDocumentPayload(
+            'recommendation_letter_1',
+            this.uploadedRecommendationLetter1(),
+            admissionDocuments?.recommendation_letter_1 || data?.academic_history?.[0]?.certificate
+          ),
+          recommendation_letter_2: this.resolveAdmissionDocumentPayload(
+            'recommendation_letter_2',
+            this.uploadedRecommendationLetter2(),
+            admissionDocuments?.recommendation_letter_2 || data?.academic_history?.[1]?.certificate
+          ),
+          testimonial: this.resolveAdmissionDocumentPayload(
+            'testimonial',
+            this.uploadedTestimonial(),
+            admissionDocuments?.testimonial || data?.certificate_of_origin
+          )
         }
       };
       await firstValueFrom(this.appService.submitProfileDocuments(payload));
@@ -351,6 +383,47 @@ export class AdmittedFlowService {
     } finally {
       this.submittingProfileDocuments.set(false);
     }
+  }
+
+  removeAdmissionDocument(documentType: AdmissionDocumentType): void {
+    if (this.isAdmissionDocumentsVerified()) {
+      return;
+    }
+    const nextRemoved = Array.from(new Set([...this.removedAdmissionDocuments(), documentType]));
+    this.removedAdmissionDocuments.set(nextRemoved);
+    switch (documentType) {
+      case 'recommendation_letter_1':
+        this.uploadedRecommendationLetter1.set(null);
+        break;
+      case 'recommendation_letter_2':
+        this.uploadedRecommendationLetter2.set(null);
+        break;
+      case 'testimonial':
+        this.uploadedTestimonial.set(null);
+        break;
+    }
+  }
+
+  private isAdmissionDocumentRemoved(documentType: AdmissionDocumentType): boolean {
+    return this.removedAdmissionDocuments().includes(documentType);
+  }
+
+  private clearRemovedAdmissionDocument(documentType: AdmissionDocumentType): void {
+    const current = this.removedAdmissionDocuments();
+    if (!current.includes(documentType)) {
+      return;
+    }
+    this.removedAdmissionDocuments.set(current.filter((value) => value !== documentType));
+  }
+
+  private resolveAdmissionDocumentPayload(documentType: AdmissionDocumentType, uploaded: any, fallback: any): any {
+    if (uploaded) {
+      return uploaded;
+    }
+    if (this.isAdmissionDocumentRemoved(documentType)) {
+      return {};
+    }
+    return fallback || {};
   }
 
   readonly selectedCourses = computed(() => {

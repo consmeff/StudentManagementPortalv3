@@ -57,10 +57,18 @@
                 <strong>{{ doc.label }}</strong>
                 <small>{{ doc.fileName }}</small>
               </div>
+              <button
+                *ngIf="!flow.isAdmissionDocumentsVerified()"
+                type="button"
+                class="remove-doc-btn"
+                (click)="removeAdmissionDocument(i === 0 ? 'recommendation_letter_1' : 'recommendation_letter_2', $event)"
+              >
+                <span class="pi pi-times"></span>
+              </button>
             </div>
           </ng-container>
           <ng-template #uploadPlaceholder>
-            <div class="upload-placeholder" (click)="recInput.click()">
+            <div class="upload-placeholder" [class.disabled]="flow.isAdmissionDocumentsVerified()" (click)="!flow.isAdmissionDocumentsVerified() && recInput.click()">
               <span class="pi pi-upload"></span>
               <p>{{ doc.label }}</p>
               <small>Click to upload or drag and drop file (JPG/PNG/PDF)</small>
@@ -93,10 +101,18 @@
               <strong>{{ flow.testimonialDocument().label }}</strong>
               <small>{{ flow.testimonialDocument().fileName }}</small>
             </div>
+            <button
+              *ngIf="!flow.isAdmissionDocumentsVerified()"
+              type="button"
+              class="remove-doc-btn"
+              (click)="removeAdmissionDocument('testimonial', $event)"
+            >
+              <span class="pi pi-times"></span>
+            </button>
           </div>
         </ng-container>
         <ng-template #testimonialPlaceholder>
-          <div class="upload-placeholder" (click)="testimonialInput.click()">
+          <div class="upload-placeholder" [class.disabled]="flow.isAdmissionDocumentsVerified()" (click)="!flow.isAdmissionDocumentsVerified() && testimonialInput.click()">
             <span class="pi pi-upload"></span>
             <p>{{ flow.testimonialDocument().label }}</p>
             <small>Click to upload or drag and drop file (JPG/PNG/PDF)</small>
@@ -108,11 +124,11 @@
       </div>
     </section>
 
-    <div class="continue-row" *ngIf="flow.canSubmitProfileDocuments()">
+    <div class="continue-row" *ngIf="flow.canShowSubmitProfileDocumentsButton()">
       <app-button
         iconClass="pi pi-check"
         (buttonClick)="submitForVerification()"
-        [disabled]="flow.submittingProfileDocuments()"
+        [disabled]="flow.submittingProfileDocuments() || !flow.canSubmitProfileDocuments()"
       >{{ flow.submittingProfileDocuments() ? 'Submitting...' : 'Submit for Verification' }}</app-button>
     </div>
   </ng-template>
