@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
 import { ApplicationService } from '../../services/application.service';
-import { RegistrantData } from '../../data/application/registrantdatadto';
+import { RegistrantData, StudentSingleData } from '../../data/application/registrantdatadto';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatStructuredName } from '../../utility/name-format';
 import {
@@ -54,6 +54,8 @@ export class AdmittedFlowService {
 
   readonly registrantData = signal<RegistrantData | null>(null);
 
+  readonly studentProfile = computed(() => this.authSessionStore.studentProfile());
+
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
@@ -92,6 +94,11 @@ export class AdmittedFlowService {
   );
 
   readonly applicantName = computed(() => {
+    const student = this.studentProfile();
+    if (student) {
+      const fullName = [student.first_name, student.other_names, student.last_name].filter((value) => !!(value || '').trim()).join(' ');
+      return fullName || this.authSessionStore.name() || 'Student';
+    }
     const data = this.registrantData();
     const fallback = this.authSessionStore.name();
     const composed = formatStructuredName({
@@ -103,16 +110,28 @@ export class AdmittedFlowService {
   });
 
   readonly applicationNo = computed(
-    () => this.registrantData()?.application_no || this.authSessionStore.applicationNo() || '—'
+    () => this.studentProfile()?.matriculation_number
+      || this.registrantData()?.matriculation_no
+      || this.registrantData()?.application_no
+      || this.authSessionStore.matriculationNo()
+      || this.authSessionStore.applicationNo()
+      || '—'
   );
 
   readonly programName = computed(
-    () => this.registrantData()?.department?.name || this.registrantData()?.program?.name || '—'
+    () => this.studentProfile()?.department?.name
+      || this.registrantData()?.department?.name
+      || this.registrantData()?.program?.name
+      || '—'
   );
 
-  readonly academicSession = computed(() => this.registrantData()?.session?.name || '—');
+  readonly academicSession = computed(() =>
+    this.studentProfile()?.session?.name
+    || this.registrantData()?.session?.name
+    || '—'
+  );
 
-  readonly levelName = computed(() => 'ND 1');
+  readonly levelName = computed(() => this.studentProfile()?.level?.name || 'ND 1');
 
   readonly admissionDate = computed(() => {
     const data = this.registrantData();
@@ -158,7 +177,11 @@ export class AdmittedFlowService {
 
   readonly receiptUrl = computed(() => this.registrantData()?.payment_slip?.file_url || '');
 
-  readonly profilePhotoUrl = computed(() => this.registrantData()?.passport_photo?.file_url || '');
+  readonly profilePhotoUrl = computed(() =>
+    this.studentProfile()?.passport_photo?.file_url
+    || this.registrantData()?.passport_photo?.file_url
+    || ''
+  );
 
   readonly paidSchoolFees = computed(() =>
     this.studentSchoolFeeStatus()?.payment_status.total_paid
@@ -240,11 +263,25 @@ export class AdmittedFlowService {
   });
 
   readonly recommendationLetters = computed<VerificationDocument[]>(() => {
+    const student = this.studentProfile();
+    const admissionDocuments = student?.admission_documents;
     const data = this.registrantData();
-    const recFile1 = this.uploadedRecommendationLetter1()?.file_name || data?.academic_history?.[0]?.certificate?.file_name || '';
-    const recUrl1 = this.uploadedRecommendationLetter1()?.file_url || data?.academic_history?.[0]?.certificate?.file_url || '';
-    const recFile2 = this.uploadedRecommendationLetter2()?.file_name || data?.academic_history?.[1]?.certificate?.file_name || '';
-    const recUrl2 = this.uploadedRecommendationLetter2()?.file_url || data?.academic_history?.[1]?.certificate?.file_url || '';
+    const recFile1 = this.uploadedRecommendationLetter1()?.file_name
+      || admissionDocuments?.recommendation_letter_1?.file_name
+      || data?.academic_history?.[0]?.certificate?.file_name
+      || '';
+    const recUrl1 = this.uploadedRecommendationLetter1()?.file_url
+      || admissionDocuments?.recommendation_letter_1?.file_url
+      || data?.academic_history?.[0]?.certificate?.file_url
+      || '';
+    const recFile2 = this.uploadedRecommendationLetter2()?.file_name
+      || admissionDocuments?.recommendation_letter_2?.file_name
+      || data?.academic_history?.[1]?.certificate?.file_name
+      || '';
+    const recUrl2 = this.uploadedRecommendationLetter2()?.file_url
+      || admissionDocuments?.recommendation_letter_2?.file_url
+      || data?.academic_history?.[1]?.certificate?.file_url
+      || '';
 
     return [
       { label: 'Letter of Recommendation 1', fileName: recFile1, fileUrl: recUrl1, uploaded: !!recFile1 },
@@ -253,9 +290,17 @@ export class AdmittedFlowService {
   });
 
   readonly testimonialDocument = computed<VerificationDocument>(() => {
+    const student = this.studentProfile();
+    const admissionDocuments = student?.admission_documents;
     const data = this.registrantData();
-    const testimonialFile = this.uploadedTestimonial()?.file_name || data?.certificate_of_origin?.file_name || '';
-    const testimonialUrl = this.uploadedTestimonial()?.file_url || data?.certificate_of_origin?.file_url || '';
+    const testimonialFile = this.uploadedTestimonial()?.file_name
+      || admissionDocuments?.testimonial?.file_name
+      || data?.certificate_of_origin?.file_name
+      || '';
+    const testimonialUrl = this.uploadedTestimonial()?.file_url
+      || admissionDocuments?.testimonial?.file_url
+      || data?.certificate_of_origin?.file_url
+      || '';
 
     return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: testimonialUrl, uploaded: !!testimonialFile };
   });
@@ -337,16 +382,19 @@ export class AdmittedFlowService {
 
   async loadSnapshot(): Promise<void> {
     const appNo = this.authSessionStore.applicationNo() || '';
-    if (!appNo) {
+    const hasStudentSnapshot = !!this.authSessionStore.studentProfile();
+    if (!appNo && !hasStudentSnapshot) {
       this.registrantData.set(null);
       return;
     }
 
     this.loadingSnapshot.set(true);
     try {
-      await this.loadApplicantSnapshot(appNo);
-      await this.loadStudentFeePlan();
       await this.loadStudentSnapshotAfterFirstInstallment();
+      if (!this.authSessionStore.studentProfile() && appNo) {
+        await this.loadApplicantSnapshot(appNo);
+      }
+      await this.loadStudentFeePlan();
       await this.loadCourses();
       await this.loadRegisteredCourses();
     } finally {
@@ -530,12 +578,18 @@ export class AdmittedFlowService {
   }
 
   private async loadStudentSnapshotAfterFirstInstallment(): Promise<void> {
-    if (!this.hasInternalPayment()) {
+    if (!this.shouldLoadStudentSnapshot()) {
+      return;
+    }
+    if (this.authSessionStore.studentProfile()) {
       return;
     }
     try {
       const response = await firstValueFrom(this.appService.studentData());
-      this.applyRegistrantSnapshot(response?.data ?? null);
+      const profile: StudentSingleData | null = response?.data ?? null;
+      if (profile?.matriculation_number) {
+        this.authSessionStore.setStudentProfile(profile);
+      }
     } catch {
       // Keep the applicant snapshot when the student profile is not ready yet.
     }
@@ -544,6 +598,20 @@ export class AdmittedFlowService {
   private applyRegistrantSnapshot(data: RegistrantData | null): void {
     this.registrantData.set(data);
     this.authSessionStore.syncRegistrantSession(data);
+  }
+
+  private shouldLoadStudentSnapshot(): boolean {
+    const userType = (this.authSessionStore.userType() || '').toLowerCase().trim();
+    if (userType.includes('student')) {
+      return true;
+    }
+    if (!!this.authSessionStore.matriculationNo()) {
+      return true;
+    }
+    if (this.isSchoolFeesFullyPaid()) {
+      return true;
+    }
+    return this.hasInternalPayment();
   }
 
   private generateReference(date: Date): string {

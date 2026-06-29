@@ -10,7 +10,7 @@ import {
   PaymentRefResponse
 } from '../data/application/payment.data';
 import { PreRegistrationDataDTO } from '../data/application/preregistrationdatadto';
-import { RegistrantDataDTO } from '../data/application/registrantdatadto';
+import { RegistrantDataDTO, StudentSingleResponse } from '../data/application/registrantdatadto';
 import {
   StudentFeePartPaymentConfig,
   StudentFeePartPaymentEntry,
@@ -91,9 +91,9 @@ export class ApplicationService {
     return this.http.get<RegistrantDataDTO>(`${this.apiRoot}/api/v1/applicants/single?applicant_no=${app_no}`);
   }
 
-  studentData(): Observable<RegistrantDataDTO> {
+  studentData(): Observable<StudentSingleResponse> {
     return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/single`).pipe(
-      map((response) => this.normalizeRegistrantResponse(response))
+      map((response) => this.normalizeStudentSingleResponse(response))
     );
   }
 
@@ -206,12 +206,45 @@ export class ApplicationService {
   }
 
   private normalizeRegistrantResponse(response: unknown): RegistrantDataDTO {
-    const raw = this.getNestedRecord(response, 'data');
-    if (raw) {
-      return { data: raw as unknown as RegistrantDataDTO['data'] };
+    const registrant = this.extractRegistrantRecord(response);
+    return { data: registrant ? registrant as unknown as RegistrantDataDTO['data'] : undefined };
+  }
+
+  private normalizeStudentSingleResponse(response: unknown): StudentSingleResponse {
+    const record = this.extractRegistrantRecord(response);
+    return { data: record as unknown as StudentSingleResponse['data'] };
+  }
+
+  private extractRegistrantRecord(response: unknown): Record<string, unknown> | null {
+    let current = this.toRecord(response);
+    for (let step = 0; step < 4; step += 1) {
+      if (this.looksLikeRegistrant(current)) {
+        return current;
+      }
+      const studentValue = current['student'];
+      if (this.isRecord(studentValue)) {
+        current = studentValue;
+        continue;
+      }
+      const dataValue = current['data'];
+      if (this.isRecord(dataValue)) {
+        current = dataValue;
+        continue;
+      }
+      break;
     }
-    const root = this.toRecord(response);
-    return { data: Object.keys(root).length > 0 ? root as unknown as RegistrantDataDTO['data'] : undefined };
+    return null;
+  }
+
+  private looksLikeRegistrant(value: Record<string, unknown>): boolean {
+    return (
+      typeof value['application_no'] === 'string'
+      || typeof value['matriculation_no'] === 'string'
+      || typeof value['matriculation_number'] === 'string'
+      || typeof value['first_name'] === 'string'
+      || typeof value['last_name'] === 'string'
+      || typeof value['id'] === 'number'
+    );
   }
 
   private normalizePaginatedPaymentsResponse(response: unknown): PaginatedPaymentsResponse {

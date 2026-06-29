@@ -1,7 +1,7 @@
 import { effect } from '@angular/core';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { LoginResponse } from '../data/auth/auth.data';
-import { RegistrantData } from '../data/application/registrantdatadto';
+import { RegistrantData, StudentSingleData } from '../data/application/registrantdatadto';
 import { normalizeDisplayName } from '../utility/name-format';
 
 type AuthSessionState = {
@@ -19,6 +19,7 @@ type AuthSessionState = {
   forgotOtp: string;
   paymentRef: string;
   registrationComplete: boolean;
+  studentProfile: StudentSingleData | null;
 };
 
 const initialAuthSessionState: AuthSessionState = {
@@ -36,9 +37,27 @@ const initialAuthSessionState: AuthSessionState = {
   forgotOtp: '',
   paymentRef: '',
   registrationComplete: false,
+  studentProfile: null,
 };
 
 const AUTH_SESSION_COOKIE_KEY = 'auth_session_store';
+type AuthSessionCookieState = Omit<AuthSessionState, 'studentProfile'>;
+const initialAuthSessionCookieState: AuthSessionCookieState = {
+  name: initialAuthSessionState.name,
+  userType: initialAuthSessionState.userType,
+  matriculationNo: initialAuthSessionState.matriculationNo,
+  applicationNo: initialAuthSessionState.applicationNo,
+  paymentStatus: initialAuthSessionState.paymentStatus,
+  acceptanceFeeStatus: initialAuthSessionState.acceptanceFeeStatus,
+  isAdmitted: initialAuthSessionState.isAdmitted,
+  jwtToken: initialAuthSessionState.jwtToken,
+  refreshToken: initialAuthSessionState.refreshToken,
+  profileEmail: initialAuthSessionState.profileEmail,
+  authFlow: initialAuthSessionState.authFlow,
+  forgotOtp: initialAuthSessionState.forgotOtp,
+  paymentRef: initialAuthSessionState.paymentRef,
+  registrationComplete: initialAuthSessionState.registrationComplete,
+};
 
 type PortalSessionStateUpdate = {
   userType?: string | null;
@@ -107,7 +126,7 @@ function clearAuthSessionCookie(): void {
   document.cookie = `${AUTH_SESSION_COOKIE_KEY}=; Path=/; Max-Age=0; SameSite=Lax`;
 }
 
-function writeAuthSessionCookie(state: AuthSessionState): void {
+function writeAuthSessionCookie(state: AuthSessionCookieState): void {
   if (typeof document === 'undefined') {
     return;
   }
@@ -121,7 +140,7 @@ function writeAuthSessionCookie(state: AuthSessionState): void {
   document.cookie = `${AUTH_SESSION_COOKIE_KEY}=${serialized}; Path=/; SameSite=Lax`;
 }
 
-function readAuthSessionCookie(): AuthSessionState | null {
+function readAuthSessionCookie(): AuthSessionCookieState | null {
   if (typeof document === 'undefined') {
     return null;
   }
@@ -136,9 +155,9 @@ function readAuthSessionCookie(): AuthSessionState | null {
 
   try {
     const encodedValue = rawCookie.split('=').slice(1).join('=');
-    const parsed = JSON.parse(decodeURIComponent(encodedValue)) as Partial<AuthSessionState>;
+    const parsed = JSON.parse(decodeURIComponent(encodedValue)) as Partial<AuthSessionCookieState>;
     return {
-      ...initialAuthSessionState,
+      ...initialAuthSessionCookieState,
       ...parsed,
       isAdmitted: !!parsed.isAdmitted,
       registrationComplete: !!parsed.registrationComplete,
@@ -146,6 +165,11 @@ function readAuthSessionCookie(): AuthSessionState | null {
   } catch {
     return null;
   }
+}
+
+function buildStudentDisplayName(profile: StudentSingleData): string {
+  const parts = [profile.last_name, profile.first_name, profile.other_names].filter((value) => !!(value || '').trim());
+  return parts.join(' ');
 }
 
 export const AuthSessionStore = signalStore(
@@ -168,6 +192,18 @@ export const AuthSessionStore = signalStore(
         }),
       };
       patchState(store, nextState);
+    },
+    setStudentProfile(profile: StudentSingleData | null) {
+      patchState(store, { studentProfile: profile });
+      if (!profile) {
+        return;
+      }
+      const displayName = buildStudentDisplayName(profile);
+      patchState(store, {
+        name: normalizeDisplayName(displayName),
+        matriculationNo: profile.matriculation_number ?? store.matriculationNo(),
+        userType: store.userType() || 'student',
+      });
     },
     syncPortalState(update: PortalSessionStateUpdate) {
       patchState(store, buildPortalSessionPatch(update));
@@ -252,7 +288,7 @@ export const AuthSessionStore = signalStore(
       }
 
       effect(() => {
-        const snapshot: AuthSessionState = {
+        const snapshot: AuthSessionCookieState = {
           name: store.name(),
           userType: store.userType(),
           matriculationNo: store.matriculationNo(),
