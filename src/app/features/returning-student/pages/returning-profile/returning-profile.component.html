@@ -4,9 +4,9 @@
 
   <div class="profile-shell">
     <aside class="profile-tabs">
-      <button type="button" [class.active]="activeTab() === 'overview'" (click)="setTab('overview')">Overview</button>
-      <button type="button" [class.active]="activeTab() === 'personal'" (click)="setTab('personal')">Personal and Contact</button>
-      <button type="button" [class.active]="activeTab() === 'account'" (click)="setTab('account')">Account Settings</button>
+      <button type="button" class="body-small" [class.active]="activeTab() === 'overview'" (click)="setTab('overview')">Overview</button>
+      <button type="button" class="body-small" [class.active]="activeTab() === 'personal'" (click)="setTab('personal')">Personal and Contact</button>
+      <button type="button" class="body-small" [class.active]="activeTab() === 'account'" (click)="setTab('account')">Account Settings</button>
     </aside>
 
     <section class="profile-content">
@@ -203,7 +203,9 @@
               <button type="button" (click)="showConfirm.set(!showConfirm())"><i class="pi pi-eye-slash"></i></button>
             </div>
           </label>
-          <app-button (buttonClick)="savePassword()">Update New Password</app-button>
+          <app-button [disabled]="isUpdatingPassword()" (buttonClick)="savePassword()">
+            {{ isUpdatingPassword() ? 'Updating Password...' : 'Update New Password' }}
+          </app-button>
         </div>
       </ng-container>
     </section>

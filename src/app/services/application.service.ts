@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
+import { PasswordChangePayload } from '../data/application/password-change.dto';
 import {
   PaginatedPaymentsResponse,
   PaymentHistoryItem,
@@ -41,6 +42,8 @@ export class ApplicationService {
   private readonly studentFeesEndpoint = `${this.apiRoot}/api/v1/payments/student-fees`;
 
   private readonly payStudentFeeEndpoint = `${this.apiRoot}/api/v1/students/pay-fee`;
+
+  private readonly changePasswordEndpoint = `${this.apiRoot}/password/change`;
 
   constructor(private http: HttpClient) { }
 
@@ -147,6 +150,10 @@ export class ApplicationService {
 
   initiateStudentFeePayment(payload: StudentFeePaymentPayload): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(this.payStudentFeeEndpoint, payload);
+  }
+
+  changePassword(payload: PasswordChangePayload): Observable<unknown> {
+    return this.http.post<unknown>(this.changePasswordEndpoint, payload);
   }
 
   getPayments(query: { page: number; pageSize: number; ordering: string | null; search: string | null }): Observable<PaginatedPaymentsResponse> {

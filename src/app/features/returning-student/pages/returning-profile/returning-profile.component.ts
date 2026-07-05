@@ -44,6 +44,8 @@ export class ReturningProfileComponent {
 
   readonly savingSection = signal<string | null>(null);
 
+  readonly isUpdatingPassword = signal(false);
+
   readonly isEditingPersonal = signal(false);
 
   readonly isEditingResidential = signal(false);
@@ -162,8 +164,10 @@ export class ReturningProfileComponent {
     }
   }
 
-  savePassword(): void {
-    const result = this.flow.updateAccountPassword(this.currentPassword(), this.newPassword(), this.confirmPassword());
+  async savePassword(): Promise<void> {
+    this.isUpdatingPassword.set(true);
+    const result = await this.flow.updateAccountPassword(this.currentPassword(), this.newPassword(), this.confirmPassword());
+    this.isUpdatingPassword.set(false);
     this.messageService.add({
       severity: result.ok ? 'success' : 'warn',
       summary: 'Account Settings',

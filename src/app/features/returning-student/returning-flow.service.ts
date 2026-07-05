@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { StudentCgpaTrendResponse } from '../../data/application/student-cgpa-trend.dto';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
@@ -824,7 +825,11 @@ export class ReturningFlowService {
     return { ok: true, message: 'Profile changes saved successfully.' };
   }
 
-  updateAccountPassword(currentPassword: string, newPassword: string, confirmPassword: string): { ok: boolean; message: string } {
+  async updateAccountPassword(
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string
+  ): Promise<{ ok: boolean; message: string }> {
     if (!currentPassword || !newPassword || !confirmPassword) {
       return { ok: false, message: 'Please fill all password fields.' };
     }
@@ -834,7 +839,22 @@ export class ReturningFlowService {
     if (newPassword !== confirmPassword) {
       return { ok: false, message: 'Confirm password does not match new password.' };
     }
-    return { ok: true, message: 'Password updated successfully.' };
+
+    try {
+      await firstValueFrom(
+        this.appService.changePassword({
+          password: currentPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword
+        })
+      );
+      return { ok: true, message: 'Password updated successfully.' };
+    } catch (error) {
+      return {
+        ok: false,
+        message: this.resolvePasswordChangeErrorMessage(error)
+      };
+    }
   }
 
   updateHostelDraft(patch: Partial<HostelApplicationPayload>): void {
@@ -1203,6 +1223,37 @@ export class ReturningFlowService {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
+  }
+
+  private resolvePasswordChangeErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const errorPayload = this.toRecord(error.error);
+      return this.readErrorMessage(errorPayload)
+        ?? error.message
+        ?? 'Unable to update password right now.';
+    }
+    return 'Unable to update password right now.';
+  }
+
+  private readErrorMessage(source: Record<string, unknown>): string | null {
+    const errorMessageKeys = ['message', 'detail', 'error', 'non_field_errors'];
+    for (const key of errorMessageKeys) {
+      const value = source[key];
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+      if (Array.isArray(value) && typeof value[0] === 'string' && value[0].trim().length > 0) {
+        return value[0].trim();
+      }
+    }
+    return null;
+  }
+
+  private toRecord(value: unknown): Record<string, unknown> {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      return {};
+    }
+    return value as Record<string, unknown>;
   }
 
   private readCurrentLevelNumber(): number | null {
