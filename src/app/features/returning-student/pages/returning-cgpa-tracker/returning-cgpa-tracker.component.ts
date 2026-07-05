@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ReturningFlowService } from '../../returning-flow.service';
 
 @Component({
@@ -9,7 +9,13 @@ import { ReturningFlowService } from '../../returning-flow.service';
   templateUrl: './returning-cgpa-tracker.component.html',
   styleUrl: './returning-cgpa-tracker.component.scss'
 })
-export class ReturningCgpaTrackerComponent {
+export class ReturningCgpaTrackerComponent implements OnInit {
   readonly flow = inject(ReturningFlowService);
-}
 
+  ngOnInit(): void {
+    void Promise.allSettled([
+      this.flow.loadStudentDashboard(),
+      this.flow.loadStudentCgpaTrend()
+    ]);
+  }
+}

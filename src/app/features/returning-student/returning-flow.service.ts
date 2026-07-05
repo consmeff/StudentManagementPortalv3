@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { StudentCgpaTrendResponse } from '../../data/application/student-cgpa-trend.dto';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
 import { StudentDashboardAnnouncement, StudentDashboardResponse } from '../../data/application/student-dashboard.dto';
 import { StudentResultsResponse } from '../../data/application/student-results.dto';
@@ -152,6 +153,12 @@ export type ReturningAnnouncementFeedItem = {
   timeAgo: string;
 };
 
+export type SemesterGpaPoint = {
+  label: string;
+  value: number | null;
+  active: boolean;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   private readonly appService = inject(ApplicationService);
@@ -229,6 +236,8 @@ export class ReturningFlowService {
 
   readonly loadingStudentResults = signal(false);
 
+  readonly loadingStudentCgpaTrend = signal(false);
+
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
@@ -238,6 +247,8 @@ export class ReturningFlowService {
   readonly hasLoadedStudentDashboard = signal(false);
 
   readonly studentResults = signal<StudentResultsResponse | null>(null);
+
+  readonly studentCgpaTrend = signal<StudentCgpaTrendResponse | null>(null);
 
   readonly availableCourses = signal<AvailableCourse[]>([]);
 
@@ -580,6 +591,57 @@ export class ReturningFlowService {
 
   readonly selectedSemesterLabel = computed(() => this.selectedResultSemester() || this.semester());
 
+  readonly cgpaTrackerCurrent = computed(() => this.formatDecimal(this.studentCgpaTrend()?.current_cgpa ?? this.currentCgpa()));
+
+  readonly cgpaTrackerBest = computed(() => this.formatDecimal(this.studentCgpaTrend()?.best_cgpa ?? this.bestSemesterGpa()));
+
+  readonly cgpaTrackerWorst = computed(() => this.formatDecimal(this.studentCgpaTrend()?.worst_cgpa ?? this.lowestSemesterGpa()));
+
+  readonly cgpaTrackerCompletedSummary = computed(() => {
+    const completed = this.studentCgpaTrend()?.semester_completed ?? this.semestersCompleted();
+    const total = Math.max(completed, this.studentCgpaTrend()?.trend.length ?? this.semestersTotal());
+    return {
+      completed,
+      total,
+      remaining: Math.max(0, total - completed)
+    };
+  });
+
+  readonly cgpaTrackerTrendLabel = computed(() => {
+    const trend = this.studentCgpaTrend();
+    if (!trend) {
+      return 'No trend data';
+    }
+    const latest = trend.current_cgpa;
+    const previous = trend.trend.length > 1 ? trend.trend[trend.trend.length - 2]?.cgpa ?? null : null;
+    if (previous === null) {
+      return 'Stable';
+    }
+    if (latest > previous) {
+      return 'Trending Up';
+    }
+    if (latest < previous) {
+      return 'Trending Down';
+    }
+    return 'Stable';
+  });
+
+  readonly cgpaTrackerTrendPoints = computed<SemesterGpaPoint[]>(() => {
+    const trend = this.studentCgpaTrend()?.trend;
+    if (!trend || trend.length === 0) {
+      return this.semesterGpaPoints();
+    }
+    return trend.map((item) => ({
+      label: `${item.semester}\n${item.session}`,
+      value: item.cgpa,
+      active: true
+    }));
+  });
+
+  readonly cgpaTrackerBestLabel = computed(() => this.describeCgpaTrendPoint(this.studentCgpaTrend()?.trend, 'best'));
+
+  readonly cgpaTrackerWorstLabel = computed(() => this.describeCgpaTrendPoint(this.studentCgpaTrend()?.trend, 'worst'));
+
   readonly profileOverview = signal<ProfileOverviewData>({
     fullName: 'ISHOLA, Hassan Gbadebo',
     matricNo: 'CONSMMEFS/NUR/2024/0142',
@@ -871,6 +933,26 @@ export class ReturningFlowService {
     }
   }
 
+  async loadStudentCgpaTrend(forceReload = false): Promise<void> {
+    if (this.studentCgpaTrend() && !forceReload) {
+      return;
+    }
+    this.loadingStudentCgpaTrend.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getStudentCgpaTrend());
+      this.studentCgpaTrend.set(response);
+      this.currentCgpa.set(response.current_cgpa);
+      this.cumulativeGpa.set(response.current_cgpa);
+      this.bestSemesterGpa.set(response.best_cgpa);
+      this.lowestSemesterGpa.set(response.worst_cgpa);
+      this.semestersCompleted.set(response.semester_completed);
+      this.semestersTotal.set(Math.max(response.semester_completed, response.trend.length || this.semestersTotal()));
+      this.gpaClass.set(this.resolveCgpaClassLabel(response.current_cgpa));
+    } finally {
+      this.loadingStudentCgpaTrend.set(false);
+    }
+  }
+
   async loadAvailableCourses(): Promise<void> {
     this.loadingCourses.set(true);
     try {
@@ -1130,5 +1212,24 @@ export class ReturningFlowService {
       return 'Pass';
     }
     return 'Fail';
+  }
+
+  private describeCgpaTrendPoint(
+    trend: StudentCgpaTrendResponse['trend'] | undefined,
+    mode: 'best' | 'worst'
+  ): string {
+    if (!trend || trend.length === 0) {
+      return 'No semester data';
+    }
+    const target = trend.reduce((selected, current) => {
+      if (!selected) {
+        return current;
+      }
+      if (mode === 'best') {
+        return current.cgpa > selected.cgpa ? current : selected;
+      }
+      return current.cgpa < selected.cgpa ? current : selected;
+    }, trend[0]);
+    return `${target.semester} ${target.session}`.trim();
   }
 }

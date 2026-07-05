@@ -12,6 +12,7 @@ import {
 import { PreRegistrationDataDTO } from '../data/application/preregistrationdatadto';
 import { RegistrantDataDTO, StudentSingleResponse } from '../data/application/registrantdatadto';
 import { StudentDashboardResponse } from '../data/application/student-dashboard.dto';
+import { StudentCgpaTrendResponse } from '../data/application/student-cgpa-trend.dto';
 import { StudentResultsResponse } from '../data/application/student-results.dto';
 import {
   StudentFeePartPaymentConfig,
@@ -108,6 +109,12 @@ export class ApplicationService {
   getStudentResults(): Observable<StudentResultsResponse> {
     return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/student/my-results`).pipe(
       map((response) => this.normalizeStudentResultsResponse(response))
+    );
+  }
+
+  getStudentCgpaTrend(): Observable<StudentCgpaTrendResponse> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/cgpa-trend`).pipe(
+      map((response) => this.normalizeStudentCgpaTrendResponse(response))
     );
   }
 
@@ -278,6 +285,26 @@ export class ApplicationService {
           grade: this.readNullableString(row, 'grade'),
           course_name: this.readString(row, 'course_name'),
           course_code: this.readString(row, 'course_code')
+        };
+      })
+    };
+  }
+
+  private normalizeStudentCgpaTrendResponse(response: unknown): StudentCgpaTrendResponse {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const trendSource = Array.isArray(rawResponse['trend']) ? rawResponse['trend'] : [];
+
+    return {
+      best_cgpa: this.readNumber(rawResponse, 'best_cgpa'),
+      worst_cgpa: this.readNumber(rawResponse, 'worst_cgpa'),
+      current_cgpa: this.readNumber(rawResponse, 'current_cgpa'),
+      semester_completed: this.readNumber(rawResponse, 'semester_completed'),
+      trend: trendSource.map((item) => {
+        const row = this.toRecord(item);
+        return {
+          session: this.readString(row, 'session'),
+          semester: this.readString(row, 'semester'),
+          cgpa: this.readNumber(row, 'cgpa')
         };
       })
     };
