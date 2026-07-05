@@ -9,6 +9,7 @@ import { AuthSessionStore } from '../../store/auth-session.store';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
+  selectStudentFeePlan,
 } from '../../utility/student-fees-plan';
 import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
 
@@ -22,6 +23,8 @@ export type ReturningCourse = {
 };
 
 export type ReturningPaymentRecord = {
+  feeId: string;
+  paymentType: string;
   installmentLabel: string;
   amount: number;
   paidAt: Date;
@@ -511,7 +514,7 @@ export class ReturningFlowService {
   );
 
   readonly paidAmount = computed(() =>
-    this.paymentHistory().reduce((sum, entry) => sum + entry.amount, 0)
+    this.schoolFeeInstallments().reduce((sum, entry) => sum + entry.amount, 0)
   );
 
   readonly outstandingAmount = computed(() => Math.max(0, this.totalSchoolFees - this.paidAmount()));
@@ -732,6 +735,8 @@ export class ReturningFlowService {
     const installmentNo = this.paymentHistory().length + 1;
     const paidAt = new Date();
     const entry: ReturningPaymentRecord = {
+      feeId: 'school-fees',
+      paymentType: 'School Fees',
       installmentLabel: `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`,
       amount: normalizedAmount,
       paidAt,
@@ -754,7 +759,7 @@ export class ReturningFlowService {
     if (target.status === 'paid') {
       return { ok: false, message: 'Fee has already been paid.' };
     }
-    const result = this.addDummyPayment(target.amount);
+    const result = this.recordAuxiliaryFeePayment(feeId, target.amount, target.name);
     if (!result.ok) {
       return result;
     }
@@ -766,6 +771,37 @@ export class ReturningFlowService {
       this.hostelApplicationStatus.set('form');
     }
     return { ok: true, message: `${target.name} payment recorded.` };
+  }
+
+  recordAuxiliaryFeePayment(feeId: string, amount: number, paymentType: string): { ok: boolean; message: string; referenceNo?: string } {
+    const target = this.fees().find((fee) => fee.id === feeId);
+    if (!target) {
+      return { ok: false, message: 'Fee item not found.' };
+    }
+    const normalizedAmount = Math.floor(amount || 0);
+    if (normalizedAmount <= 0) {
+      return { ok: false, message: 'Enter a valid payment amount.' };
+    }
+    const paidAt = new Date();
+    const referenceNo = `RET-${paidAt.getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const entry: ReturningPaymentRecord = {
+      feeId,
+      paymentType,
+      installmentLabel: paymentType,
+      amount: normalizedAmount,
+      paidAt,
+      referenceNo
+    };
+    this.paymentHistory.set([...this.paymentHistory(), entry]);
+    this.fees.set(
+      this.fees().map((fee) =>
+        fee.id === feeId ? { ...fee, status: 'paid' as const } : fee
+      )
+    );
+    if (feeId === 'hostel' && this.hostelApplicationStatus() === 'locked') {
+      this.hostelApplicationStatus.set('form');
+    }
+    return { ok: true, message: `${paymentType} payment recorded.`, referenceNo };
   }
 
   setResultSemester(value: string): void {
@@ -858,7 +894,7 @@ export class ReturningFlowService {
       this.syncReturningModuleAccess();
     } catch {
       const response = await firstValueFrom(this.appService.getStudentFeePlans());
-      this.studentFeePlan.set(response.data[0] ?? null);
+      this.studentFeePlan.set(selectStudentFeePlan(response.data));
       this.syncReturningModuleAccess();
     } finally {
       this.loadingStudentFeePlan.set(false);
@@ -1038,6 +1074,8 @@ export class ReturningFlowService {
     this.paymentHistory.set([
       ...this.paymentHistory(),
       {
+        feeId: 'school-fees',
+        paymentType: `School Fees - ${entry.installmentLabel}`,
         installmentLabel: entry.installmentLabel,
         amount: entry.amount,
         paidAt: entry.paidAt,
@@ -1090,12 +1128,16 @@ export class ReturningFlowService {
       return;
     }
 
+    const nextTotalPaid = currentStatus.payment_status.total_paid + amount;
+    const nextTotalDue = Math.max(0, currentStatus.payment_status.total_due - amount);
+
     this.studentSchoolFeeStatus.set({
       ...currentStatus,
       payment_status: {
-        total_paid: currentStatus.payment_status.total_paid + amount,
-        total_due: Math.max(0, currentStatus.payment_status.total_due - amount),
-        number_of_payments: currentStatus.payment_status.number_of_payments + 1
+        total_paid: nextTotalPaid,
+        total_due: nextTotalDue,
+        number_of_payments: currentStatus.payment_status.number_of_payments + 1,
+        status: nextTotalDue <= 0 ? 'paid' : 'partially_paid'
       }
     });
   }

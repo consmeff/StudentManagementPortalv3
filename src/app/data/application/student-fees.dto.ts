@@ -30,6 +30,7 @@ export type StudentSchoolFeePaymentStatus = {
   total_paid: number;
   total_due: number;
   number_of_payments: number;
+  status: string;
 };
 
 export type StudentSchoolFeeStatus = StudentFeePlan & {

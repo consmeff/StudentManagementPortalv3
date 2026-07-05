@@ -33,7 +33,7 @@ export class ReturningHostelComponent {
   });
 
   goToPayment(): void {
-    void this.router.navigateByUrl('/returning/payment');
+    void this.router.navigateByUrl('/returning/payment?flow=school-fee');
   }
 
   updateField<K extends keyof ReturnType<ReturningFlowService['hostelApplicationDraft']>>(key: K, value: ReturnType<ReturningFlowService['hostelApplicationDraft']>[K]): void {
@@ -86,4 +86,3 @@ export class ReturningHostelComponent {
     URL.revokeObjectURL(url);
   }
 }
-

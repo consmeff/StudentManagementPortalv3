@@ -23,6 +23,7 @@ import {
   StudentSchoolFeePaymentStatus,
   StudentSchoolFeeStatus
 } from '../data/application/student-fees.dto';
+import { selectStudentFeePlan } from '../utility/student-fees-plan';
 import {
   AvailableCoursesResponse,
   RegisterCoursesPayload,
@@ -38,8 +39,6 @@ export class ApplicationService {
   private readonly paymentsEndpoint = `${this.apiRoot}/api/v1/payments/payments`;
 
   private readonly studentFeesEndpoint = `${this.apiRoot}/api/v1/payments/student-fees`;
-
-  private readonly studentSchoolFeeEndpoint = `${this.apiRoot}/api/v1/payments/student-school-fee`;
 
   private readonly payStudentFeeEndpoint = `${this.apiRoot}/api/v1/students/pay-fee`;
 
@@ -141,7 +140,7 @@ export class ApplicationService {
   }
 
   getStudentSchoolFeeStatus(): Observable<StudentSchoolFeeStatus> {
-    return this.http.get<unknown>(this.studentSchoolFeeEndpoint).pipe(
+    return this.http.get<unknown>(this.studentFeesEndpoint).pipe(
       map((response) => this.normalizeStudentSchoolFeeStatusResponse(response))
     );
   }
@@ -413,11 +412,32 @@ export class ApplicationService {
   }
 
   private normalizeStudentSchoolFeeStatusResponse(response: unknown): StudentSchoolFeeStatus {
-    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const rawResponse = this.selectStudentSchoolFeeRecord(response);
     return {
       ...this.normalizeStudentFeePlan(rawResponse),
       payment_status: this.readStudentSchoolFeePaymentStatus(rawResponse, 'payment_status')
     };
+  }
+
+  private selectStudentSchoolFeeRecord(response: unknown): Record<string, unknown> {
+    const rawResponse = this.toRecord(response);
+    const source = Array.isArray(rawResponse['data'])
+      ? rawResponse['data']
+      : Array.isArray(response)
+        ? response
+        : [];
+
+    const normalizedPlans = source.map((plan) => this.normalizeStudentFeePlan(plan));
+    const selectedPlan = selectStudentFeePlan(normalizedPlans);
+    if (!selectedPlan) {
+      return this.getNestedRecord(response, 'data') ?? rawResponse;
+    }
+
+    const selectedRecord = source.find((entry) => {
+      const normalizedEntry = this.normalizeStudentFeePlan(entry);
+      return normalizedEntry.id === selectedPlan.id;
+    });
+    return this.toRecord(selectedRecord);
   }
 
   private getNestedRecord(source: unknown, key: string): Record<string, unknown> | null {
@@ -501,14 +521,16 @@ export class ApplicationService {
       return {
         total_paid: 0,
         total_due: 0,
-        number_of_payments: 0
+        number_of_payments: 0,
+        status: ''
       };
     }
 
     return {
       total_paid: this.readNumber(value, 'total_paid'),
       total_due: this.readNumber(value, 'total_due'),
-      number_of_payments: this.readNumber(value, 'number_of_payments')
+      number_of_payments: this.readNumber(value, 'number_of_payments'),
+      status: this.readString(value, 'status')
     };
   }
 }

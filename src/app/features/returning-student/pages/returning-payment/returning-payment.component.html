@@ -1,96 +1,304 @@
 <div class="payment-page">
-  <h1>School fees payment</h1>
-  <p class="page-copy">Your fees can be paid in up to 3 installments. A minimum first payment applies.</p>
+  <div class="page-header">
+    <div>
+      <h1>{{ pageTitle() }}</h1>
+      <p class="page-copy">{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
+    </div>
 
-  <section class="summary-card">
-    <div class="summary-top">
-      <h3>{{ schoolFeeCardTitle() }}</h3>
-      <p>{{ flow.session() }} Academic Session • {{ flow.level() }}</p>
-    </div>
-    <div class="summary-amount">{{ schoolFeeMainValue() }}</div>
-    <div class="progress-track">
-      <span class="progress-fill" [style.width.%]="flow.schoolFeesProgressPercent()"></span>
-    </div>
-    <div class="summary-bottom">
-      <strong>{{ totalPaid() }} paid</strong>
-      <strong>{{ remainingAmount() }} remaining</strong>
-    </div>
-  </section>
+    <button
+      pButton
+      type="button"
+      class="header-btn"
+      *ngIf="currentView() === 'overview'; else backButton"
+      (click)="openHistory()"
+    >
+      <i class="pi pi-history"></i>
+      <span>Payment History</span>
+    </button>
 
-  <section class="history-card" *ngIf="paymentHistory().length > 0">
-    <h3>Payment History</h3>
-    <div class="history-row" *ngFor="let item of paymentHistory()">
-      <div class="left">
-        <strong>{{ item.installmentLabel }}</strong>
-        <span>Ref No: {{ item.referenceNo }}</span>
-      </div>
-      <div class="right">
-        <strong>{{ "₦" + item.amount.toLocaleString("en-NG") }}</strong>
-        <span>{{ item.paidAt | date: "dd MMM yyyy" }}</span>
-      </div>
-      <button pButton type="button" class="icon-btn" (click)="downloadReceipt(item.referenceNo)">
-        <i class="pi pi-download"></i>
+    <ng-template #backButton>
+      <button pButton type="button" class="header-btn" (click)="openOverview()">
+        <i class="pi pi-arrow-left"></i>
+        <span>Back to Payments</span>
       </button>
-    </div>
-  </section>
-
-  <section class="payment-form" *ngIf="flow.canAddSchoolFeeInstallment()">
-    <h3>{{ amountFieldLabel() }}</h3>
-    <label>Amount to pay</label>
-    <div class="amount-input" [class.amount-input-error]="!!paymentValidationMessage()">
-      <span class="currency">₦</span>
-      <input
-        pInputText
-        [ngModel]="amountToPay()"
-        (ngModelChange)="onAmountChange($event)"
-        (keydown)="onAmountKeyDown($event)"
-        (paste)="onAmountPaste($event)"
-        placeholder="Enter amount"
-        inputmode="numeric"
-        class="title-xlarge!"
-      />
-    </div>
-    <small class="hint body-small">Maximum of 3 payments allowed across the full academic session</small>
-    <small class="hint body-small" *ngIf="flow.studentFeePlan()">Minimum amount: {{ minimumAmountHint() }}</small>
-    <small class="hint body-small" *ngIf="flow.studentFeePlan()">Maximum amount: {{ maximumAmountHint() }}</small>
-    <small class="hint body-small" *ngIf="paymentHistory().length === 0">
-      First payment minimum is {{ minimumAmountHint() }}. You can pay more.
-    </small>
-    <small class="hint body-small" *ngIf="paymentHistory().length > 0">
-      Suggested amount: {{ suggestedAmount() }}
-    </small>
-    <small class="hint hint-error body-small" *ngIf="paymentValidationMessage()">{{ paymentValidationMessage() }}</small>
-  </section>
-
-  <div class="actions" *ngIf="flow.canAddSchoolFeeInstallment(); else fullyPaidAction">
-    <button pButton type="button" class="primary-btn" [disabled]="isProcessing() || !canSubmitPayment()" (click)="proceedToPayment()">
-      {{ isProcessing() ? "Processing..." : "Continue to Payment" }}
-    </button>
-    <button
-      pButton
-      type="button"
-      class="secondary-btn"
-      *ngIf="paymentHistory().length > 0"
-      (click)="proceedToCourseRegistration()"
-    >
-      Proceed to Course Registration
-    </button>
-    <button
-      pButton
-      type="button"
-      class="secondary-btn"
-      *ngIf="paymentHistory().length > 0"
-      (click)="downloadReceipt()"
-    >
-      Download Receipt
-    </button>
+    </ng-template>
   </div>
 
-  <ng-template #fullyPaidAction>
-    <div class="actions">
-      <button pButton type="button" class="secondary-btn" (click)="downloadReceipt()">
-        Download Full Receipt
-      </button>
-    </div>
-  </ng-template>
+  <ng-container [ngSwitch]="currentView()">
+    <ng-container *ngSwitchCase="'overview'">
+      <section class="table-card">
+        <h2>Mandatory Fees</h2>
+        <table class="fees-table">
+          <thead>
+            <tr>
+              <th>PAYMENT TYPE</th>
+              <th>AMOUNT</th>
+              <th>STATUS</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let fee of flow.mandatoryFees()">
+              <td>{{ fee.name }}</td>
+              <td>{{ feeAmountLabel(fee.id, fee.amount) }}</td>
+              <td>
+                <span [class]="feeStatusClass(fee.id, fee.status)">{{ feeStatusLabel(fee.id, fee.status) }}</span>
+              </td>
+              <td>
+                <button
+                  pButton
+                  type="button"
+                  class="table-action-btn"
+                  *ngIf="canDownloadReceipt(fee.id, fee.status); else makeMandatoryPayment"
+                  (click)="fee.id === 'school-fees' ? downloadSchoolFeeReceipt() : downloadFeeReceipt(fee.id)"
+                >
+                  <i class="pi pi-download"></i>
+                  <span>Download Receipt</span>
+                </button>
+                <ng-template #makeMandatoryPayment>
+                  <button
+                    pButton
+                    type="button"
+                    class="table-action-btn"
+                    (click)="fee.id === 'school-fees' ? openSchoolFeePayment() : openInvoiceForFee(fee.id)"
+                  >
+                    <i class="pi pi-credit-card"></i>
+                    <span>Make Payment</span>
+                  </button>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="table-card optional-card">
+        <h2>Optional Fees (only if applicable)</h2>
+        <table class="fees-table optional-table">
+          <thead>
+            <tr>
+              <th>PAYMENT TYPE</th>
+              <th>AMOUNT</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let fee of flow.optionalFees()">
+              <td>{{ fee.name }}</td>
+              <td>{{ feeAmountLabel(fee.id, fee.amount) }}</td>
+              <td>
+                <button
+                  pButton
+                  type="button"
+                  class="table-action-btn"
+                  *ngIf="canDownloadReceipt(fee.id, fee.status); else makeOptionalPayment"
+                  (click)="downloadFeeReceipt(fee.id)"
+                >
+                  <i class="pi pi-download"></i>
+                  <span>Download Receipt</span>
+                </button>
+                <ng-template #makeOptionalPayment>
+                  <button pButton type="button" class="table-action-btn" (click)="openInvoiceForFee(fee.id)">
+                    <i class="pi pi-credit-card"></i>
+                    <span>Make Payment</span>
+                  </button>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'history'">
+      <section class="table-card">
+        <table class="fees-table history-table">
+          <thead>
+            <tr>
+              <th>DATE</th>
+              <th>PAYMENT TYPE</th>
+              <th>REFERENCE NUMBER</th>
+              <th>AMOUNT</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of paymentHistory()">
+              <td>{{ item.paidAt | date: 'dd MMM yyyy' }}</td>
+              <td>{{ item.paymentType }}</td>
+              <td>{{ item.referenceNo }}</td>
+              <td>{{ paidAmountLabel(item.amount) }}</td>
+              <td>
+                <button pButton type="button" class="table-action-btn" (click)="downloadHistoryReceipt(item.referenceNo)">
+                  <i class="pi pi-download"></i>
+                  <span>Download</span>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="paymentHistory().length === 0">
+              <td colspan="5" class="empty-row">No payment history available yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'invoice'">
+      <section class="invoice-layout">
+        <div class="invoice-form-card">
+          <div class="form-group">
+            <label>Payment Type</label>
+            <select [ngModel]="selectedFeeId()" (ngModelChange)="onPaymentTypeChange($event)">
+              <option [ngValue]="null">Select payment type</option>
+              <option *ngFor="let fee of invoiceOptions()" [ngValue]="fee.id">{{ fee.name }}</option>
+            </select>
+          </div>
+
+          <div class="form-group" *ngIf="requiresCourseSelection()">
+            <label>Courses</label>
+            <div class="course-picker">
+              <label class="course-option" *ngFor="let course of resitCourseOptions()">
+                <input
+                  type="checkbox"
+                  [checked]="isResitCourseSelected(course.code)"
+                  (change)="toggleResitCourse(course.code, $any($event.target).checked)"
+                />
+                <span>{{ course.code }} - {{ course.title }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Amount</label>
+            <div class="readonly-field">₦ {{ invoiceAmount().toLocaleString('en-NG') }}</div>
+          </div>
+        </div>
+
+        <div class="invoice-summary-card">
+          <div class="invoice-summary-header">
+            <strong>CONSMMEFS</strong>
+            <span>Invoice Generation</span>
+          </div>
+
+          <div class="invoice-summary-row">
+            <span>Student Name</span>
+            <strong>{{ flow.studentName() }}</strong>
+          </div>
+          <div class="invoice-summary-row">
+            <span>Matric No</span>
+            <strong>{{ flow.matricNo() }}</strong>
+          </div>
+          <div class="invoice-summary-row">
+            <span>Level</span>
+            <strong>{{ flow.level() }}</strong>
+          </div>
+          <div class="invoice-summary-row">
+            <span>Session</span>
+            <strong>{{ flow.session() }}</strong>
+          </div>
+          <div class="invoice-summary-row">
+            <span>Payment Type</span>
+            <strong>{{ invoicePaymentTypeLabel() }}</strong>
+          </div>
+          <div class="invoice-summary-row">
+            <span>Amount</span>
+            <strong>{{ feeAmountLabel('standard', invoiceAmount()) }}</strong>
+          </div>
+          <div class="invoice-summary-row">
+            <span>Processing Fee</span>
+            <strong>{{ feeAmountLabel('standard', invoiceProcessingFee()) }}</strong>
+          </div>
+          <div class="invoice-summary-row total">
+            <span>Total To Pay</span>
+            <strong>{{ feeAmountLabel('standard', invoiceTotal()) }}</strong>
+          </div>
+
+          <button pButton type="button" class="primary-btn" [disabled]="!canProceedInvoicePayment()" (click)="proceedWithInvoicePayment()">
+            Proceed to Payment
+          </button>
+        </div>
+      </section>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'school-fee'">
+      <section class="summary-card">
+        <div class="summary-top">
+          <h3>{{ schoolFeeCardTitle() }}</h3>
+          <p>{{ flow.session() }} Academic Session • {{ flow.level() }}</p>
+        </div>
+        <div class="summary-amount">{{ schoolFeeMainValue() }}</div>
+        <div class="progress-track">
+          <span class="progress-fill" [style.width.%]="flow.schoolFeesProgressPercent()"></span>
+        </div>
+        <div class="summary-bottom">
+          <strong>{{ totalPaid() }} paid</strong>
+          <strong>{{ remainingAmount() }} remaining</strong>
+        </div>
+      </section>
+
+      <section class="history-card" *ngIf="schoolFeePaymentHistory().length > 0">
+        <h3>Payment History</h3>
+        <div class="history-row" *ngFor="let item of schoolFeePaymentHistory()">
+          <div class="left">
+            <strong>{{ item.installmentLabel }}</strong>
+            <span>Ref No: {{ item.referenceNo }}</span>
+          </div>
+          <div class="right">
+            <strong>{{ "₦" + item.amount.toLocaleString("en-NG") }}</strong>
+            <span>{{ item.paidAt | date: "dd MMM yyyy" }}</span>
+          </div>
+          <button pButton type="button" class="icon-btn" (click)="downloadSchoolFeeReceipt(item.referenceNo)">
+            <i class="pi pi-download"></i>
+          </button>
+        </div>
+      </section>
+
+      <section class="payment-form" *ngIf="flow.canAddSchoolFeeInstallment()">
+        <h3>{{ amountFieldLabel() }}</h3>
+        <label>Amount to pay</label>
+        <div class="amount-input" [class.amount-input-error]="!!paymentValidationMessage()">
+          <span class="currency">₦</span>
+          <input
+            pInputText
+            [ngModel]="amountToPay()"
+            (ngModelChange)="onAmountChange($event)"
+            (keydown)="onAmountKeyDown($event)"
+            (paste)="onAmountPaste($event)"
+            placeholder="Enter amount"
+            inputmode="numeric"
+          />
+        </div>
+        <small class="hint">Maximum of 3 payments allowed across the full academic session</small>
+        <small class="hint" *ngIf="flow.studentFeePlan()">Minimum amount: {{ minimumAmountHint() }}</small>
+        <small class="hint" *ngIf="flow.studentFeePlan()">Maximum amount: {{ maximumAmountHint() }}</small>
+        <small class="hint" *ngIf="schoolFeePaymentHistory().length === 0">
+          First payment minimum is {{ minimumAmountHint() }}. You can pay more.
+        </small>
+        <small class="hint" *ngIf="schoolFeePaymentHistory().length > 0">
+          Suggested amount: {{ suggestedAmount() }}
+        </small>
+        <small class="hint hint-error" *ngIf="paymentValidationMessage()">{{ paymentValidationMessage() }}</small>
+      </section>
+
+      <div class="actions" *ngIf="flow.canAddSchoolFeeInstallment(); else fullyPaidAction">
+        <button pButton type="button" class="primary-btn" [disabled]="isProcessing() || !canSubmitPayment()" (click)="proceedToPayment()">
+          {{ isProcessing() ? "Processing..." : "Continue to Payment" }}
+        </button>
+        <button pButton type="button" class="secondary-btn" *ngIf="schoolFeePaymentHistory().length > 0" (click)="proceedToCourseRegistration()">
+          Proceed to Course Registration
+        </button>
+        <button pButton type="button" class="secondary-btn" *ngIf="schoolFeePaymentHistory().length > 0" (click)="downloadSchoolFeeReceipt()">
+          Download Receipt
+        </button>
+      </div>
+
+      <ng-template #fullyPaidAction>
+        <div class="actions">
+          <button pButton type="button" class="secondary-btn" (click)="downloadSchoolFeeReceipt()">
+            Download Full Receipt
+          </button>
+        </div>
+      </ng-template>
+    </ng-container>
+  </ng-container>
 </div>

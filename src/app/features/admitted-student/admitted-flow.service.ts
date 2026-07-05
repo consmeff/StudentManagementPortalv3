@@ -635,12 +635,16 @@ export class AdmittedFlowService {
       return;
     }
 
+    const nextTotalPaid = currentStatus.payment_status.total_paid + amount;
+    const nextTotalDue = Math.max(0, currentStatus.payment_status.total_due - amount);
+
     this.studentSchoolFeeStatus.set({
       ...currentStatus,
       payment_status: {
-        total_paid: currentStatus.payment_status.total_paid + amount,
-        total_due: Math.max(0, currentStatus.payment_status.total_due - amount),
-        number_of_payments: currentStatus.payment_status.number_of_payments + 1
+        total_paid: nextTotalPaid,
+        total_due: nextTotalDue,
+        number_of_payments: currentStatus.payment_status.number_of_payments + 1,
+        status: nextTotalDue <= 0 ? 'paid' : 'partially_paid'
       }
     });
   }
