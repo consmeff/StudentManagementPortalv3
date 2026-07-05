@@ -82,6 +82,7 @@ export type FeeItem = {
   amount: number;
   status: 'paid' | 'unpaid' | 'remaining';
   type: 'mandatory' | 'optional';
+  referenceId: string;
 };
 
 export type HostelApplicationStatus = 'locked' | 'form' | 'pending' | 'allocated';
@@ -317,16 +318,7 @@ export class ReturningFlowService {
 
   readonly canAccessHostelModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
 
-  readonly fees = signal<FeeItem[]>([
-    { id: 'school-fees', name: 'School Fees', amount: 600000, status: 'remaining', type: 'mandatory' },
-    { id: 'faculty-charges', name: 'Faculty Charges', amount: 10000, status: 'paid', type: 'mandatory' },
-    { id: 'departmental-fees', name: 'Departmental Fees', amount: 5000, status: 'unpaid', type: 'mandatory' },
-    { id: 'medical-fees', name: 'Medical Fees', amount: 8000, status: 'paid', type: 'mandatory' },
-    { id: 'student-union-levy', name: 'Student Union Levy', amount: 2000, status: 'paid', type: 'mandatory' },
-    { id: 'late-registration', name: 'Late Registration', amount: 600000, status: 'unpaid', type: 'optional' },
-    { id: 'hostel', name: 'Hostel', amount: 10000, status: 'unpaid', type: 'optional' },
-    { id: 'exam-resit', name: 'Exam Resit', amount: 5000, status: 'unpaid', type: 'optional' }
-  ]);
+  readonly fees = signal<FeeItem[]>([]);
 
   readonly announcementFeed = signal([
     {
@@ -888,13 +880,23 @@ export class ReturningFlowService {
   async loadStudentFeePlan(): Promise<void> {
     this.loadingStudentFeePlan.set(true);
     try {
-      const response = await firstValueFrom(this.appService.getStudentSchoolFeeStatus());
-      this.studentSchoolFeeStatus.set(response);
-      this.studentFeePlan.set(response);
+      const response = await firstValueFrom(this.appService.getStudentFeePlans());
+      this.fees.set(this.mapFeeItems(response.data));
+      const selectedPlan = selectStudentFeePlan(response.data);
+      this.studentFeePlan.set(selectedPlan);
+      this.studentSchoolFeeStatus.set(
+        selectedPlan?.payment_status
+          ? {
+              ...selectedPlan,
+              payment_status: selectedPlan.payment_status
+            }
+          : null
+      );
       this.syncReturningModuleAccess();
     } catch {
-      const response = await firstValueFrom(this.appService.getStudentFeePlans());
-      this.studentFeePlan.set(selectStudentFeePlan(response.data));
+      this.fees.set([]);
+      this.studentFeePlan.set(null);
+      this.studentSchoolFeeStatus.set(null);
       this.syncReturningModuleAccess();
     } finally {
       this.loadingStudentFeePlan.set(false);
@@ -1165,6 +1167,42 @@ export class ReturningFlowService {
     return normalized.includes('paid')
       || normalized.includes('complete')
       || normalized.includes('success');
+  }
+
+  private mapFeeItems(plans: StudentFeePlan[]): FeeItem[] {
+    return plans
+      .slice()
+      .sort((leftPlan, rightPlan) => leftPlan.display_order - rightPlan.display_order)
+      .map((plan) => ({
+        id: plan.label === 'school_fee' ? 'school-fees' : this.normalizeFeeIdentifier(plan.label || plan.name),
+        name: plan.name,
+        amount: plan.amount,
+        status: this.resolveFeeStatus(plan),
+        type: 'mandatory',
+        referenceId: String(plan.id)
+      }));
+  }
+
+  private resolveFeeStatus(plan: StudentFeePlan): FeeItem['status'] {
+    const paymentStatus = plan.payment_status;
+    if (!paymentStatus) {
+      return 'unpaid';
+    }
+    if (paymentStatus.status === 'paid' || paymentStatus.total_due <= 0) {
+      return 'paid';
+    }
+    if (paymentStatus.total_paid > 0 || paymentStatus.number_of_payments > 0) {
+      return 'remaining';
+    }
+    return 'unpaid';
+  }
+
+  private normalizeFeeIdentifier(value: string): string {
+    return (value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   }
 
   private readCurrentLevelNumber(): number | null {

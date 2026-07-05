@@ -420,7 +420,7 @@ export class ReturningPaymentComponent implements OnInit {
 
   canDownloadReceipt(feeId: string, status: string): boolean {
     if (feeId === 'school-fees') {
-      return this.schoolFeePaymentHistory().length > 0 && !this.flow.canAddSchoolFeeInstallment();
+      return status === 'paid';
     }
     return status === 'paid' && this.paymentHistory().some((item) => item.feeId === feeId);
   }

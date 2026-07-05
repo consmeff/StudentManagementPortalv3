@@ -408,6 +408,9 @@ export class ApplicationService {
       deleted_by: this.readNullableNumber(rawResponse, 'deleted_by'),
       department: this.readNumber(rawResponse, 'department'),
       level: this.readNumber(rawResponse, 'level'),
+      payment_status: this.isRecord(rawResponse['payment_status'])
+        ? this.readStudentSchoolFeePaymentStatus(rawResponse, 'payment_status')
+        : null,
     };
   }
 

@@ -68,11 +68,14 @@
                 </ng-template>
               </td>
             </tr>
+            <tr *ngIf="flow.mandatoryFees().length === 0">
+              <td colspan="4" class="empty-row">No payment items available yet.</td>
+            </tr>
           </tbody>
         </table>
       </section>
 
-      <section class="table-card optional-card">
+      <section class="table-card optional-card" *ngIf="flow.optionalFees().length > 0">
         <h2>Optional Fees (only if applicable)</h2>
         <table class="fees-table optional-table">
           <thead>
