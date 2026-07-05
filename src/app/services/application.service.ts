@@ -11,6 +11,8 @@ import {
 } from '../data/application/payment.data';
 import { PreRegistrationDataDTO } from '../data/application/preregistrationdatadto';
 import { RegistrantDataDTO, StudentSingleResponse } from '../data/application/registrantdatadto';
+import { StudentDashboardResponse } from '../data/application/student-dashboard.dto';
+import { StudentResultsResponse } from '../data/application/student-results.dto';
 import {
   StudentFeePartPaymentConfig,
   StudentFeePartPaymentEntry,
@@ -94,6 +96,18 @@ export class ApplicationService {
   studentData(): Observable<StudentSingleResponse> {
     return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/single`).pipe(
       map((response) => this.normalizeStudentSingleResponse(response))
+    );
+  }
+
+  getStudentDashboard(): Observable<StudentDashboardResponse> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/dashboard`).pipe(
+      map((response) => this.normalizeStudentDashboardResponse(response))
+    );
+  }
+
+  getStudentResults(): Observable<StudentResultsResponse> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/student/my-results`).pipe(
+      map((response) => this.normalizeStudentResultsResponse(response))
     );
   }
 
@@ -213,6 +227,60 @@ export class ApplicationService {
   private normalizeStudentSingleResponse(response: unknown): StudentSingleResponse {
     const record = this.extractRegistrantRecord(response);
     return { data: record as unknown as StudentSingleResponse['data'] };
+  }
+
+  private normalizeStudentDashboardResponse(response: unknown): StudentDashboardResponse {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    return {
+      fee_info: {
+        total_paid: this.readNumberFromUnknown(rawResponse['fee_info'], 'total_paid'),
+        total_due: this.readNumberFromUnknown(rawResponse['fee_info'], 'total_due'),
+        number_of_payments: this.readNumberFromUnknown(rawResponse['fee_info'], 'number_of_payments')
+      },
+      courses_info: {
+        registered_courses: this.readNumberFromUnknown(rawResponse['courses_info'], 'registered_courses'),
+        units: this.readNumberFromUnknown(rawResponse['courses_info'], 'units'),
+        failed_courses: this.readNumberFromUnknown(rawResponse['courses_info'], 'failed_courses')
+      },
+      cgpa: this.readNumber(rawResponse, 'cgpa'),
+      previous_cgpa: this.readNumber(rawResponse, 'previous_cgpa'),
+      current_level: this.readString(rawResponse, 'current_level'),
+      current_semester: this.readString(rawResponse, 'current_semester'),
+      academic_year: this.readString(rawResponse, 'academic_year'),
+      department: this.readString(rawResponse, 'department'),
+      recent_announcements: Array.isArray(rawResponse['recent_announcements'])
+        ? rawResponse['recent_announcements'] as StudentDashboardResponse['recent_announcements']
+        : [],
+      full_name: this.readString(rawResponse, 'full_name'),
+      matriculation_number: this.readString(rawResponse, 'matriculation_number')
+    };
+  }
+
+  private normalizeStudentResultsResponse(response: unknown): StudentResultsResponse {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const results = Array.isArray(rawResponse['results']) ? rawResponse['results'] : [];
+
+    return {
+      student_name: this.readString(rawResponse, 'student_name'),
+      matric_no: this.readString(rawResponse, 'matric_no'),
+      program: this.readNullableString(rawResponse, 'program'),
+      level: this.readString(rawResponse, 'level'),
+      total_student: this.readNumber(rawResponse, 'total_student'),
+      semester: this.readString(rawResponse, 'semester'),
+      session: this.readString(rawResponse, 'session'),
+      semester_gpa: this.readNullableNumber(rawResponse, 'semester_gpa'),
+      results: results.map((item) => {
+        const row = this.toRecord(item);
+        return {
+          id: this.readNumber(row, 'id'),
+          test_score: this.readNullableNumber(row, 'test_score'),
+          exam_score: this.readNullableNumber(row, 'exam_score'),
+          grade: this.readNullableString(row, 'grade'),
+          course_name: this.readString(row, 'course_name'),
+          course_code: this.readString(row, 'course_code')
+        };
+      })
+    };
   }
 
   private extractRegistrantRecord(response: unknown): Record<string, unknown> | null {
@@ -358,6 +426,10 @@ export class ApplicationService {
   private readNumber(source: Record<string, unknown>, key: string): number {
     const value = source[key];
     return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+  }
+
+  private readNumberFromUnknown(source: unknown, key: string): number {
+    return this.readNumber(this.toRecord(source), key);
   }
 
   private readNullableNumber(source: Record<string, unknown>, key: string): number | null {

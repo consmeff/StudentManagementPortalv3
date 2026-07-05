@@ -1,6 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
+import { StudentDashboardAnnouncement, StudentDashboardResponse } from '../../data/application/student-dashboard.dto';
+import { StudentResultsResponse } from '../../data/application/student-results.dto';
 import { ApplicationService } from '../../services/application.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import {
@@ -54,11 +56,11 @@ export type ResitCourse = {
 export type SemesterResultRow = {
   code: string;
   title: string;
-  units: number;
+  units: number | null;
   ca: number;
   exam: number;
   total: number;
-  grade: string;
+  grade: string | null;
 };
 
 export type CgpaThreshold = {
@@ -144,6 +146,12 @@ export type NextOfKinData = {
   alternatePhone: string;
 };
 
+export type ReturningAnnouncementFeedItem = {
+  title: string;
+  body: string;
+  timeAgo: string;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   private readonly appService = inject(ApplicationService);
@@ -217,9 +225,19 @@ export class ReturningFlowService {
 
   readonly loadingCourses = signal(false);
 
+  readonly loadingStudentDashboard = signal(false);
+
+  readonly loadingStudentResults = signal(false);
+
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
+
+  readonly studentDashboard = signal<StudentDashboardResponse | null>(null);
+
+  readonly hasLoadedStudentDashboard = signal(false);
+
+  readonly studentResults = signal<StudentResultsResponse | null>(null);
 
   readonly availableCourses = signal<AvailableCourse[]>([]);
 
@@ -273,7 +291,10 @@ export class ReturningFlowService {
   );
 
   readonly hasPaidFirstSchoolFeeInstallment = computed(() =>
-    this.schoolFeePaymentCount() > 0 || this.schoolFeesPaid() > 0
+    this.schoolFeePaymentCount() > 0
+    || this.schoolFeesPaid() > 0
+    || (this.studentDashboard()?.fee_info.total_paid ?? 0) > 0
+    || (this.studentDashboard()?.fee_info.total_due ?? 0) <= 0
   );
 
   readonly canAccessCoursesModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
@@ -305,6 +326,87 @@ export class ReturningFlowService {
       timeAgo: '5h ago'
     }
   ]);
+
+  readonly studentPhotoUrl = computed(() => this.authSessionStore.studentProfile()?.passport_photo?.file_url || 'assets/logo.png');
+
+  readonly dashboardAnnouncementFeed = computed<ReturningAnnouncementFeedItem[]>(() => {
+    if (!this.hasLoadedStudentDashboard()) {
+      return this.announcementFeed();
+    }
+    return this.normalizeDashboardAnnouncements(this.studentDashboard()?.recent_announcements ?? []);
+  });
+
+  readonly dashboardOutstandingAmount = computed(() =>
+    Math.max(0, this.studentDashboard()?.fee_info.total_due ?? this.outstandingAmount())
+  );
+
+  readonly dashboardTotalFeeBenchmark = computed(() => {
+    const feeInfo = this.studentDashboard()?.fee_info;
+    if (!feeInfo) {
+      return this.configuredTotalSchoolFees();
+    }
+    const paidAmount = Math.max(0, feeInfo.total_paid);
+    const dueAmount = Math.max(0, feeInfo.total_due);
+    const totalAmount = paidAmount + dueAmount;
+    return totalAmount > 0 ? totalAmount : this.configuredTotalSchoolFees();
+  });
+
+  readonly dashboardPaymentProgressPercent = computed(() => {
+    const feeInfo = this.studentDashboard()?.fee_info;
+    if (!feeInfo) {
+      return this.paymentProgressPercent();
+    }
+    const paidAmount = Math.max(0, feeInfo.total_paid);
+    const dueAmount = Math.max(0, feeInfo.total_due);
+    const totalAmount = paidAmount + dueAmount;
+    if (totalAmount <= 0) {
+      return paidAmount > 0 ? 100 : 0;
+    }
+    return Math.max(0, Math.min(100, Math.round((paidAmount / totalAmount) * 100)));
+  });
+
+  readonly dashboardOutstandingInstallmentLabel = computed(() => {
+    const feeInfo = this.studentDashboard()?.fee_info;
+    if (!feeInfo) {
+      return this.outstandingInstallmentLabel();
+    }
+    if (feeInfo.total_due <= 0) {
+      return 'Paid in full';
+    }
+    const installmentNo = feeInfo.number_of_payments + 1;
+    return `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`;
+  });
+
+  readonly dashboardRegisteredCoursesCount = computed(() =>
+    this.studentDashboard()?.courses_info.registered_courses ?? this.totalCoursesSelected()
+  );
+
+  readonly dashboardRegisteredUnitsCount = computed(() =>
+    this.studentDashboard()?.courses_info.units ?? this.totalUnitsSelected()
+  );
+
+  readonly dashboardFailedCoursesCount = computed(() =>
+    this.studentDashboard()?.courses_info.failed_courses ?? this.carryoverCourses().length
+  );
+
+  readonly dashboardFailedCoursesLabel = computed(() => {
+    const failedCoursesCount = this.dashboardFailedCoursesCount();
+    return `${failedCoursesCount} Failed ${failedCoursesCount === 1 ? 'course' : 'courses'}`;
+  });
+
+  readonly dashboardCgpaDisplay = computed(() => this.formatDecimal(this.studentDashboard()?.cgpa ?? this.cumulativeGpa()));
+
+  readonly dashboardCgpaClass = computed(() =>
+    this.studentDashboard() ? this.resolveCgpaClassLabel(this.studentDashboard()!.cgpa) : this.gpaClass()
+  );
+
+  readonly dashboardGpaDeltaLabel = computed(() => {
+    const previousCgpa = this.studentDashboard()?.previous_cgpa;
+    if (previousCgpa === undefined || previousCgpa === null) {
+      return this.gpaDelta();
+    }
+    return `from ${this.formatDecimal(previousCgpa)}`;
+  });
 
   readonly courseReviewState = signal<CourseReviewState>('locked');
 
@@ -470,7 +572,13 @@ export class ReturningFlowService {
     return current === 'locked' ? 'form' : current;
   });
 
-  readonly semesterResultGpa = computed(() => 3.85);
+  readonly semesterResultGpa = computed<number | null>(() => this.studentResults()?.semester_gpa ?? 3.85);
+
+  readonly formattedSemesterResultGpa = computed(() => this.formatNullableDecimal(this.semesterResultGpa()));
+
+  readonly formattedCurrentCgpa = computed(() => this.formatDecimal(this.currentCgpa()));
+
+  readonly selectedSemesterLabel = computed(() => this.selectedResultSemester() || this.semester());
 
   readonly profileOverview = signal<ProfileOverviewData>({
     fullName: 'ISHOLA, Hassan Gbadebo',
@@ -695,6 +803,74 @@ export class ReturningFlowService {
     }
   }
 
+  async loadStudentDashboard(forceReload = false): Promise<void> {
+    const userType = this.authSessionStore.userType().toLowerCase().trim();
+    if (userType && !userType.includes('student')) {
+      return;
+    }
+    if (this.hasLoadedStudentDashboard() && !forceReload) {
+      return;
+    }
+    this.loadingStudentDashboard.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getStudentDashboard());
+      this.studentDashboard.set(response);
+      this.hasLoadedStudentDashboard.set(true);
+      this.studentName.set(response.full_name || this.studentName());
+      this.matricNo.set(response.matriculation_number || this.matricNo());
+      this.program.set(response.department || this.program());
+      this.session.set(response.academic_year || this.session());
+      this.level.set(response.current_level || this.level());
+      this.semester.set(response.current_semester || this.semester());
+      this.cumulativeGpa.set(response.cgpa);
+      this.currentCgpa.set(response.cgpa);
+      this.gpaClass.set(this.resolveCgpaClassLabel(response.cgpa));
+      this.gpaDelta.set(`from ${this.formatDecimal(response.previous_cgpa)}`);
+      if ((response.fee_info.total_paid > 0 || response.fee_info.total_due <= 0) && !this.hasPaidStatus(this.authSessionStore.paymentStatus())) {
+        this.authSessionStore.setPaymentStatus('paid');
+      }
+      this.syncReturningModuleAccess();
+    } finally {
+      this.loadingStudentDashboard.set(false);
+    }
+  }
+
+  async loadStudentResults(forceReload = false): Promise<void> {
+    if (this.studentResults() && !forceReload) {
+      return;
+    }
+    this.loadingStudentResults.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getStudentResults());
+      this.studentResults.set(response);
+      this.studentName.set(response.student_name || this.studentName());
+      this.matricNo.set(response.matric_no || this.matricNo());
+      this.program.set(response.program || this.program());
+      this.level.set(response.level || this.level());
+      this.semester.set(response.semester || this.semester());
+      this.session.set(response.session || this.session());
+      this.selectedResultSemester.set(response.semester || this.selectedResultSemester());
+      this.resultSemesterOptions.set(response.semester ? [response.semester] : this.resultSemesterOptions());
+      this.semesterResultRows.set(
+        response.results.map((result) => {
+          const caScore = result.test_score ?? 0;
+          const examScore = result.exam_score ?? 0;
+          return {
+            code: result.course_code,
+            title: result.course_name,
+            units: null,
+            ca: caScore,
+            exam: examScore,
+            total: caScore + examScore,
+            grade: result.grade
+          };
+        })
+      );
+    } finally {
+      this.loadingStudentResults.set(false);
+    }
+  }
+
   async loadAvailableCourses(): Promise<void> {
     this.loadingCourses.set(true);
     try {
@@ -801,6 +977,14 @@ export class ReturningFlowService {
     return `₦${value.toLocaleString('en-NG')}`;
   }
 
+  formatDecimal(value: number): string {
+    return value.toFixed(2);
+  }
+
+  formatNullableDecimal(value: number | null): string {
+    return value === null ? '—' : this.formatDecimal(value);
+  }
+
   private resolveNextSchoolFeeAmount(): number {
     const nextInstallmentNumber = this.schoolFeePaymentCount() + 1;
     const configuredAmount = readStudentFeeInstallmentAmount(this.studentFeePlan(), nextInstallmentNumber);
@@ -887,5 +1071,64 @@ export class ReturningFlowService {
     if (n % 10 === 2 && n % 100 !== 12) return 'nd';
     if (n % 10 === 3 && n % 100 !== 13) return 'rd';
     return 'th';
+  }
+
+  private normalizeDashboardAnnouncements(
+    announcements: StudentDashboardAnnouncement[]
+  ): ReturningAnnouncementFeedItem[] {
+    return announcements.map((announcement) => {
+      const title = (announcement.title || '').trim();
+      const body = (announcement.body || announcement.message || announcement.description || '').trim();
+      const timeAgo = (announcement.time_ago || '').trim()
+        || this.formatAnnouncementTime(announcement.updated_at || announcement.created_at || '');
+      return {
+        title: title || 'Announcement',
+        body: body || 'No announcement details available.',
+        timeAgo: timeAgo || 'Recently'
+      };
+    });
+  }
+
+  private formatAnnouncementTime(value: string): string {
+    if (!value) {
+      return '';
+    }
+    const timestamp = Date.parse(value);
+    if (Number.isNaN(timestamp)) {
+      return '';
+    }
+    const diffMs = Date.now() - timestamp;
+    const diffMinutes = Math.max(0, Math.floor(diffMs / 60000));
+    if (diffMinutes < 1) {
+      return 'Just now';
+    }
+    if (diffMinutes < 60) {
+      return `${diffMinutes}m ago`;
+    }
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) {
+      return `${diffHours}h ago`;
+    }
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}d ago`;
+  }
+
+  private resolveCgpaClassLabel(cgpa: number): string {
+    if (cgpa >= 4.5) {
+      return 'First Class';
+    }
+    if (cgpa >= 3.5) {
+      return 'Second Class Upper';
+    }
+    if (cgpa >= 2.4) {
+      return 'Second Class Lower';
+    }
+    if (cgpa >= 1.5) {
+      return 'Third Class';
+    }
+    if (cgpa >= 1) {
+      return 'Pass';
+    }
+    return 'Fail';
   }
 }

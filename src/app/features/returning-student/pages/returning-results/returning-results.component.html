@@ -4,7 +4,7 @@
       <h1>Semester results</h1>
       <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
     </div>
-    <select [ngModel]="flow.selectedResultSemester()" (ngModelChange)="flow.setResultSemester($event)">
+    <select [ngModel]="flow.selectedResultSemester()" (ngModelChange)="flow.setResultSemester($event)" [disabled]="flow.resultSemesterOptions().length <= 1">
       <option *ngFor="let option of flow.resultSemesterOptions()" [ngValue]="option">{{ option }}</option>
     </select>
   </div>
@@ -14,11 +14,11 @@
       <div><small>Student Name</small><strong>{{ flow.studentName() }}</strong></div>
       <div><small>Matric Number</small><strong>{{ flow.matricNo() }}</strong></div>
       <div><small>Current Level</small><strong>{{ flow.level() }}</strong></div>
-      <div><small>program</small><strong>{{ flow.program() }}</strong></div>
+      <div><small>Programme</small><strong>{{ flow.program() || '—' }}</strong></div>
       <div><small>Academic Session</small><strong>{{ flow.session() }}</strong></div>
-      <div><small>Semester</small><strong>First</strong></div>
+      <div><small>Semester</small><strong>{{ flow.selectedSemesterLabel() }}</strong></div>
     </div>
-    <img src="assets/logo.png" alt="Student image" />
+    <img [src]="flow.studentPhotoUrl()" alt="Student image" />
   </section>
 
   <section class="results-table-wrap">
@@ -38,25 +38,27 @@
         <tr *ngFor="let row of flow.semesterResultRows()">
           <td>{{ row.code }}</td>
           <td>{{ row.title }}</td>
-          <td>{{ row.units }}</td>
+          <td>{{ row.units ?? '—' }}</td>
           <td>{{ row.ca }}</td>
           <td>{{ row.exam }}</td>
           <td>{{ row.total }}</td>
           <td>
-            <span class="grade-pill" [class.fail]="row.grade === 'F'">{{ row.grade }}</span>
+            <span class="grade-pill" [class.fail]="row.grade === 'F'" [class.empty]="!row.grade">{{ row.grade ?? '—' }}</span>
           </td>
+        </tr>
+        <tr *ngIf="flow.semesterResultRows().length === 0">
+          <td colspan="7" class="empty-row">No results available yet.</td>
         </tr>
       </tbody>
     </table>
   </section>
 
   <div class="gpa-footer">
-    <span>Semester GPA: <strong>{{ flow.semesterResultGpa().toFixed(2) }}</strong></span>
-    <span>C.G.P.A: <strong>{{ flow.currentCgpa().toFixed(2) }}</strong></span>
+    <span>Semester GPA: <strong>{{ flow.formattedSemesterResultGpa() }}</strong></span>
+    <span>C.G.P.A: <strong>{{ flow.formattedCurrentCgpa() }}</strong></span>
   </div>
 
   <div class="action-row">
     <app-button iconClass="pi pi-download" (buttonClick)="downloadResultSlip()">Download Result Slip</app-button>
   </div>
 </div>
-

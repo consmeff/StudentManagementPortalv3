@@ -1,6 +1,6 @@
 <div class="returning-dashboard-page">
   <section class="student-hero">
-    <img src="assets/logo.png" alt="Student profile" class="student-photo" />
+    <img [src]="flow.studentPhotoUrl()" alt="Student profile" class="student-photo" />
     <div class="student-meta">
       <h1>{{ flow.studentName() }}</h1>
       <p>{{ flow.matricNo() }}</p>
@@ -16,39 +16,40 @@
   <section class="summary-grid">
     <article class="summary-card">
       <h3>Cumulative GPA</h3>
-      <strong>{{ flow.cumulativeGpa() }}</strong>
-      <p>{{ flow.gpaClass() }}</p>
-      <span class="chip positive">↑ {{ flow.gpaDelta() }}</span>
+      <strong>{{ flow.dashboardCgpaDisplay() }}</strong>
+      <p>{{ flow.dashboardCgpaClass() }}</p>
+      <span class="chip positive">↑ {{ flow.dashboardGpaDeltaLabel() }}</span>
     </article>
 
     <article class="summary-card">
       <h3>School Fees Outstanding</h3>
-      <strong>{{ flow.formatCurrency(flow.outstandingAmount()) }}</strong>
-      <p>{{ flow.outstandingInstallmentLabel() }}</p>
+      <strong>{{ flow.formatCurrency(flow.dashboardOutstandingAmount()) }}</strong>
+      <p>{{ flow.dashboardOutstandingInstallmentLabel() }}</p>
       <div class="progress-track">
-        <span class="progress-fill" [style.width.%]="flow.paymentProgressPercent()"></span>
+        <span class="progress-fill" [style.width.%]="flow.dashboardPaymentProgressPercent()"></span>
       </div>
-      <small>{{ flow.formatCurrency(flow.totalSchoolFees) }}</small>
+      <small>{{ flow.formatCurrency(flow.dashboardTotalFeeBenchmark()) }}</small>
     </article>
 
     <article class="summary-card">
       <h3>Courses registered</h3>
-      <strong>{{ flow.totalCoursesSelected() }}</strong>
-      <p>{{ flow.totalUnitsSelected() }} units this semester</p>
-      <span class="chip muted" *ngIf="flow.hasFailedCourse()">0 Failed course</span>
+      <strong>{{ flow.dashboardRegisteredCoursesCount() }}</strong>
+      <p>{{ flow.dashboardRegisteredUnitsCount() }} units this semester</p>
+      <span class="chip muted">{{ flow.dashboardFailedCoursesLabel() }}</span>
     </article>
   </section>
 
   <section class="board-grid">
     <article class="announcement-pane">
       <h2>Announcement</h2>
-      <div class="announcement-item" *ngFor="let item of flow.announcementFeed()">
+      <div class="announcement-item" *ngFor="let item of flow.dashboardAnnouncementFeed()">
         <div>
           <strong>{{ item.title }}</strong>
           <p>{{ item.body }}</p>
         </div>
         <small>{{ item.timeAgo }}</small>
       </div>
+      <p class="empty-state" *ngIf="flow.dashboardAnnouncementFeed().length === 0">No recent announcements.</p>
     </article>
 
     <article class="tasks-pane">
