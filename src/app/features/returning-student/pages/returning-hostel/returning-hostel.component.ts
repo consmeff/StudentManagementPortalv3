@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { ReturningFlowService } from '../../returning-flow.service';
@@ -14,10 +13,8 @@ import { ReturningFlowService } from '../../returning-flow.service';
   templateUrl: './returning-hostel.component.html',
   styleUrl: './returning-hostel.component.scss'
 })
-export class ReturningHostelComponent {
+export class ReturningHostelComponent implements OnInit {
   readonly flow = inject(ReturningFlowService);
-
-  private readonly router = inject(Router);
 
   private readonly messageService = inject(MessageService);
 
@@ -32,8 +29,19 @@ export class ReturningHostelComponent {
     return !!d.academicSession && !!d.preferredHostel && !!d.preferredBlock && d.acknowledged;
   });
 
-  goToPayment(): void {
-    void this.router.navigateByUrl('/returning/payment?flow=school-fee');
+  ngOnInit(): void {
+    void Promise.allSettled([
+      this.flow.loadStudentDashboard(),
+      this.flow.loadHostelAllocation()
+    ]);
+  }
+
+  startRequest(): void {
+    this.flow.startHostelModificationRequest();
+  }
+
+  backToRoom(): void {
+    this.flow.setHostelApplicationStatus('allocated');
   }
 
   updateField<K extends keyof ReturnType<ReturningFlowService['hostelApplicationDraft']>>(key: K, value: ReturnType<ReturningFlowService['hostelApplicationDraft']>[K]): void {
@@ -58,11 +66,6 @@ export class ReturningHostelComponent {
       summary: 'Hostel',
       detail: result.message
     });
-  }
-
-  // demo helper to match final screenshot state quickly without backend review process
-  markAllocated(): void {
-    this.flow.setHostelApplicationStatus('allocated');
   }
 
   printHostelSlip(): void {

@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { StudentCgpaTrendResponse } from '../../data/application/student-cgpa-trend.dto';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
 import { StudentDashboardAnnouncement, StudentDashboardResponse } from '../../data/application/student-dashboard.dto';
+import { StudentHostelAllocation } from '../../data/application/student-hostel.dto';
 import { StudentResultsResponse } from '../../data/application/student-results.dto';
 import { ApplicationService } from '../../services/application.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
@@ -86,7 +87,7 @@ export type FeeItem = {
   referenceId: string;
 };
 
-export type HostelApplicationStatus = 'locked' | 'form' | 'pending' | 'allocated';
+export type HostelApplicationStatus = 'request' | 'pending' | 'allocated';
 
 export type HostelApplicationPayload = {
   academicSession: string;
@@ -186,10 +187,10 @@ export class ReturningFlowService {
 
   readonly activeProfileTab = signal<ReturningProfileTab>('overview');
 
-  readonly hostelApplicationStatus = signal<HostelApplicationStatus>('locked');
+  readonly hostelApplicationStatus = signal<HostelApplicationStatus>('allocated');
 
   readonly hostelApplicationDraft = signal<HostelApplicationPayload>({
-    academicSession: '',
+    academicSession: '2025/2026',
     preferredHostel: '',
     preferredBlock: '',
     specialNeeds: '',
@@ -199,12 +200,12 @@ export class ReturningFlowService {
   readonly hostelApplicationDate = signal<Date | null>(null);
 
   readonly hostelAllocation = signal<HostelAllocation>({
-    hostelName: 'Abimbola Hostel',
-    block: 'Block A',
-    roomNumber: 'Room 17',
-    floor: '2nd Floor',
-    roomType: '4-bed shared',
-    bed: 'Bed 3'
+    hostelName: '',
+    block: '',
+    roomNumber: '',
+    floor: '',
+    roomType: '',
+    bed: ''
   });
 
   readonly cumulativeGpa = signal(3.78);
@@ -243,6 +244,8 @@ export class ReturningFlowService {
 
   readonly loadingStudentCgpaTrend = signal(false);
 
+  readonly loadingHostelAllocation = signal(false);
+
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
@@ -254,6 +257,8 @@ export class ReturningFlowService {
   readonly studentResults = signal<StudentResultsResponse | null>(null);
 
   readonly studentCgpaTrend = signal<StudentCgpaTrendResponse | null>(null);
+
+  readonly hasLoadedHostelAllocation = signal(false);
 
   readonly availableCourses = signal<AvailableCourse[]>([]);
 
@@ -567,17 +572,7 @@ export class ReturningFlowService {
 
   readonly optionalFees = computed(() => this.fees().filter((fee) => fee.type === 'optional'));
 
-  readonly hostelFeeStatus = computed(() => this.fees().find((fee) => fee.id === 'hostel')?.status ?? 'unpaid');
-
-  readonly canAccessHostelApplication = computed(() => this.hostelFeeStatus() === 'paid');
-
-  readonly effectiveHostelStatus = computed<HostelApplicationStatus>(() => {
-    if (!this.canAccessHostelApplication()) {
-      return 'locked';
-    }
-    const current = this.hostelApplicationStatus();
-    return current === 'locked' ? 'form' : current;
-  });
+  readonly effectiveHostelStatus = computed<HostelApplicationStatus>(() => this.hostelApplicationStatus());
 
   readonly semesterResultGpa = computed<number | null>(() => this.studentResults()?.semester_gpa ?? 3.85);
 
@@ -760,9 +755,6 @@ export class ReturningFlowService {
       fee.id === feeId ? { ...fee, status: 'paid' as const } : fee
     );
     this.fees.set(updated);
-    if (feeId === 'hostel' && this.hostelApplicationStatus() === 'locked') {
-      this.hostelApplicationStatus.set('form');
-    }
     return { ok: true, message: `${target.name} payment recorded.` };
   }
 
@@ -791,9 +783,6 @@ export class ReturningFlowService {
         fee.id === feeId ? { ...fee, status: 'paid' as const } : fee
       )
     );
-    if (feeId === 'hostel' && this.hostelApplicationStatus() === 'locked') {
-      this.hostelApplicationStatus.set('form');
-    }
     return { ok: true, message: `${paymentType} payment recorded.`, referenceNo };
   }
 
@@ -861,12 +850,20 @@ export class ReturningFlowService {
     this.hostelApplicationDraft.set({ ...this.hostelApplicationDraft(), ...patch });
   }
 
+  startHostelModificationRequest(): void {
+    this.hostelApplicationDraft.set({
+      academicSession: this.session(),
+      preferredHostel: '',
+      preferredBlock: '',
+      specialNeeds: '',
+      acknowledged: false
+    });
+    this.hostelApplicationStatus.set('request');
+  }
+
   submitHostelApplication(payload: HostelApplicationPayload): { ok: boolean; message: string } {
-    if (!this.canAccessHostelApplication()) {
-      return { ok: false, message: 'Hostel application is locked until hostel fee is paid.' };
-    }
     if (!payload.academicSession || !payload.preferredHostel || !payload.preferredBlock) {
-      return { ok: false, message: 'Complete all required hostel fields.' };
+      return { ok: false, message: 'Complete all required hostel modification fields.' };
     }
     if (!payload.acknowledged) {
       return { ok: false, message: 'You must acknowledge hostel rules before submission.' };
@@ -874,14 +871,10 @@ export class ReturningFlowService {
     this.hostelApplicationDraft.set(payload);
     this.hostelApplicationDate.set(new Date());
     this.hostelApplicationStatus.set('pending');
-    return { ok: true, message: 'Hostel application submitted successfully.' };
+    return { ok: true, message: 'Hostel modification request submitted successfully.' };
   }
 
   setHostelApplicationStatus(status: HostelApplicationStatus): void {
-    if (!this.canAccessHostelApplication() && status !== 'locked') {
-      this.hostelApplicationStatus.set('locked');
-      return;
-    }
     this.hostelApplicationStatus.set(status);
   }
 
@@ -1008,6 +1001,31 @@ export class ReturningFlowService {
       this.gpaClass.set(this.resolveCgpaClassLabel(response.current_cgpa));
     } finally {
       this.loadingStudentCgpaTrend.set(false);
+    }
+  }
+
+  async loadHostelAllocation(forceReload = false): Promise<void> {
+    if (this.hasLoadedHostelAllocation() && !forceReload) {
+      return;
+    }
+
+    this.loadingHostelAllocation.set(true);
+    try {
+      const allocation = await firstValueFrom(this.appService.getStudentHostelAllocation());
+      this.setHostelAllocation(allocation);
+      this.hasLoadedHostelAllocation.set(true);
+    } catch {
+      this.hostelAllocation.set({
+        hostelName: '',
+        block: '',
+        roomNumber: '',
+        floor: '',
+        roomType: '',
+        bed: ''
+      });
+      this.hasLoadedHostelAllocation.set(true);
+    } finally {
+      this.loadingHostelAllocation.set(false);
     }
   }
 
@@ -1223,6 +1241,21 @@ export class ReturningFlowService {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
+  }
+
+  private setHostelAllocation(allocation: StudentHostelAllocation): void {
+    const normalizedAllocation = {
+      hostelName: allocation.hostelName,
+      block: allocation.block,
+      roomNumber: allocation.roomNumber,
+      floor: allocation.floor,
+      roomType: allocation.roomType,
+      bed: allocation.bed
+    };
+
+    this.hostelAllocation.set(normalizedAllocation);
+    const hasAllocation = Object.values(normalizedAllocation).some((value) => value.trim().length > 0);
+    this.hostelApplicationStatus.set(hasAllocation ? 'allocated' : 'request');
   }
 
   private resolvePasswordChangeErrorMessage(error: unknown): string {

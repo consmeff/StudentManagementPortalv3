@@ -14,6 +14,7 @@ import { PreRegistrationDataDTO } from '../data/application/preregistrationdatad
 import { RegistrantDataDTO, StudentSingleResponse } from '../data/application/registrantdatadto';
 import { StudentDashboardResponse } from '../data/application/student-dashboard.dto';
 import { StudentCgpaTrendResponse } from '../data/application/student-cgpa-trend.dto';
+import { StudentHostelAllocation } from '../data/application/student-hostel.dto';
 import { StudentResultsResponse } from '../data/application/student-results.dto';
 import {
   StudentFeePartPaymentConfig,
@@ -44,6 +45,8 @@ export class ApplicationService {
   private readonly payStudentFeeEndpoint = `${this.apiRoot}/api/v1/students/pay-fee`;
 
   private readonly changePasswordEndpoint = `${this.apiRoot}/password/change`;
+
+  private readonly studentHostelAllocationEndpoint = `${this.apiRoot}/api/v1/hostels/students/allocation`;
 
   constructor(private http: HttpClient) { }
 
@@ -117,6 +120,12 @@ export class ApplicationService {
   getStudentCgpaTrend(): Observable<StudentCgpaTrendResponse> {
     return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/cgpa-trend`).pipe(
       map((response) => this.normalizeStudentCgpaTrendResponse(response))
+    );
+  }
+
+  getStudentHostelAllocation(): Observable<StudentHostelAllocation> {
+    return this.http.get<unknown>(this.studentHostelAllocationEndpoint).pipe(
+      map((response) => this.normalizeStudentHostelAllocationResponse(response))
     );
   }
 
@@ -542,5 +551,72 @@ export class ApplicationService {
       number_of_payments: this.readNumber(value, 'number_of_payments'),
       status: this.readString(value, 'status')
     };
+  }
+
+  private normalizeStudentHostelAllocationResponse(response: unknown): StudentHostelAllocation {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const hostelRecord = this.getNestedRecord(rawResponse, 'hostel');
+    const blockRecord = this.getNestedRecord(rawResponse, 'block');
+    const roomRecord = this.getNestedRecord(rawResponse, 'room');
+    const bedRecord = this.getNestedRecord(rawResponse, 'bed');
+
+    return {
+      hostelName: this.readFirstDisplayValue(
+        rawResponse['hostel_name'],
+        rawResponse['hostel'],
+        rawResponse['hostel_label'],
+        hostelRecord?.['name'],
+        hostelRecord?.['hostel_name']
+      ),
+      block: this.readFirstDisplayValue(
+        rawResponse['block'],
+        rawResponse['block_name'],
+        rawResponse['hostel_block'],
+        blockRecord?.['name'],
+        roomRecord?.['block'],
+        roomRecord?.['block_name']
+      ),
+      roomNumber: this.readFirstDisplayValue(
+        rawResponse['room_number'],
+        rawResponse['room_no'],
+        rawResponse['room'],
+        roomRecord?.['number'],
+        roomRecord?.['room_number'],
+        roomRecord?.['name']
+      ),
+      floor: this.readFirstDisplayValue(
+        rawResponse['floor'],
+        rawResponse['floor_name'],
+        roomRecord?.['floor'],
+        roomRecord?.['floor_name']
+      ),
+      roomType: this.readFirstDisplayValue(
+        rawResponse['room_type'],
+        rawResponse['type'],
+        roomRecord?.['room_type'],
+        roomRecord?.['type']
+      ),
+      bed: this.readFirstDisplayValue(
+        rawResponse['bed'],
+        rawResponse['bed_number'],
+        rawResponse['student_bed'],
+        bedRecord?.['name'],
+        bedRecord?.['bed_number'],
+        roomRecord?.['bed'],
+        roomRecord?.['bed_number']
+      )
+    };
+  }
+
+  private readFirstDisplayValue(...candidates: unknown[]): string {
+    for (const candidate of candidates) {
+      if (typeof candidate === 'string' && candidate.trim().length > 0) {
+        return candidate.trim();
+      }
+      if (typeof candidate === 'number' && Number.isFinite(candidate)) {
+        return String(candidate);
+      }
+    }
+    return '';
   }
 }
