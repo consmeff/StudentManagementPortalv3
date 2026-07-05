@@ -14,7 +14,12 @@ import { PreRegistrationDataDTO } from '../data/application/preregistrationdatad
 import { RegistrantDataDTO, StudentSingleResponse } from '../data/application/registrantdatadto';
 import { StudentDashboardResponse } from '../data/application/student-dashboard.dto';
 import { StudentCgpaTrendResponse } from '../data/application/student-cgpa-trend.dto';
-import { StudentHostelAllocation } from '../data/application/student-hostel.dto';
+import {
+  StudentHostelAllocation,
+  StudentHostelListResponse,
+  StudentHostelOption,
+  StudentHostelRoomOption
+} from '../data/application/student-hostel.dto';
 import { StudentResultsResponse } from '../data/application/student-results.dto';
 import {
   StudentFeePartPaymentConfig,
@@ -47,6 +52,8 @@ export class ApplicationService {
   private readonly changePasswordEndpoint = `${this.apiRoot}/password/change`;
 
   private readonly studentHostelAllocationEndpoint = `${this.apiRoot}/api/v1/hostels/students/allocation`;
+
+  private readonly hostelsEndpoint = `${this.apiRoot}/api/v1/hostels`;
 
   constructor(private http: HttpClient) { }
 
@@ -126,6 +133,12 @@ export class ApplicationService {
   getStudentHostelAllocation(): Observable<StudentHostelAllocation> {
     return this.http.get<unknown>(this.studentHostelAllocationEndpoint).pipe(
       map((response) => this.normalizeStudentHostelAllocationResponse(response))
+    );
+  }
+
+  getHostels(): Observable<StudentHostelListResponse> {
+    return this.http.get<unknown>(this.hostelsEndpoint).pipe(
+      map((response) => this.normalizeStudentHostelsResponse(response))
     );
   }
 
@@ -605,6 +618,96 @@ export class ApplicationService {
         roomRecord?.['bed'],
         roomRecord?.['bed_number']
       )
+    };
+  }
+
+  private normalizeStudentHostelsResponse(response: unknown): StudentHostelListResponse {
+    const rawResponse = this.toRecord(response);
+    const source = Array.isArray(rawResponse['results'])
+      ? rawResponse['results']
+      : Array.isArray(rawResponse['data'])
+        ? rawResponse['data']
+        : Array.isArray(response)
+          ? response
+          : [];
+
+    return {
+      count: this.readNumber(rawResponse, 'count') || source.length,
+      next: this.readNullableString(rawResponse, 'next'),
+      previous: this.readNullableString(rawResponse, 'previous'),
+      results: source.map((entry) => this.normalizeStudentHostelOption(entry))
+    };
+  }
+
+  private normalizeStudentHostelOption(source: unknown): StudentHostelOption {
+    const rawSource = this.toRecord(source);
+    const rooms = this.readStudentHostelRoomOptions(rawSource);
+    const roomCount = this.readNumber(rawSource, 'number_of_rooms') || rooms.length;
+
+    return {
+      id: this.readFirstDisplayValue(rawSource['id'], rawSource['slug'], rawSource['name']),
+      name: this.readFirstDisplayValue(rawSource['name'], rawSource['hostel_name']),
+      roomCount,
+      rooms
+    };
+  }
+
+  private readStudentHostelRoomOptions(source: Record<string, unknown>): StudentHostelRoomOption[] {
+    const possibleKeys = ['rooms', 'available_rooms', 'room_numbers'];
+
+    for (const key of possibleKeys) {
+      const value = source[key];
+      if (!Array.isArray(value)) {
+        continue;
+      }
+
+      return value
+        .map((entry) => this.normalizeStudentHostelRoomOption(entry))
+        .filter((entry) => entry !== null);
+    }
+
+    return [];
+  }
+
+  private normalizeStudentHostelRoomOption(source: unknown): StudentHostelRoomOption | null {
+    if (typeof source === 'string' && source.trim().length > 0) {
+      return {
+        value: source.trim(),
+        label: source.trim()
+      };
+    }
+
+    if (typeof source === 'number' && Number.isFinite(source)) {
+      const value = String(source);
+      return {
+        value,
+        label: value
+      };
+    }
+
+    const rawSource = this.toRecord(source);
+    const value = this.readFirstDisplayValue(
+      rawSource['room_number'],
+      rawSource['number'],
+      rawSource['name'],
+      rawSource['label'],
+      rawSource['id']
+    );
+
+    if (!value) {
+      return null;
+    }
+
+    const label = this.readFirstDisplayValue(
+      rawSource['label'],
+      rawSource['room_number'],
+      rawSource['number'],
+      rawSource['name']
+    ) || value;
+
+    return {
+      value,
+      label
     };
   }
 

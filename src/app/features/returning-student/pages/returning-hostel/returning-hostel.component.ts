@@ -26,13 +26,15 @@ export class ReturningHostelComponent implements OnInit {
 
   readonly canSubmit = computed(() => {
     const d = this.draft();
-    return !!d.academicSession && !!d.preferredHostel && !!d.preferredBlock && d.acknowledged;
+    const requiresRoomSelection = this.flow.availableRoomOptions().length > 0;
+    return !!d.academicSession && !!d.preferredHostel && (!requiresRoomSelection || !!d.preferredBlock) && d.acknowledged;
   });
 
   ngOnInit(): void {
     void Promise.allSettled([
       this.flow.loadStudentDashboard(),
-      this.flow.loadHostelAllocation()
+      this.flow.loadHostelAllocation(),
+      this.flow.loadHostelOptions()
     ]);
   }
 

@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { StudentCgpaTrendResponse } from '../../data/application/student-cgpa-trend.dto';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
 import { StudentDashboardAnnouncement, StudentDashboardResponse } from '../../data/application/student-dashboard.dto';
-import { StudentHostelAllocation } from '../../data/application/student-hostel.dto';
+import { StudentHostelAllocation, StudentHostelOption, StudentHostelRoomOption } from '../../data/application/student-hostel.dto';
 import { StudentResultsResponse } from '../../data/application/student-results.dto';
 import { ApplicationService } from '../../services/application.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
@@ -246,6 +246,8 @@ export class ReturningFlowService {
 
   readonly loadingHostelAllocation = signal(false);
 
+  readonly loadingHostelOptions = signal(false);
+
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
@@ -259,6 +261,10 @@ export class ReturningFlowService {
   readonly studentCgpaTrend = signal<StudentCgpaTrendResponse | null>(null);
 
   readonly hasLoadedHostelAllocation = signal(false);
+
+  readonly hasLoadedHostelOptions = signal(false);
+
+  readonly availableHostels = signal<StudentHostelOption[]>([]);
 
   readonly availableCourses = signal<AvailableCourse[]>([]);
 
@@ -485,10 +491,6 @@ export class ReturningFlowService {
 
   readonly hostelSessionOptions = signal(['2025/2026']);
 
-  readonly hostelOptions = signal(['Abimbola Hostel', 'Amina Hostel', 'Legacy Hostel']);
-
-  readonly hostelBlockOptions = signal(['Block A', 'Block B', 'Block C']);
-
   readonly cgpaThresholds = signal<CgpaThreshold[]>([
     { scoreRange: '70 - 100', letterGrade: 'A', gradePoint: '5', cgpaRange: '4.50 - 5.00', classOfDegree: 'First Class' },
     { scoreRange: '60 - 69', letterGrade: 'B', gradePoint: '4', cgpaRange: '3.50 - 4.49', classOfDegree: 'Second Class Upper', highlighted: true },
@@ -573,6 +575,16 @@ export class ReturningFlowService {
   readonly optionalFees = computed(() => this.fees().filter((fee) => fee.type === 'optional'));
 
   readonly effectiveHostelStatus = computed<HostelApplicationStatus>(() => this.hostelApplicationStatus());
+
+  readonly selectedHostelOption = computed(() => {
+    const preferredHostel = this.hostelApplicationDraft().preferredHostel;
+    return this.availableHostels().find((hostel) => hostel.id === preferredHostel) ?? null;
+  });
+
+  readonly availableRoomOptions = computed<StudentHostelRoomOption[]>(() => {
+    const selectedHostel = this.selectedHostelOption();
+    return selectedHostel?.rooms ?? [];
+  });
 
   readonly semesterResultGpa = computed<number | null>(() => this.studentResults()?.semester_gpa ?? 3.85);
 
@@ -847,7 +859,17 @@ export class ReturningFlowService {
   }
 
   updateHostelDraft(patch: Partial<HostelApplicationPayload>): void {
-    this.hostelApplicationDraft.set({ ...this.hostelApplicationDraft(), ...patch });
+    const currentDraft = this.hostelApplicationDraft();
+    const shouldResetPreferredBlock =
+      typeof patch.preferredHostel === 'string' &&
+      patch.preferredHostel !== currentDraft.preferredHostel &&
+      !('preferredBlock' in patch);
+
+    this.hostelApplicationDraft.set({
+      ...currentDraft,
+      ...patch,
+      preferredBlock: shouldResetPreferredBlock ? '' : (patch.preferredBlock ?? currentDraft.preferredBlock)
+    });
   }
 
   startHostelModificationRequest(): void {
@@ -862,7 +884,10 @@ export class ReturningFlowService {
   }
 
   submitHostelApplication(payload: HostelApplicationPayload): { ok: boolean; message: string } {
-    if (!payload.academicSession || !payload.preferredHostel || !payload.preferredBlock) {
+    const selectedHostel = this.availableHostels().find((hostel) => hostel.id === payload.preferredHostel) ?? null;
+    const requiresRoomSelection = (selectedHostel?.rooms.length ?? 0) > 0;
+
+    if (!payload.academicSession || !payload.preferredHostel || (requiresRoomSelection && !payload.preferredBlock)) {
       return { ok: false, message: 'Complete all required hostel modification fields.' };
     }
     if (!payload.acknowledged) {
@@ -1026,6 +1051,24 @@ export class ReturningFlowService {
       this.hasLoadedHostelAllocation.set(true);
     } finally {
       this.loadingHostelAllocation.set(false);
+    }
+  }
+
+  async loadHostelOptions(forceReload = false): Promise<void> {
+    if (this.hasLoadedHostelOptions() && !forceReload) {
+      return;
+    }
+
+    this.loadingHostelOptions.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getHostels());
+      this.availableHostels.set(response.results);
+      this.hasLoadedHostelOptions.set(true);
+    } catch {
+      this.availableHostels.set([]);
+      this.hasLoadedHostelOptions.set(true);
+    } finally {
+      this.loadingHostelOptions.set(false);
     }
   }
 

@@ -32,16 +32,26 @@
         <label>Preferred Hostel</label>
         <select [ngModel]="draft().preferredHostel" (ngModelChange)="updateField('preferredHostel', $event)">
           <option [ngValue]="''">Select hostel</option>
-          <option *ngFor="let item of flow.hostelOptions()" [ngValue]="item">{{ item }}</option>
+          <option *ngFor="let item of flow.availableHostels()" [ngValue]="item.id">
+            {{ item.name }}<ng-container *ngIf="item.roomCount > 0"> ({{ item.roomCount }} rooms)</ng-container>
+          </option>
         </select>
+        <small *ngIf="flow.loadingHostelOptions()">Loading available hostels...</small>
       </div>
 
       <div class="form-field">
-        <label>Preferred Block</label>
-        <select [ngModel]="draft().preferredBlock" (ngModelChange)="updateField('preferredBlock', $event)">
-          <option [ngValue]="''">Select block</option>
-          <option *ngFor="let item of flow.hostelBlockOptions()" [ngValue]="item">{{ item }}</option>
+        <label>Preferred Room</label>
+        <select
+          [disabled]="!draft().preferredHostel || flow.availableRoomOptions().length === 0"
+          [ngModel]="draft().preferredBlock"
+          (ngModelChange)="updateField('preferredBlock', $event)"
+        >
+          <option [ngValue]="''">Select room</option>
+          <option *ngFor="let item of flow.availableRoomOptions()" [ngValue]="item.value">{{ item.label }}</option>
         </select>
+        <small *ngIf="draft().preferredHostel && flow.selectedHostelOption()?.roomCount">
+          {{ flow.selectedHostelOption()?.roomCount }} rooms available
+        </small>
       </div>
 
       <div class="form-field">
