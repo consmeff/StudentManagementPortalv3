@@ -18,6 +18,7 @@ import { AcademicHistory, OLevelResult, RegistrantDataDTO } from '../../../../da
 import { extractLastYearFromText, getPastYears } from '../../../../utility/yearutil';
 import { ExamRecord, TAcademicHistory, TOLevelResult, TPersonalDetailDTO, TUtmeResultPayload } from '../../../../data/application/transformer.dto';
 import { ACADEMIC_HISTORY_RULES } from '../../../../constants/academic-history.constants';
+import { formatDateOnly, parseDateOnly } from '../../../../utility/date-only';
 
 @Component({
   selector: 'app-academichistory',
@@ -338,9 +339,7 @@ export class AcademicHistoryComponent implements OnInit {
   }
 
   formatDate(date: Date | string | null): string {
-    if (!date) return '';
-    if (typeof date === 'string') return date;
-    return date.toISOString().split('T')[0];
+    return formatDateOnly(date);
   }
 
   examAttemptCountArray(): FormArray {
@@ -355,8 +354,8 @@ export class AcademicHistoryComponent implements OnInit {
     return this.fb.group({
       name: [item?.institution ?? ''],
       qualificationType: [item?.certificate_type ?? null],
-      dateStarted: [item?.from_date ? new Date(item.from_date) : null],
-      dateCompleted: [item?.to_date ? new Date(item.to_date) : null],
+      dateStarted: [parseDateOnly(item?.from_date ?? null)],
+      dateCompleted: [parseDateOnly(item?.to_date ?? null)],
     });
   }
 

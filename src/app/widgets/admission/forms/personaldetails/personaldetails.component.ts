@@ -18,6 +18,7 @@ import { formstepDTO } from '../../../../data/application/form.dto';
 import { LGA, RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { Countries, States } from '../../../../data/application/location.dto';
 import { TPersonalDetailDTO } from '../../../../data/application/transformer.dto';
+import { parseDateOnly } from '../../../../utility/date-only';
 
 @Component({
   selector: 'app-personaldetails',
@@ -229,8 +230,8 @@ export class PersonalDetailsComponent implements OnInit {
       return null;
     }
 
-    const date = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(date.getTime())) {
+    const date = parseDateOnly(value);
+    if (!date) {
       return null;
     }
 
@@ -243,8 +244,8 @@ export class PersonalDetailsComponent implements OnInit {
       if (!value) {
         return null;
       }
-      const date = value instanceof Date ? value : new Date(value);
-      if (Number.isNaN(date.getTime())) {
+      const date = parseDateOnly(value);
+      if (!date) {
         return null;
       }
 
