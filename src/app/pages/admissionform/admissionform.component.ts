@@ -25,6 +25,7 @@ import { AuthSessionStore } from '../../store/auth-session.store';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { normalizeApplicationStatusKey } from '../../constants/application-status.utils';
+import { formatDateOnly } from '../../utility/date-only';
 import { PersonalDetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
 import { NextOfKinComponent } from '../../widgets/admission/forms/nextofkin/nextofkin.component';
 import { AcademicHistoryComponent } from "../../widgets/admission/forms/academichistory/academichistory.component";
@@ -566,7 +567,7 @@ export class AdmissionFormComponent implements OnInit {
         residential_address: _raddress,
         correspondence_address: _caddress,
         nationality: this._personalFormData.nationality,
-        dob: this._personalFormData.dateOfBirth ? this._personalFormData.dateOfBirth.toISOString().split('T')[0] : '',
+        dob: formatDateOnly(this._personalFormData.dateOfBirth),
         gender: this._personalFormData.gender,
         lga,
         state_of_origin: stateOfOrigin,
