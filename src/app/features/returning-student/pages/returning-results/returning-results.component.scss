@@ -111,6 +111,16 @@
   background: color-mix(in srgb, var(--app-danger) 14%, transparent);
 }
 
+.grade-pill.empty {
+  color: var(--app-text-secondary);
+  background: var(--app-surface-alt);
+}
+
+.empty-row {
+  text-align: center;
+  color: var(--app-text-secondary);
+}
+
 .gpa-footer {
   margin-top: 1rem;
   border: 1px solid var(--app-border);
@@ -155,4 +165,3 @@
     gap: 0.35rem;
   }
 }
-

@@ -29,10 +29,17 @@ export class AdmittedProfileComponent implements OnInit {
   async onFileUpload(event: Event, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
+    input.value = '';
     if (!file) {
       return;
     }
     await this.flow.uploadDocument(file, documentType);
+  }
+
+  removeAdmissionDocument(documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial', event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.flow.removeAdmissionDocument(documentType);
   }
 
   async submitForVerification(): Promise<void> {

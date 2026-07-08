@@ -21,7 +21,10 @@ export class ReturningDashboardComponent implements OnInit {
   readonly canAccessProfile = computed(() => this.flow.canAccessProfileModule());
 
   ngOnInit(): void {
-    this.flow.loadStudentFeePlan().catch(() => {});
+    void Promise.allSettled([
+      this.flow.loadStudentDashboard(),
+      this.flow.loadStudentFeePlan()
+    ]);
   }
 
   goToCourses(): void {

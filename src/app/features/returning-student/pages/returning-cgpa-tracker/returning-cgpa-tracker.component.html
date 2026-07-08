@@ -4,29 +4,29 @@
 
   <section class="summary-grid">
     <article class="metric-card">
-      <strong>{{ flow.currentCgpa().toFixed(2) }}</strong>
+      <strong>{{ flow.cgpaTrackerCurrent() }}</strong>
       <span>Current C.G.P.A</span>
-      <small class="trend-chip">↑ Trending Up</small>
+      <small class="trend-chip">{{ flow.cgpaTrackerTrendLabel() }}</small>
     </article>
     <article class="metric-card">
-      <strong>{{ flow.bestSemesterGpa().toFixed(2) }}</strong>
+      <strong>{{ flow.cgpaTrackerBest() }}</strong>
       <span>Best Semester G.P.A</span>
-      <small>1st Semester OND 1</small>
+      <small>{{ flow.cgpaTrackerBestLabel() }}</small>
     </article>
     <article class="metric-card">
-      <strong>{{ flow.lowestSemesterGpa().toFixed(2) }}</strong>
+      <strong>{{ flow.cgpaTrackerWorst() }}</strong>
       <span>Lowest Semester G.P.A</span>
-      <small>2nd Semester OND 1</small>
+      <small>{{ flow.cgpaTrackerWorstLabel() }}</small>
     </article>
     <article class="metric-card">
-      <strong>{{ flow.semestersCompleted() }}/{{ flow.semestersTotal() }}</strong>
+      <strong>{{ flow.cgpaTrackerCompletedSummary().completed }}/{{ flow.cgpaTrackerCompletedSummary().total }}</strong>
       <span>Semesters Completed</span>
-      <small>{{ flow.semestersTotal() - flow.semestersCompleted() }} remaining</small>
+      <small>{{ flow.cgpaTrackerCompletedSummary().remaining }} remaining</small>
     </article>
   </section>
 
   <section class="points-row">
-    <div class="point" *ngFor="let p of flow.semesterGpaPoints()">
+    <div class="point" *ngFor="let p of flow.cgpaTrackerTrendPoints()">
       <strong [class.empty]="!p.active">{{ p.value === null ? '—' : p.value.toFixed(2) }}</strong>
       <span>{{ p.label }}</span>
     </div>
@@ -56,4 +56,3 @@
     </table>
   </section>
 </div>
-

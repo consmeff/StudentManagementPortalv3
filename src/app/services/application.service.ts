@@ -4,13 +4,23 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
+import { PasswordChangePayload } from '../data/application/password-change.dto';
 import {
   PaginatedPaymentsResponse,
   PaymentHistoryItem,
   PaymentRefResponse
 } from '../data/application/payment.data';
 import { PreRegistrationDataDTO } from '../data/application/preregistrationdatadto';
-import { RegistrantDataDTO } from '../data/application/registrantdatadto';
+import { RegistrantDataDTO, StudentSingleResponse } from '../data/application/registrantdatadto';
+import { StudentDashboardResponse } from '../data/application/student-dashboard.dto';
+import { StudentCgpaTrendResponse } from '../data/application/student-cgpa-trend.dto';
+import {
+  StudentHostelAllocation,
+  StudentHostelListResponse,
+  StudentHostelOption,
+  StudentHostelRoomOption
+} from '../data/application/student-hostel.dto';
+import { StudentResultsResponse } from '../data/application/student-results.dto';
 import {
   StudentFeePartPaymentConfig,
   StudentFeePartPaymentEntry,
@@ -20,6 +30,7 @@ import {
   StudentSchoolFeePaymentStatus,
   StudentSchoolFeeStatus
 } from '../data/application/student-fees.dto';
+import { selectStudentFeePlan } from '../utility/student-fees-plan';
 import {
   AvailableCoursesResponse,
   RegisterCoursesPayload,
@@ -36,9 +47,13 @@ export class ApplicationService {
 
   private readonly studentFeesEndpoint = `${this.apiRoot}/api/v1/payments/student-fees`;
 
-  private readonly studentSchoolFeeEndpoint = `${this.apiRoot}/api/v1/payments/student-school-fee`;
-
   private readonly payStudentFeeEndpoint = `${this.apiRoot}/api/v1/students/pay-fee`;
+
+  private readonly changePasswordEndpoint = `${this.apiRoot}/password/change`;
+
+  private readonly studentHostelAllocationEndpoint = `${this.apiRoot}/api/v1/hostels/students/allocation`;
+
+  private readonly hostelsEndpoint = `${this.apiRoot}/api/v1/hostels`;
 
   constructor(private http: HttpClient) { }
 
@@ -91,6 +106,42 @@ export class ApplicationService {
     return this.http.get<RegistrantDataDTO>(`${this.apiRoot}/api/v1/applicants/single?applicant_no=${app_no}`);
   }
 
+  studentData(): Observable<StudentSingleResponse> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/single`).pipe(
+      map((response) => this.normalizeStudentSingleResponse(response))
+    );
+  }
+
+  getStudentDashboard(): Observable<StudentDashboardResponse> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/dashboard`).pipe(
+      map((response) => this.normalizeStudentDashboardResponse(response))
+    );
+  }
+
+  getStudentResults(): Observable<StudentResultsResponse> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/student/my-results`).pipe(
+      map((response) => this.normalizeStudentResultsResponse(response))
+    );
+  }
+
+  getStudentCgpaTrend(): Observable<StudentCgpaTrendResponse> {
+    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/cgpa-trend`).pipe(
+      map((response) => this.normalizeStudentCgpaTrendResponse(response))
+    );
+  }
+
+  getStudentHostelAllocation(): Observable<StudentHostelAllocation> {
+    return this.http.get<unknown>(this.studentHostelAllocationEndpoint).pipe(
+      map((response) => this.normalizeStudentHostelAllocationResponse(response))
+    );
+  }
+
+  getHostels(): Observable<StudentHostelListResponse> {
+    return this.http.get<unknown>(this.hostelsEndpoint).pipe(
+      map((response) => this.normalizeStudentHostelsResponse(response))
+    );
+  }
+
   uploadFile(fileData: any): Observable<any> {
     return this.http.post<any>(`${this.apiRoot}/api/v1/uploads`, fileData);
   }
@@ -114,13 +165,17 @@ export class ApplicationService {
   }
 
   getStudentSchoolFeeStatus(): Observable<StudentSchoolFeeStatus> {
-    return this.http.get<unknown>(this.studentSchoolFeeEndpoint).pipe(
+    return this.http.get<unknown>(this.studentFeesEndpoint).pipe(
       map((response) => this.normalizeStudentSchoolFeeStatusResponse(response))
     );
   }
 
   initiateStudentFeePayment(payload: StudentFeePaymentPayload): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(this.payStudentFeeEndpoint, payload);
+  }
+
+  changePassword(payload: PasswordChangePayload): Observable<unknown> {
+    return this.http.post<unknown>(this.changePasswordEndpoint, payload);
   }
 
   getPayments(query: { page: number; pageSize: number; ordering: string | null; search: string | null }): Observable<PaginatedPaymentsResponse> {
@@ -199,6 +254,122 @@ export class ApplicationService {
     };
   }
 
+  private normalizeRegistrantResponse(response: unknown): RegistrantDataDTO {
+    const registrant = this.extractRegistrantRecord(response);
+    return { data: registrant ? registrant as unknown as RegistrantDataDTO['data'] : undefined };
+  }
+
+  private normalizeStudentSingleResponse(response: unknown): StudentSingleResponse {
+    const record = this.extractRegistrantRecord(response);
+    return { data: record as unknown as StudentSingleResponse['data'] };
+  }
+
+  private normalizeStudentDashboardResponse(response: unknown): StudentDashboardResponse {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    return {
+      fee_info: {
+        total_paid: this.readNumberFromUnknown(rawResponse['fee_info'], 'total_paid'),
+        total_due: this.readNumberFromUnknown(rawResponse['fee_info'], 'total_due'),
+        number_of_payments: this.readNumberFromUnknown(rawResponse['fee_info'], 'number_of_payments')
+      },
+      courses_info: {
+        registered_courses: this.readNumberFromUnknown(rawResponse['courses_info'], 'registered_courses'),
+        units: this.readNumberFromUnknown(rawResponse['courses_info'], 'units'),
+        failed_courses: this.readNumberFromUnknown(rawResponse['courses_info'], 'failed_courses')
+      },
+      cgpa: this.readNumber(rawResponse, 'cgpa'),
+      previous_cgpa: this.readNumber(rawResponse, 'previous_cgpa'),
+      current_level: this.readString(rawResponse, 'current_level'),
+      current_semester: this.readString(rawResponse, 'current_semester'),
+      academic_year: this.readString(rawResponse, 'academic_year'),
+      department: this.readString(rawResponse, 'department'),
+      recent_announcements: Array.isArray(rawResponse['recent_announcements'])
+        ? rawResponse['recent_announcements'] as StudentDashboardResponse['recent_announcements']
+        : [],
+      full_name: this.readString(rawResponse, 'full_name'),
+      matriculation_number: this.readString(rawResponse, 'matriculation_number')
+    };
+  }
+
+  private normalizeStudentResultsResponse(response: unknown): StudentResultsResponse {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const results = Array.isArray(rawResponse['results']) ? rawResponse['results'] : [];
+
+    return {
+      student_name: this.readString(rawResponse, 'student_name'),
+      matric_no: this.readString(rawResponse, 'matric_no'),
+      program: this.readNullableString(rawResponse, 'program'),
+      level: this.readString(rawResponse, 'level'),
+      total_student: this.readNumber(rawResponse, 'total_student'),
+      semester: this.readString(rawResponse, 'semester'),
+      session: this.readString(rawResponse, 'session'),
+      semester_gpa: this.readNullableNumber(rawResponse, 'semester_gpa'),
+      results: results.map((item) => {
+        const row = this.toRecord(item);
+        return {
+          id: this.readNumber(row, 'id'),
+          test_score: this.readNullableNumber(row, 'test_score'),
+          exam_score: this.readNullableNumber(row, 'exam_score'),
+          grade: this.readNullableString(row, 'grade'),
+          course_name: this.readString(row, 'course_name'),
+          course_code: this.readString(row, 'course_code')
+        };
+      })
+    };
+  }
+
+  private normalizeStudentCgpaTrendResponse(response: unknown): StudentCgpaTrendResponse {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const trendSource = Array.isArray(rawResponse['trend']) ? rawResponse['trend'] : [];
+
+    return {
+      best_cgpa: this.readNumber(rawResponse, 'best_cgpa'),
+      worst_cgpa: this.readNumber(rawResponse, 'worst_cgpa'),
+      current_cgpa: this.readNumber(rawResponse, 'current_cgpa'),
+      semester_completed: this.readNumber(rawResponse, 'semester_completed'),
+      trend: trendSource.map((item) => {
+        const row = this.toRecord(item);
+        return {
+          session: this.readString(row, 'session'),
+          semester: this.readString(row, 'semester'),
+          cgpa: this.readNumber(row, 'cgpa')
+        };
+      })
+    };
+  }
+
+  private extractRegistrantRecord(response: unknown): Record<string, unknown> | null {
+    let current = this.toRecord(response);
+    for (let step = 0; step < 4; step += 1) {
+      if (this.looksLikeRegistrant(current)) {
+        return current;
+      }
+      const studentValue = current['student'];
+      if (this.isRecord(studentValue)) {
+        current = studentValue;
+        continue;
+      }
+      const dataValue = current['data'];
+      if (this.isRecord(dataValue)) {
+        current = dataValue;
+        continue;
+      }
+      break;
+    }
+    return null;
+  }
+
+  private looksLikeRegistrant(value: Record<string, unknown>): boolean {
+    return (
+      typeof value['application_no'] === 'string'
+      || typeof value['matriculation_no'] === 'string'
+      || typeof value['matriculation_number'] === 'string'
+      || typeof value['first_name'] === 'string'
+      || typeof value['last_name'] === 'string'
+      || typeof value['id'] === 'number'
+    );
+  }
+
   private normalizePaginatedPaymentsResponse(response: unknown): PaginatedPaymentsResponse {
     const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
     const resultsSource = Array.isArray(rawResponse['results'])
@@ -266,15 +437,39 @@ export class ApplicationService {
       deleted_by: this.readNullableNumber(rawResponse, 'deleted_by'),
       department: this.readNumber(rawResponse, 'department'),
       level: this.readNumber(rawResponse, 'level'),
+      payment_status: this.isRecord(rawResponse['payment_status'])
+        ? this.readStudentSchoolFeePaymentStatus(rawResponse, 'payment_status')
+        : null,
     };
   }
 
   private normalizeStudentSchoolFeeStatusResponse(response: unknown): StudentSchoolFeeStatus {
-    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const rawResponse = this.selectStudentSchoolFeeRecord(response);
     return {
       ...this.normalizeStudentFeePlan(rawResponse),
       payment_status: this.readStudentSchoolFeePaymentStatus(rawResponse, 'payment_status')
     };
+  }
+
+  private selectStudentSchoolFeeRecord(response: unknown): Record<string, unknown> {
+    const rawResponse = this.toRecord(response);
+    const source = Array.isArray(rawResponse['data'])
+      ? rawResponse['data']
+      : Array.isArray(response)
+        ? response
+        : [];
+
+    const normalizedPlans = source.map((plan) => this.normalizeStudentFeePlan(plan));
+    const selectedPlan = selectStudentFeePlan(normalizedPlans);
+    if (!selectedPlan) {
+      return this.getNestedRecord(response, 'data') ?? rawResponse;
+    }
+
+    const selectedRecord = source.find((entry) => {
+      const normalizedEntry = this.normalizeStudentFeePlan(entry);
+      return normalizedEntry.id === selectedPlan.id;
+    });
+    return this.toRecord(selectedRecord);
   }
 
   private getNestedRecord(source: unknown, key: string): Record<string, unknown> | null {
@@ -310,6 +505,10 @@ export class ApplicationService {
   private readNumber(source: Record<string, unknown>, key: string): number {
     const value = source[key];
     return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+  }
+
+  private readNumberFromUnknown(source: unknown, key: string): number {
+    return this.readNumber(this.toRecord(source), key);
   }
 
   private readNullableNumber(source: Record<string, unknown>, key: string): number | null {
@@ -354,14 +553,173 @@ export class ApplicationService {
       return {
         total_paid: 0,
         total_due: 0,
-        number_of_payments: 0
+        number_of_payments: 0,
+        status: ''
       };
     }
 
     return {
       total_paid: this.readNumber(value, 'total_paid'),
       total_due: this.readNumber(value, 'total_due'),
-      number_of_payments: this.readNumber(value, 'number_of_payments')
+      number_of_payments: this.readNumber(value, 'number_of_payments'),
+      status: this.readString(value, 'status')
     };
+  }
+
+  private normalizeStudentHostelAllocationResponse(response: unknown): StudentHostelAllocation {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    const hostelRecord = this.getNestedRecord(rawResponse, 'hostel');
+    const blockRecord = this.getNestedRecord(rawResponse, 'block');
+    const roomRecord = this.getNestedRecord(rawResponse, 'room');
+    const bedRecord = this.getNestedRecord(rawResponse, 'bed');
+
+    return {
+      hostelName: this.readFirstDisplayValue(
+        rawResponse['hostel_name'],
+        rawResponse['hostel'],
+        rawResponse['hostel_label'],
+        hostelRecord?.['name'],
+        hostelRecord?.['hostel_name']
+      ),
+      block: this.readFirstDisplayValue(
+        rawResponse['block'],
+        rawResponse['block_name'],
+        rawResponse['hostel_block'],
+        blockRecord?.['name'],
+        roomRecord?.['block'],
+        roomRecord?.['block_name']
+      ),
+      roomNumber: this.readFirstDisplayValue(
+        rawResponse['room_number'],
+        rawResponse['room_no'],
+        rawResponse['room'],
+        roomRecord?.['number'],
+        roomRecord?.['room_number'],
+        roomRecord?.['name']
+      ),
+      floor: this.readFirstDisplayValue(
+        rawResponse['floor'],
+        rawResponse['floor_name'],
+        roomRecord?.['floor'],
+        roomRecord?.['floor_name']
+      ),
+      roomType: this.readFirstDisplayValue(
+        rawResponse['room_type'],
+        rawResponse['type'],
+        roomRecord?.['room_type'],
+        roomRecord?.['type']
+      ),
+      bed: this.readFirstDisplayValue(
+        rawResponse['bed'],
+        rawResponse['bed_number'],
+        rawResponse['student_bed'],
+        bedRecord?.['name'],
+        bedRecord?.['bed_number'],
+        roomRecord?.['bed'],
+        roomRecord?.['bed_number']
+      )
+    };
+  }
+
+  private normalizeStudentHostelsResponse(response: unknown): StudentHostelListResponse {
+    const rawResponse = this.toRecord(response);
+    const source = Array.isArray(rawResponse['results'])
+      ? rawResponse['results']
+      : Array.isArray(rawResponse['data'])
+        ? rawResponse['data']
+        : Array.isArray(response)
+          ? response
+          : [];
+
+    return {
+      count: this.readNumber(rawResponse, 'count') || source.length,
+      next: this.readNullableString(rawResponse, 'next'),
+      previous: this.readNullableString(rawResponse, 'previous'),
+      results: source.map((entry) => this.normalizeStudentHostelOption(entry))
+    };
+  }
+
+  private normalizeStudentHostelOption(source: unknown): StudentHostelOption {
+    const rawSource = this.toRecord(source);
+    const rooms = this.readStudentHostelRoomOptions(rawSource);
+    const roomCount = this.readNumber(rawSource, 'number_of_rooms') || rooms.length;
+
+    return {
+      id: this.readFirstDisplayValue(rawSource['id'], rawSource['slug'], rawSource['name']),
+      name: this.readFirstDisplayValue(rawSource['name'], rawSource['hostel_name']),
+      roomCount,
+      rooms
+    };
+  }
+
+  private readStudentHostelRoomOptions(source: Record<string, unknown>): StudentHostelRoomOption[] {
+    const possibleKeys = ['rooms', 'available_rooms', 'room_numbers'];
+
+    for (const key of possibleKeys) {
+      const value = source[key];
+      if (!Array.isArray(value)) {
+        continue;
+      }
+
+      return value
+        .map((entry) => this.normalizeStudentHostelRoomOption(entry))
+        .filter((entry) => entry !== null);
+    }
+
+    return [];
+  }
+
+  private normalizeStudentHostelRoomOption(source: unknown): StudentHostelRoomOption | null {
+    if (typeof source === 'string' && source.trim().length > 0) {
+      return {
+        value: source.trim(),
+        label: source.trim()
+      };
+    }
+
+    if (typeof source === 'number' && Number.isFinite(source)) {
+      const value = String(source);
+      return {
+        value,
+        label: value
+      };
+    }
+
+    const rawSource = this.toRecord(source);
+    const value = this.readFirstDisplayValue(
+      rawSource['room_number'],
+      rawSource['number'],
+      rawSource['name'],
+      rawSource['label'],
+      rawSource['id']
+    );
+
+    if (!value) {
+      return null;
+    }
+
+    const label = this.readFirstDisplayValue(
+      rawSource['label'],
+      rawSource['room_number'],
+      rawSource['number'],
+      rawSource['name']
+    ) || value;
+
+    return {
+      value,
+      label
+    };
+  }
+
+  private readFirstDisplayValue(...candidates: unknown[]): string {
+    for (const candidate of candidates) {
+      if (typeof candidate === 'string' && candidate.trim().length > 0) {
+        return candidate.trim();
+      }
+      if (typeof candidate === 'number' && Number.isFinite(candidate)) {
+        return String(candidate);
+      }
+    }
+    return '';
   }
 }

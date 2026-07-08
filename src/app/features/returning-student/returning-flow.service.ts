@@ -1,11 +1,17 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { StudentCgpaTrendResponse } from '../../data/application/student-cgpa-trend.dto';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
+import { StudentDashboardAnnouncement, StudentDashboardResponse } from '../../data/application/student-dashboard.dto';
+import { StudentHostelAllocation, StudentHostelOption, StudentHostelRoomOption } from '../../data/application/student-hostel.dto';
+import { StudentResultsResponse } from '../../data/application/student-results.dto';
 import { ApplicationService } from '../../services/application.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
+  selectStudentFeePlan,
 } from '../../utility/student-fees-plan';
 import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
 
@@ -19,6 +25,8 @@ export type ReturningCourse = {
 };
 
 export type ReturningPaymentRecord = {
+  feeId: string;
+  paymentType: string;
   installmentLabel: string;
   amount: number;
   paidAt: Date;
@@ -54,11 +62,11 @@ export type ResitCourse = {
 export type SemesterResultRow = {
   code: string;
   title: string;
-  units: number;
+  units: number | null;
   ca: number;
   exam: number;
   total: number;
-  grade: string;
+  grade: string | null;
 };
 
 export type CgpaThreshold = {
@@ -76,9 +84,10 @@ export type FeeItem = {
   amount: number;
   status: 'paid' | 'unpaid' | 'remaining';
   type: 'mandatory' | 'optional';
+  referenceId: string;
 };
 
-export type HostelApplicationStatus = 'locked' | 'form' | 'pending' | 'allocated';
+export type HostelApplicationStatus = 'request' | 'pending' | 'allocated';
 
 export type HostelApplicationPayload = {
   academicSession: string;
@@ -144,6 +153,18 @@ export type NextOfKinData = {
   alternatePhone: string;
 };
 
+export type ReturningAnnouncementFeedItem = {
+  title: string;
+  body: string;
+  timeAgo: string;
+};
+
+export type SemesterGpaPoint = {
+  label: string;
+  value: number | null;
+  active: boolean;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   private readonly appService = inject(ApplicationService);
@@ -166,10 +187,10 @@ export class ReturningFlowService {
 
   readonly activeProfileTab = signal<ReturningProfileTab>('overview');
 
-  readonly hostelApplicationStatus = signal<HostelApplicationStatus>('locked');
+  readonly hostelApplicationStatus = signal<HostelApplicationStatus>('allocated');
 
   readonly hostelApplicationDraft = signal<HostelApplicationPayload>({
-    academicSession: '',
+    academicSession: '2025/2026',
     preferredHostel: '',
     preferredBlock: '',
     specialNeeds: '',
@@ -179,12 +200,12 @@ export class ReturningFlowService {
   readonly hostelApplicationDate = signal<Date | null>(null);
 
   readonly hostelAllocation = signal<HostelAllocation>({
-    hostelName: 'Abimbola Hostel',
-    block: 'Block A',
-    roomNumber: 'Room 17',
-    floor: '2nd Floor',
-    roomType: '4-bed shared',
-    bed: 'Bed 3'
+    hostelName: '',
+    block: '',
+    roomNumber: '',
+    floor: '',
+    roomType: '',
+    bed: ''
   });
 
   readonly cumulativeGpa = signal(3.78);
@@ -217,9 +238,33 @@ export class ReturningFlowService {
 
   readonly loadingCourses = signal(false);
 
+  readonly loadingStudentDashboard = signal(false);
+
+  readonly loadingStudentResults = signal(false);
+
+  readonly loadingStudentCgpaTrend = signal(false);
+
+  readonly loadingHostelAllocation = signal(false);
+
+  readonly loadingHostelOptions = signal(false);
+
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
+
+  readonly studentDashboard = signal<StudentDashboardResponse | null>(null);
+
+  readonly hasLoadedStudentDashboard = signal(false);
+
+  readonly studentResults = signal<StudentResultsResponse | null>(null);
+
+  readonly studentCgpaTrend = signal<StudentCgpaTrendResponse | null>(null);
+
+  readonly hasLoadedHostelAllocation = signal(false);
+
+  readonly hasLoadedHostelOptions = signal(false);
+
+  readonly availableHostels = signal<StudentHostelOption[]>([]);
 
   readonly availableCourses = signal<AvailableCourse[]>([]);
 
@@ -273,7 +318,10 @@ export class ReturningFlowService {
   );
 
   readonly hasPaidFirstSchoolFeeInstallment = computed(() =>
-    this.schoolFeePaymentCount() > 0 || this.schoolFeesPaid() > 0
+    this.schoolFeePaymentCount() > 0
+    || this.schoolFeesPaid() > 0
+    || (this.studentDashboard()?.fee_info.total_paid ?? 0) > 0
+    || (this.studentDashboard()?.fee_info.total_due ?? 0) <= 0
   );
 
   readonly canAccessCoursesModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
@@ -282,16 +330,7 @@ export class ReturningFlowService {
 
   readonly canAccessHostelModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
 
-  readonly fees = signal<FeeItem[]>([
-    { id: 'school-fees', name: 'School Fees', amount: 600000, status: 'remaining', type: 'mandatory' },
-    { id: 'faculty-charges', name: 'Faculty Charges', amount: 10000, status: 'paid', type: 'mandatory' },
-    { id: 'departmental-fees', name: 'Departmental Fees', amount: 5000, status: 'unpaid', type: 'mandatory' },
-    { id: 'medical-fees', name: 'Medical Fees', amount: 8000, status: 'paid', type: 'mandatory' },
-    { id: 'student-union-levy', name: 'Student Union Levy', amount: 2000, status: 'paid', type: 'mandatory' },
-    { id: 'late-registration', name: 'Late Registration', amount: 600000, status: 'unpaid', type: 'optional' },
-    { id: 'hostel', name: 'Hostel', amount: 10000, status: 'unpaid', type: 'optional' },
-    { id: 'exam-resit', name: 'Exam Resit', amount: 5000, status: 'unpaid', type: 'optional' }
-  ]);
+  readonly fees = signal<FeeItem[]>([]);
 
   readonly announcementFeed = signal([
     {
@@ -305,6 +344,87 @@ export class ReturningFlowService {
       timeAgo: '5h ago'
     }
   ]);
+
+  readonly studentPhotoUrl = computed(() => this.authSessionStore.studentProfile()?.passport_photo?.file_url || 'assets/logo.png');
+
+  readonly dashboardAnnouncementFeed = computed<ReturningAnnouncementFeedItem[]>(() => {
+    if (!this.hasLoadedStudentDashboard()) {
+      return this.announcementFeed();
+    }
+    return this.normalizeDashboardAnnouncements(this.studentDashboard()?.recent_announcements ?? []);
+  });
+
+  readonly dashboardOutstandingAmount = computed(() =>
+    Math.max(0, this.studentDashboard()?.fee_info.total_due ?? this.outstandingAmount())
+  );
+
+  readonly dashboardTotalFeeBenchmark = computed(() => {
+    const feeInfo = this.studentDashboard()?.fee_info;
+    if (!feeInfo) {
+      return this.configuredTotalSchoolFees();
+    }
+    const paidAmount = Math.max(0, feeInfo.total_paid);
+    const dueAmount = Math.max(0, feeInfo.total_due);
+    const totalAmount = paidAmount + dueAmount;
+    return totalAmount > 0 ? totalAmount : this.configuredTotalSchoolFees();
+  });
+
+  readonly dashboardPaymentProgressPercent = computed(() => {
+    const feeInfo = this.studentDashboard()?.fee_info;
+    if (!feeInfo) {
+      return this.paymentProgressPercent();
+    }
+    const paidAmount = Math.max(0, feeInfo.total_paid);
+    const dueAmount = Math.max(0, feeInfo.total_due);
+    const totalAmount = paidAmount + dueAmount;
+    if (totalAmount <= 0) {
+      return paidAmount > 0 ? 100 : 0;
+    }
+    return Math.max(0, Math.min(100, Math.round((paidAmount / totalAmount) * 100)));
+  });
+
+  readonly dashboardOutstandingInstallmentLabel = computed(() => {
+    const feeInfo = this.studentDashboard()?.fee_info;
+    if (!feeInfo) {
+      return this.outstandingInstallmentLabel();
+    }
+    if (feeInfo.total_due <= 0) {
+      return 'Paid in full';
+    }
+    const installmentNo = feeInfo.number_of_payments + 1;
+    return `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`;
+  });
+
+  readonly dashboardRegisteredCoursesCount = computed(() =>
+    this.studentDashboard()?.courses_info.registered_courses ?? this.totalCoursesSelected()
+  );
+
+  readonly dashboardRegisteredUnitsCount = computed(() =>
+    this.studentDashboard()?.courses_info.units ?? this.totalUnitsSelected()
+  );
+
+  readonly dashboardFailedCoursesCount = computed(() =>
+    this.studentDashboard()?.courses_info.failed_courses ?? this.carryoverCourses().length
+  );
+
+  readonly dashboardFailedCoursesLabel = computed(() => {
+    const failedCoursesCount = this.dashboardFailedCoursesCount();
+    return `${failedCoursesCount} Failed ${failedCoursesCount === 1 ? 'course' : 'courses'}`;
+  });
+
+  readonly dashboardCgpaDisplay = computed(() => this.formatDecimal(this.studentDashboard()?.cgpa ?? this.cumulativeGpa()));
+
+  readonly dashboardCgpaClass = computed(() =>
+    this.studentDashboard() ? this.resolveCgpaClassLabel(this.studentDashboard()!.cgpa) : this.gpaClass()
+  );
+
+  readonly dashboardGpaDeltaLabel = computed(() => {
+    const previousCgpa = this.studentDashboard()?.previous_cgpa;
+    if (previousCgpa === undefined || previousCgpa === null) {
+      return this.gpaDelta();
+    }
+    return `from ${this.formatDecimal(previousCgpa)}`;
+  });
 
   readonly courseReviewState = signal<CourseReviewState>('locked');
 
@@ -371,10 +491,6 @@ export class ReturningFlowService {
 
   readonly hostelSessionOptions = signal(['2025/2026']);
 
-  readonly hostelOptions = signal(['Abimbola Hostel', 'Amina Hostel', 'Legacy Hostel']);
-
-  readonly hostelBlockOptions = signal(['Block A', 'Block B', 'Block C']);
-
   readonly cgpaThresholds = signal<CgpaThreshold[]>([
     { scoreRange: '70 - 100', letterGrade: 'A', gradePoint: '5', cgpaRange: '4.50 - 5.00', classOfDegree: 'First Class' },
     { scoreRange: '60 - 69', letterGrade: 'B', gradePoint: '4', cgpaRange: '3.50 - 4.49', classOfDegree: 'Second Class Upper', highlighted: true },
@@ -398,7 +514,7 @@ export class ReturningFlowService {
   );
 
   readonly paidAmount = computed(() =>
-    this.paymentHistory().reduce((sum, entry) => sum + entry.amount, 0)
+    this.schoolFeeInstallments().reduce((sum, entry) => sum + entry.amount, 0)
   );
 
   readonly outstandingAmount = computed(() => Math.max(0, this.totalSchoolFees - this.paidAmount()));
@@ -458,19 +574,76 @@ export class ReturningFlowService {
 
   readonly optionalFees = computed(() => this.fees().filter((fee) => fee.type === 'optional'));
 
-  readonly hostelFeeStatus = computed(() => this.fees().find((fee) => fee.id === 'hostel')?.status ?? 'unpaid');
+  readonly effectiveHostelStatus = computed<HostelApplicationStatus>(() => this.hostelApplicationStatus());
 
-  readonly canAccessHostelApplication = computed(() => this.hostelFeeStatus() === 'paid');
-
-  readonly effectiveHostelStatus = computed<HostelApplicationStatus>(() => {
-    if (!this.canAccessHostelApplication()) {
-      return 'locked';
-    }
-    const current = this.hostelApplicationStatus();
-    return current === 'locked' ? 'form' : current;
+  readonly selectedHostelOption = computed(() => {
+    const preferredHostel = this.hostelApplicationDraft().preferredHostel;
+    return this.availableHostels().find((hostel) => hostel.id === preferredHostel) ?? null;
   });
 
-  readonly semesterResultGpa = computed(() => 3.85);
+  readonly availableRoomOptions = computed<StudentHostelRoomOption[]>(() => {
+    const selectedHostel = this.selectedHostelOption();
+    return selectedHostel?.rooms ?? [];
+  });
+
+  readonly semesterResultGpa = computed<number | null>(() => this.studentResults()?.semester_gpa ?? 3.85);
+
+  readonly formattedSemesterResultGpa = computed(() => this.formatNullableDecimal(this.semesterResultGpa()));
+
+  readonly formattedCurrentCgpa = computed(() => this.formatDecimal(this.currentCgpa()));
+
+  readonly selectedSemesterLabel = computed(() => this.selectedResultSemester() || this.semester());
+
+  readonly cgpaTrackerCurrent = computed(() => this.formatDecimal(this.studentCgpaTrend()?.current_cgpa ?? this.currentCgpa()));
+
+  readonly cgpaTrackerBest = computed(() => this.formatDecimal(this.studentCgpaTrend()?.best_cgpa ?? this.bestSemesterGpa()));
+
+  readonly cgpaTrackerWorst = computed(() => this.formatDecimal(this.studentCgpaTrend()?.worst_cgpa ?? this.lowestSemesterGpa()));
+
+  readonly cgpaTrackerCompletedSummary = computed(() => {
+    const completed = this.studentCgpaTrend()?.semester_completed ?? this.semestersCompleted();
+    const total = Math.max(completed, this.studentCgpaTrend()?.trend.length ?? this.semestersTotal());
+    return {
+      completed,
+      total,
+      remaining: Math.max(0, total - completed)
+    };
+  });
+
+  readonly cgpaTrackerTrendLabel = computed(() => {
+    const trend = this.studentCgpaTrend();
+    if (!trend) {
+      return 'No trend data';
+    }
+    const latest = trend.current_cgpa;
+    const previous = trend.trend.length > 1 ? trend.trend[trend.trend.length - 2]?.cgpa ?? null : null;
+    if (previous === null) {
+      return 'Stable';
+    }
+    if (latest > previous) {
+      return 'Trending Up';
+    }
+    if (latest < previous) {
+      return 'Trending Down';
+    }
+    return 'Stable';
+  });
+
+  readonly cgpaTrackerTrendPoints = computed<SemesterGpaPoint[]>(() => {
+    const trend = this.studentCgpaTrend()?.trend;
+    if (!trend || trend.length === 0) {
+      return this.semesterGpaPoints();
+    }
+    return trend.map((item) => ({
+      label: `${item.semester}\n${item.session}`,
+      value: item.cgpa,
+      active: true
+    }));
+  });
+
+  readonly cgpaTrackerBestLabel = computed(() => this.describeCgpaTrendPoint(this.studentCgpaTrend()?.trend, 'best'));
+
+  readonly cgpaTrackerWorstLabel = computed(() => this.describeCgpaTrendPoint(this.studentCgpaTrend()?.trend, 'worst'));
 
   readonly profileOverview = signal<ProfileOverviewData>({
     fullName: 'ISHOLA, Hassan Gbadebo',
@@ -562,6 +735,8 @@ export class ReturningFlowService {
     const installmentNo = this.paymentHistory().length + 1;
     const paidAt = new Date();
     const entry: ReturningPaymentRecord = {
+      feeId: 'school-fees',
+      paymentType: 'School Fees',
       installmentLabel: `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`,
       amount: normalizedAmount,
       paidAt,
@@ -584,7 +759,7 @@ export class ReturningFlowService {
     if (target.status === 'paid') {
       return { ok: false, message: 'Fee has already been paid.' };
     }
-    const result = this.addDummyPayment(target.amount);
+    const result = this.recordAuxiliaryFeePayment(feeId, target.amount, target.name);
     if (!result.ok) {
       return result;
     }
@@ -592,10 +767,35 @@ export class ReturningFlowService {
       fee.id === feeId ? { ...fee, status: 'paid' as const } : fee
     );
     this.fees.set(updated);
-    if (feeId === 'hostel' && this.hostelApplicationStatus() === 'locked') {
-      this.hostelApplicationStatus.set('form');
-    }
     return { ok: true, message: `${target.name} payment recorded.` };
+  }
+
+  recordAuxiliaryFeePayment(feeId: string, amount: number, paymentType: string): { ok: boolean; message: string; referenceNo?: string } {
+    const target = this.fees().find((fee) => fee.id === feeId);
+    if (!target) {
+      return { ok: false, message: 'Fee item not found.' };
+    }
+    const normalizedAmount = Math.floor(amount || 0);
+    if (normalizedAmount <= 0) {
+      return { ok: false, message: 'Enter a valid payment amount.' };
+    }
+    const paidAt = new Date();
+    const referenceNo = `RET-${paidAt.getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const entry: ReturningPaymentRecord = {
+      feeId,
+      paymentType,
+      installmentLabel: paymentType,
+      amount: normalizedAmount,
+      paidAt,
+      referenceNo
+    };
+    this.paymentHistory.set([...this.paymentHistory(), entry]);
+    this.fees.set(
+      this.fees().map((fee) =>
+        fee.id === feeId ? { ...fee, status: 'paid' as const } : fee
+      )
+    );
+    return { ok: true, message: `${paymentType} payment recorded.`, referenceNo };
   }
 
   setResultSemester(value: string): void {
@@ -626,7 +826,11 @@ export class ReturningFlowService {
     return { ok: true, message: 'Profile changes saved successfully.' };
   }
 
-  updateAccountPassword(currentPassword: string, newPassword: string, confirmPassword: string): { ok: boolean; message: string } {
+  async updateAccountPassword(
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string
+  ): Promise<{ ok: boolean; message: string }> {
     if (!currentPassword || !newPassword || !confirmPassword) {
       return { ok: false, message: 'Please fill all password fields.' };
     }
@@ -636,19 +840,55 @@ export class ReturningFlowService {
     if (newPassword !== confirmPassword) {
       return { ok: false, message: 'Confirm password does not match new password.' };
     }
-    return { ok: true, message: 'Password updated successfully.' };
+
+    try {
+      await firstValueFrom(
+        this.appService.changePassword({
+          password: currentPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword
+        })
+      );
+      return { ok: true, message: 'Password updated successfully.' };
+    } catch (error) {
+      return {
+        ok: false,
+        message: this.resolvePasswordChangeErrorMessage(error)
+      };
+    }
   }
 
   updateHostelDraft(patch: Partial<HostelApplicationPayload>): void {
-    this.hostelApplicationDraft.set({ ...this.hostelApplicationDraft(), ...patch });
+    const currentDraft = this.hostelApplicationDraft();
+    const shouldResetPreferredBlock =
+      typeof patch.preferredHostel === 'string' &&
+      patch.preferredHostel !== currentDraft.preferredHostel &&
+      !('preferredBlock' in patch);
+
+    this.hostelApplicationDraft.set({
+      ...currentDraft,
+      ...patch,
+      preferredBlock: shouldResetPreferredBlock ? '' : (patch.preferredBlock ?? currentDraft.preferredBlock)
+    });
+  }
+
+  startHostelModificationRequest(): void {
+    this.hostelApplicationDraft.set({
+      academicSession: this.session(),
+      preferredHostel: '',
+      preferredBlock: '',
+      specialNeeds: '',
+      acknowledged: false
+    });
+    this.hostelApplicationStatus.set('request');
   }
 
   submitHostelApplication(payload: HostelApplicationPayload): { ok: boolean; message: string } {
-    if (!this.canAccessHostelApplication()) {
-      return { ok: false, message: 'Hostel application is locked until hostel fee is paid.' };
-    }
-    if (!payload.academicSession || !payload.preferredHostel || !payload.preferredBlock) {
-      return { ok: false, message: 'Complete all required hostel fields.' };
+    const selectedHostel = this.availableHostels().find((hostel) => hostel.id === payload.preferredHostel) ?? null;
+    const requiresRoomSelection = (selectedHostel?.rooms.length ?? 0) > 0;
+
+    if (!payload.academicSession || !payload.preferredHostel || (requiresRoomSelection && !payload.preferredBlock)) {
+      return { ok: false, message: 'Complete all required hostel modification fields.' };
     }
     if (!payload.acknowledged) {
       return { ok: false, message: 'You must acknowledge hostel rules before submission.' };
@@ -656,14 +896,10 @@ export class ReturningFlowService {
     this.hostelApplicationDraft.set(payload);
     this.hostelApplicationDate.set(new Date());
     this.hostelApplicationStatus.set('pending');
-    return { ok: true, message: 'Hostel application submitted successfully.' };
+    return { ok: true, message: 'Hostel modification request submitted successfully.' };
   }
 
   setHostelApplicationStatus(status: HostelApplicationStatus): void {
-    if (!this.canAccessHostelApplication() && status !== 'locked') {
-      this.hostelApplicationStatus.set('locked');
-      return;
-    }
     this.hostelApplicationStatus.set(status);
   }
 
@@ -682,16 +918,157 @@ export class ReturningFlowService {
   async loadStudentFeePlan(): Promise<void> {
     this.loadingStudentFeePlan.set(true);
     try {
-      const response = await firstValueFrom(this.appService.getStudentSchoolFeeStatus());
-      this.studentSchoolFeeStatus.set(response);
-      this.studentFeePlan.set(response);
+      const response = await firstValueFrom(this.appService.getStudentFeePlans());
+      this.fees.set(this.mapFeeItems(response.data));
+      const selectedPlan = selectStudentFeePlan(response.data);
+      this.studentFeePlan.set(selectedPlan);
+      this.studentSchoolFeeStatus.set(
+        selectedPlan?.payment_status
+          ? {
+              ...selectedPlan,
+              payment_status: selectedPlan.payment_status
+            }
+          : null
+      );
       this.syncReturningModuleAccess();
     } catch {
-      const response = await firstValueFrom(this.appService.getStudentFeePlans());
-      this.studentFeePlan.set(response.data[0] ?? null);
+      this.fees.set([]);
+      this.studentFeePlan.set(null);
+      this.studentSchoolFeeStatus.set(null);
       this.syncReturningModuleAccess();
     } finally {
       this.loadingStudentFeePlan.set(false);
+    }
+  }
+
+  async loadStudentDashboard(forceReload = false): Promise<void> {
+    const userType = this.authSessionStore.userType().toLowerCase().trim();
+    if (userType && !userType.includes('student')) {
+      return;
+    }
+    if (this.hasLoadedStudentDashboard() && !forceReload) {
+      return;
+    }
+    this.loadingStudentDashboard.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getStudentDashboard());
+      this.studentDashboard.set(response);
+      this.hasLoadedStudentDashboard.set(true);
+      this.studentName.set(response.full_name || this.studentName());
+      this.matricNo.set(response.matriculation_number || this.matricNo());
+      this.program.set(response.department || this.program());
+      this.session.set(response.academic_year || this.session());
+      this.level.set(response.current_level || this.level());
+      this.semester.set(response.current_semester || this.semester());
+      this.cumulativeGpa.set(response.cgpa);
+      this.currentCgpa.set(response.cgpa);
+      this.gpaClass.set(this.resolveCgpaClassLabel(response.cgpa));
+      this.gpaDelta.set(`from ${this.formatDecimal(response.previous_cgpa)}`);
+      if ((response.fee_info.total_paid > 0 || response.fee_info.total_due <= 0) && !this.hasPaidStatus(this.authSessionStore.paymentStatus())) {
+        this.authSessionStore.setPaymentStatus('paid');
+      }
+      this.syncReturningModuleAccess();
+    } finally {
+      this.loadingStudentDashboard.set(false);
+    }
+  }
+
+  async loadStudentResults(forceReload = false): Promise<void> {
+    if (this.studentResults() && !forceReload) {
+      return;
+    }
+    this.loadingStudentResults.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getStudentResults());
+      this.studentResults.set(response);
+      this.studentName.set(response.student_name || this.studentName());
+      this.matricNo.set(response.matric_no || this.matricNo());
+      this.program.set(response.program || this.program());
+      this.level.set(response.level || this.level());
+      this.semester.set(response.semester || this.semester());
+      this.session.set(response.session || this.session());
+      this.selectedResultSemester.set(response.semester || this.selectedResultSemester());
+      this.resultSemesterOptions.set(response.semester ? [response.semester] : this.resultSemesterOptions());
+      this.semesterResultRows.set(
+        response.results.map((result) => {
+          const caScore = result.test_score ?? 0;
+          const examScore = result.exam_score ?? 0;
+          return {
+            code: result.course_code,
+            title: result.course_name,
+            units: null,
+            ca: caScore,
+            exam: examScore,
+            total: caScore + examScore,
+            grade: result.grade
+          };
+        })
+      );
+    } finally {
+      this.loadingStudentResults.set(false);
+    }
+  }
+
+  async loadStudentCgpaTrend(forceReload = false): Promise<void> {
+    if (this.studentCgpaTrend() && !forceReload) {
+      return;
+    }
+    this.loadingStudentCgpaTrend.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getStudentCgpaTrend());
+      this.studentCgpaTrend.set(response);
+      this.currentCgpa.set(response.current_cgpa);
+      this.cumulativeGpa.set(response.current_cgpa);
+      this.bestSemesterGpa.set(response.best_cgpa);
+      this.lowestSemesterGpa.set(response.worst_cgpa);
+      this.semestersCompleted.set(response.semester_completed);
+      this.semestersTotal.set(Math.max(response.semester_completed, response.trend.length || this.semestersTotal()));
+      this.gpaClass.set(this.resolveCgpaClassLabel(response.current_cgpa));
+    } finally {
+      this.loadingStudentCgpaTrend.set(false);
+    }
+  }
+
+  async loadHostelAllocation(forceReload = false): Promise<void> {
+    if (this.hasLoadedHostelAllocation() && !forceReload) {
+      return;
+    }
+
+    this.loadingHostelAllocation.set(true);
+    try {
+      const allocation = await firstValueFrom(this.appService.getStudentHostelAllocation());
+      this.setHostelAllocation(allocation);
+      this.hasLoadedHostelAllocation.set(true);
+    } catch {
+      this.hostelAllocation.set({
+        hostelName: '',
+        block: '',
+        roomNumber: '',
+        floor: '',
+        roomType: '',
+        bed: ''
+      });
+      this.hasLoadedHostelAllocation.set(true);
+    } finally {
+      this.loadingHostelAllocation.set(false);
+    }
+  }
+
+  async loadHostelOptions(forceReload = false): Promise<void> {
+    if (this.hasLoadedHostelOptions() && !forceReload) {
+      return;
+    }
+
+    this.loadingHostelOptions.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getHostels());
+      this.availableHostels.set(response.results);
+      this.hasLoadedHostelOptions.set(true);
+    } catch {
+      this.availableHostels.set([]);
+      this.hasLoadedHostelOptions.set(true);
+    } finally {
+      this.loadingHostelOptions.set(false);
     }
   }
 
@@ -780,6 +1157,8 @@ export class ReturningFlowService {
     this.paymentHistory.set([
       ...this.paymentHistory(),
       {
+        feeId: 'school-fees',
+        paymentType: `School Fees - ${entry.installmentLabel}`,
         installmentLabel: entry.installmentLabel,
         amount: entry.amount,
         paidAt: entry.paidAt,
@@ -799,6 +1178,14 @@ export class ReturningFlowService {
 
   formatCurrency(value: number): string {
     return `₦${value.toLocaleString('en-NG')}`;
+  }
+
+  formatDecimal(value: number): string {
+    return value.toFixed(2);
+  }
+
+  formatNullableDecimal(value: number | null): string {
+    return value === null ? '—' : this.formatDecimal(value);
   }
 
   private resolveNextSchoolFeeAmount(): number {
@@ -824,12 +1211,16 @@ export class ReturningFlowService {
       return;
     }
 
+    const nextTotalPaid = currentStatus.payment_status.total_paid + amount;
+    const nextTotalDue = Math.max(0, currentStatus.payment_status.total_due - amount);
+
     this.studentSchoolFeeStatus.set({
       ...currentStatus,
       payment_status: {
-        total_paid: currentStatus.payment_status.total_paid + amount,
-        total_due: Math.max(0, currentStatus.payment_status.total_due - amount),
-        number_of_payments: currentStatus.payment_status.number_of_payments + 1
+        total_paid: nextTotalPaid,
+        total_due: nextTotalDue,
+        number_of_payments: currentStatus.payment_status.number_of_payments + 1,
+        status: nextTotalDue <= 0 ? 'paid' : 'partially_paid'
       }
     });
   }
@@ -857,6 +1248,88 @@ export class ReturningFlowService {
     return normalized.includes('paid')
       || normalized.includes('complete')
       || normalized.includes('success');
+  }
+
+  private mapFeeItems(plans: StudentFeePlan[]): FeeItem[] {
+    return plans
+      .slice()
+      .sort((leftPlan, rightPlan) => leftPlan.display_order - rightPlan.display_order)
+      .map((plan) => ({
+        id: plan.label === 'school_fee' ? 'school-fees' : this.normalizeFeeIdentifier(plan.label || plan.name),
+        name: plan.name,
+        amount: plan.amount,
+        status: this.resolveFeeStatus(plan),
+        type: 'mandatory',
+        referenceId: String(plan.id)
+      }));
+  }
+
+  private resolveFeeStatus(plan: StudentFeePlan): FeeItem['status'] {
+    const paymentStatus = plan.payment_status;
+    if (!paymentStatus) {
+      return 'unpaid';
+    }
+    if (paymentStatus.status === 'paid' || paymentStatus.total_due <= 0) {
+      return 'paid';
+    }
+    if (paymentStatus.total_paid > 0 || paymentStatus.number_of_payments > 0) {
+      return 'remaining';
+    }
+    return 'unpaid';
+  }
+
+  private normalizeFeeIdentifier(value: string): string {
+    return (value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  private setHostelAllocation(allocation: StudentHostelAllocation): void {
+    const normalizedAllocation = {
+      hostelName: allocation.hostelName,
+      block: allocation.block,
+      roomNumber: allocation.roomNumber,
+      floor: allocation.floor,
+      roomType: allocation.roomType,
+      bed: allocation.bed
+    };
+
+    this.hostelAllocation.set(normalizedAllocation);
+    const hasAllocation = Object.values(normalizedAllocation).some((value) => value.trim().length > 0);
+    this.hostelApplicationStatus.set(hasAllocation ? 'allocated' : 'request');
+  }
+
+  private resolvePasswordChangeErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const errorPayload = this.toRecord(error.error);
+      return this.readErrorMessage(errorPayload)
+        ?? error.message
+        ?? 'Unable to update password right now.';
+    }
+    return 'Unable to update password right now.';
+  }
+
+  private readErrorMessage(source: Record<string, unknown>): string | null {
+    const errorMessageKeys = ['message', 'detail', 'error', 'non_field_errors'];
+    for (const key of errorMessageKeys) {
+      const value = source[key];
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+      if (Array.isArray(value) && typeof value[0] === 'string' && value[0].trim().length > 0) {
+        return value[0].trim();
+      }
+    }
+    return null;
+  }
+
+  private toRecord(value: unknown): Record<string, unknown> {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      return {};
+    }
+    return value as Record<string, unknown>;
   }
 
   private readCurrentLevelNumber(): number | null {
@@ -887,5 +1360,83 @@ export class ReturningFlowService {
     if (n % 10 === 2 && n % 100 !== 12) return 'nd';
     if (n % 10 === 3 && n % 100 !== 13) return 'rd';
     return 'th';
+  }
+
+  private normalizeDashboardAnnouncements(
+    announcements: StudentDashboardAnnouncement[]
+  ): ReturningAnnouncementFeedItem[] {
+    return announcements.map((announcement) => {
+      const title = (announcement.title || '').trim();
+      const body = (announcement.body || announcement.message || announcement.description || '').trim();
+      const timeAgo = (announcement.time_ago || '').trim()
+        || this.formatAnnouncementTime(announcement.updated_at || announcement.created_at || '');
+      return {
+        title: title || 'Announcement',
+        body: body || 'No announcement details available.',
+        timeAgo: timeAgo || 'Recently'
+      };
+    });
+  }
+
+  private formatAnnouncementTime(value: string): string {
+    if (!value) {
+      return '';
+    }
+    const timestamp = Date.parse(value);
+    if (Number.isNaN(timestamp)) {
+      return '';
+    }
+    const diffMs = Date.now() - timestamp;
+    const diffMinutes = Math.max(0, Math.floor(diffMs / 60000));
+    if (diffMinutes < 1) {
+      return 'Just now';
+    }
+    if (diffMinutes < 60) {
+      return `${diffMinutes}m ago`;
+    }
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) {
+      return `${diffHours}h ago`;
+    }
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}d ago`;
+  }
+
+  private resolveCgpaClassLabel(cgpa: number): string {
+    if (cgpa >= 4.5) {
+      return 'First Class';
+    }
+    if (cgpa >= 3.5) {
+      return 'Second Class Upper';
+    }
+    if (cgpa >= 2.4) {
+      return 'Second Class Lower';
+    }
+    if (cgpa >= 1.5) {
+      return 'Third Class';
+    }
+    if (cgpa >= 1) {
+      return 'Pass';
+    }
+    return 'Fail';
+  }
+
+  private describeCgpaTrendPoint(
+    trend: StudentCgpaTrendResponse['trend'] | undefined,
+    mode: 'best' | 'worst'
+  ): string {
+    if (!trend || trend.length === 0) {
+      return 'No semester data';
+    }
+    const target = trend.reduce((selected, current) => {
+      if (!selected) {
+        return current;
+      }
+      if (mode === 'best') {
+        return current.cgpa > selected.cgpa ? current : selected;
+      }
+      return current.cgpa < selected.cgpa ? current : selected;
+    }, trend[0]);
+    return `${target.semester} ${target.session}`.trim();
   }
 }

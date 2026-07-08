@@ -30,18 +30,17 @@
 
 .profile-tabs button {
   border: none;
-  border-radius: 0.6rem;
-  padding: 0.65rem 0.8rem;
+  border-radius: 8px;
+  padding: 12px 6px;
   background: transparent;
   text-align: left;
   color: var(--app-text-secondary);
-  font-size: 2rem;
 }
 
 .profile-tabs button.active {
   background: var(--app-surface-alt);
   color: var(--app-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .profile-content {

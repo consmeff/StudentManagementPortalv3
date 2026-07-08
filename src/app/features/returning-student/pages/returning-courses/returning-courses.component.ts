@@ -34,7 +34,7 @@ export class ReturningCoursesComponent implements OnInit {
   }
 
   goToPayment(): void {
-    void this.router.navigateByUrl('/returning/payment');
+    void this.router.navigateByUrl('/returning/payment?flow=school-fee');
   }
 
   toggle(courseId: number, checked: boolean): void {

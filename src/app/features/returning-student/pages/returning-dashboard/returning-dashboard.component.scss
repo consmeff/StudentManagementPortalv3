@@ -163,6 +163,11 @@
   white-space: nowrap;
 }
 
+.empty-state {
+  margin: 0;
+  color: var(--app-text-secondary);
+}
+
 .task-grid {
   display: grid;
   gap: 0.8rem;
@@ -183,4 +188,3 @@
     align-items: flex-start;
   }
 }
-

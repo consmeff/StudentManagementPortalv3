@@ -136,3 +136,64 @@ export interface UtmeResult {
   score?: number;
   file:  CertificateOfBirth;
 }
+
+export type StudentSingleResponse = {
+  data: StudentSingleData | null;
+};
+
+export type StudentLevel = {
+  id: number;
+  name: string;
+  is_active: boolean;
+};
+
+export type StudentDepartment = {
+  id: number;
+  name: string;
+  code: string;
+};
+
+export type StudentAdmissionDocuments = {
+  testimonial: CertificateOfBirth | null;
+  recommendation_letter_1: CertificateOfBirth | null;
+  recommendation_letter_2: CertificateOfBirth | null;
+};
+
+export type StudentSingleData = {
+  id: number;
+  matriculation_number: string;
+  first_name: string;
+  last_name: string;
+  other_names: string;
+  email: string;
+  phone_number: string;
+  alt_phone_number: string;
+  level: StudentLevel | null;
+  session: Session | null;
+  semester: unknown;
+  department: StudentDepartment | null;
+  program: unknown;
+  admission_documents: StudentAdmissionDocuments | null;
+  admission_document_verified: boolean;
+  dob: string | null;
+  certificate_of_birth: CertificateOfBirth | null;
+  o_level_result: OLevelResult[] | null;
+  certificate_of_origin: CertificateOfBirth | null;
+  passport_photo: CertificateOfBirth | null;
+  utme_reg_no: string | null;
+  utme_result: UtmeResult | null;
+  residential_address: Address | null;
+  correspondence_address: Address | null;
+  nationality: string | null;
+  state_of_origin: string | null;
+  lga: string | null;
+  marital_status: string | null;
+  primary_parent_or_guardian: AryParentOrGuardian | null;
+  secondary_parent_or_guardian: AryParentOrGuardian | null;
+  activities: unknown[];
+  disability: string | null;
+  compliance_directive: string | null;
+  deleted_at: string | null;
+  created_at: string;
+  updated_at: string;
+};

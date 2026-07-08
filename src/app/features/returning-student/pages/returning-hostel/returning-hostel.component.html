@@ -1,16 +1,25 @@
 <div class="returning-hostel-page">
-  <h1>{{ state() === 'allocated' ? 'My room' : 'Hostel application' }}</h1>
+  <h1>{{ state() === 'allocated' ? 'My room' : 'Hostel modification request' }}</h1>
   <p>{{ flow.studentName() }} • {{ flow.session() }} • {{ flow.level() }}</p>
 
-  <ng-container [ngSwitch]="state()">
-    <section *ngSwitchCase="'locked'" class="state-card">
-      <div class="state-icon">🏨🔒</div>
-      <h2>Hostel application is locked</h2>
-      <p>You need to make your first hostel fees payment before you can apply for hostel.</p>
-      <app-button (buttonClick)="goToPayment()">Make Payment</app-button>
-    </section>
+  <section *ngIf="flow.loadingHostelAllocation()" class="state-card">
+    <div class="state-icon">🏢</div>
+    <h2>Loading hostel allocation</h2>
+    <p>Fetching your current hostel details.</p>
+  </section>
 
-    <section *ngSwitchCase="'form'" class="application-form">
+  <ng-container *ngIf="!flow.loadingHostelAllocation()" [ngSwitch]="state()">
+    <section *ngSwitchCase="'request'" class="application-form">
+      <div class="current-allocation-card">
+        <h2>Current room allocation</h2>
+        <div class="current-allocation-grid">
+          <div><small>Hostel Name</small><strong>{{ flow.hostelAllocation().hostelName }}</strong></div>
+          <div><small>Hostel Block</small><strong>{{ flow.hostelAllocation().block }}</strong></div>
+          <div><small>Room Number</small><strong>{{ flow.hostelAllocation().roomNumber }}</strong></div>
+          <div><small>Your Bed</small><strong>{{ flow.hostelAllocation().bed }}</strong></div>
+        </div>
+      </div>
+
       <div class="form-field">
         <label>Academic Session</label>
         <select [ngModel]="draft().academicSession" (ngModelChange)="updateField('academicSession', $event)">
@@ -23,16 +32,26 @@
         <label>Preferred Hostel</label>
         <select [ngModel]="draft().preferredHostel" (ngModelChange)="updateField('preferredHostel', $event)">
           <option [ngValue]="''">Select hostel</option>
-          <option *ngFor="let item of flow.hostelOptions()" [ngValue]="item">{{ item }}</option>
+          <option *ngFor="let item of flow.availableHostels()" [ngValue]="item.id">
+            {{ item.name }}<ng-container *ngIf="item.roomCount > 0"> ({{ item.roomCount }} rooms)</ng-container>
+          </option>
         </select>
+        <small *ngIf="flow.loadingHostelOptions()">Loading available hostels...</small>
       </div>
 
       <div class="form-field">
-        <label>Preferred Block</label>
-        <select [ngModel]="draft().preferredBlock" (ngModelChange)="updateField('preferredBlock', $event)">
-          <option [ngValue]="''">Select block</option>
-          <option *ngFor="let item of flow.hostelBlockOptions()" [ngValue]="item">{{ item }}</option>
+        <label>Preferred Room</label>
+        <select
+          [disabled]="!draft().preferredHostel || flow.availableRoomOptions().length === 0"
+          [ngModel]="draft().preferredBlock"
+          (ngModelChange)="updateField('preferredBlock', $event)"
+        >
+          <option [ngValue]="''">Select room</option>
+          <option *ngFor="let item of flow.availableRoomOptions()" [ngValue]="item.value">{{ item.label }}</option>
         </select>
+        <small *ngIf="draft().preferredHostel && flow.selectedHostelOption()?.roomCount">
+          {{ flow.selectedHostelOption()?.roomCount }} rooms available
+        </small>
       </div>
 
       <div class="form-field">
@@ -47,9 +66,9 @@
       <div class="acknowledgement">
         <h3>Acknowledgement</h3>
         <p>
-          By submitting this application you agree to abide by the CONSMMEFS Hostel Rules and Regulations,
+          By submitting this modification request you agree to abide by the CONSMMEFS Hostel Rules and Regulations,
           including but not limited to no guests after 10 PM, no cooking in rooms, quiet hours from 11 PM to 6 AM,
-          and no damage to hostel property. Violation of hostel rules may result in eviction without refund of fees.
+          and no damage to hostel property. Room changes remain subject to approval and bed-space availability.
         </p>
         <label class="agree-check">
           <input
@@ -57,27 +76,27 @@
             [checked]="draft().acknowledged"
             (change)="updateField('acknowledged', $any($event.target).checked)"
           />
-          <span>I have read and agree to the hostel rules and regulations</span>
+          <span>I have read and agree to the hostel rules and modification terms</span>
         </label>
       </div>
 
-      <div class="actions">
+      <div class="actions split">
+        <app-button variant="outline" (buttonClick)="backToRoom()">Cancel</app-button>
         <app-button [disabled]="!canSubmit() || isSubmitting()" (buttonClick)="submit()">
-          {{ isSubmitting() ? 'Please wait...' : 'Submit Hostel Application' }}
+          {{ isSubmitting() ? 'Please wait...' : 'Submit Modification Request' }}
         </app-button>
       </div>
     </section>
 
     <section *ngSwitchCase="'pending'" class="state-card">
       <div class="state-icon">🏢⏱️</div>
-      <h2>Hostel allocation pending</h2>
+      <h2>Hostel change request pending</h2>
       <p>
-        Your hostel application has been successfully submitted and is currently under review.
-        Room allocation is done based on availability and application order. You will be notified once your room has been assigned.
+        Your hostel modification request has been submitted and is currently under review.
+        Room reassignment depends on approval and available bed spaces. You will be notified once a decision has been made.
       </p>
       <div class="actions split">
-        <app-button variant="outline" (buttonClick)="goToPayment()">Payment Portal</app-button>
-        <app-button (buttonClick)="markAllocated()">Mark Allocated</app-button>
+        <app-button variant="outline" (buttonClick)="backToRoom()">View Current Room</app-button>
       </div>
     </section>
 
@@ -103,9 +122,8 @@
 
       <div class="actions split">
         <app-button variant="outline" iconClass="pi pi-print" (buttonClick)="printHostelSlip()">Print Hostel Slip</app-button>
-        <app-button variant="outline" iconClass="pi pi-send">Request to Vacate</app-button>
+        <app-button variant="outline" iconClass="pi pi-send" (buttonClick)="startRequest()">Request Hostel Change</app-button>
       </div>
     </section>
   </ng-container>
 </div>
-

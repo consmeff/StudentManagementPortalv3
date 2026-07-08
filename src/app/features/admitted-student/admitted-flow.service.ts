@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
 import { ApplicationService } from '../../services/application.service';
-import { RegistrantData } from '../../data/application/registrantdatadto';
+import { RegistrantData, StudentSingleData } from '../../data/application/registrantdatadto';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatStructuredName } from '../../utility/name-format';
 import {
@@ -11,6 +11,8 @@ import {
   selectMatchingStudentFeePlan,
 } from '../../utility/student-fees-plan';
 import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
+
+type AdmissionDocumentType = 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial';
 
 export type VerificationDocument = {
   label: string;
@@ -54,6 +56,10 @@ export class AdmittedFlowService {
 
   readonly registrantData = signal<RegistrantData | null>(null);
 
+  readonly studentProfile = computed(() => this.authSessionStore.studentProfile());
+
+  readonly removedAdmissionDocuments = signal<AdmissionDocumentType[]>([]);
+
   readonly studentFeePlan = signal<StudentFeePlan | null>(null);
 
   readonly studentSchoolFeeStatus = signal<StudentSchoolFeeStatus | null>(null);
@@ -92,6 +98,11 @@ export class AdmittedFlowService {
   );
 
   readonly applicantName = computed(() => {
+    const student = this.studentProfile();
+    if (student) {
+      const fullName = [student.first_name, student.other_names, student.last_name].filter((value) => !!(value || '').trim()).join(' ');
+      return fullName || this.authSessionStore.name() || 'Student';
+    }
     const data = this.registrantData();
     const fallback = this.authSessionStore.name();
     const composed = formatStructuredName({
@@ -103,16 +114,28 @@ export class AdmittedFlowService {
   });
 
   readonly applicationNo = computed(
-    () => this.registrantData()?.application_no || this.authSessionStore.applicationNo() || '—'
+    () => this.studentProfile()?.matriculation_number
+      || this.registrantData()?.matriculation_no
+      || this.registrantData()?.application_no
+      || this.authSessionStore.matriculationNo()
+      || this.authSessionStore.applicationNo()
+      || '—'
   );
 
   readonly programName = computed(
-    () => this.registrantData()?.department?.name || this.registrantData()?.program?.name || '—'
+    () => this.studentProfile()?.department?.name
+      || this.registrantData()?.department?.name
+      || this.registrantData()?.program?.name
+      || '—'
   );
 
-  readonly academicSession = computed(() => this.registrantData()?.session?.name || '—');
+  readonly academicSession = computed(() =>
+    this.studentProfile()?.session?.name
+    || this.registrantData()?.session?.name
+    || '—'
+  );
 
-  readonly levelName = computed(() => 'ND 1');
+  readonly levelName = computed(() => this.studentProfile()?.level?.name || 'ND 1');
 
   readonly admissionDate = computed(() => {
     const data = this.registrantData();
@@ -158,7 +181,11 @@ export class AdmittedFlowService {
 
   readonly receiptUrl = computed(() => this.registrantData()?.payment_slip?.file_url || '');
 
-  readonly profilePhotoUrl = computed(() => this.registrantData()?.passport_photo?.file_url || '');
+  readonly profilePhotoUrl = computed(() =>
+    this.studentProfile()?.passport_photo?.file_url
+    || this.registrantData()?.passport_photo?.file_url
+    || ''
+  );
 
   readonly paidSchoolFees = computed(() =>
     this.studentSchoolFeeStatus()?.payment_status.total_paid
@@ -215,6 +242,8 @@ export class AdmittedFlowService {
 
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
+  readonly isAdmissionDocumentsVerified = computed(() => !!this.studentProfile()?.admission_document_verified);
+
   readonly isAllDocumentsVerified = computed(() => {
     const data = this.registrantData();
     const oLevelFile = data?.o_level_result?.[0]?.file?.file_name || '';
@@ -240,11 +269,27 @@ export class AdmittedFlowService {
   });
 
   readonly recommendationLetters = computed<VerificationDocument[]>(() => {
+    const student = this.studentProfile();
+    const admissionDocuments = student?.admission_documents;
     const data = this.registrantData();
-    const recFile1 = this.uploadedRecommendationLetter1()?.file_name || data?.academic_history?.[0]?.certificate?.file_name || '';
-    const recUrl1 = this.uploadedRecommendationLetter1()?.file_url || data?.academic_history?.[0]?.certificate?.file_url || '';
-    const recFile2 = this.uploadedRecommendationLetter2()?.file_name || data?.academic_history?.[1]?.certificate?.file_name || '';
-    const recUrl2 = this.uploadedRecommendationLetter2()?.file_url || data?.academic_history?.[1]?.certificate?.file_url || '';
+    const rec1Removed = this.isAdmissionDocumentRemoved('recommendation_letter_1');
+    const rec2Removed = this.isAdmissionDocumentRemoved('recommendation_letter_2');
+    const recFile1 = this.uploadedRecommendationLetter1()?.file_name
+      || (rec1Removed ? '' : admissionDocuments?.recommendation_letter_1?.file_name)
+      || data?.academic_history?.[0]?.certificate?.file_name
+      || '';
+    const recUrl1 = this.uploadedRecommendationLetter1()?.file_url
+      || (rec1Removed ? '' : admissionDocuments?.recommendation_letter_1?.file_url)
+      || data?.academic_history?.[0]?.certificate?.file_url
+      || '';
+    const recFile2 = this.uploadedRecommendationLetter2()?.file_name
+      || (rec2Removed ? '' : admissionDocuments?.recommendation_letter_2?.file_name)
+      || data?.academic_history?.[1]?.certificate?.file_name
+      || '';
+    const recUrl2 = this.uploadedRecommendationLetter2()?.file_url
+      || (rec2Removed ? '' : admissionDocuments?.recommendation_letter_2?.file_url)
+      || data?.academic_history?.[1]?.certificate?.file_url
+      || '';
 
     return [
       { label: 'Letter of Recommendation 1', fileName: recFile1, fileUrl: recUrl1, uploaded: !!recFile1 },
@@ -253,9 +298,18 @@ export class AdmittedFlowService {
   });
 
   readonly testimonialDocument = computed<VerificationDocument>(() => {
+    const student = this.studentProfile();
+    const admissionDocuments = student?.admission_documents;
     const data = this.registrantData();
-    const testimonialFile = this.uploadedTestimonial()?.file_name || data?.certificate_of_origin?.file_name || '';
-    const testimonialUrl = this.uploadedTestimonial()?.file_url || data?.certificate_of_origin?.file_url || '';
+    const testimonialRemoved = this.isAdmissionDocumentRemoved('testimonial');
+    const testimonialFile = this.uploadedTestimonial()?.file_name
+      || (testimonialRemoved ? '' : admissionDocuments?.testimonial?.file_name)
+      || data?.certificate_of_origin?.file_name
+      || '';
+    const testimonialUrl = this.uploadedTestimonial()?.file_url
+      || (testimonialRemoved ? '' : admissionDocuments?.testimonial?.file_url)
+      || data?.certificate_of_origin?.file_url
+      || '';
 
     return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: testimonialUrl, uploaded: !!testimonialFile };
   });
@@ -265,7 +319,12 @@ export class AdmittedFlowService {
     && this.testimonialDocument().uploaded
   );
 
+  readonly canShowSubmitProfileDocumentsButton = computed(() => !this.isAdmissionDocumentsVerified());
+
   async uploadDocument(file: File, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
+    if (this.isAdmissionDocumentsVerified()) {
+      return;
+    }
     this.uploadingDocument.set(documentType);
     try {
       const formData = new FormData();
@@ -282,23 +341,41 @@ export class AdmittedFlowService {
           this.uploadedTestimonial.set(response);
           break;
       }
+      this.clearRemovedAdmissionDocument(documentType);
     } finally {
       this.uploadingDocument.set(null);
     }
   }
 
   async submitProfileDocuments(): Promise<void> {
+    if (this.isAdmissionDocumentsVerified()) {
+      return;
+    }
     if (!this.canSubmitProfileDocuments()) {
       return;
     }
     this.submittingProfileDocuments.set(true);
     try {
       const data = this.registrantData();
+      const student = this.studentProfile();
+      const admissionDocuments = student?.admission_documents;
       const payload = {
         documents: {
-          recommendation_letter_1: this.uploadedRecommendationLetter1() || data?.academic_history?.[0]?.certificate || {},
-          recommendation_letter_2: this.uploadedRecommendationLetter2() || data?.academic_history?.[1]?.certificate || {},
-          testimonial: this.uploadedTestimonial() || data?.certificate_of_origin || {}
+          recommendation_letter_1: this.resolveAdmissionDocumentPayload(
+            'recommendation_letter_1',
+            this.uploadedRecommendationLetter1(),
+            admissionDocuments?.recommendation_letter_1 || data?.academic_history?.[0]?.certificate
+          ),
+          recommendation_letter_2: this.resolveAdmissionDocumentPayload(
+            'recommendation_letter_2',
+            this.uploadedRecommendationLetter2(),
+            admissionDocuments?.recommendation_letter_2 || data?.academic_history?.[1]?.certificate
+          ),
+          testimonial: this.resolveAdmissionDocumentPayload(
+            'testimonial',
+            this.uploadedTestimonial(),
+            admissionDocuments?.testimonial || data?.certificate_of_origin
+          )
         }
       };
       await firstValueFrom(this.appService.submitProfileDocuments(payload));
@@ -306,6 +383,47 @@ export class AdmittedFlowService {
     } finally {
       this.submittingProfileDocuments.set(false);
     }
+  }
+
+  removeAdmissionDocument(documentType: AdmissionDocumentType): void {
+    if (this.isAdmissionDocumentsVerified()) {
+      return;
+    }
+    const nextRemoved = Array.from(new Set([...this.removedAdmissionDocuments(), documentType]));
+    this.removedAdmissionDocuments.set(nextRemoved);
+    switch (documentType) {
+      case 'recommendation_letter_1':
+        this.uploadedRecommendationLetter1.set(null);
+        break;
+      case 'recommendation_letter_2':
+        this.uploadedRecommendationLetter2.set(null);
+        break;
+      case 'testimonial':
+        this.uploadedTestimonial.set(null);
+        break;
+    }
+  }
+
+  private isAdmissionDocumentRemoved(documentType: AdmissionDocumentType): boolean {
+    return this.removedAdmissionDocuments().includes(documentType);
+  }
+
+  private clearRemovedAdmissionDocument(documentType: AdmissionDocumentType): void {
+    const current = this.removedAdmissionDocuments();
+    if (!current.includes(documentType)) {
+      return;
+    }
+    this.removedAdmissionDocuments.set(current.filter((value) => value !== documentType));
+  }
+
+  private resolveAdmissionDocumentPayload(documentType: AdmissionDocumentType, uploaded: any, fallback: any): any {
+    if (uploaded) {
+      return uploaded;
+    }
+    if (this.isAdmissionDocumentRemoved(documentType)) {
+      return {};
+    }
+    return fallback || {};
   }
 
   readonly selectedCourses = computed(() => {
@@ -337,17 +455,18 @@ export class AdmittedFlowService {
 
   async loadSnapshot(): Promise<void> {
     const appNo = this.authSessionStore.applicationNo() || '';
-    if (!appNo) {
+    const hasStudentSnapshot = !!this.authSessionStore.studentProfile();
+    if (!appNo && !hasStudentSnapshot) {
       this.registrantData.set(null);
       return;
     }
 
     this.loadingSnapshot.set(true);
     try {
-      const response = await firstValueFrom(this.appService.registrantData(appNo));
-      const data = response?.data ?? null;
-      this.registrantData.set(data);
-      this.authSessionStore.syncRegistrantSession(data);
+      await this.loadStudentSnapshotAfterFirstInstallment();
+      if (!this.authSessionStore.studentProfile() && appNo) {
+        await this.loadApplicantSnapshot(appNo);
+      }
       await this.loadStudentFeePlan();
       await this.loadCourses();
       await this.loadRegisteredCourses();
@@ -454,6 +573,7 @@ export class AdmittedFlowService {
     this.updateStudentSchoolFeeStatus(trimmedAmount);
     this.authSessionStore.setPaymentRef(resolvedReference);
     this.authSessionStore.setPaymentStatus('paid');
+    void this.loadStudentSnapshotAfterFirstInstallment();
 
     return { ok: true, message: `${installmentLabel} recorded successfully.` };
   }
@@ -515,14 +635,60 @@ export class AdmittedFlowService {
       return;
     }
 
+    const nextTotalPaid = currentStatus.payment_status.total_paid + amount;
+    const nextTotalDue = Math.max(0, currentStatus.payment_status.total_due - amount);
+
     this.studentSchoolFeeStatus.set({
       ...currentStatus,
       payment_status: {
-        total_paid: currentStatus.payment_status.total_paid + amount,
-        total_due: Math.max(0, currentStatus.payment_status.total_due - amount),
-        number_of_payments: currentStatus.payment_status.number_of_payments + 1
+        total_paid: nextTotalPaid,
+        total_due: nextTotalDue,
+        number_of_payments: currentStatus.payment_status.number_of_payments + 1,
+        status: nextTotalDue <= 0 ? 'paid' : 'partially_paid'
       }
     });
+  }
+
+  private async loadApplicantSnapshot(appNo: string): Promise<void> {
+    const response = await firstValueFrom(this.appService.registrantData(appNo));
+    this.applyRegistrantSnapshot(response?.data ?? null);
+  }
+
+  private async loadStudentSnapshotAfterFirstInstallment(): Promise<void> {
+    if (!this.shouldLoadStudentSnapshot()) {
+      return;
+    }
+    if (this.authSessionStore.studentProfile()) {
+      return;
+    }
+    try {
+      const response = await firstValueFrom(this.appService.studentData());
+      const profile: StudentSingleData | null = response?.data ?? null;
+      if (profile?.matriculation_number) {
+        this.authSessionStore.setStudentProfile(profile);
+      }
+    } catch {
+      // Keep the applicant snapshot when the student profile is not ready yet.
+    }
+  }
+
+  private applyRegistrantSnapshot(data: RegistrantData | null): void {
+    this.registrantData.set(data);
+    this.authSessionStore.syncRegistrantSession(data);
+  }
+
+  private shouldLoadStudentSnapshot(): boolean {
+    const userType = (this.authSessionStore.userType() || '').toLowerCase().trim();
+    if (userType.includes('student')) {
+      return true;
+    }
+    if (!!this.authSessionStore.matriculationNo()) {
+      return true;
+    }
+    if (this.isSchoolFeesFullyPaid()) {
+      return true;
+    }
+    return this.hasInternalPayment();
   }
 
   private generateReference(date: Date): string {

@@ -20,6 +20,7 @@ export type StudentFeePlan = {
   deleted_by: number | null;
   department: number;
   level: number;
+  payment_status?: StudentSchoolFeePaymentStatus | null;
 };
 
 export type StudentFeePlanResponse = {
@@ -30,6 +31,7 @@ export type StudentSchoolFeePaymentStatus = {
   total_paid: number;
   total_due: number;
   number_of_payments: number;
+  status: string;
 };
 
 export type StudentSchoolFeeStatus = StudentFeePlan & {
