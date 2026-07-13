@@ -3,11 +3,9 @@ import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
-// PrimeNG Imports
 import { AccordionModule } from 'primeng/accordion';
 import { SkeletonModule } from 'primeng/skeleton';
 
-// Services & DTOs
 import { RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { ApplicationService } from '../../../../services/application.service';
 import { FormService } from '../../../services/form.service';
@@ -16,6 +14,7 @@ import { AuthSessionStore } from '../../../../store/auth-session.store';
 import { TAcademicHistory, TNextOfKinDTO, TOLevelResult, TPersonalDetailDTO, TUploadFile, TUtmeResultPayload } from '../../../../data/application/transformer.dto';
 import { LGA, States } from '../../../../data/application/location.dto';
 import { formatFileSize } from '../../../../utility/yearutil';
+import { parseDateOnly } from '../../../../utility/date-only';
 
 interface LabelValueRow {
   label: string;
@@ -449,16 +448,30 @@ ${residential_address.country?.name || ''}
     return value === null || value === undefined ? '—' : String(value);
   }
 
+  // private formatDate(value: string | Date | undefined): string {
+  //   if (!value) {
+  //     return '—';
+  //   }
+  //   const date = new Date(value);
+  //   if (Number.isNaN(date.getTime())) {
+  //     return this.toDisplay(value);
+  //   }
+  //   return date.toLocaleDateString('en-GB');
+  // }
+
   private formatDate(value: string | Date | undefined): string {
-    if (!value) {
-      return '—';
-    }
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return this.toDisplay(value);
-    }
-    return date.toLocaleDateString('en-GB');
+  if (!value) {
+    return '—';
   }
+
+  const date = parseDateOnly(value);
+
+  if (!date) {
+    return this.toDisplay(value);
+  }
+
+  return date.toLocaleDateString('en-GB');
+}
 
   private toFileSize(value: number | undefined): string {
     if (!value) {
