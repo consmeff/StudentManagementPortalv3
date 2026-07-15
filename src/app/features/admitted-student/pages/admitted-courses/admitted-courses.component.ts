@@ -44,6 +44,11 @@ export class AdmittedCoursesComponent implements OnInit {
 
   readonly totalRegisteredCount = computed(() => this.readRegisteredCourses().length);
 
+  readonly areRegisteredCoursesApproved = computed(() => {
+    const registeredCourses = this.readRegisteredCourses();
+    return registeredCourses.length > 0 && registeredCourses.every((course) => course.is_approved);
+  });
+
   readonly canSubmit = computed(() => this.selectedCount() > 0 && !this.registrationSubmitted() && !this.hasRegisteredCourses());
 
   readonly currentDate = new Date().toLocaleDateString('en-GB', {

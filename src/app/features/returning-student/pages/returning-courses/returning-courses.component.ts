@@ -20,6 +20,10 @@ export class ReturningCoursesComponent implements OnInit {
 
   readonly selectedResit = signal<ResitCourse | null>(null);
 
+  readonly canDownloadCourseSlip = computed(() =>
+    this.flow.areRegisteredCoursesApproved()
+  );
+
   readonly canSubmit = computed(() =>
     this.flow.courseReviewState() === 'open' && this.flow.totalCoursesSelectedFromApi() > 0
   );

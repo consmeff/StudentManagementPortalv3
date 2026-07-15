@@ -103,7 +103,13 @@
       </div>
 
       <div class="action-row">
-        <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">Download Course Slip</app-button>
+        <app-button
+          *ngIf="canDownloadCourseSlip()"
+          iconClass="pi pi-download"
+          (buttonClick)="downloadCourseSlip()"
+        >
+          Download Course Slip
+        </app-button>
       </div>
       <div class="action-row secondary">
         <app-button variant="neutral" iconClass="pi pi-file" (buttonClick)="openResitList()">Course Resit</app-button>
@@ -191,7 +197,7 @@
     <section class="locked-state" *ngSwitchCase="'waiting'">
       <div class="state-icon">⏳</div>
       <h2>Your courses are waiting to be approved</h2>
-      <p>You need to make your first school fees payment and verify your documents before you can register for courses.</p>
+      <p>Your registered courses have been submitted and are awaiting approval.</p>
     </section>
 
     <ng-container *ngSwitchDefault>
@@ -280,7 +286,13 @@
           </div>
 
           <div class="action-row">
-            <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">Download Course Slip</app-button>
+            <app-button
+              *ngIf="canDownloadCourseSlip()"
+              iconClass="pi pi-download"
+              (buttonClick)="downloadCourseSlip()"
+            >
+              Download Course Slip
+            </app-button>
           </div>
           <div class="action-row secondary">
             <app-button variant="neutral" iconClass="pi pi-file" (buttonClick)="openResitList()">Course Resit</app-button>
