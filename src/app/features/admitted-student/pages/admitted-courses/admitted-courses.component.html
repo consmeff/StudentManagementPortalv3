@@ -92,7 +92,11 @@
           </div>
 
           <div class="slip-footer">
-            <app-button iconClass="pi pi-download" (buttonClick)="downloadCourseSlip()">
+            <app-button
+              *ngIf="areRegisteredCoursesApproved()"
+              iconClass="pi pi-download"
+              (buttonClick)="downloadCourseSlip()"
+            >
               Download Course Slip
             </app-button>
           </div>

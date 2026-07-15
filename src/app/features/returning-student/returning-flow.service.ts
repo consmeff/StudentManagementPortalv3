@@ -40,7 +40,7 @@ export type SchoolFeeInstallment = {
   paidAt: Date;
 };
 
-export type CourseReviewState = 'locked' | 'waiting' | 'rejected' | 'open';
+export type CourseReviewState = 'locked' | 'waiting' | 'rejected' | 'open' | 'approved';
 
 export type ResitCourse = {
   code: string;
@@ -285,6 +285,15 @@ export class ReturningFlowService {
   readonly registeredCourses = signal<RegisteredCourse[]>([]);
 
   readonly hasRegisteredCourses = computed(() => this.registeredCourses().length > 0);
+
+  readonly hasApprovedRegisteredCourses = computed(() =>
+    this.registeredCourses().some((course) => course.is_approved)
+  );
+
+  readonly areRegisteredCoursesApproved = computed(() =>
+    this.registeredCourses().length > 0
+    && this.registeredCourses().every((course) => course.is_approved)
+  );
 
   readonly firstSemesterRegistered = computed(() => {
     return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('first'));
@@ -744,10 +753,7 @@ export class ReturningFlowService {
     };
     this.paymentHistory.set([...this.paymentHistory(), entry]);
     this.markFeeAsPaidByPriority();
-
-    if (this.courseReviewState() === 'locked') {
-      this.courseReviewState.set('waiting');
-    }
+    this.syncCourseReviewStateFromRegisteredCourses();
     return { ok: true, message: 'Payment recorded successfully.' };
   }
 
@@ -912,7 +918,7 @@ export class ReturningFlowService {
   }
 
   submitCourseRegistration(): void {
-    this.courseReviewState.set('waiting');
+    this.syncCourseReviewStateFromRegisteredCourses();
   }
 
   async loadStudentFeePlan(): Promise<void> {
@@ -1085,9 +1091,12 @@ export class ReturningFlowService {
   async loadRegisteredCourses(): Promise<void> {
     try {
       const response = await firstValueFrom(this.appService.getCurrentCourses());
-      this.registeredCourses.set(flattenRegisteredCoursesResponse(response));
-    } catch (e) {
+      const flattened = flattenRegisteredCoursesResponse(response);
+      this.registeredCourses.set(flattened);
+      this.syncCourseReviewStateFromRegisteredCourses();
+    } catch {
       this.registeredCourses.set([]);
+      this.syncCourseReviewStateFromRegisteredCourses();
     }
   }
 
@@ -1095,6 +1104,7 @@ export class ReturningFlowService {
     const payload = { course_ids: this.selectedCourseIds() };
     await firstValueFrom(this.appService.registerCourses(payload));
     await this.loadRegisteredCourses();
+    this.syncCourseReviewStateFromRegisteredCourses();
   }
 
   toggleCourseSelectionFromApi(courseId: number, checked: boolean): void {
@@ -1169,9 +1179,6 @@ export class ReturningFlowService {
     this.authSessionStore.setPaymentStatus('paid');
     this.updateStudentSchoolFeeStatus(normalizedAmount);
     this.syncReturningModuleAccess();
-    if (this.courseReviewState() === 'locked') {
-      this.courseReviewState.set('waiting');
-    }
     this.markFeeAsPaidByPriority();
     return { ok: true, message: `${entry.installmentLabel} recorded successfully.` };
   }
@@ -1227,9 +1234,7 @@ export class ReturningFlowService {
 
   private syncReturningModuleAccess(): void {
     if (this.hasPaidFirstSchoolFeeInstallment()) {
-      if (this.courseReviewState() === 'locked') {
-        this.courseReviewState.set('waiting');
-      }
+      this.syncCourseReviewStateFromRegisteredCourses();
       if (!this.hasPaidStatus(this.authSessionStore.paymentStatus())) {
         this.authSessionStore.setPaymentStatus('paid');
       }
@@ -1237,6 +1242,24 @@ export class ReturningFlowService {
     }
 
     this.courseReviewState.set('locked');
+  }
+
+  private syncCourseReviewStateFromRegisteredCourses(): void {
+    if (!this.hasPaidFirstSchoolFeeInstallment()) {
+      this.courseReviewState.set('locked');
+      return;
+    }
+
+    if (!this.hasRegisteredCourses()) {
+      if (this.courseReviewState() !== 'rejected') {
+        this.courseReviewState.set('open');
+      }
+      return;
+    }
+
+    this.courseReviewState.set(
+      this.areRegisteredCoursesApproved() ? 'approved' : 'waiting'
+    );
   }
 
   private hasPaidStatus(status: string): boolean {

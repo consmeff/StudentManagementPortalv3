@@ -26,12 +26,12 @@
         </div>
         <div class="doc-actions">
           <app-status-indicator
-            [text]="doc.uploaded ? 'Verified' : 'Pending Upload'"
+            [text]="doc.uploaded ? 'Uploaded' : 'Pending Upload'"
             [tone]="doc.uploaded ? 'shortlisted' : 'pending'"
             [pill]="true"
             [dot]="false"
           ></app-status-indicator>
-          <a *ngIf="doc.uploaded" [href]="doc.fileUrl" target="_blank" rel="noopener noreferrer" class="view-link">View</a>
+          <a *ngIf="doc.fileUrl" [href]="doc.fileUrl" target="_blank" rel="noopener noreferrer" class="view-link">View</a>
         </div>
       </div>
     </section>
@@ -57,6 +57,15 @@
                 <strong>{{ doc.label }}</strong>
                 <small>{{ doc.fileName }}</small>
               </div>
+              <a
+                *ngIf="doc.fileUrl"
+                [href]="doc.fileUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="view-link"
+              >
+                View
+              </a>
               <button
                 *ngIf="!flow.isAdmissionDocumentsVerified()"
                 type="button"
@@ -101,6 +110,15 @@
               <strong>{{ flow.testimonialDocument().label }}</strong>
               <small>{{ flow.testimonialDocument().fileName }}</small>
             </div>
+            <a
+              *ngIf="flow.testimonialDocument().fileUrl"
+              [href]="flow.testimonialDocument().fileUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="view-link"
+            >
+              View
+            </a>
             <button
               *ngIf="!flow.isAdmissionDocumentsVerified()"
               type="button"

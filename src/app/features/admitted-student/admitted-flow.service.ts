@@ -245,21 +245,21 @@ export class AdmittedFlowService {
   readonly isAdmissionDocumentsVerified = computed(() => !!this.studentProfile()?.admission_document_verified);
 
   readonly isAllDocumentsVerified = computed(() => {
-    const data = this.registrantData();
-    const oLevelFile = data?.o_level_result?.[0]?.file?.file_name || '';
-    const utmeFile = data?.utme_result?.file?.file_name || '';
-    const birthFile = data?.certificate_of_birth?.file_name || '';
+    const student = this.studentProfile() as unknown as Record<string, unknown> | null;
+    const oLevelFile = this.readStudentOLevelFileName(student) || '';
+    const utmeFile = this.readStudentUtmeFileName(student) || '';
+    const birthFile = this.readStudentBirthCertificateFileName(student) || '';
     return !!(oLevelFile && utmeFile && birthFile);
   });
 
   readonly coreDocuments = computed<VerificationDocument[]>(() => {
-    const data = this.registrantData();
-    const oLevelFile = data?.o_level_result?.[0]?.file?.file_name || '';
-    const oLevelUrl = data?.o_level_result?.[0]?.file?.file_url || '';
-    const utmeFile = data?.utme_result?.file?.file_name || '';
-    const utmeUrl = data?.utme_result?.file?.file_url || '';
-    const birthFile = data?.certificate_of_birth?.file_name || '';
-    const birthUrl = data?.certificate_of_birth?.file_url || '';
+    const student = this.studentProfile() as unknown as Record<string, unknown> | null;
+    const oLevelFile = this.readStudentOLevelFileName(student) || '';
+    const oLevelUrl = this.readStudentOLevelFileUrl(student) || '';
+    const utmeFile = this.readStudentUtmeFileName(student) || '';
+    const utmeUrl = this.readStudentUtmeFileUrl(student) || '';
+    const birthFile = this.readStudentBirthCertificateFileName(student) || '';
+    const birthUrl = this.readStudentBirthCertificateFileUrl(student) || '';
 
     return [
       { label: 'O Level Result', fileName: oLevelFile, fileUrl: oLevelUrl, uploaded: !!oLevelFile },
@@ -292,8 +292,8 @@ export class AdmittedFlowService {
       || '';
 
     return [
-      { label: 'Letter of Recommendation 1', fileName: recFile1, fileUrl: recUrl1, uploaded: !!recFile1 },
-      { label: 'Letter of Recommendation 2', fileName: recFile2, fileUrl: recUrl2, uploaded: !!recFile2 }
+      { label: 'Letter of Recommendation 1', fileName: recFile1, fileUrl: this.normalizeDocumentUrl(recUrl1), uploaded: !!recFile1 },
+      { label: 'Letter of Recommendation 2', fileName: recFile2, fileUrl: this.normalizeDocumentUrl(recUrl2), uploaded: !!recFile2 }
     ];
   });
 
@@ -311,7 +311,7 @@ export class AdmittedFlowService {
       || data?.certificate_of_origin?.file_url
       || '';
 
-    return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: testimonialUrl, uploaded: !!testimonialFile };
+    return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: this.normalizeDocumentUrl(testimonialUrl), uploaded: !!testimonialFile };
   });
 
   readonly canSubmitProfileDocuments = computed(() =>
@@ -319,7 +319,14 @@ export class AdmittedFlowService {
     && this.testimonialDocument().uploaded
   );
 
-  readonly canShowSubmitProfileDocumentsButton = computed(() => !this.isAdmissionDocumentsVerified());
+  readonly hasMissingProfileDocuments = computed(() =>
+    this.recommendationLetters().some((document) => !document.uploaded)
+    || !this.testimonialDocument().uploaded
+  );
+
+  readonly canShowSubmitProfileDocumentsButton = computed(() =>
+    !this.isAdmissionDocumentsVerified() && this.hasMissingProfileDocuments()
+  );
 
   async uploadDocument(file: File, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
     if (this.isAdmissionDocumentsVerified()) {
@@ -695,6 +702,95 @@ export class AdmittedFlowService {
     const year = date.getFullYear();
     const suffix = Math.floor(100000 + Math.random() * 900000);
     return `REM-${year}-${suffix}`;
+  }
+
+  private normalizeDocumentUrl(value: string): string {
+    return value.replace(/[`\\s]+/g, '').trim();
+  }
+
+  private tryParseJsonValue(value: unknown): unknown {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    const trimmed = value.trim();
+    if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) {
+      return value;
+    }
+    try {
+      return JSON.parse(trimmed.replace(/`/g, '').replace(/\\`/g, ''));
+    } catch {
+      return value;
+    }
+  }
+
+  private readStudentOLevelResult(student: Record<string, unknown> | null): unknown[] {
+    const raw = student?.['o_level_result'];
+    const parsed = this.tryParseJsonValue(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  }
+
+  private readStudentUtmeResult(student: Record<string, unknown> | null): Record<string, unknown> | null {
+    const raw = student?.['utme_result'];
+    const parsed = this.tryParseJsonValue(raw);
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : null;
+  }
+
+  private readStudentBirthCertificate(student: Record<string, unknown> | null): Record<string, unknown> | null {
+    const raw = student?.['certificate_of_birth'];
+    const parsed = this.tryParseJsonValue(raw);
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : null;
+  }
+
+  private readStudentOLevelFileName(student: Record<string, unknown> | null): string | null {
+    const result = this.readStudentOLevelResult(student)[0];
+    const file = result && typeof result === 'object' ? (result as Record<string, unknown>)['file'] : null;
+    if (!file || typeof file !== 'object') {
+      return null;
+    }
+    const fileName = (file as Record<string, unknown>)['file_name'];
+    return typeof fileName === 'string' ? fileName : null;
+  }
+
+  private readStudentOLevelFileUrl(student: Record<string, unknown> | null): string | null {
+    const result = this.readStudentOLevelResult(student)[0];
+    const file = result && typeof result === 'object' ? (result as Record<string, unknown>)['file'] : null;
+    if (!file || typeof file !== 'object') {
+      return null;
+    }
+    const fileUrl = (file as Record<string, unknown>)['file_url'];
+    return typeof fileUrl === 'string' ? this.normalizeDocumentUrl(fileUrl) : null;
+  }
+
+  private readStudentUtmeFileName(student: Record<string, unknown> | null): string | null {
+    const utme = this.readStudentUtmeResult(student);
+    const file = utme?.['file'];
+    if (!file || typeof file !== 'object') {
+      return null;
+    }
+    const fileName = (file as Record<string, unknown>)['file_name'];
+    return typeof fileName === 'string' ? fileName : null;
+  }
+
+  private readStudentUtmeFileUrl(student: Record<string, unknown> | null): string | null {
+    const utme = this.readStudentUtmeResult(student);
+    const file = utme?.['file'];
+    if (!file || typeof file !== 'object') {
+      return null;
+    }
+    const fileUrl = (file as Record<string, unknown>)['file_url'];
+    return typeof fileUrl === 'string' ? this.normalizeDocumentUrl(fileUrl) : null;
+  }
+
+  private readStudentBirthCertificateFileName(student: Record<string, unknown> | null): string | null {
+    const birth = this.readStudentBirthCertificate(student);
+    const fileName = birth?.['file_name'];
+    return typeof fileName === 'string' ? fileName : null;
+  }
+
+  private readStudentBirthCertificateFileUrl(student: Record<string, unknown> | null): string | null {
+    const birth = this.readStudentBirthCertificate(student);
+    const fileUrl = birth?.['file_url'];
+    return typeof fileUrl === 'string' ? this.normalizeDocumentUrl(fileUrl) : null;
   }
 
   private ordinalSuffix(n: number): string {
