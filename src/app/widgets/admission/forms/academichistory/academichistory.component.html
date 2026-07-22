@@ -83,18 +83,18 @@
         <div class="radio-options">
           <div *ngFor="let attempt of attemptOptions" class="radio-option">
             <div class="p-radiobutton">
-              <input type="radio" [id]="'attempt-' + attempt" name="attempt" [value]="attempt" formControlName="attempt" class="p-radiobutton-input" />
+              <input type="radio" [id]="getAttemptOptionId(attempt)" name="attempt" [value]="attempt" formControlName="attempt" class="p-radiobutton-input" />
               <div class="p-radiobutton-box">
                 <div class="p-radiobutton-icon"></div>
               </div>
             </div>
-            <label [for]="'attempt-' + attempt" class="radio-label">{{ attempt }}</label>
+            <label [for]="getAttemptOptionId(attempt)" class="radio-label">{{ attempt }}</label>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="form-section" [formGroup]="academicHistoryExamsForm">
+    <div *ngIf="!isAwaitingResultSelected()" class="form-section" [formGroup]="academicHistoryExamsForm">
       <div formArrayName="examattemptcount">
         <div *ngFor="let item of examAttemptCountArray().controls; let i = index" [formGroupName]="i" class="attempt-block">
           <h4 class="sub-section-title" *ngIf="i > 0">Second Sitting</h4>

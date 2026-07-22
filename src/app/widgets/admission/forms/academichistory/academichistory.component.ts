@@ -17,7 +17,11 @@ import { formstepDTO } from '../../../../data/application/form.dto';
 import { AcademicHistory, OLevelResult, RegistrantDataDTO } from '../../../../data/application/registrantdatadto';
 import { extractLastYearFromText, getPastYears } from '../../../../utility/yearutil';
 import { ExamRecord, TAcademicHistory, TOLevelResult, TPersonalDetailDTO, TUtmeResultPayload } from '../../../../data/application/transformer.dto';
-import { ACADEMIC_HISTORY_RULES } from '../../../../constants/academic-history.constants';
+import {
+  ACADEMIC_HISTORY_ATTEMPT_OPTIONS,
+  ACADEMIC_HISTORY_AWAITING_RESULT_OPTION,
+  ACADEMIC_HISTORY_RULES
+} from '../../../../constants/academic-history.constants';
 import { formatDateOnly, parseDateOnly } from '../../../../utility/date-only';
 
 @Component({
@@ -90,7 +94,7 @@ export class AcademicHistoryComponent implements OnInit {
     attempt: new FormControl('1', Validators.required)
   });
 
-  attemptOptions = ['1', '2'];
+  readonly attemptOptions = [...ACADEMIC_HISTORY_ATTEMPT_OPTIONS];
 
   isEditable = true;
 
@@ -150,13 +154,8 @@ export class AcademicHistoryComponent implements OnInit {
       value: year.toString()
     }));
 
-    this.examnumform.valueChanges.subscribe(val => {
-      if (+val.attempt == 1 && this.examAttemptCountArray().length != 1) {
-        this.removeExamAttempt(1);
-      }
-      if (+val.attempt == 2 && this.examAttemptCountArray().length != 2) {
-        this.addExamAttempt();
-      }
+    this.examnumform.valueChanges.subscribe((value) => {
+      this.updateExamAttemptSelection(value.attempt);
       this.cd.detectChanges();
     });
 
@@ -224,6 +223,10 @@ export class AcademicHistoryComponent implements OnInit {
       this.examnumform.get('attempt')?.setValue(`${Math.min(_exams.length, 2)}`);
     }
 
+    if (this.draftOLevelResults !== null && this.draftOLevelResults.length === 0) {
+      this.examnumform.get('attempt')?.setValue(ACADEMIC_HISTORY_AWAITING_RESULT_OPTION);
+    }
+
     if (_more != null && _more.length > 0) {
       this.qualificationsArray().clear();
       _more.forEach((item) => this.addQualification(item));
@@ -269,9 +272,10 @@ export class AcademicHistoryComponent implements OnInit {
     const dateRangesValid = this.areDateRangesValid();
     const completionAgeValid = this.areCompletionAgeRulesValid();
     const optionalQualificationsValid = this.areOptionalQualificationsValid();
+    const examsSectionValid = this.isAwaitingResultSelected() || this.academicHistoryExamsForm.valid;
     if (this.academicHistoryPrimaryForm.valid && 
         this.academicHistorySecondaryForm.valid && 
-        this.academicHistoryExamsForm.valid &&
+        examsSectionValid &&
         this.jambDetailsForm.valid &&
         dateRangesValid &&
         completionAgeValid &&
@@ -286,18 +290,19 @@ export class AcademicHistoryComponent implements OnInit {
   }
 
   preparePayload() {
-    const ex: TOLevelResult[] = [];
-    this.academicHistoryExamsForm.value.examattemptcount.forEach((_element: any) => {
-      const element = _element as ExamRecord;
-      const _n = element.name;
-      const _d = element.year;
-      ex.push({
-        name: `${_n}/${_d}`,
-        subjects: Object.entries(element)
-          .filter(([key]) => !["name", "year"].includes(key))
-          .map(([subject, grade]) => ({ subject, grade }))
+    const ex: TOLevelResult[] = this.isAwaitingResultSelected()
+      ? []
+      : this.academicHistoryExamsForm.value.examattemptcount.map((_element: unknown) => {
+        const element = _element as ExamRecord;
+        const examName = element.name;
+        const examYear = element.year;
+        return {
+          name: `${examName}/${examYear}`,
+          subjects: Object.entries(element)
+            .filter(([key]) => !['name', 'year'].includes(key))
+            .map(([subject, grade]) => ({ subject, grade }))
+        };
       });
-    });
 
     this._formStepService.setOlevelResultFormData(ex);
     const rawRegNo = this.jambDetailsForm.value.registrationNumber;
@@ -401,6 +406,14 @@ export class AcademicHistoryComponent implements OnInit {
 
   removeExamAttempt(index: number): void {
     this.examAttemptCountArray().removeAt(index);
+  }
+
+  isAwaitingResultSelected(): boolean {
+    return this.examnumform.get('attempt')?.value === ACADEMIC_HISTORY_AWAITING_RESULT_OPTION;
+  }
+
+  getAttemptOptionId(attempt: string): string {
+    return `attempt-${attempt.toLowerCase().replace(/\s+/g, '-')}`;
   }
 
   onJambRegistrationNumberInput(event: Event): void {
@@ -589,7 +602,6 @@ export class AcademicHistoryComponent implements OnInit {
       this.academicHistoryPrimaryForm,
       this.academicHistorySecondaryForm,
       this.jambDetailsForm,
-      this.academicHistoryExamsForm,
       this.academicHistoryOtherQualificationForm,
       this.examnumform
     ];
@@ -604,5 +616,43 @@ export class AcademicHistoryComponent implements OnInit {
         form.disable({ emitEvent: false });
       }
     });
+
+    this.applyExamFormState();
+  }
+
+  private applyExamFormState(): void {
+    if (!this.academicHistoryExamsForm) {
+      return;
+    }
+
+    if (this.isEditable && !this.isAwaitingResultSelected()) {
+      this.academicHistoryExamsForm.enable({ emitEvent: false });
+      return;
+    }
+
+    this.academicHistoryExamsForm.disable({ emitEvent: false });
+  }
+
+  private updateExamAttemptSelection(selectedAttempt: string | null): void {
+    if (selectedAttempt === '1') {
+      while (this.examAttemptCountArray().length > 1) {
+        this.removeExamAttempt(this.examAttemptCountArray().length - 1);
+      }
+      while (this.examAttemptCountArray().length < 1) {
+        this.addExamAttempt();
+      }
+    }
+
+    if (selectedAttempt === '2') {
+      while (this.examAttemptCountArray().length < 2) {
+        this.addExamAttempt();
+      }
+      while (this.examAttemptCountArray().length > 2) {
+        this.removeExamAttempt(this.examAttemptCountArray().length - 1);
+      }
+    }
+
+    this.applyExamFormState();
+    this.validateAndUpdate();
   }
 }
