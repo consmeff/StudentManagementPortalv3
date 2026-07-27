@@ -300,15 +300,12 @@ export class AdmittedFlowService {
   readonly testimonialDocument = computed<VerificationDocument>(() => {
     const student = this.studentProfile();
     const admissionDocuments = student?.admission_documents;
-    const data = this.registrantData();
     const testimonialRemoved = this.isAdmissionDocumentRemoved('testimonial');
     const testimonialFile = this.uploadedTestimonial()?.file_name
       || (testimonialRemoved ? '' : admissionDocuments?.testimonial?.file_name)
-      || data?.certificate_of_origin?.file_name
       || '';
     const testimonialUrl = this.uploadedTestimonial()?.file_url
       || (testimonialRemoved ? '' : admissionDocuments?.testimonial?.file_url)
-      || data?.certificate_of_origin?.file_url
       || '';
 
     return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: this.normalizeDocumentUrl(testimonialUrl), uploaded: !!testimonialFile };
@@ -325,7 +322,7 @@ export class AdmittedFlowService {
   );
 
   readonly canShowSubmitProfileDocumentsButton = computed(() =>
-    !this.isAdmissionDocumentsVerified() && this.hasMissingProfileDocuments()
+    !this.isAdmissionDocumentsVerified() && !this.hasAllSubmittedProfileDocuments()
   );
 
   async uploadDocument(file: File, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
@@ -381,7 +378,7 @@ export class AdmittedFlowService {
           testimonial: this.resolveAdmissionDocumentPayload(
             'testimonial',
             this.uploadedTestimonial(),
-            admissionDocuments?.testimonial || data?.certificate_of_origin
+            admissionDocuments?.testimonial
           )
         }
       };
@@ -431,6 +428,15 @@ export class AdmittedFlowService {
       return {};
     }
     return fallback || {};
+  }
+
+  private hasAllSubmittedProfileDocuments(): boolean {
+    const admissionDocuments = this.studentProfile()?.admission_documents;
+    return !!(
+      admissionDocuments?.recommendation_letter_1?.file_url
+      && admissionDocuments?.recommendation_letter_2?.file_url
+      && admissionDocuments?.testimonial?.file_url
+    );
   }
 
   readonly selectedCourses = computed(() => {
