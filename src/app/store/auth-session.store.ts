@@ -2,7 +2,7 @@ import { effect } from '@angular/core';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { LoginResponse } from '../data/auth/auth.data';
 import { RegistrantData, StudentSingleData } from '../data/application/registrantdatadto';
-import { normalizeDisplayName } from '../utility/name-format';
+import { formatStructuredName, normalizeDisplayName } from '../utility/name-format';
 
 type AuthSessionState = {
   name: string;
@@ -168,8 +168,11 @@ function readAuthSessionCookie(): AuthSessionCookieState | null {
 }
 
 function buildStudentDisplayName(profile: StudentSingleData): string {
-  const parts = [profile.last_name, profile.first_name, profile.other_names].filter((value) => !!(value || '').trim());
-  return parts.join(' ');
+  return formatStructuredName({
+    firstName: profile.first_name,
+    lastName: profile.last_name,
+    middleName: profile.other_names
+  });
 }
 
 export const AuthSessionStore = signalStore(

@@ -19,7 +19,7 @@ export const errorInterceptor: HttpInterceptorFn = (request, next) => {
   return next(request).pipe(
     catchError((error: unknown) => {
       if (!skipErrorToast) {
-        const message = buildErrorMessage(error);
+        const message = extractHttpErrorMessage(error);
         messageService.add({
           severity: 'error',
           summary: buildErrorSummary(error),
@@ -56,7 +56,7 @@ function buildErrorSummary(error: unknown): string {
   return INTERCEPTOR_SUMMARIES.fallback;
 }
 
-function buildErrorMessage(error: unknown): string {
+export function extractHttpErrorMessage(error: unknown): string {
   if (!(error instanceof HttpErrorResponse)) {
     return 'An unexpected error occurred. Please try again.';
   }

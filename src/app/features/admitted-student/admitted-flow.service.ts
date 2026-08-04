@@ -100,7 +100,11 @@ export class AdmittedFlowService {
   readonly applicantName = computed(() => {
     const student = this.studentProfile();
     if (student) {
-      const fullName = [student.first_name, student.other_names, student.last_name].filter((value) => !!(value || '').trim()).join(' ');
+      const fullName = formatStructuredName({
+        firstName: student.first_name,
+        lastName: student.last_name,
+        middleName: student.other_names
+      });
       return fullName || this.authSessionStore.name() || 'Student';
     }
     const data = this.registrantData();

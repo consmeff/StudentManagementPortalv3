@@ -8,6 +8,7 @@ import { StudentHostelAllocation, StudentHostelOption, StudentHostelRoomOption }
 import { StudentResultsResponse } from '../../data/application/student-results.dto';
 import { ApplicationService } from '../../services/application.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
+import { normalizeDisplayName } from '../../utility/name-format';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
@@ -960,7 +961,7 @@ export class ReturningFlowService {
       const response = await firstValueFrom(this.appService.getStudentDashboard());
       this.studentDashboard.set(response);
       this.hasLoadedStudentDashboard.set(true);
-      this.studentName.set(response.full_name || this.studentName());
+      this.studentName.set(normalizeDisplayName(response.full_name) || this.studentName());
       this.matricNo.set(response.matriculation_number || this.matricNo());
       this.program.set(response.department || this.program());
       this.session.set(response.academic_year || this.session());
@@ -987,7 +988,7 @@ export class ReturningFlowService {
     try {
       const response = await firstValueFrom(this.appService.getStudentResults());
       this.studentResults.set(response);
-      this.studentName.set(response.student_name || this.studentName());
+      this.studentName.set(normalizeDisplayName(response.student_name) || this.studentName());
       this.matricNo.set(response.matric_no || this.matricNo());
       this.program.set(response.program || this.program());
       this.level.set(response.level || this.level());

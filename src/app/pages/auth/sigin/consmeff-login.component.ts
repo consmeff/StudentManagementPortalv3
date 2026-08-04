@@ -1,4 +1,5 @@
 
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -9,6 +10,8 @@ import { AuthSessionStore } from '../../../store/auth-session.store';
 import { ThemeService } from '../../../services/theme.service';
 import { UserPortalService } from '../../../services/user-portal.service';
 import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants';
+import { extractHttpErrorMessage } from '../../../services/error.interceptor';
+import { PENDING_VERIFICATION_REDIRECT_REASON } from '../../../constants/auth.constants';
 
 import { TraceabilityModule } from '../../../shared/traceability.module';
 
@@ -17,6 +20,10 @@ const LOGIN_CAROUSEL_IMAGES = [
   '/assets/images/carousel-image-2.jpeg'
 ];
 const LOGIN_CAROUSEL_INTERVAL_MS = 6000;
+
+/** Statuses the API uses when the account exists but the email has never been verified. */
+const PENDING_VERIFICATION_STATUSES = [403, 422];
+const PENDING_VERIFICATION_PATTERN = /pending verification|awaiting verification|not verified|unverified|verify your (account|email)/i;
 
 @Component({
   selector: 'app-consmeff-login',
@@ -100,8 +107,15 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
         this.isLoading.set(false);
         this.router.navigateByUrl(this.userPortalService.landingUrl());
       },
-      error: () => {
+      error: (error: unknown) => {
         this.isLoading.set(false);
+
+        if (this.isPendingVerificationError(error)) {
+          this.redirectToOtpVerification(payload.username);
+          return;
+        }
+
+        this.errorMessage = extractHttpErrorMessage(error);
       },
       complete: () => {
         this.isLoading.set(false);
@@ -109,6 +123,24 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
     })
 
 
+  }
+
+  private isPendingVerificationError(error: unknown): boolean {
+    if (!(error instanceof HttpErrorResponse)) {
+      return false;
+    }
+    if (!PENDING_VERIFICATION_STATUSES.includes(error.status)) {
+      return false;
+    }
+
+    return PENDING_VERIFICATION_PATTERN.test(extractHttpErrorMessage(error));
+  }
+
+  private redirectToOtpVerification(email: string): void {
+    this.authSessionStore.startSignupVerificationFlow((email ?? '').trim());
+    this.router.navigate(['/auth/otp-page'], {
+      state: { reason: PENDING_VERIFICATION_REDIRECT_REASON }
+    });
   }
 
   ngOnDestroy(): void {
