@@ -65,6 +65,10 @@
           Password is required.
         </small>
 
+        <small class="error-text" role="alert" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </small>
+
         <button pButton type="submit" class="action-btn" [disabled]="isLoading()">
           {{ isLoading() ? "Signing In..." : "Login" }}
         </button>

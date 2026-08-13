@@ -140,7 +140,7 @@
     </p-dialog>
 
     <app-application-guideline-modal
-        [content]="guidelineContent"
+        [content]="guidelineContent()"
         [visible]="showGuidelineDialog()"
         [accepted]="guidelinesAccepted()"
         [loading]="initializingApplication()"

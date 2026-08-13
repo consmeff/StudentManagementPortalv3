@@ -9,6 +9,7 @@ import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ThemeService } from '../../../services/theme.service';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants';
+import { PENDING_VERIFICATION_REDIRECT_REASON } from '../../../constants/auth.constants';
 
 @Component({
   selector: 'app-otp-page',
@@ -54,8 +55,20 @@ export class OtpPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.email = this.authSessionStore.profileEmail() || 'your email';
     this.isPasswordResetFlow = this.authSessionStore.authFlow() === 'password_reset';
-    this.startResendCooldown();
-    
+
+    if (this.isPendingVerificationRedirect()) {
+      // No fresh code was just sent, so leave "Resend OTP" available straight away.
+      this.resendCountdown = 0;
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Verification Required',
+        detail: `Your account is pending verification. Enter the code sent to ${this.email}, or request a new one.`,
+        life: 6000
+      });
+    } else {
+      this.startResendCooldown();
+    }
+
     this.otpForm = new FormGroup({
       box1: new FormControl('', [Validators.required, Validators.pattern(/^\d$/)]),
       box2: new FormControl('', [Validators.required, Validators.pattern(/^\d$/)]),
@@ -213,6 +226,16 @@ export class OtpPageComponent implements OnInit, OnDestroy {
       return `Resend OTP in ${this.resendCountdown}s`;
     }
     return 'Resend OTP';
+  }
+
+  private isPendingVerificationRedirect(): boolean {
+    if (this.isPasswordResetFlow) {
+      return false;
+    }
+    const navigationState = this.router.getCurrentNavigation()?.extras.state
+      ?? (typeof history === 'undefined' ? null : history.state);
+
+    return navigationState?.['reason'] === PENDING_VERIFICATION_REDIRECT_REASON;
   }
 
   private startResendCooldown(): void {

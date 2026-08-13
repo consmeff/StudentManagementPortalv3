@@ -3,6 +3,7 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { AcceptanceFee } from '../data/application/acceptance-fee.dto';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
 import { PasswordChangePayload } from '../data/application/password-change.dto';
 import {
@@ -48,6 +49,8 @@ export class ApplicationService {
   private readonly studentFeesEndpoint = `${this.apiRoot}/api/v1/payments/student-fees`;
 
   private readonly payStudentFeeEndpoint = `${this.apiRoot}/api/v1/students/pay-fee`;
+
+  private readonly acceptanceFeeEndpoint = `${this.apiRoot}/api/v1/applicants/acceptance-fee`;
 
   private readonly changePasswordEndpoint = `${this.apiRoot}/password/change`;
 
@@ -152,6 +155,12 @@ export class ApplicationService {
 
   getPaymentRef(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
     return this.http.post<PaymentRefResponse>(`${this.apiRoot}/api/v1/applicants/initiate-payment`, refPayload);
+  }
+
+  getAcceptanceFee(): Observable<AcceptanceFee> {
+    return this.http.get<unknown>(this.acceptanceFeeEndpoint).pipe(
+      map((response) => this.normalizeAcceptanceFeeResponse(response))
+    );
   }
 
   acceptanceFeePayment(refPayload: { application_no: string }): Observable<PaymentRefResponse> {
@@ -406,6 +415,66 @@ export class ApplicationService {
     };
   }
 
+  private normalizeAcceptanceFeeResponse(response: unknown): AcceptanceFee {
+    const rawResponse = this.selectAcceptanceFeeRecord(response);
+    return {
+      amount: this.readFirstNumericValue(
+        rawResponse['amount'],
+        rawResponse['acceptance_fee'],
+        rawResponse['acceptance_fee_amount'],
+        rawResponse['fee'],
+        rawResponse['value']
+      ),
+      processing_fee: this.readFirstNumericValue(
+        rawResponse['processing_fee'],
+        rawResponse['processing_fee_amount'],
+        rawResponse['convenience_fee']
+      ),
+      label: this.readFirstDisplayValue(rawResponse['label'], rawResponse['name'], rawResponse['title'])
+    };
+  }
+
+  private selectAcceptanceFeeRecord(response: unknown): Record<string, unknown> {
+    if (typeof response === 'number' || typeof response === 'string') {
+      return { amount: response };
+    }
+
+    let current = this.toRecord(response);
+    for (let step = 0; step < 4; step += 1) {
+      if (this.looksLikeAcceptanceFee(current)) {
+        return current;
+      }
+
+      const nestedList = Array.isArray(current['data'])
+        ? current['data']
+        : Array.isArray(current['results'])
+          ? current['results']
+          : null;
+      if (nestedList) {
+        const match = nestedList.find((entry) => this.looksLikeAcceptanceFee(this.toRecord(entry)));
+        return this.toRecord(match ?? nestedList[0]);
+      }
+
+      const nestedRecord = this.getNestedRecord(current, 'data')
+        ?? this.getNestedRecord(current, 'acceptance_fee');
+      if (!nestedRecord) {
+        break;
+      }
+      current = nestedRecord;
+    }
+
+    return current;
+  }
+
+  private looksLikeAcceptanceFee(value: Record<string, unknown>): boolean {
+    return (
+      this.parseNumericValue(value['amount']) !== null
+      || this.parseNumericValue(value['acceptance_fee']) !== null
+      || this.parseNumericValue(value['acceptance_fee_amount']) !== null
+      || this.parseNumericValue(value['fee']) !== null
+    );
+  }
+
   private normalizeStudentFeePlansResponse(response: unknown): StudentFeePlanResponse {
     const rawResponse = this.toRecord(response);
     const source = Array.isArray(rawResponse['data'])
@@ -514,6 +583,32 @@ export class ApplicationService {
   private readNullableNumber(source: Record<string, unknown>, key: string): number | null {
     const value = source[key];
     return typeof value === 'number' && Number.isFinite(value) ? value : null;
+  }
+
+  private parseNumericValue(value: unknown): number | null {
+    if (typeof value === 'number') {
+      return Number.isFinite(value) ? value : null;
+    }
+    if (typeof value !== 'string') {
+      return null;
+    }
+
+    const normalized = value.replace(/[^0-9.-]/g, '');
+    if (!normalized || normalized === '-' || normalized === '.') {
+      return null;
+    }
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private readFirstNumericValue(...candidates: unknown[]): number | null {
+    for (const candidate of candidates) {
+      const parsed = this.parseNumericValue(candidate);
+      if (parsed !== null) {
+        return parsed;
+      }
+    }
+    return null;
   }
 
   private readBoolean(source: Record<string, unknown>, key: string): boolean {
