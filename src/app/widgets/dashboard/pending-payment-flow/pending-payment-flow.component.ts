@@ -1,12 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { firstValueFrom } from 'rxjs';
 import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ApplicationService } from '../../../services/application.service';
 import { Datum, Department, DepartmentsDTO, OpenApplicationDTO } from '../../../data/application/admission.dto';
-import { APPLICATION_GUIDELINE_CONTENT } from '../../../data/dashboard/application-guideline.data';
+import {
+  ApplicationFeeAmounts,
+  DEFAULT_APPLICATION_FEE_AMOUNTS,
+  buildApplicationGuidelineContent,
+} from '../../../data/dashboard/application-guideline.data';
 import { AuthSessionStore } from '../../../store/auth-session.store';
 import { ApplicationGuidelineModalComponent } from '../application-guideline-modal/application-guideline-modal.component';
 import { PaymentWorkflowService } from '../../../services/payment-workflow.service';
@@ -73,7 +77,9 @@ export class PendingPaymentFlowComponent implements OnInit {
 
   private readonly paymentWorkflow = inject(PaymentWorkflowService);
 
-  readonly guidelineContent = APPLICATION_GUIDELINE_CONTENT;
+  readonly applicationFee = signal<ApplicationFeeAmounts>(DEFAULT_APPLICATION_FEE_AMOUNTS);
+
+  readonly guidelineContent = computed(() => buildApplicationGuidelineContent(this.applicationFee()));
 
   readonly actionLabels = ACTION_LABELS;
 
@@ -141,7 +147,20 @@ export class PendingPaymentFlowComponent implements OnInit {
       this.authSessionStore.paymentStatus() || UI_COPY.defaultPaymentStatus
     );
     this.recomputeDashboardState();
+    void this.loadApplicationFee();
     void this.loadRegistrantSnapshot();
+  }
+
+  async loadApplicationFee(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.appService.getAcceptanceFee());
+      this.applicationFee.set({
+        amount: response.amount ?? DEFAULT_APPLICATION_FEE_AMOUNTS.amount,
+        processingFee: response.processing_fee ?? DEFAULT_APPLICATION_FEE_AMOUNTS.processingFee,
+      });
+    } catch {
+      // Keep the configured defaults when the acceptance fee endpoint is unavailable.
+    }
   }
 
   onPrimaryAction(): void {

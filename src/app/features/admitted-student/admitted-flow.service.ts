@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { AcceptanceFee } from '../../data/application/acceptance-fee.dto';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
 import { ApplicationService } from '../../services/application.service';
 import { RegistrantData, StudentSingleData } from '../../data/application/registrantdatadto';
@@ -28,6 +29,8 @@ export type SchoolFeePaymentRecord = {
   paidAt: Date;
 };
 
+const DEFAULT_ACCEPTANCE_FEE = 30000;
+const DEFAULT_PROCESSING_FEE = 500;
 const DEFAULT_STUDENT_FEE_TOTAL = 600000;
 const DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT = 500000;
 const DEFAULT_STUDENT_FEE_INSTALLMENTS = 3;
@@ -74,11 +77,15 @@ export class AdmittedFlowService {
 
   readonly registeredCourses = signal<RegisteredCourse[]>([]);
 
-  readonly acceptanceFee = 30000;
+  readonly acceptanceFeeDetail = signal<AcceptanceFee | null>(null);
 
-  readonly processingFee = 500;
+  readonly loadingAcceptanceFee = signal(false);
 
-  readonly totalPay = computed(() => this.acceptanceFee + this.processingFee);
+  readonly acceptanceFee = computed(() => this.acceptanceFeeDetail()?.amount ?? DEFAULT_ACCEPTANCE_FEE);
+
+  readonly processingFee = computed(() => this.acceptanceFeeDetail()?.processing_fee ?? DEFAULT_PROCESSING_FEE);
+
+  readonly totalPay = computed(() => this.acceptanceFee() + this.processingFee());
 
   readonly totalSchoolFees = computed(() =>
     this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? DEFAULT_STUDENT_FEE_TOTAL
@@ -473,6 +480,7 @@ export class AdmittedFlowService {
   async loadSnapshot(): Promise<void> {
     const appNo = this.authSessionStore.applicationNo() || '';
     const hasStudentSnapshot = !!this.authSessionStore.studentProfile();
+    await this.loadAcceptanceFee();
     if (!appNo && !hasStudentSnapshot) {
       this.registrantData.set(null);
       return;
@@ -530,6 +538,22 @@ export class AdmittedFlowService {
     const payload = { course_ids: this.selectedCourseIds() };
     await firstValueFrom(this.appService.registerCourses(payload));
     this.registrationSubmitted.set(true);
+  }
+
+  async loadAcceptanceFee(): Promise<void> {
+    if (this.loadingAcceptanceFee()) {
+      return;
+    }
+
+    this.loadingAcceptanceFee.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getAcceptanceFee());
+      this.acceptanceFeeDetail.set(response);
+    } catch {
+      // Keep the configured defaults when the acceptance fee endpoint is unavailable.
+    } finally {
+      this.loadingAcceptanceFee.set(false);
+    }
   }
 
   async loadStudentFeePlan(): Promise<void> {
