@@ -1,6 +1,8 @@
 # Graph Report - StudentManagementPortalv3  (2026-08-13)
+# Graph Report - StudentManagementPortalv3  (2026-08-13)
 
 ## Corpus Check
+- 155 files · ~109,711 words
 - 155 files · ~109,711 words
 - Verdict: corpus is large enough that graph structure adds value.
 
@@ -65,7 +67,7 @@
 - payment.component.ts
 - StudentFeePlan
 - JwtService
-- RegistrantDataDTO
+- regstore.service.ts
 - registrantdatadto.ts
 - PaymentHistoryItem
 - ApplicationGuidelineModalComponent
@@ -92,6 +94,7 @@
 - staging
 - consmeff
 - returning-flow.service.ts
+- returning-flow.service.ts
 - ReturningHostelComponent
 - Component
 - Country Flag Sprite Sheet (flags_responsive.png)
@@ -113,6 +116,7 @@
 - functions.ts
 - MIT License (Sakai template)
 - package.json
+- @angular/compiler
 - @angular/compiler
 - PortalShellComponent
 - @angular/compiler-cli
@@ -158,9 +162,12 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApplicationService` - 93 edges
+1. `ApplicationService` - 93 edges
 2. `ReturningFlowService` - 65 edges
 3. `AdmissionFormComponent` - 52 edges
 4. `AcademicHistoryComponent` - 47 edges
+5. `AdmittedFlowService` - 46 edges
+6. `PendingPaymentFlowComponent` - 43 edges
 5. `AdmittedFlowService` - 46 edges
 6. `PendingPaymentFlowComponent` - 43 edges
 7. `ReturningPaymentComponent` - 38 edges
@@ -173,10 +180,10 @@
   src/app/pages/payment/payment.component.html → src/app/shared/components/status-indicator/status-indicator.component.ts
 - `Application Progress Widget` --semantically_similar_to--> `Admission Stepper Flow`  [INFERRED] [semantically similar]
   src/app/pages/xdashboard/dashboard.component.html → src/app/pages/admissionform/admissionform.component.html
-- `App Status Indicator Component` --implements--> `StatusTone`  [EXTRACTED]
-  src/app/shared/components/status-indicator/status-indicator.component.html → src/app/shared/components/status-indicator/status-indicator.component.ts
 - `Sakai19 Angular Project` --references--> `MIT License (Sakai template)`  [INFERRED]
   README.md → LICENSE.md
+- `App Status Indicator Component` --conceptually_related_to--> `Edit Lock Policy`  [AMBIGUOUS]
+  src/app/shared/components/status-indicator/status-indicator.component.html → src/app/pages/admissionform/admissionform.component.html
 - `Dashboard Template` --semantically_similar_to--> `Legacy Applicant Dashboard Template`  [INFERRED] [semantically similar]
   src/app/pages/dashboard/dashboard.component.html → src/app/pages/xdashboard/dashboard.component.html
 
@@ -207,9 +214,9 @@ Nodes (3): flattenRegisteredCoursesResponse(), ReturningFlowService, Injectable
 Cohesion: 0.06
 Nodes (20): HostBinding, AppConfigurator, KeyOfType, presets, SurfacesType, Component, AppFloatingConfigurator, Component (+12 more)
 
-### Community 2 - "DataTableComponent"
-Cohesion: 0.22
-Nodes (6): DATA_TABLE_CONFIG, DataTableComponent, Component, DataTableColumn, DataTableColumnAlign, DataTableRowContext
+### Community 2 - "payment.component.ts"
+Cohesion: 0.08
+Nodes (17): DATA_TABLE_CONFIG, PAGINATION_CONFIG, PAYMENT_PAGE_CONFIG, PAYMENT_RECEIPT_KEYS, PAYMENT_STATUS_CLASS, PAYMENT_TABLE_COLUMNS, TPaymentQueryState, DataTableComponent (+9 more)
 
 ### Community 3 - "programComponent"
 Cohesion: 0.14
@@ -288,8 +295,8 @@ Cohesion: 0.11
 Nodes (11): ProfileFailResponse, ProfilePayload, ProfileSuccessResponse, validationCheckDTO, SignUpComponent, Component, AuthEmailPayload, AuthOtpPayload (+3 more)
 
 ### Community 31 - "Admission Portal Login Template"
-Cohesion: 0.13
-Nodes (18): Personal Details Step Component, Dual-Mode OTP Flow (verify vs reset), OTP Form (six-box entry), OTP Page Template, OTP Resend Countdown, Password Strength Checklist, Password Reset Successful Dialog, Password Reset Template (+10 more)
+Cohesion: 0.20
+Nodes (11): Personal Details Step Component, OTP Form (six-box entry), OTP Resend Countdown, Email OTP Request Form, Request Password Reset Template, Auth Split-Panel Carousel, Login Form (email + password), Admission Portal Login Template (+3 more)
 
 ### Community 32 - "NextOfKinComponent"
 Cohesion: 0.18
@@ -362,18 +369,20 @@ Nodes (13): Address, AryParentOrGuardian, Country, Department, LGA, Session, Sta
 ### Community 53 - "ApplicationGuidelineModalComponent"
 Cohesion: 0.25
 Nodes (5): ApplicationGuidelineContent, ApplicationGuidelineModalComponent, Component, Input, Output
+Cohesion: 0.25
+Nodes (5): ApplicationGuidelineContent, ApplicationGuidelineModalComponent, Component, Input, Output
 
 ### Community 54 - "Admission Stepper Flow"
-Cohesion: 0.20
-Nodes (11): Admission Stepper Flow, Academic History Step Component, Application Summary Step Component, Next of Kin Step Component, Document Upload Step Component, Compliance Directive Notice, Form Step Status Gating, Edit Lock Policy (+3 more)
+Cohesion: 0.22
+Nodes (10): Admission Stepper Flow, Academic History Step Component, Application Summary Step Component, Next of Kin Step Component, Document Upload Step Component, Compliance Directive Notice, Form Step Status Gating, Edit Lock Policy (+2 more)
 
 ### Community 55 - "dependencies"
 Cohesion: 0.18
 Nodes (11): @angular/animations, @angular/common, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/common, chartjs-adapter-date-fns (+3 more)
 
 ### Community 57 - "App Data Table Component"
-Cohesion: 0.40
-Nodes (5): Payment Table Columns, App Data Table Component, Row Template Projection, Sortable Column Headers, Loading and Empty State Messaging
+Cohesion: 0.29
+Nodes (7): Payment Row Template, Payment Table Columns, Receipt Download Action, App Data Table Component, Row Template Projection, Sortable Column Headers, Loading and Empty State Messaging
 
 ### Community 60 - "returning-student.routes.ts"
 Cohesion: 0.24
@@ -474,6 +483,10 @@ Nodes (6): Sidebar Navigation Template, Dark Mode Theme Toggle, Topbar Sidebar T
 ### Community 92 - "architect"
 Cohesion: 0.40
 Nodes (5): extract-i18n, test, architect, builder, builder
+
+### Community 94 - "Password Reset Template"
+Cohesion: 0.29
+Nodes (7): Dual-Mode OTP Flow (verify vs reset), OTP Page Template, Password Strength Checklist, Password Reset Successful Dialog, Password Reset Template, New Password Reset Form, Signup Password Strength Checklist
 
 ### Community 96 - "FilterSelectComponent"
 Cohesion: 0.40
