@@ -9,7 +9,7 @@
       <label>Amount:</label>
       <div class="amount-input">
         <span>₦</span>
-        <strong>{{ flow.acceptanceFee.toLocaleString('en-NG') }}</strong>
+        <strong>{{ flow.acceptanceFee().toLocaleString('en-NG') }}</strong>
       </div>
     </div>
 
@@ -24,8 +24,8 @@
         <div><span>program Admitted to:</span><strong>{{ flow.programName() }}</strong></div>
         <div><span>Academic Session:</span><strong>{{ flow.academicSession() }}</strong></div>
         <div><span>Payment Type:</span><strong>Acceptance Fee</strong></div>
-        <div><span>Amount:</span><strong>₦{{ flow.acceptanceFee.toLocaleString('en-NG') }}</strong></div>
-        <div><span>Processing Fee:</span><strong>₦{{ flow.processingFee.toLocaleString('en-NG') }}</strong></div>
+        <div><span>Amount:</span><strong>₦{{ flow.acceptanceFee().toLocaleString('en-NG') }}</strong></div>
+        <div><span>Processing Fee:</span><strong>₦{{ flow.processingFee().toLocaleString('en-NG') }}</strong></div>
       </div>
       <footer>
         <span>Total to Pay:</span>

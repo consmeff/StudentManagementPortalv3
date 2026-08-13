@@ -60,7 +60,7 @@
 
   <div class="action-stack" *ngIf="!flow.isAcceptancePaid(); else postPaymentActions">
     <button pButton type="button" class="primary-btn" (click)="goToAcceptancePayment()">
-      Pay Acceptance Fee - ₦20,000
+      Pay Acceptance Fee - ₦{{ flow.acceptanceFee().toLocaleString('en-NG') }}
     </button>
   </div>
 
