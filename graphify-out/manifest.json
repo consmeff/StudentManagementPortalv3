@@ -990,8 +990,8 @@
     "semantic_hash": ""
   },
   ".claude/settings.local.json": {
-    "mtime": 1786651223.917995,
-    "ast_hash": "b50e94158f7071e98966e03f1a6d4a6b",
+    "mtime": 1786654025.8665009,
+    "ast_hash": "f477a037ccfa9a13324bd7a9c4101296",
     "semantic_hash": ""
   },
   "src/app/data/application/acceptance-fee.dto.ts": {
