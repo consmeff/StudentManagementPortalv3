@@ -990,8 +990,8 @@
     "semantic_hash": ""
   },
   ".claude/settings.local.json": {
-    "mtime": 1786778575.7435083,
-    "ast_hash": "2bb2354c39cddcc26a05c70f766ee35c",
+    "mtime": 1786781037.8724883,
+    "ast_hash": "5f06c7908bc6d1799e8229d5967f7808",
     "semantic_hash": ""
   },
   "src/app/data/application/acceptance-fee.dto.ts": {
@@ -1015,8 +1015,8 @@
     "semantic_hash": ""
   },
   "src/app/public/components/public-brand/public-brand.component.ts": {
-    "mtime": 1786778448.7907536,
-    "ast_hash": "fe197c90b759c96be235f6d322540851",
+    "mtime": 1786780448.312384,
+    "ast_hash": "59b4633126c202b72fac33f50694d5e6",
     "semantic_hash": ""
   },
   "src/app/public/components/public-footer/public-footer.component.ts": {
@@ -1025,8 +1025,8 @@
     "semantic_hash": ""
   },
   "src/app/public/components/public-header/public-header.component.ts": {
-    "mtime": 1786778474.6396303,
-    "ast_hash": "60db515dcff88bc4d707e9c29687cbc4",
+    "mtime": 1786780466.916294,
+    "ast_hash": "564e058b65bf305f760f55100129518b",
     "semantic_hash": ""
   },
   "src/app/public/components/public-image/public-image.component.ts": {
@@ -1090,38 +1090,38 @@
     "semantic_hash": ""
   },
   "src/app/public/sections/directors-speech/directors-speech-section.component.ts": {
-    "mtime": 1786777236.0379968,
-    "ast_hash": "57bf7d518edd6afcb9e001c57cd96d6e",
+    "mtime": 1786780608.937581,
+    "ast_hash": "483698c049fdb1e75cf9f72b8e8c4812",
     "semantic_hash": ""
   },
   "src/app/public/sections/facilities/facilities-section.component.ts": {
-    "mtime": 1786777312.182799,
-    "ast_hash": "77fc09481fb2325f4de1cd66604bb46c",
+    "mtime": 1786780688.5460758,
+    "ast_hash": "bfffbcba37cb52ebfb07fa50a72a9ac5",
     "semantic_hash": ""
   },
   "src/app/public/sections/hero/hero-section.component.ts": {
-    "mtime": 1786777183.2235825,
-    "ast_hash": "83d7465e8c575a1c3426091e934c391d",
+    "mtime": 1786780576.3432472,
+    "ast_hash": "b48ce5980f03767450c1a68eee7f77aa",
     "semantic_hash": ""
   },
   "src/app/public/sections/management-team/management-team-section.component.ts": {
-    "mtime": 1786777263.9007425,
-    "ast_hash": "0b6e3f3930a26ec9685ff1e321e7bb27",
+    "mtime": 1786780627.1201928,
+    "ast_hash": "01bc5adf972abf3a80e368801f2901ca",
     "semantic_hash": ""
   },
   "src/app/public/sections/news/news-section.component.ts": {
-    "mtime": 1786777341.5738037,
-    "ast_hash": "acef42c3bddfd5209b5b04ca3720484f",
+    "mtime": 1786780665.1870902,
+    "ast_hash": "98ec6c7620de6b0bd83b2bcad67708cb",
     "semantic_hash": ""
   },
   "src/app/public/sections/objectives/objectives-section.component.ts": {
-    "mtime": 1786777208.2701087,
-    "ast_hash": "9a79f5daa503ed1158ee83b2d2681662",
+    "mtime": 1786780591.9362373,
+    "ast_hash": "dc6b55492206024faf0890e2e2f2b4ac",
     "semantic_hash": ""
   },
   "src/app/public/sections/programmes/programmes-section.component.ts": {
-    "mtime": 1786777285.074418,
-    "ast_hash": "6cd5477eb58b22ec295669a71979a3d6",
+    "mtime": 1786780647.8034897,
+    "ast_hash": "c4db03e841685b13bb71fc4a2a46084c",
     "semantic_hash": ""
   },
   "src/app/public/services/public-content.service.ts": {
@@ -1140,8 +1140,8 @@
     "semantic_hash": ""
   },
   "src/app/public/components/public-header/public-header.component.html": {
-    "mtime": 1786778464.7913084,
-    "ast_hash": "6f72a5c286231eeb5986185f085f8ad7",
+    "mtime": 1786780483.6021535,
+    "ast_hash": "1a253824a86b7e7f801ac0248edfcfb2",
     "semantic_hash": ""
   },
   "src/app/public/pages/contact/contact.component.html": {
@@ -1150,38 +1150,43 @@
     "semantic_hash": ""
   },
   "src/app/public/sections/directors-speech/directors-speech-section.component.html": {
-    "mtime": 1786777243.88708,
-    "ast_hash": "c0d8879aa7805e4fbaa8a8666e26a178",
+    "mtime": 1786780606.374739,
+    "ast_hash": "63ea63adc18d84dae7fd4e7a28a8d442",
     "semantic_hash": ""
   },
   "src/app/public/sections/facilities/facilities-section.component.html": {
-    "mtime": 1786779069.2639036,
-    "ast_hash": "a769b1e9e4b3973ca9af567e494b7bd0",
+    "mtime": 1786780703.7648034,
+    "ast_hash": "523332335d21b3ed491b242443797c88",
     "semantic_hash": ""
   },
   "src/app/public/sections/hero/hero-section.component.html": {
-    "mtime": 1786777189.2501323,
-    "ast_hash": "a3f22778eb4998dfdca96797203ec836",
+    "mtime": 1786780566.1027,
+    "ast_hash": "26081b5fa2bc3c868e262c160d18c947",
     "semantic_hash": ""
   },
   "src/app/public/sections/management-team/management-team-section.component.html": {
-    "mtime": 1786777269.4842906,
-    "ast_hash": "ab0d98bc273dcd3aa7ff8f1746e6b2e1",
+    "mtime": 1786780623.5307648,
+    "ast_hash": "572e8b3adaebc9987fd85752c89c11c6",
     "semantic_hash": ""
   },
   "src/app/public/sections/news/news-section.component.html": {
-    "mtime": 1786777360.7666428,
-    "ast_hash": "530a46ce8c1a6435817759928ba6340c",
+    "mtime": 1786780661.7159307,
+    "ast_hash": "d8c55d2c2bc534c8079a52c5ce63448a",
     "semantic_hash": ""
   },
   "src/app/public/sections/objectives/objectives-section.component.html": {
-    "mtime": 1786777215.6878726,
-    "ast_hash": "3ccb624ca0f8b56b97fd875d170aac6c",
+    "mtime": 1786780589.061815,
+    "ast_hash": "2a8c43f0ec98240d3a862d77386f529c",
     "semantic_hash": ""
   },
   "src/app/public/sections/programmes/programmes-section.component.html": {
-    "mtime": 1786777292.1680286,
-    "ast_hash": "d2475114c069242832710abd81883288",
+    "mtime": 1786780643.9546657,
+    "ast_hash": "2f2a208645a309bb072ca7d7debc81e2",
+    "semantic_hash": ""
+  },
+  "src/app/public/directives/reveal-on-scroll.directive.ts": {
+    "mtime": 1786780913.9182339,
+    "ast_hash": "bd0ded9309bd99a1a67773a264ce5baf",
     "semantic_hash": ""
   }
 }
