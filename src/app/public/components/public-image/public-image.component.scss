@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background-color: #e4e7ec;
+}
+
+.pub-image__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pub-image__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  color: #98a2b3;
+  background-color: #e4e7ec;
+
+  svg {
+    width: 2rem;
+    height: 2rem;
+  }
+}

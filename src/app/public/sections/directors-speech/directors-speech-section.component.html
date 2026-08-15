@@ -1,0 +1,23 @@
+@if (speech(); as content) {
+  <div class="pub-shell speech__layout">
+    <app-public-image class="speech__portrait" [src]="content.portraitUrl" [alt]="content.portraitAlt" />
+
+    <figure class="speech__card">
+      <span class="speech__quote speech__quote--open" aria-hidden="true">&ldquo;</span>
+      <span class="speech__quote speech__quote--close" aria-hidden="true">&rdquo;</span>
+
+      <figcaption class="speech__heading">{{ content.heading }}</figcaption>
+
+      <blockquote class="speech__body">
+        @for (paragraph of content.paragraphs; track $index) {
+          <p class="speech__paragraph">{{ paragraph }}</p>
+        }
+      </blockquote>
+
+      <a class="pub-link speech__more" [routerLink]="content.readMoreRoute">
+        Read More
+        <span class="pi pi-arrow-right" aria-hidden="true"></span>
+      </a>
+    </figure>
+  </div>
+}

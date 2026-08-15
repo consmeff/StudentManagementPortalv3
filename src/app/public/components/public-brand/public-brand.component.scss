@@ -1,0 +1,51 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  line-height: 1.15;
+}
+
+.brand__line {
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.brand__line--primary {
+  font-size: 0.8125rem;
+  color: var(--pub-magenta);
+}
+
+.brand__line--secondary {
+  font-size: 0.6875rem;
+  color: var(--pub-navy);
+}
+
+.brand__text--compact .brand__line--primary {
+  font-size: 0.6875rem;
+}
+
+.brand__text--compact .brand__line--secondary {
+  font-size: 0.5625rem;
+}
+
+@media (max-width: 400px) {
+  .brand__line {
+    white-space: normal;
+  }
+
+  .brand__text--compact .brand__line--primary {
+    font-size: 0.625rem;
+  }
+
+  .brand__text--compact .brand__line--secondary {
+    font-size: 0.5rem;
+  }
+}

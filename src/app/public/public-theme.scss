@@ -1,0 +1,144 @@
+/**
+ * Design tokens for the public marketing site.
+ *
+ * Scoped to `.public-site` (set on the public layout root) rather than `:root`
+ * so none of this reaches the authenticated portal, which runs its own
+ * light/dark theme off the `--app-*` variables in `src/styles.scss`.
+ *
+ * The public site is intentionally light-only — the marketing design has a
+ * single committed look, so these tokens do not respond to the dark theme.
+ */
+.public-site {
+  --pub-navy: #000080;
+  --pub-navy-hover: #00006b;
+  --pub-ink: #101828;
+  --pub-body: #667085;
+  --pub-body-strong: #475467;
+  --pub-magenta: #a02d8c;
+  --pub-magenta-hover: #85246f;
+  --pub-accent: #d22630;
+  --pub-surface: #ffffff;
+  --pub-surface-alt: #f8fafc;
+  --pub-border: #e4e7ec;
+  --pub-border-strong: #d0d5dd;
+  --pub-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --pub-shadow-raised: 0 12px 32px rgba(16, 24, 40, 0.1);
+  --pub-radius: 8px;
+  --pub-shell-max: 1140px;
+  --pub-shell-pad: 1.5rem;
+
+  background-color: var(--pub-surface);
+  color: var(--pub-body);
+  font-family: 'Raleway', 'Inter', 'Montserrat', sans-serif;
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--pub-ink);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  /* The portal's Sakai typography styles blockquote with a grey left rule and
+     indent. The marketing design has neither, so neutralise it here. */
+  blockquote {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* Centred content column shared by every section. */
+  .pub-shell {
+    width: 100%;
+    max-width: var(--pub-shell-max);
+    margin-inline: auto;
+    padding-inline: var(--pub-shell-pad);
+  }
+
+  /* Section heading used by Objectives / Management Team / Academics. */
+  .pub-section-title {
+    font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.25rem);
+    letter-spacing: -0.02em;
+  }
+
+  .pub-section-title--centered {
+    text-align: center;
+  }
+
+  /* Shared pill button. */
+  .pub-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .pub-btn--primary {
+    background-color: var(--pub-magenta);
+    color: #ffffff;
+  }
+
+  .pub-btn--primary:hover {
+    background-color: var(--pub-magenta-hover);
+  }
+
+  .pub-btn--outline {
+    background-color: transparent;
+    border-color: var(--pub-border-strong);
+    color: var(--pub-ink);
+  }
+
+  .pub-btn--outline:hover {
+    border-color: var(--pub-navy);
+    color: var(--pub-navy);
+  }
+
+  /* Inline "Read More →" affordance. */
+  .pub-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--pub-navy);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .pub-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Visible keyboard focus on the site's own navy, since the PrimeNG focus
+     ring is not in play outside the portal. */
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--pub-navy);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

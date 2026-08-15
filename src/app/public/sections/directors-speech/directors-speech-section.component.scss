@@ -1,0 +1,116 @@
+:host {
+  display: block;
+  background-color: var(--pub-surface);
+  padding-block: 2rem 4.5rem;
+}
+
+.speech__layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.speech__portrait {
+  width: 100%;
+  height: clamp(260px, 60vw, 340px);
+  border-radius: 4px;
+}
+
+.speech__card {
+  position: relative;
+  margin: 0;
+  padding: 2rem 1.75rem;
+  background-color: var(--pub-surface);
+  border: 1px solid var(--pub-border);
+  border-radius: var(--pub-radius);
+  box-shadow: var(--pub-shadow-raised);
+}
+
+/* Oversized decorative quotation marks behind the copy. */
+.speech__quote {
+  position: absolute;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 5.5rem;
+  line-height: 1;
+  color: #eef0f4;
+  pointer-events: none;
+  user-select: none;
+}
+
+.speech__quote--open {
+  top: 1rem;
+  left: 1rem;
+}
+
+.speech__quote--close {
+  right: 1rem;
+  bottom: 0.25rem;
+}
+
+.speech__heading,
+.speech__body,
+.speech__more {
+  position: relative;
+}
+
+.speech__heading {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--pub-ink);
+  margin-bottom: 1rem;
+}
+
+.speech__body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.speech__paragraph {
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: var(--pub-body-strong);
+}
+
+.speech__more {
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .speech__layout {
+    display: grid;
+    /* Portrait occupies the first track; the card starts mid-portrait and runs
+       to the end, producing the overlap in the design. */
+    grid-template-columns: 340px 1fr;
+    align-items: center;
+    gap: 0;
+  }
+
+  .speech__portrait {
+    grid-column: 1;
+    grid-row: 1;
+    height: 400px;
+  }
+
+  .speech__card {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-left: 280px;
+    padding: 2.5rem 3rem;
+  }
+
+  .speech__quote {
+    font-size: 7rem;
+  }
+
+  .speech__quote--open {
+    top: 1.5rem;
+    left: 1.75rem;
+  }
+
+  .speech__quote--close {
+    right: 2rem;
+    bottom: 0.5rem;
+  }
+}

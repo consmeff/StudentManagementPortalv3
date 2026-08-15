@@ -1,0 +1,28 @@
+<div class="pub-shell">
+  <h2 class="pub-section-title programmes__heading">{{ heading() }}</h2>
+
+  <div class="programmes__layout" [class.programmes__layout--no-image]="!showImage()">
+    @if (showImage()) {
+      <app-public-image
+        class="programmes__image"
+        [src]="image()"
+        alt="Students outside the College of Nursing Sciences building"
+      />
+    }
+
+    <ul class="programmes__list">
+      @for (programme of programmes(); track programme.id) {
+        <li class="programmes__item">
+          @if (programme.route) {
+            <a class="programmes__link" [routerLink]="programme.route">
+              <span>{{ programme.name }}</span>
+              <span class="pi pi-arrow-right programmes__chevron" aria-hidden="true"></span>
+            </a>
+          } @else {
+            <span class="programmes__name">{{ programme.name }}</span>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</div>

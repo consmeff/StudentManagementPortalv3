@@ -1,0 +1,147 @@
+:host {
+  display: block;
+  background-color: var(--pub-surface-alt);
+  border-top: 1px solid var(--pub-border);
+  padding-block: 3.5rem 1.5rem;
+}
+
+.pub-footer__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+.pub-footer__about {
+  max-width: 22rem;
+
+  app-public-brand {
+    margin-bottom: 1.25rem;
+  }
+}
+
+.pub-footer__blurb {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--pub-body);
+}
+
+.pub-footer__col-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--pub-ink);
+  margin-bottom: 1.25rem;
+}
+
+.pub-footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pub-footer__link {
+  color: var(--pub-body);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.pub-footer__link:hover {
+  color: var(--pub-navy);
+  text-decoration: underline;
+}
+
+.pub-footer__list--contact {
+  gap: 1rem;
+}
+
+.pub-footer__contact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.pub-footer__icon {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  color: var(--pub-navy);
+  font-size: 0.9375rem;
+}
+
+.pub-footer__address {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  font-style: normal;
+  color: var(--pub-body);
+}
+
+.pub-footer__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--pub-border);
+}
+
+.pub-footer__copyright {
+  font-size: 0.8125rem;
+  color: var(--pub-body);
+}
+
+.pub-footer__socials {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pub-footer__social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--pub-navy);
+  font-size: 1.0625rem;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.pub-footer__social:hover {
+  background-color: rgba(0, 0, 128, 0.08);
+}
+
+@media (min-width: 768px) {
+  .pub-footer__grid {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+
+  .pub-footer__about {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 992px) {
+  .pub-footer__grid {
+    grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+    gap: 3rem;
+  }
+
+  .pub-footer__about {
+    grid-column: auto;
+  }
+
+  .pub-footer__bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

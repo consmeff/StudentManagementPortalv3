@@ -1,0 +1,39 @@
+<div class="pub-shell">
+  <h2 class="pub-section-title pub-section-title--centered news__heading">{{ heading() }}</h2>
+
+  <ul class="news__grid">
+    @for (article of articles(); track article.id) {
+      <li class="news__card">
+        <app-public-image class="news__image" [src]="article.imageUrl" [alt]="''" />
+
+        <div class="news__body">
+          <span class="news__tag">{{ article.category }}</span>
+
+          <h3 class="news__title">
+            <a class="news__title-link" [routerLink]="article.route">{{ article.title }}</a>
+          </h3>
+
+          <div class="news__meta">
+            <span class="pub-link news__more" aria-hidden="true">
+              Read More
+              <span class="pi pi-arrow-right" aria-hidden="true"></span>
+            </span>
+
+            <span class="news__date">
+              <span class="pi pi-calendar" aria-hidden="true"></span>
+              <time [attr.datetime]="article.publishedAt">{{ formatDate(article.publishedAt) }}</time>
+            </span>
+          </div>
+        </div>
+      </li>
+    } @empty {
+      <li class="news__empty">There are no announcements at the moment. Please check back soon.</li>
+    }
+  </ul>
+
+  @if (showViewAll()) {
+    <div class="news__actions">
+      <a class="pub-btn pub-btn--outline" routerLink="/media">View All News</a>
+    </div>
+  }
+</div>

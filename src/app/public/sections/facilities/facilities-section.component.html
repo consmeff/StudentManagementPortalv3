@@ -1,0 +1,20 @@
+<div class="pub-shell">
+  <h2 class="pub-section-title pub-section-title--centered facilities__heading">{{ heading() }}</h2>
+</div>
+
+<!-- Scroll-snap track. The scroller is focusable so the overflow is reachable
+     by keyboard, which a plain overflow container is not. -->
+<div class="facilities__scroller" tabindex="0" role="region" [attr.aria-label]="heading()">
+  <ul class="facilities__track">
+    @for (facility of facilities(); track facility.id) {
+      <li class="facilities__item">
+        <app-public-image
+          class="facilities__image"
+          [src]="facility.imageUrl"
+          [alt]="facility.name + ' at the College of Nursing Sciences'"
+        />
+        <p class="facilities__label">{{ facility.name }}</p>
+      </li>
+    }
+  </ul>
+</div>

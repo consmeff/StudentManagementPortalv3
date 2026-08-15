@@ -1,0 +1,86 @@
+:host {
+  display: block;
+  background-color: var(--pub-navy);
+  padding-block: 3.5rem 4rem;
+  overflow: hidden;
+}
+
+.facilities__heading {
+  color: #ffffff;
+  margin-bottom: 2.5rem;
+}
+
+/* The scroller — not the <ul> — carries the gutter. `src/styles.scss` sets a
+   global `ul { padding: 0 !important }` for the portal's menus, which no
+   component style can outrank, so the list itself must stay unpadded.
+   Cards line up with the centred content column while the track runs
+   full-bleed, letting the next card peek in from the edge as in the design. */
+.facilities__scroller {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-left: var(--pub-shell-pad);
+  padding-right: var(--pub-shell-pad);
+  padding-bottom: 0.5rem;
+  scroll-padding-left: var(--pub-shell-pad);
+  scroll-padding-right: var(--pub-shell-pad);
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.facilities__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.facilities__scroller:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
+}
+
+.facilities__track {
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  list-style: none;
+  /* max-content so the scroller's trailing padding is honoured past the last
+     card rather than being collapsed. */
+  width: max-content;
+}
+
+.facilities__item {
+  flex: 0 0 auto;
+  width: clamp(200px, 62vw, 232px);
+  scroll-snap-align: start;
+}
+
+.facilities__image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.facilities__label {
+  margin-top: 0.875rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* 1188px = --pub-shell-max (1140) + 2 * --pub-shell-pad (24): the width at
+   which the shell starts being centred rather than edge-padded. A media query
+   rather than max(), which is awkward to substitute through var() here.
+   The percentage resolves against the same containing block `.pub-shell`
+   centres within, so cards land on the heading exactly; 100vw would include
+   the page scrollbar and drift a few pixels. */
+@media (min-width: 1188px) {
+  .facilities__scroller {
+    --pub-track-gutter: calc((100% - var(--pub-shell-max)) / 2 + var(--pub-shell-pad));
+    padding-left: var(--pub-track-gutter);
+    padding-right: var(--pub-track-gutter);
+    scroll-padding-left: var(--pub-track-gutter);
+    scroll-padding-right: var(--pub-track-gutter);
+  }
+}
