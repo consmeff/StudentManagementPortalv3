@@ -1,13 +1,45 @@
-<div class="pub-shell">
-  <h2 class="pub-section-title pub-section-title--centered facilities__heading">{{ heading() }}</h2>
+<div class="pub-shell facilities__head">
+  <h2 class="pub-section-title pub-section-title--centered facilities__heading" appReveal>{{ heading() }}</h2>
+
+  <!-- Arrows are an addition to, not a replacement for, dragging and keyboard
+       scrolling. They are hidden entirely when everything already fits. -->
+  @if (canScrollPrev() || canScrollNext()) {
+    <div class="facilities__controls">
+      <button
+        type="button"
+        class="facilities__control"
+        aria-label="Previous facilities"
+        [disabled]="!canScrollPrev()"
+        (click)="scrollBy(-1)"
+      >
+        <span class="pi pi-chevron-left" aria-hidden="true"></span>
+      </button>
+      <button
+        type="button"
+        class="facilities__control"
+        aria-label="Next facilities"
+        [disabled]="!canScrollNext()"
+        (click)="scrollBy(1)"
+      >
+        <span class="pi pi-chevron-right" aria-hidden="true"></span>
+      </button>
+    </div>
+  }
 </div>
 
 <!-- Scroll-snap track. The scroller is focusable so the overflow is reachable
      by keyboard, which a plain overflow container is not. -->
-<div class="facilities__scroller" tabindex="0" role="region" [attr.aria-label]="heading()">
+<div
+  #scroller
+  class="facilities__scroller"
+  tabindex="0"
+  role="region"
+  [attr.aria-label]="heading()"
+  (scroll)="updateScrollState()"
+>
   <ul class="facilities__track">
     @for (facility of facilities(); track facility.id) {
-      <li class="facilities__item">
+      <li class="facilities__item" appReveal [revealDelay]="$index * 80">
         <app-public-image
           class="facilities__image"
           [src]="facility.imageUrl"

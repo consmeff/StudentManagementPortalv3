@@ -26,6 +26,9 @@ export class PublicHeaderComponent {
 
   readonly applyLabel = HERO_CONTENT.ctaLabel;
 
+  /** Existing applicants and students returning to the portal. */
+  readonly loginRoute = '/auth/login';
+
   readonly menuOpen = signal(false);
 
   constructor(router: Router) {

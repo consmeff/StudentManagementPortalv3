@@ -1,9 +1,9 @@
 <div class="pub-shell">
-  <h2 class="pub-section-title pub-section-title--centered news__heading">{{ heading() }}</h2>
+  <h2 class="pub-section-title pub-section-title--centered news__heading" appReveal>{{ heading() }}</h2>
 
   <ul class="news__grid">
     @for (article of articles(); track article.id) {
-      <li class="news__card">
+      <li class="news__card" appReveal [revealDelay]="$index * 100">
         <app-public-image class="news__image" [src]="article.imageUrl" [alt]="''" />
 
         <div class="news__body">
@@ -32,7 +32,7 @@
   </ul>
 
   @if (showViewAll()) {
-    <div class="news__actions">
+    <div class="news__actions" appReveal>
       <a class="pub-btn pub-btn--outline" routerLink="/media">View All News</a>
     </div>
   }

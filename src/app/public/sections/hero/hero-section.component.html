@@ -1,15 +1,24 @@
 @if (hero(); as content) {
   <div class="pub-shell hero__intro">
-    <h1 class="hero__title">
+    <h1 class="hero__title" appReveal>
       @for (line of content.titleLines; track line) {
         <span class="hero__title-line">{{ line }}</span>
       }
     </h1>
 
-    <p class="hero__subtitle">{{ content.subtitle }}</p>
+    <p class="hero__subtitle" appReveal [revealDelay]="120">{{ content.subtitle }}</p>
 
-    <a class="pub-btn pub-btn--primary hero__cta" [routerLink]="content.ctaRoute">{{ content.ctaLabel }}</a>
+    <a class="pub-btn pub-btn--primary hero__cta" appReveal [revealDelay]="220" [routerLink]="content.ctaRoute">
+      {{ content.ctaLabel }}
+    </a>
   </div>
 
-  <app-public-image class="hero__image" [src]="content.imageUrl" [alt]="content.imageAlt" [eager]="true" />
+  <app-public-image
+    class="hero__image"
+    appReveal
+    [revealDelay]="120"
+    [src]="content.imageUrl"
+    [alt]="content.imageAlt"
+    [eager]="true"
+  />
 }

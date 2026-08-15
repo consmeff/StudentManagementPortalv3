@@ -945,8 +945,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "package_dependencies_angular_common",
-      "community": 150,
-      "community_name": "@angular/common",
+      "community": 55,
+      "community_name": "dependencies",
       "norm_label": "@angular/common"
     },
     {
@@ -956,8 +956,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "angular_common",
-      "community": 150,
-      "community_name": "@angular/common",
+      "community": 55,
+      "community_name": "dependencies",
       "norm_label": "@angular/common"
     },
     {
@@ -1231,8 +1231,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "package_dependencies_exceljs",
-      "community": 55,
-      "community_name": "dependencies",
+      "community": 42,
+      "community_name": "exceljs",
       "norm_label": "exceljs"
     },
     {
@@ -1242,8 +1242,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "exceljs",
-      "community": 55,
-      "community_name": "dependencies",
+      "community": 42,
+      "community_name": "exceljs",
       "norm_label": "exceljs"
     },
     {
@@ -1616,7 +1616,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "package_devdependencies_autoprefixer",
-      "community": 107,
+      "community": 151,
       "community_name": "autoprefixer",
       "norm_label": "autoprefixer"
     },
@@ -1627,7 +1627,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "autoprefixer",
-      "community": 107,
+      "community": 151,
       "community_name": "autoprefixer",
       "norm_label": "autoprefixer"
     },
@@ -2056,7 +2056,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_routes",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "app.routes.ts"
     },
@@ -2122,8 +2122,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application-status.constants.ts"
     },
     {
@@ -2133,8 +2133,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_labels",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application_status_labels"
     },
     {
@@ -2144,8 +2144,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_descriptions",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application_status_descriptions"
     },
     {
@@ -2155,8 +2155,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_tones",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application_status_tones"
     },
     {
@@ -2166,8 +2166,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_definitions",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application_status_definitions"
     },
     {
@@ -2177,8 +2177,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_order",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application_status_order"
     },
     {
@@ -2188,8 +2188,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_options",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application_status_options"
     },
     {
@@ -2232,8 +2232,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_app_constants_application_status_types_applicationstatusdefinition",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "applicationstatusdefinition"
     },
     {
@@ -2254,8 +2254,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application-status.utils.ts"
     },
     {
@@ -2265,8 +2265,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils_statusaliasmap",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "statusaliasmap"
     },
     {
@@ -2276,8 +2276,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils_application_status_aliases",
-      "community": 38,
-      "community_name": "pending-payment-flow.component.ts",
+      "community": 71,
+      "community_name": "application-status.constants.ts",
       "norm_label": "application_status_aliases"
     },
     {
@@ -2288,7 +2288,7 @@
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils_normalizeapplicationstatuskey",
       "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community_name": "application-status.constants.ts",
       "norm_label": "normalizeapplicationstatuskey()"
     },
     {
@@ -2299,7 +2299,7 @@
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils_getapplicationstatusdefinition",
       "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community_name": "application-status.constants.ts",
       "norm_label": "getapplicationstatusdefinition()"
     },
     {
@@ -2309,8 +2309,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_auth_constants",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "auth.constants.ts"
     },
     {
@@ -2419,8 +2419,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_data_table_constants",
-      "community": 115,
-      "community_name": "data-table.component.ts",
+      "community": 77,
+      "community_name": "DataTableComponent",
       "norm_label": "data-table.constants.ts"
     },
     {
@@ -2430,8 +2430,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_data_table_constants_data_table_config",
-      "community": 115,
-      "community_name": "data-table.component.ts",
+      "community": 77,
+      "community_name": "DataTableComponent",
       "norm_label": "data_table_config"
     },
     {
@@ -2463,7 +2463,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_payment_page_constants",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "payment-page.constants.ts"
     },
@@ -2474,7 +2474,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_app_constants_payment_page_constants_payment_page_config",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "payment_page_config"
     },
@@ -2485,7 +2485,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_app_constants_payment_page_constants_payment_status_class",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "payment_status_class"
     },
@@ -2496,7 +2496,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_app_constants_payment_page_constants_payment_receipt_keys",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "payment_receipt_keys"
     },
@@ -2507,7 +2507,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "src_app_constants_payment_page_constants_payment_table_columns",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "payment_table_columns"
     },
@@ -2518,8 +2518,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_support_constants",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "support.constants.ts"
     },
     {
@@ -2617,8 +2617,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_acceptance_fee_dto",
-      "community": 14,
-      "community_name": ".normalizeAcceptanceFeeResponse",
+      "community": 18,
+      "community_name": "ApplicationService",
       "norm_label": "acceptance-fee.dto.ts"
     },
     {
@@ -2628,8 +2628,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_acceptance_fee_dto_acceptancefee",
-      "community": 14,
-      "community_name": ".normalizeAcceptanceFeeResponse",
+      "community": 18,
+      "community_name": "ApplicationService",
       "norm_label": "acceptancefee"
     },
     {
@@ -2793,8 +2793,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_courseregistration_dto",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "courseregistration.dto.ts"
     },
     {
@@ -2804,8 +2804,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_courseregistration_dto_courseinfo",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "courseinfo"
     },
     {
@@ -2815,8 +2815,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_app_data_application_courseregistration_dto_availablecourse",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "availablecourse"
     },
     {
@@ -2837,8 +2837,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "src_app_data_application_courseregistration_dto_availablecoursesresponse",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "availablecoursesresponse"
     },
     {
@@ -2848,8 +2848,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "src_app_data_application_courseregistration_dto_registeredcoursesresponse",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "registeredcoursesresponse"
     },
     {
@@ -2870,8 +2870,8 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "src_app_data_application_courseregistration_dto_registercoursespayload",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "registercoursespayload"
     },
     {
@@ -2903,8 +2903,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_location_dto",
-      "community": 6,
-      "community_name": "admissionform.component.ts",
+      "community": 50,
+      "community_name": "regstore.service.ts",
       "norm_label": "location.dto.ts"
     },
     {
@@ -2915,7 +2915,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_location_dto_countrydto",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": "countrydto"
     },
     {
@@ -2925,8 +2925,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_app_data_application_location_dto_countries",
-      "community": 6,
-      "community_name": "admissionform.component.ts",
+      "community": 21,
+      "community_name": "PersonalDetailsComponent",
       "norm_label": "countries"
     },
     {
@@ -2937,7 +2937,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_location_dto_lgadto",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": "lgadto"
     },
     {
@@ -2947,8 +2947,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_app_data_application_location_dto_lga",
-      "community": 6,
-      "community_name": "admissionform.component.ts",
+      "community": 50,
+      "community_name": "regstore.service.ts",
       "norm_label": "lga"
     },
     {
@@ -2959,7 +2959,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_location_dto_statesdto",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": "statesdto"
     },
     {
@@ -2980,7 +2980,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_password_change_dto",
-      "community": 50,
+      "community": 25,
       "community_name": "application.service.ts",
       "norm_label": "password-change.dto.ts"
     },
@@ -2991,7 +2991,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_password_change_dto_passwordchangepayload",
-      "community": 50,
+      "community": 25,
       "community_name": "application.service.ts",
       "norm_label": "passwordchangepayload"
     },
@@ -3002,7 +3002,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_payment_data",
-      "community": 79,
+      "community": 95,
       "community_name": ".normalizePaginatedPaymentsResponse",
       "norm_label": "application/payment.data.ts"
     },
@@ -3013,7 +3013,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_payment_data_paymentstatus",
-      "community": 79,
+      "community": 95,
       "community_name": ".normalizePaginatedPaymentsResponse",
       "norm_label": "paymentstatus"
     },
@@ -3024,8 +3024,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_app_data_application_payment_data_paymentrefresponse",
-      "community": 79,
-      "community_name": ".normalizePaginatedPaymentsResponse",
+      "community": 18,
+      "community_name": "ApplicationService",
       "norm_label": "paymentrefresponse"
     },
     {
@@ -3035,8 +3035,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_app_data_application_payment_data_paymenthistoryitem",
-      "community": 93,
-      "community_name": "PaymentHistoryItem",
+      "community": 95,
+      "community_name": ".normalizePaginatedPaymentsResponse",
       "norm_label": "paymenthistoryitem"
     },
     {
@@ -3046,7 +3046,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_app_data_application_payment_data_paginatedpaymentsresponse",
-      "community": 79,
+      "community": 95,
       "community_name": ".normalizePaginatedPaymentsResponse",
       "norm_label": "paginatedpaymentsresponse"
     },
@@ -3156,8 +3156,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_preregistrationdatadto",
-      "community": 50,
-      "community_name": "application.service.ts",
+      "community": 107,
+      "community_name": "PreRegistrationDataDTO",
       "norm_label": "preregistrationdatadto.ts"
     },
     {
@@ -3167,8 +3167,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_data_application_preregistrationdatadto_preregistrationdatadto",
-      "community": 50,
-      "community_name": "application.service.ts",
+      "community": 107,
+      "community_name": "PreRegistrationDataDTO",
       "norm_label": "preregistrationdatadto"
     },
     {
@@ -3190,7 +3190,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_registrantdatadto_registrantdatadto",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": "registrantdatadto"
     },
     {
@@ -3200,8 +3200,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_data_application_registrantdatadto_registrantdata",
-      "community": 9,
-      "community_name": "AdmissionFormComponent",
+      "community": 10,
+      "community_name": "PendingPaymentFlowComponent",
       "norm_label": "registrantdata"
     },
     {
@@ -3211,8 +3211,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "src_app_data_application_registrantdatadto_academichistory",
-      "community": 45,
-      "community_name": "academichistory.component.ts",
+      "community": 4,
+      "community_name": "AcademicHistoryComponent",
       "norm_label": "academichistory"
     },
     {
@@ -3398,8 +3398,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_cgpa_trend_dto",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 115,
+      "community_name": ".normalizeStudentCgpaTrendResponse",
       "norm_label": "student-cgpa-trend.dto.ts"
     },
     {
@@ -3409,8 +3409,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_cgpa_trend_dto_studentcgpatrenditem",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 115,
+      "community_name": ".normalizeStudentCgpaTrendResponse",
       "norm_label": "studentcgpatrenditem"
     },
     {
@@ -3420,8 +3420,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_data_application_student_cgpa_trend_dto_studentcgpatrendresponse",
-      "community": 95,
-      "community_name": ".toRecord",
+      "community": 115,
+      "community_name": ".normalizeStudentCgpaTrendResponse",
       "norm_label": "studentcgpatrendresponse"
     },
     {
@@ -3431,8 +3431,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_dashboard_dto",
-      "community": 123,
-      "community_name": "student-dashboard.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "student-dashboard.dto.ts"
     },
     {
@@ -3442,8 +3442,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_dashboard_dto_studentdashboardfeeinfo",
-      "community": 123,
-      "community_name": "student-dashboard.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "studentdashboardfeeinfo"
     },
     {
@@ -3453,8 +3453,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_data_application_student_dashboard_dto_studentdashboardcoursesinfo",
-      "community": 123,
-      "community_name": "student-dashboard.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "studentdashboardcoursesinfo"
     },
     {
@@ -3464,8 +3464,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_app_data_application_student_dashboard_dto_studentdashboardannouncement",
-      "community": 123,
-      "community_name": "student-dashboard.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "studentdashboardannouncement"
     },
     {
@@ -3475,7 +3475,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_app_data_application_student_dashboard_dto_studentdashboardresponse",
-      "community": 95,
+      "community": 23,
       "community_name": ".toRecord",
       "norm_label": "studentdashboardresponse"
     },
@@ -3487,7 +3487,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto",
       "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community_name": "application.service.ts",
       "norm_label": "student-fees.dto.ts"
     },
     {
@@ -3498,7 +3498,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto_studentfeepartpaymentmode",
       "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community_name": "application.service.ts",
       "norm_label": "studentfeepartpaymentmode"
     },
     {
@@ -3509,7 +3509,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto_studentfeepartpaymententry",
       "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community_name": "application.service.ts",
       "norm_label": "studentfeepartpaymententry"
     },
     {
@@ -3520,7 +3520,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto_studentfeepartpaymentconfig",
       "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community_name": "application.service.ts",
       "norm_label": "studentfeepartpaymentconfig"
     },
     {
@@ -3530,8 +3530,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto_studentfeeplan",
-      "community": 149,
-      "community_name": "StudentFeePlan",
+      "community": 25,
+      "community_name": "application.service.ts",
       "norm_label": "studentfeeplan"
     },
     {
@@ -3542,7 +3542,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto_studentfeeplanresponse",
       "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community_name": "application.service.ts",
       "norm_label": "studentfeeplanresponse"
     },
     {
@@ -3553,7 +3553,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto_studentschoolfeepaymentstatus",
       "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community_name": "application.service.ts",
       "norm_label": "studentschoolfeepaymentstatus"
     },
     {
@@ -3563,8 +3563,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto_studentschoolfeestatus",
-      "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community": 23,
+      "community_name": ".toRecord",
       "norm_label": "studentschoolfeestatus"
     },
     {
@@ -3574,8 +3574,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "src_app_data_application_student_fees_dto_studentfeepaymentpayload",
-      "community": 79,
-      "community_name": ".normalizePaginatedPaymentsResponse",
+      "community": 25,
+      "community_name": "application.service.ts",
       "norm_label": "studentfeepaymentpayload"
     },
     {
@@ -3585,7 +3585,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_hostel_dto",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": "student-hostel.dto.ts"
     },
@@ -3596,7 +3596,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_hostel_dto_studenthostelallocation",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": "studenthostelallocation"
     },
@@ -3607,7 +3607,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_app_data_application_student_hostel_dto_studenthostelroomoption",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": "studenthostelroomoption"
     },
@@ -3618,7 +3618,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_app_data_application_student_hostel_dto_studenthosteloption",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": "studenthosteloption"
     },
@@ -3629,7 +3629,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_app_data_application_student_hostel_dto_studenthostellistresponse",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": "studenthostellistresponse"
     },
@@ -3663,7 +3663,7 @@
       "_origin": "ast",
       "id": "src_app_data_application_student_results_dto_studentresultsresponse",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": "studentresultsresponse"
     },
     {
@@ -3706,8 +3706,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "src_app_data_application_transformer_dto_tacademichistory",
-      "community": 45,
-      "community_name": "academichistory.component.ts",
+      "community": 4,
+      "community_name": "AcademicHistoryComponent",
       "norm_label": "tacademichistory"
     },
     {
@@ -3849,8 +3849,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_app_data_dashboard_application_guideline_data_applicationguidelinecontent",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": "applicationguidelinecontent"
     },
     {
@@ -4784,8 +4784,8 @@
       "source_location": "L559",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_admitted_flow_service_admittedflowservice_loadstudentfeeplan",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 5,
+      "community_name": "AdmittedFlowService",
       "norm_label": ".loadstudentfeeplan()"
     },
     {
@@ -4806,8 +4806,8 @@
       "source_location": "L622",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_admitted_flow_service_admittedflowservice_suggestedinstallmentamount",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 5,
+      "community_name": "AdmittedFlowService",
       "norm_label": ".suggestedinstallmentamount()"
     },
     {
@@ -4861,8 +4861,8 @@
       "source_location": "L656",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_admitted_flow_service_admittedflowservice_resolvenextinstallmentamount",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 5,
+      "community_name": "AdmittedFlowService",
       "norm_label": ".resolvenextinstallmentamount()"
     },
     {
@@ -5071,7 +5071,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_admitted_student_routes",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "admitted-student.routes.ts"
     },
     {
@@ -5082,7 +5082,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "admitted-acceptance-payment.component.ts"
     },
     {
@@ -5093,7 +5093,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_admittedacceptancepaymentcomponent",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "admittedacceptancepaymentcomponent"
     },
     {
@@ -5104,7 +5104,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_ts_component",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "component"
     },
     {
@@ -5115,7 +5115,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_admittedacceptancepaymentcomponent_ngoninit",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".ngoninit()"
     },
     {
@@ -5126,7 +5126,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_admittedacceptancepaymentcomponent_proceedtopayment",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".proceedtopayment()"
     },
     {
@@ -5137,7 +5137,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_admittedacceptancepaymentcomponent_gobacktodashboard",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".gobacktodashboard()"
     },
     {
@@ -5147,8 +5147,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_courses_admitted_courses_component",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 60,
+      "community_name": "returning-student.routes.ts",
       "norm_label": "admitted-courses.component.ts"
     },
     {
@@ -5291,7 +5291,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_dashboard_admitted_dashboard_component",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "admitted-dashboard.component.ts"
     },
     {
@@ -5301,8 +5301,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_dashboard_admitted_dashboard_component_admitteddashboardcomponent",
-      "community": 94,
-      "community_name": "AdmittedDashboardComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "admitteddashboardcomponent"
     },
     {
@@ -5312,8 +5312,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_dashboard_admitted_dashboard_component_ts_component",
-      "community": 94,
-      "community_name": "AdmittedDashboardComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "component"
     },
     {
@@ -5323,8 +5323,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_dashboard_admitted_dashboard_component_admitteddashboardcomponent_ngoninit",
-      "community": 94,
-      "community_name": "AdmittedDashboardComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".ngoninit()"
     },
     {
@@ -5334,8 +5334,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_dashboard_admitted_dashboard_component_admitteddashboardcomponent_gotoacceptancepayment",
-      "community": 94,
-      "community_name": "AdmittedDashboardComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".gotoacceptancepayment()"
     },
     {
@@ -5345,8 +5345,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_dashboard_admitted_dashboard_component_admitteddashboardcomponent_gotoschoolfeespayment",
-      "community": 94,
-      "community_name": "AdmittedDashboardComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".gotoschoolfeespayment()"
     },
     {
@@ -5356,8 +5356,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_dashboard_admitted_dashboard_component_admitteddashboardcomponent_downloadreceipt",
-      "community": 94,
-      "community_name": "AdmittedDashboardComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".downloadreceipt()"
     },
     {
@@ -5367,8 +5367,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_dashboard_admitted_dashboard_component_admitteddashboardcomponent_formatnaira",
-      "community": 94,
-      "community_name": "AdmittedDashboardComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".formatnaira()"
     },
     {
@@ -5378,8 +5378,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_payment_admitted_payment_component",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "admitted-payment.component.ts"
     },
     {
@@ -5588,7 +5588,7 @@
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component",
       "community": 11,
-      "community_name": "TraceabilityModule",
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "admitted-profile.component.ts"
     },
     {
@@ -5598,8 +5598,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent",
-      "community": 105,
-      "community_name": "AdmittedProfileComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "admittedprofilecomponent"
     },
     {
@@ -5609,8 +5609,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_ts_component",
-      "community": 105,
-      "community_name": "AdmittedProfileComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": "component"
     },
     {
@@ -5620,8 +5620,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_ngoninit",
-      "community": 105,
-      "community_name": "AdmittedProfileComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".ngoninit()"
     },
     {
@@ -5631,8 +5631,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_gotopayment",
-      "community": 105,
-      "community_name": "AdmittedProfileComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".gotopayment()"
     },
     {
@@ -5642,8 +5642,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_onfileupload",
-      "community": 105,
-      "community_name": "AdmittedProfileComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".onfileupload()"
     },
     {
@@ -5653,8 +5653,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_removeadmissiondocument",
-      "community": 105,
-      "community_name": "AdmittedProfileComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".removeadmissiondocument()"
     },
     {
@@ -5664,8 +5664,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_submitforverification",
-      "community": 105,
-      "community_name": "AdmittedProfileComponent",
+      "community": 11,
+      "community_name": "admitted-student.routes.ts",
       "norm_label": ".submitforverification()"
     },
     {
@@ -5730,8 +5730,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_courses_returning_courses_component",
-      "community": 40,
-      "community_name": "ReturningCoursesComponent",
+      "community": 60,
+      "community_name": "returning-student.routes.ts",
       "norm_label": "returning-courses.component.ts"
     },
     {
@@ -5994,8 +5994,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_hostel_returning_hostel_component_returninghostelcomponent",
-      "community": 60,
-      "community_name": "returning-student.routes.ts",
+      "community": 14,
+      "community_name": "ReturningHostelComponent",
       "norm_label": "returninghostelcomponent"
     },
     {
@@ -6005,8 +6005,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_hostel_returning_hostel_component_ts_component",
-      "community": 60,
-      "community_name": "returning-student.routes.ts",
+      "community": 14,
+      "community_name": "ReturningHostelComponent",
       "norm_label": "component"
     },
     {
@@ -6016,8 +6016,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_hostel_returning_hostel_component_returninghostelcomponent_ngoninit",
-      "community": 60,
-      "community_name": "returning-student.routes.ts",
+      "community": 14,
+      "community_name": "ReturningHostelComponent",
       "norm_label": ".ngoninit()"
     },
     {
@@ -6027,8 +6027,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_hostel_returning_hostel_component_returninghostelcomponent_startrequest",
-      "community": 60,
-      "community_name": "returning-student.routes.ts",
+      "community": 14,
+      "community_name": "ReturningHostelComponent",
       "norm_label": ".startrequest()"
     },
     {
@@ -6038,8 +6038,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_hostel_returning_hostel_component_returninghostelcomponent_backtoroom",
-      "community": 60,
-      "community_name": "returning-student.routes.ts",
+      "community": 14,
+      "community_name": "ReturningHostelComponent",
       "norm_label": ".backtoroom()"
     },
     {
@@ -6049,8 +6049,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_hostel_returning_hostel_component_returninghostelcomponent_updatefield",
-      "community": 60,
-      "community_name": "returning-student.routes.ts",
+      "community": 14,
+      "community_name": "ReturningHostelComponent",
       "norm_label": ".updatefield()"
     },
     {
@@ -6060,8 +6060,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_hostel_returning_hostel_component_returninghostelcomponent_submit",
-      "community": 60,
-      "community_name": "returning-student.routes.ts",
+      "community": 14,
+      "community_name": "ReturningHostelComponent",
       "norm_label": ".submit()"
     },
     {
@@ -6071,8 +6071,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_hostel_returning_hostel_component_returninghostelcomponent_printhostelslip",
-      "community": 60,
-      "community_name": "returning-student.routes.ts",
+      "community": 14,
+      "community_name": "ReturningHostelComponent",
       "norm_label": ".printhostelslip()"
     },
     {
@@ -6082,8 +6082,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_payment_returning_payment_component",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "returning-payment.component.ts"
     },
     {
@@ -6093,8 +6093,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_payment_returning_payment_component_paymentpageview",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "paymentpageview"
     },
     {
@@ -6511,8 +6511,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_profile_returning_profile_component",
-      "community": 43,
-      "community_name": "ReturningProfileComponent",
+      "community": 60,
+      "community_name": "returning-student.routes.ts",
       "norm_label": "returning-profile.component.ts"
     },
     {
@@ -6698,8 +6698,8 @@
       "source_location": "L188",
       "_origin": "ast",
       "id": "src_app_features_returning_student_pages_returning_profile_returning_profile_component_editableprofilesection",
-      "community": 43,
-      "community_name": "ReturningProfileComponent",
+      "community": 60,
+      "community_name": "returning-student.routes.ts",
       "norm_label": "editableprofilesection"
     },
     {
@@ -6775,8 +6775,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningcourse",
-      "community": 40,
-      "community_name": "ReturningCoursesComponent",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": "returningcourse"
     },
     {
@@ -6863,8 +6863,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_hostelapplicationstatus",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 85,
+      "community_name": ".loadStudentDashboard",
       "norm_label": "hostelapplicationstatus"
     },
     {
@@ -7017,8 +7017,8 @@
       "source_location": "L730",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_adddummypayment",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 105,
+      "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".adddummypayment()"
     },
     {
@@ -7127,8 +7127,8 @@
       "source_location": "L836",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_updateaccountpassword",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 150,
+      "community_name": ".resolvePasswordChangeErrorMessage",
       "norm_label": ".updateaccountpassword()"
     },
     {
@@ -7193,8 +7193,8 @@
       "source_location": "L921",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_submitcourseregistration",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 123,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".submitcourseregistration()"
     },
     {
@@ -7205,7 +7205,7 @@
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadstudentfeeplan",
       "community": 149,
-      "community_name": "StudentFeePlan",
+      "community_name": ".mapFeeItems",
       "norm_label": ".loadstudentfeeplan()"
     },
     {
@@ -7215,8 +7215,8 @@
       "source_location": "L951",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadstudentdashboard",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 85,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".loadstudentdashboard()"
     },
     {
@@ -7237,8 +7237,8 @@
       "source_location": "L1019",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadstudentcgpatrend",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 85,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".loadstudentcgpatrend()"
     },
     {
@@ -7281,8 +7281,8 @@
       "source_location": "L1092",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadregisteredcourses",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 123,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".loadregisteredcourses()"
     },
     {
@@ -7292,8 +7292,8 @@
       "source_location": "L1104",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_submitcourseregistrationfromapi",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 123,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".submitcourseregistrationfromapi()"
     },
     {
@@ -7336,8 +7336,8 @@
       "source_location": "L1133",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_suggestedschoolfeeamount",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 0,
+      "community_name": "ReturningFlowService",
       "norm_label": ".suggestedschoolfeeamount()"
     },
     {
@@ -7347,8 +7347,8 @@
       "source_location": "L1137",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_recordverifiedschoolfeeinstallment",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 105,
+      "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".recordverifiedschoolfeeinstallment()"
     },
     {
@@ -7358,8 +7358,8 @@
       "source_location": "L1187",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_formatcurrency",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 105,
+      "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".formatcurrency()"
     },
     {
@@ -7369,8 +7369,8 @@
       "source_location": "L1191",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_formatdecimal",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 85,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".formatdecimal()"
     },
     {
@@ -7380,8 +7380,8 @@
       "source_location": "L1195",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_formatnullabledecimal",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 85,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".formatnullabledecimal()"
     },
     {
@@ -7391,8 +7391,8 @@
       "source_location": "L1199",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_resolvenextschoolfeeamount",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 0,
+      "community_name": "ReturningFlowService",
       "norm_label": ".resolvenextschoolfeeamount()"
     },
     {
@@ -7402,8 +7402,8 @@
       "source_location": "L1216",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_updatestudentschoolfeestatus",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 105,
+      "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".updatestudentschoolfeestatus()"
     },
     {
@@ -7413,8 +7413,8 @@
       "source_location": "L1236",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_syncreturningmoduleaccess",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 85,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".syncreturningmoduleaccess()"
     },
     {
@@ -7424,8 +7424,8 @@
       "source_location": "L1248",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_synccoursereviewstatefromregisteredcourses",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 123,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".synccoursereviewstatefromregisteredcourses()"
     },
     {
@@ -7435,8 +7435,8 @@
       "source_location": "L1266",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_haspaidstatus",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 85,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".haspaidstatus()"
     },
     {
@@ -7447,7 +7447,7 @@
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_mapfeeitems",
       "community": 149,
-      "community_name": "StudentFeePlan",
+      "community_name": ".mapFeeItems",
       "norm_label": ".mapfeeitems()"
     },
     {
@@ -7458,7 +7458,7 @@
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_resolvefeestatus",
       "community": 149,
-      "community_name": "StudentFeePlan",
+      "community_name": ".mapFeeItems",
       "norm_label": ".resolvefeestatus()"
     },
     {
@@ -7469,7 +7469,7 @@
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_normalizefeeidentifier",
       "community": 149,
-      "community_name": "StudentFeePlan",
+      "community_name": ".mapFeeItems",
       "norm_label": ".normalizefeeidentifier()"
     },
     {
@@ -7490,8 +7490,8 @@
       "source_location": "L1328",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_resolvepasswordchangeerrormessage",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 150,
+      "community_name": ".resolvePasswordChangeErrorMessage",
       "norm_label": ".resolvepasswordchangeerrormessage()"
     },
     {
@@ -7501,8 +7501,8 @@
       "source_location": "L1338",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_readerrormessage",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 150,
+      "community_name": ".resolvePasswordChangeErrorMessage",
       "norm_label": ".readerrormessage()"
     },
     {
@@ -7512,8 +7512,8 @@
       "source_location": "L1352",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_torecord",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 150,
+      "community_name": ".resolvePasswordChangeErrorMessage",
       "norm_label": ".torecord()"
     },
     {
@@ -7534,8 +7534,8 @@
       "source_location": "L1369",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_markfeeaspaidbypriority",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 105,
+      "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".markfeeaspaidbypriority()"
     },
     {
@@ -7545,8 +7545,8 @@
       "source_location": "L1382",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_ordinalsuffix",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 105,
+      "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".ordinalsuffix()"
     },
     {
@@ -7556,8 +7556,8 @@
       "source_location": "L1389",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_normalizedashboardannouncements",
-      "community": 123,
-      "community_name": "student-dashboard.dto.ts",
+      "community": 0,
+      "community_name": "ReturningFlowService",
       "norm_label": ".normalizedashboardannouncements()"
     },
     {
@@ -7567,8 +7567,8 @@
       "source_location": "L1405",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_formatannouncementtime",
-      "community": 123,
-      "community_name": "student-dashboard.dto.ts",
+      "community": 0,
+      "community_name": "ReturningFlowService",
       "norm_label": ".formatannouncementtime()"
     },
     {
@@ -7578,8 +7578,8 @@
       "source_location": "L1429",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_resolvecgpaclasslabel",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 85,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".resolvecgpaclasslabel()"
     },
     {
@@ -7589,8 +7589,8 @@
       "source_location": "L1448",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_describecgpatrendpoint",
-      "community": 95,
-      "community_name": ".toRecord",
+      "community": 0,
+      "community_name": "ReturningFlowService",
       "norm_label": ".describecgpatrendpoint()"
     },
     {
@@ -7611,7 +7611,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_features_shared_portal_entry_stub_component",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "portal-entry-stub.component.ts"
     },
@@ -7622,7 +7622,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_app_features_shared_portal_entry_stub_component_portalentrystubcomponent",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "portalentrystubcomponent"
     },
@@ -7633,7 +7633,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_features_shared_portal_entry_stub_component_ts_component",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "component"
     },
@@ -7963,7 +7963,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu",
-      "community": 56,
+      "community": 58,
       "community_name": "app.menu.ts",
       "norm_label": "app.menu.ts"
     },
@@ -7974,7 +7974,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": "appmenu"
     },
@@ -7985,7 +7985,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_ts_component",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": "component"
     },
@@ -7996,7 +7996,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu_constructor",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": ".constructor()"
     },
@@ -8007,7 +8007,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu_ngoninit",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": ".ngoninit()"
     },
@@ -8018,7 +8018,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu_setregistrationstage",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": ".setregistrationstage()"
     },
@@ -8029,7 +8029,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu_buildmenu",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": ".buildmenu()"
     },
@@ -8040,7 +8040,7 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu_createnavitem",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": ".createnavitem()"
     },
@@ -8051,7 +8051,7 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu_logout",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": ".logout()"
     },
@@ -8062,7 +8062,7 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu_resolveactiveportalsegment",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": ".resolveactiveportalsegment()"
     },
@@ -8073,7 +8073,7 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "src_app_layout_component_app_menu_appmenu_filtermenu",
-      "community": 62,
+      "community": 78,
       "community_name": "AppMenu",
       "norm_label": ".filtermenu()"
     },
@@ -8216,8 +8216,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_layout_component_app_sidebar",
-      "community": 56,
-      "community_name": "app.menu.ts",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "app.sidebar.ts"
     },
     {
@@ -8227,8 +8227,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_app_layout_component_app_sidebar_sidebarmenuitem",
-      "community": 56,
-      "community_name": "app.menu.ts",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "sidebarmenuitem"
     },
     {
@@ -9206,8 +9206,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_auth_auth_routes",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "auth.routes.ts"
     },
     {
@@ -9250,8 +9250,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_auth_logout",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "logout.ts"
     },
     {
@@ -9261,8 +9261,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_app_pages_auth_logout_logout",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "logout"
     },
     {
@@ -9272,8 +9272,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_pages_auth_logout_ts_component",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "component"
     },
     {
@@ -9283,8 +9283,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_app_pages_auth_logout_logout_constructor",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": ".constructor()"
     },
     {
@@ -9294,8 +9294,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_auth_otp_page_otp_page_component",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "otp-page.component.ts"
     },
     {
@@ -9338,8 +9338,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "src_app_pages_auth_otp_page_otp_page_component_otppagecomponent_constructor",
-      "community": 17,
-      "community_name": "ThemeService",
+      "community": 35,
+      "community_name": "OtpPageComponent",
       "norm_label": ".constructor()"
     },
     {
@@ -9481,8 +9481,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_auth_passwordreset_passwordreset_component",
-      "community": 29,
-      "community_name": "auth.service.ts",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "passwordreset.component.ts"
     },
     {
@@ -9580,8 +9580,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_auth_request_passwordreset_request_passwordreset_component",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "request-passwordreset.component.ts"
     },
     {
@@ -9657,8 +9657,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_auth_sigin_consmeff_login_component",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "consmeff-login.component.ts"
     },
     {
@@ -9668,8 +9668,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_app_pages_auth_sigin_consmeff_login_component_login_carousel_images",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "login_carousel_images"
     },
     {
@@ -9833,8 +9833,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": "signupcomponent"
     },
     {
@@ -9844,8 +9844,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_ts_component",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": "component"
     },
     {
@@ -9866,8 +9866,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent_constructor",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": ".constructor()"
     },
     {
@@ -9877,8 +9877,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent_updatevalidationstatus",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": ".updatevalidationstatus()"
     },
     {
@@ -9888,8 +9888,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent_showtoggle",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": ".showtoggle()"
     },
     {
@@ -9899,8 +9899,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent_showtoggle2",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": ".showtoggle2()"
     },
     {
@@ -9910,8 +9910,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent_register",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": ".register()"
     },
     {
@@ -9921,8 +9921,8 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent_registering",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": ".registering()"
     },
     {
@@ -9932,8 +9932,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent_destroyed",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": ".destroyed()"
     },
     {
@@ -9943,8 +9943,8 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signupcomponent_ngondestroy",
-      "community": 63,
-      "community_name": "SignUpComponent",
+      "community": 29,
+      "community_name": "auth.service.ts",
       "norm_label": ".ngondestroy()"
     },
     {
@@ -9998,7 +9998,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_payment_payment_component",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "payment.component.ts"
     },
@@ -10009,7 +10009,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_app_pages_payment_payment_component_tpaymentquerystate",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "tpaymentquerystate"
     },
@@ -10042,8 +10042,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "src_app_pages_payment_payment_component_paymentcomponent_constructor",
-      "community": 89,
-      "community_name": "AuthSessionStore",
+      "community": 8,
+      "community_name": "PaymentComponent",
       "norm_label": ".constructor()"
     },
     {
@@ -10064,8 +10064,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "src_app_pages_payment_payment_component_paymentcomponent_downloadreceipt",
-      "community": 93,
-      "community_name": "PaymentHistoryItem",
+      "community": 8,
+      "community_name": "PaymentComponent",
       "norm_label": ".downloadreceipt()"
     },
     {
@@ -10119,8 +10119,8 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "src_app_pages_payment_payment_component_paymentcomponent_trackpaymentrow",
-      "community": 93,
-      "community_name": "PaymentHistoryItem",
+      "community": 8,
+      "community_name": "PaymentComponent",
       "norm_label": ".trackpaymentrow()"
     },
     {
@@ -10317,8 +10317,8 @@
       "source_location": "L341",
       "_origin": "ast",
       "id": "src_app_pages_payment_payment_component_paymentcomponent_downloadreceiptresponse",
-      "community": 93,
-      "community_name": "PaymentHistoryItem",
+      "community": 8,
+      "community_name": "PaymentComponent",
       "norm_label": ".downloadreceiptresponse()"
     },
     {
@@ -10328,8 +10328,8 @@
       "source_location": "L351",
       "_origin": "ast",
       "id": "src_app_pages_payment_payment_component_paymentcomponent_extractreceiptfilename",
-      "community": 93,
-      "community_name": "PaymentHistoryItem",
+      "community": 8,
+      "community_name": "PaymentComponent",
       "norm_label": ".extractreceiptfilename()"
     },
     {
@@ -10339,8 +10339,8 @@
       "source_location": "L361",
       "_origin": "ast",
       "id": "src_app_pages_payment_payment_component_paymentcomponent_downloadblob",
-      "community": 93,
-      "community_name": "PaymentHistoryItem",
+      "community": 8,
+      "community_name": "PaymentComponent",
       "norm_label": ".downloadblob()"
     },
     {
@@ -10560,7 +10560,7 @@
       "_origin": "ast",
       "id": "src_app_public_components_content_pending_content_pending_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "content-pending.component.ts"
     },
     {
@@ -10571,7 +10571,7 @@
       "_origin": "ast",
       "id": "src_app_public_components_content_pending_content_pending_component_contentpendingcomponent",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "contentpendingcomponent"
     },
     {
@@ -10582,7 +10582,7 @@
       "_origin": "ast",
       "id": "src_app_public_components_content_pending_content_pending_component_ts_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "component"
     },
     {
@@ -10593,7 +10593,7 @@
       "_origin": "ast",
       "id": "src_app_public_components_page_header_page_header_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "page-header.component.ts"
     },
     {
@@ -10604,7 +10604,7 @@
       "_origin": "ast",
       "id": "src_app_public_components_page_header_page_header_component_pageheadercomponent",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "pageheadercomponent"
     },
     {
@@ -10615,7 +10615,7 @@
       "_origin": "ast",
       "id": "src_app_public_components_page_header_page_header_component_ts_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "component"
     },
     {
@@ -10633,7 +10633,7 @@
       "label": "PublicBrandComponent",
       "file_type": "code",
       "source_file": "src/app/public/components/public-brand/public-brand.component.ts",
-      "source_location": "L24",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "src_app_public_components_public_brand_public_brand_component_publicbrandcomponent",
       "community": 39,
@@ -10669,8 +10669,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_app_public_components_public_footer_public_footer_component_publicfootercomponent",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 93,
+      "community_name": "public-layout.component.ts",
       "norm_label": "publicfootercomponent"
     },
     {
@@ -10680,8 +10680,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_public_components_public_footer_public_footer_component_ts_component",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 93,
+      "community_name": "public-layout.component.ts",
       "norm_label": "component"
     },
     {
@@ -10691,8 +10691,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_app_public_components_public_footer_public_footer_component_publicfootercomponent_telhref",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 93,
+      "community_name": "public-layout.component.ts",
       "norm_label": ".telhref()"
     },
     {
@@ -10743,7 +10743,7 @@
       "label": ".constructor()",
       "file_type": "code",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L31",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "src_app_public_components_public_header_public_header_component_publicheadercomponent_constructor",
       "community": 39,
@@ -10754,7 +10754,7 @@
       "label": ".toggleMenu()",
       "file_type": "code",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L40",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "src_app_public_components_public_header_public_header_component_publicheadercomponent_togglemenu",
       "community": 39,
@@ -10765,7 +10765,7 @@
       "label": ".closeMenu()",
       "file_type": "code",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L44",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "src_app_public_components_public_header_public_header_component_publicheadercomponent_closemenu",
       "community": 39,
@@ -10776,7 +10776,7 @@
       "label": ".onEscape()",
       "file_type": "code",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L49",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "src_app_public_components_public_header_public_header_component_publicheadercomponent_onescape",
       "community": 39,
@@ -10856,8 +10856,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_app_public_data_public_content_data_hero_content",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 52,
+      "community_name": "public-content.service.ts",
       "norm_label": "hero_content"
     },
     {
@@ -10960,14 +10960,91 @@
       "norm_label": "social_links"
     },
     {
+      "label": "reveal-on-scroll.directive.ts",
+      "file_type": "code",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_app_public_directives_reveal_on_scroll_directive",
+      "community": 24,
+      "community_name": "landing.component.ts",
+      "norm_label": "reveal-on-scroll.directive.ts"
+    },
+    {
+      "label": "RevealOnScrollDirective",
+      "file_type": "code",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "community": 24,
+      "community_name": "landing.component.ts",
+      "norm_label": "revealonscrolldirective"
+    },
+    {
+      "label": "Directive",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "directive",
+      "community": 24,
+      "community_name": "landing.component.ts",
+      "norm_label": "directive"
+    },
+    {
+      "label": ".ngOnInit()",
+      "file_type": "code",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_ngoninit",
+      "community": 24,
+      "community_name": "landing.component.ts",
+      "norm_label": ".ngoninit()"
+    },
+    {
+      "label": ".ngOnDestroy()",
+      "file_type": "code",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L69",
+      "_origin": "ast",
+      "id": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_ngondestroy",
+      "community": 24,
+      "community_name": "landing.component.ts",
+      "norm_label": ".ngondestroy()"
+    },
+    {
+      "label": ".reveal()",
+      "file_type": "code",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_reveal",
+      "community": 24,
+      "community_name": "landing.component.ts",
+      "norm_label": ".reveal()"
+    },
+    {
+      "label": ".cleanUp()",
+      "file_type": "code",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L88",
+      "_origin": "ast",
+      "id": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_cleanup",
+      "community": 24,
+      "community_name": "landing.component.ts",
+      "norm_label": ".cleanup()"
+    },
+    {
       "label": "public-layout.component.ts",
       "file_type": "code",
       "source_file": "src/app/public/layout/public-layout.component.ts",
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_public_layout_public_layout_component",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 93,
+      "community_name": "public-layout.component.ts",
       "norm_label": "public-layout.component.ts"
     },
     {
@@ -10977,8 +11054,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "src_app_public_layout_public_layout_component_publiclayoutcomponent",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 93,
+      "community_name": "public-layout.component.ts",
       "norm_label": "publiclayoutcomponent"
     },
     {
@@ -10988,8 +11065,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_public_layout_public_layout_component_ts_component",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 93,
+      "community_name": "public-layout.component.ts",
       "norm_label": "component"
     },
     {
@@ -11165,7 +11242,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_admissions_admissions_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "admissions.component.ts"
     },
     {
@@ -11176,7 +11253,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_admissions_admissions_component_admissionscomponent",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "admissionscomponent"
     },
     {
@@ -11187,7 +11264,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_admissions_admissions_component_ts_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "component"
     },
     {
@@ -11198,7 +11275,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_contact_contact_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "contact.component.ts"
     },
     {
@@ -11209,7 +11286,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_contact_contact_component_contactcomponent",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "contactcomponent"
     },
     {
@@ -11220,7 +11297,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_contact_contact_component_ts_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "component"
     },
     {
@@ -11231,7 +11308,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_contact_contact_component_contactcomponent_telhref",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": ".telhref()"
     },
     {
@@ -11275,7 +11352,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_media_media_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "media.component.ts"
     },
     {
@@ -11286,7 +11363,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_media_media_component_mediacomponent",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "mediacomponent"
     },
     {
@@ -11297,7 +11374,7 @@
       "_origin": "ast",
       "id": "src_app_public_pages_media_media_component_ts_component",
       "community": 53,
-      "community_name": "PageHeaderComponent",
+      "community_name": "programmes-section.component.ts",
       "norm_label": "component"
     },
     {
@@ -11307,8 +11384,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_public_pages_programmes_programmes_page_component",
-      "community": 24,
-      "community_name": "landing.component.ts",
+      "community": 53,
+      "community_name": "programmes-section.component.ts",
       "norm_label": "programmes-page.component.ts"
     },
     {
@@ -11318,8 +11395,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_app_public_pages_programmes_programmes_page_component_programmespagecomponent",
-      "community": 24,
-      "community_name": "landing.component.ts",
+      "community": 53,
+      "community_name": "programmes-section.component.ts",
       "norm_label": "programmespagecomponent"
     },
     {
@@ -11329,8 +11406,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_public_pages_programmes_programmes_page_component_ts_component",
-      "community": 24,
-      "community_name": "landing.component.ts",
+      "community": 53,
+      "community_name": "programmes-section.component.ts",
       "norm_label": "component"
     },
     {
@@ -11373,8 +11450,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_public_public_routes",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 93,
+      "community_name": "public-layout.component.ts",
       "norm_label": "public.routes.ts"
     },
     {
@@ -11384,8 +11461,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_app_public_public_routes_publicroutes",
-      "community": 39,
-      "community_name": "public-header.component.ts",
+      "community": 93,
+      "community_name": "public-layout.component.ts",
       "norm_label": "publicroutes"
     },
     {
@@ -11403,7 +11480,7 @@
       "label": "DirectorsSpeechSectionComponent",
       "file_type": "code",
       "source_file": "src/app/public/sections/directors-speech/directors-speech-section.component.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "src_app_public_sections_directors_speech_directors_speech_section_component_directorsspeechsectioncomponent",
       "community": 24,
@@ -11436,11 +11513,11 @@
       "label": "FacilitiesSectionComponent",
       "file_type": "code",
       "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
-      "source_location": "L13",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent",
-      "community": 24,
-      "community_name": "landing.component.ts",
+      "community": 106,
+      "community_name": "FacilitiesSectionComponent",
       "norm_label": "facilitiessectioncomponent"
     },
     {
@@ -11450,9 +11527,53 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_public_sections_facilities_facilities_section_component_ts_component",
-      "community": 24,
-      "community_name": "landing.component.ts",
+      "community": 106,
+      "community_name": "FacilitiesSectionComponent",
       "norm_label": "component"
+    },
+    {
+      "label": ".ngAfterViewInit()",
+      "file_type": "code",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_ngafterviewinit",
+      "community": 106,
+      "community_name": "FacilitiesSectionComponent",
+      "norm_label": ".ngafterviewinit()"
+    },
+    {
+      "label": ".ngOnDestroy()",
+      "file_type": "code",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L50",
+      "_origin": "ast",
+      "id": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_ngondestroy",
+      "community": 106,
+      "community_name": "FacilitiesSectionComponent",
+      "norm_label": ".ngondestroy()"
+    },
+    {
+      "label": ".updateScrollState()",
+      "file_type": "code",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_updatescrollstate",
+      "community": 106,
+      "community_name": "FacilitiesSectionComponent",
+      "norm_label": ".updatescrollstate()"
+    },
+    {
+      "label": ".scrollBy()",
+      "file_type": "code",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_scrollby",
+      "community": 106,
+      "community_name": "FacilitiesSectionComponent",
+      "norm_label": ".scrollby()"
     },
     {
       "label": "hero-section.component.ts",
@@ -11469,7 +11590,7 @@
       "label": "HeroSectionComponent",
       "file_type": "code",
       "source_file": "src/app/public/sections/hero/hero-section.component.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "src_app_public_sections_hero_hero_section_component_herosectioncomponent",
       "community": 24,
@@ -11502,7 +11623,7 @@
       "label": "ManagementTeamSectionComponent",
       "file_type": "code",
       "source_file": "src/app/public/sections/management-team/management-team-section.component.ts",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "src_app_public_sections_management_team_management_team_section_component_managementteamsectioncomponent",
       "community": 24,
@@ -11535,7 +11656,7 @@
       "label": "NewsSectionComponent",
       "file_type": "code",
       "source_file": "src/app/public/sections/news/news-section.component.ts",
-      "source_location": "L19",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "src_app_public_sections_news_news_section_component_newssectioncomponent",
       "community": 87,
@@ -11557,7 +11678,7 @@
       "label": ".formatDate()",
       "file_type": "code",
       "source_file": "src/app/public/sections/news/news-section.component.ts",
-      "source_location": "L37",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "src_app_public_sections_news_news_section_component_newssectioncomponent_formatdate",
       "community": 87,
@@ -11579,7 +11700,7 @@
       "label": "ObjectivesSectionComponent",
       "file_type": "code",
       "source_file": "src/app/public/sections/objectives/objectives-section.component.ts",
-      "source_location": "L11",
+      "source_location": "L13",
       "_origin": "ast",
       "id": "src_app_public_sections_objectives_objectives_section_component_objectivessectioncomponent",
       "community": 24,
@@ -11604,19 +11725,19 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_public_sections_programmes_programmes_section_component",
-      "community": 24,
-      "community_name": "landing.component.ts",
+      "community": 53,
+      "community_name": "programmes-section.component.ts",
       "norm_label": "programmes-section.component.ts"
     },
     {
       "label": "ProgrammesSectionComponent",
       "file_type": "code",
       "source_file": "src/app/public/sections/programmes/programmes-section.component.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "src_app_public_sections_programmes_programmes_section_component_programmessectioncomponent",
-      "community": 24,
-      "community_name": "landing.component.ts",
+      "community": 53,
+      "community_name": "programmes-section.component.ts",
       "norm_label": "programmessectioncomponent"
     },
     {
@@ -11626,8 +11747,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_public_sections_programmes_programmes_section_component_ts_component",
-      "community": 24,
-      "community_name": "landing.component.ts",
+      "community": 53,
+      "community_name": "programmes-section.component.ts",
       "norm_label": "component"
     },
     {
@@ -11857,7 +11978,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_application_service",
-      "community": 50,
+      "community": 25,
       "community_name": "application.service.ts",
       "norm_label": "application.service.ts"
     },
@@ -11956,8 +12077,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_registrationdata",
-      "community": 18,
-      "community_name": "ApplicationService",
+      "community": 107,
+      "community_name": "PreRegistrationDataDTO",
       "norm_label": ".registrationdata()"
     },
     {
@@ -11968,7 +12089,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_countries",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".countries()"
     },
     {
@@ -11979,7 +12100,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_states",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".states()"
     },
     {
@@ -11990,7 +12111,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_lgas",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".lgas()"
     },
     {
@@ -12001,7 +12122,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_registrantdata",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".registrantdata()"
     },
     {
@@ -12022,7 +12143,7 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getstudentdashboard",
-      "community": 95,
+      "community": 23,
       "community_name": ".toRecord",
       "norm_label": ".getstudentdashboard()"
     },
@@ -12034,7 +12155,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getstudentresults",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".getstudentresults()"
     },
     {
@@ -12044,8 +12165,8 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getstudentcgpatrend",
-      "community": 95,
-      "community_name": ".toRecord",
+      "community": 115,
+      "community_name": ".normalizeStudentCgpaTrendResponse",
       "norm_label": ".getstudentcgpatrend()"
     },
     {
@@ -12055,7 +12176,7 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getstudenthostelallocation",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".getstudenthostelallocation()"
     },
@@ -12066,7 +12187,7 @@
       "source_location": "L142",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_gethostels",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".gethostels()"
     },
@@ -12099,8 +12220,8 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getpaymentref",
-      "community": 79,
-      "community_name": ".normalizePaginatedPaymentsResponse",
+      "community": 18,
+      "community_name": "ApplicationService",
       "norm_label": ".getpaymentref()"
     },
     {
@@ -12110,8 +12231,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getacceptancefee",
-      "community": 14,
-      "community_name": ".normalizeAcceptanceFeeResponse",
+      "community": 18,
+      "community_name": "ApplicationService",
       "norm_label": ".getacceptancefee()"
     },
     {
@@ -12121,8 +12242,8 @@
       "source_location": "L166",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_acceptancefeepayment",
-      "community": 79,
-      "community_name": ".normalizePaginatedPaymentsResponse",
+      "community": 18,
+      "community_name": "ApplicationService",
       "norm_label": ".acceptancefeepayment()"
     },
     {
@@ -12133,7 +12254,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getstudentfeeplans",
       "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community_name": "application.service.ts",
       "norm_label": ".getstudentfeeplans()"
     },
     {
@@ -12143,8 +12264,8 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getstudentschoolfeestatus",
-      "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community": 23,
+      "community_name": ".toRecord",
       "norm_label": ".getstudentschoolfeestatus()"
     },
     {
@@ -12154,8 +12275,8 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_initiatestudentfeepayment",
-      "community": 79,
-      "community_name": ".normalizePaginatedPaymentsResponse",
+      "community": 18,
+      "community_name": "ApplicationService",
       "norm_label": ".initiatestudentfeepayment()"
     },
     {
@@ -12165,7 +12286,7 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_changepassword",
-      "community": 50,
+      "community": 25,
       "community_name": "application.service.ts",
       "norm_label": ".changepassword()"
     },
@@ -12176,7 +12297,7 @@
       "source_location": "L190",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getpayments",
-      "community": 79,
+      "community": 95,
       "community_name": ".normalizePaginatedPaymentsResponse",
       "norm_label": ".getpayments()"
     },
@@ -12187,8 +12308,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getpaymentreceipt",
-      "community": 93,
-      "community_name": "PaymentHistoryItem",
+      "community": 8,
+      "community_name": "PaymentComponent",
       "norm_label": ".getpaymentreceipt()"
     },
     {
@@ -12209,8 +12330,8 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getavailablecourses",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": ".getavailablecourses()"
     },
     {
@@ -12220,8 +12341,8 @@
       "source_location": "L221",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getcurrentcourses",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": ".getcurrentcourses()"
     },
     {
@@ -12231,8 +12352,8 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_registercourses",
-      "community": 85,
-      "community_name": "courseregistration.dto.ts",
+      "community": 76,
+      "community_name": "returning-flow.service.ts",
       "norm_label": ".registercourses()"
     },
     {
@@ -12254,7 +12375,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizecollectionresponse",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".normalizecollectionresponse()"
     },
     {
@@ -12264,8 +12385,8 @@
       "source_location": "L252",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizepreregistrationresponse",
-      "community": 18,
-      "community_name": "ApplicationService",
+      "community": 107,
+      "community_name": "PreRegistrationDataDTO",
       "norm_label": ".normalizepreregistrationresponse()"
     },
     {
@@ -12297,7 +12418,7 @@
       "source_location": "L276",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudentdashboardresponse",
-      "community": 95,
+      "community": 23,
       "community_name": ".toRecord",
       "norm_label": ".normalizestudentdashboardresponse()"
     },
@@ -12309,7 +12430,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudentresultsresponse",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".normalizestudentresultsresponse()"
     },
     {
@@ -12319,8 +12440,8 @@
       "source_location": "L330",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudentcgpatrendresponse",
-      "community": 95,
-      "community_name": ".toRecord",
+      "community": 115,
+      "community_name": ".normalizeStudentCgpaTrendResponse",
       "norm_label": ".normalizestudentcgpatrendresponse()"
     },
     {
@@ -12352,7 +12473,7 @@
       "source_location": "L382",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizepaginatedpaymentsresponse",
-      "community": 79,
+      "community": 95,
       "community_name": ".normalizePaginatedPaymentsResponse",
       "norm_label": ".normalizepaginatedpaymentsresponse()"
     },
@@ -12364,7 +12485,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizepaymentitem",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".normalizepaymentitem()"
     },
     {
@@ -12374,8 +12495,8 @@
       "source_location": "L418",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizeacceptancefeeresponse",
-      "community": 14,
-      "community_name": ".normalizeAcceptanceFeeResponse",
+      "community": 18,
+      "community_name": "ApplicationService",
       "norm_label": ".normalizeacceptancefeeresponse()"
     },
     {
@@ -12385,7 +12506,7 @@
       "source_location": "L437",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_selectacceptancefeerecord",
-      "community": 95,
+      "community": 23,
       "community_name": ".toRecord",
       "norm_label": ".selectacceptancefeerecord()"
     },
@@ -12408,7 +12529,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudentfeeplansresponse",
       "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community_name": "application.service.ts",
       "norm_label": ".normalizestudentfeeplansresponse()"
     },
     {
@@ -12419,7 +12540,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudentfeeplan",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".normalizestudentfeeplan()"
     },
     {
@@ -12429,8 +12550,8 @@
       "source_location": "L515",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudentschoolfeestatusresponse",
-      "community": 25,
-      "community_name": "student-fees.dto.ts",
+      "community": 23,
+      "community_name": ".toRecord",
       "norm_label": ".normalizestudentschoolfeestatusresponse()"
     },
     {
@@ -12440,7 +12561,7 @@
       "source_location": "L523",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_selectstudentschoolfeerecord",
-      "community": 95,
+      "community": 23,
       "community_name": ".toRecord",
       "norm_label": ".selectstudentschoolfeerecord()"
     },
@@ -12451,7 +12572,7 @@
       "source_location": "L544",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getnestedrecord",
-      "community": 95,
+      "community": 23,
       "community_name": ".toRecord",
       "norm_label": ".getnestedrecord()"
     },
@@ -12462,7 +12583,7 @@
       "source_location": "L553",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_torecord",
-      "community": 95,
+      "community": 23,
       "community_name": ".toRecord",
       "norm_label": ".torecord()"
     },
@@ -12474,7 +12595,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_isrecord",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".isrecord()"
     },
     {
@@ -12485,7 +12606,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readstring",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".readstring()"
     },
     {
@@ -12495,7 +12616,7 @@
       "source_location": "L569",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readnullablestring",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".readnullablestring()"
     },
@@ -12507,7 +12628,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readnumber",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".readnumber()"
     },
     {
@@ -12517,7 +12638,7 @@
       "source_location": "L579",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readnumberfromunknown",
-      "community": 95,
+      "community": 23,
       "community_name": ".toRecord",
       "norm_label": ".readnumberfromunknown()"
     },
@@ -12529,7 +12650,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readnullablenumber",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".readnullablenumber()"
     },
     {
@@ -12562,7 +12683,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readboolean",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".readboolean()"
     },
     {
@@ -12573,7 +12694,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readstudentfeepartpaymentconfig",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".readstudentfeepartpaymentconfig()"
     },
     {
@@ -12584,7 +12705,7 @@
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readstudentschoolfeepaymentstatus",
       "community": 23,
-      "community_name": ".normalizeStudentFeePlan",
+      "community_name": ".toRecord",
       "norm_label": ".readstudentschoolfeepaymentstatus()"
     },
     {
@@ -12594,7 +12715,7 @@
       "source_location": "L664",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudenthostelallocationresponse",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".normalizestudenthostelallocationresponse()"
     },
@@ -12605,7 +12726,7 @@
       "source_location": "L719",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudenthostelsresponse",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".normalizestudenthostelsresponse()"
     },
@@ -12616,7 +12737,7 @@
       "source_location": "L737",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudenthosteloption",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".normalizestudenthosteloption()"
     },
@@ -12627,7 +12748,7 @@
       "source_location": "L750",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readstudenthostelroomoptions",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".readstudenthostelroomoptions()"
     },
@@ -12638,7 +12759,7 @@
       "source_location": "L767",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizestudenthostelroomoption",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".normalizestudenthostelroomoption()"
     },
@@ -12649,7 +12770,7 @@
       "source_location": "L809",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_readfirstdisplayvalue",
-      "community": 42,
+      "community": 46,
       "community_name": ".normalizeStudentHostelOption",
       "norm_label": ".readfirstdisplayvalue()"
     },
@@ -12660,7 +12781,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_auth_guard_guard",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "auth.guard.guard.ts"
     },
@@ -12671,7 +12792,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_services_auth_guard_guard_authguard",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "authguard()"
     },
@@ -12803,8 +12924,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "src_app_services_auth_service_authservice_resendsignupotp",
-      "community": 26,
-      "community_name": "AuthService",
+      "community": 35,
+      "community_name": "OtpPageComponent",
       "norm_label": ".resendsignupotp()"
     },
     {
@@ -13166,8 +13287,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_feature_access_guard",
-      "community": 86,
-      "community_name": "new-candidate.routes.ts",
+      "community": 62,
+      "community_name": "NavigationAccessService",
       "norm_label": "feature-access.guard.ts"
     },
     {
@@ -13177,8 +13298,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_app_services_feature_access_guard_featureaccessguard",
-      "community": 86,
-      "community_name": "new-candidate.routes.ts",
+      "community": 60,
+      "community_name": "returning-student.routes.ts",
       "norm_label": "featureaccessguard()"
     },
     {
@@ -13551,8 +13672,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service",
-      "community": 56,
-      "community_name": "app.menu.ts",
+      "community": 62,
+      "community_name": "NavigationAccessService",
       "norm_label": "navigation-access.service.ts"
     },
     {
@@ -13562,8 +13683,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_protectedpagefeature",
-      "community": 56,
-      "community_name": "app.menu.ts",
+      "community": 62,
+      "community_name": "NavigationAccessService",
       "norm_label": "protectedpagefeature"
     },
     {
@@ -13573,8 +13694,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_returning_first_installment_features",
-      "community": 56,
-      "community_name": "app.menu.ts",
+      "community": 62,
+      "community_name": "NavigationAccessService",
       "norm_label": "returning_first_installment_features"
     },
     {
@@ -13584,7 +13705,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_navigationaccessservice",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": "navigationaccessservice"
     },
@@ -13595,7 +13716,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_ts_injectable",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": "injectable"
     },
@@ -13606,7 +13727,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_navigationaccessservice_canaccess",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": ".canaccess()"
     },
@@ -13617,7 +13738,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_navigationaccessservice_canaccessasync",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": ".canaccessasync()"
     },
@@ -13628,7 +13749,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_navigationaccessservice_hasanypayment",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": ".hasanypayment()"
     },
@@ -13639,7 +13760,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_navigationaccessservice_isnewportaluser",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": ".isnewportaluser()"
     },
@@ -13650,7 +13771,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_navigationaccessservice_isadmittedportaluser",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": ".isadmittedportaluser()"
     },
@@ -13661,7 +13782,7 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_navigationaccessservice_isreturningportaluser",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": ".isreturningportaluser()"
     },
@@ -13672,7 +13793,7 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "src_app_services_navigation_access_service_navigationaccessservice_requiresreturningfirstinstallment",
-      "community": 58,
+      "community": 62,
       "community_name": "NavigationAccessService",
       "norm_label": ".requiresreturningfirstinstallment()"
     },
@@ -13848,7 +13969,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_permission_service",
-      "community": 56,
+      "community": 58,
       "community_name": "app.menu.ts",
       "norm_label": "permission.service.ts"
     },
@@ -13859,7 +13980,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_app_services_permission_service_roleid",
-      "community": 56,
+      "community": 58,
       "community_name": "app.menu.ts",
       "norm_label": "roleid"
     },
@@ -13870,7 +13991,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_app_services_permission_service_usertoken",
-      "community": 56,
+      "community": 58,
       "community_name": "app.menu.ts",
       "norm_label": "usertoken"
     },
@@ -13881,8 +14002,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "src_app_services_permission_service_permissionservice",
-      "community": 62,
-      "community_name": "AppMenu",
+      "community": 58,
+      "community_name": "app.menu.ts",
       "norm_label": "permissionservice"
     },
     {
@@ -13892,8 +14013,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_services_permission_service_ts_injectable",
-      "community": 62,
-      "community_name": "AppMenu",
+      "community": 58,
+      "community_name": "app.menu.ts",
       "norm_label": "injectable"
     },
     {
@@ -13903,8 +14024,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_app_services_permission_service_permissionservice_hasrole",
-      "community": 62,
-      "community_name": "AppMenu",
+      "community": 58,
+      "community_name": "app.menu.ts",
       "norm_label": ".hasrole()"
     },
     {
@@ -13914,8 +14035,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_app_services_permission_service_permissionservice_loadroles",
-      "community": 62,
-      "community_name": "AppMenu",
+      "community": 58,
+      "community_name": "app.menu.ts",
       "norm_label": ".loadroles()"
     },
     {
@@ -13925,8 +14046,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "src_app_services_permission_service_permissionservice_readrolesfromjwt",
-      "community": 62,
-      "community_name": "AppMenu",
+      "community": 58,
+      "community_name": "app.menu.ts",
       "norm_label": ".readrolesfromjwt()"
     },
     {
@@ -13936,8 +14057,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "src_app_services_permission_service_permissionservice_haseveryrole",
-      "community": 62,
-      "community_name": "AppMenu",
+      "community": 58,
+      "community_name": "app.menu.ts",
       "norm_label": ".haseveryrole()"
     },
     {
@@ -13947,7 +14068,7 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "src_app_services_permission_service_all_roles",
-      "community": 56,
+      "community": 58,
       "community_name": "app.menu.ts",
       "norm_label": "all_roles"
     },
@@ -13958,7 +14079,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_portal_entry_guard",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "portal-entry.guard.ts"
     },
@@ -13969,7 +14090,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_app_services_portal_entry_guard_portalentryguard",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "portalentryguard()"
     },
@@ -13980,7 +14101,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_portal_segment_guard",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "portal-segment.guard.ts"
     },
@@ -13991,7 +14112,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_app_services_portal_segment_guard_resolveexpectedportalsegment",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "resolveexpectedportalsegment()"
     },
@@ -14002,7 +14123,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_app_services_portal_segment_guard_portalsegmentguard",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "portalsegmentguard()"
     },
@@ -14013,8 +14134,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_services_regstore_service",
-      "community": 6,
-      "community_name": "admissionform.component.ts",
+      "community": 50,
+      "community_name": "regstore.service.ts",
       "norm_label": "regstore.service.ts"
     },
     {
@@ -14025,7 +14146,7 @@
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": "regstoreservice"
     },
     {
@@ -14036,7 +14157,7 @@
       "_origin": "ast",
       "id": "src_app_services_regstore_service_ts_injectable",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": "injectable"
     },
     {
@@ -14047,7 +14168,7 @@
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_constructor",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".constructor()"
     },
     {
@@ -14058,7 +14179,7 @@
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setregdata",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".setregdata()"
     },
     {
@@ -14068,8 +14189,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setpreregdata",
-      "community": 50,
-      "community_name": "application.service.ts",
+      "community": 107,
+      "community_name": "PreRegistrationDataDTO",
       "norm_label": ".setpreregdata()"
     },
     {
@@ -14080,7 +14201,7 @@
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setcountrydata",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".setcountrydata()"
     },
     {
@@ -14091,7 +14212,7 @@
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setstatedata",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".setstatedata()"
     },
     {
@@ -14101,8 +14222,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setlgadata",
-      "community": 6,
-      "community_name": "admissionform.component.ts",
+      "community": 50,
+      "community_name": "regstore.service.ts",
       "norm_label": ".setlgadata()"
     },
     {
@@ -14113,7 +14234,7 @@
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setuploadfile",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".setuploadfile()"
     },
     {
@@ -14124,7 +14245,7 @@
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_datainitialization",
       "community": 50,
-      "community_name": "application.service.ts",
+      "community_name": "regstore.service.ts",
       "norm_label": ".datainitialization()"
     },
     {
@@ -14244,7 +14365,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_app_services_user_portal_service_portalsegment",
-      "community": 46,
+      "community": 56,
       "community_name": "app.routes.ts",
       "norm_label": "portalsegment"
     },
@@ -14464,8 +14585,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_shared_components_data_table_data_table_component",
-      "community": 115,
-      "community_name": "data-table.component.ts",
+      "community": 77,
+      "community_name": "DataTableComponent",
       "norm_label": "data-table.component.ts"
     },
     {
@@ -14585,8 +14706,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_shared_components_data_table_data_table_types",
-      "community": 115,
-      "community_name": "data-table.component.ts",
+      "community": 77,
+      "community_name": "DataTableComponent",
       "norm_label": "data-table.types.ts"
     },
     {
@@ -14596,8 +14717,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_shared_components_data_table_data_table_types_datatablecolumnalign",
-      "community": 115,
-      "community_name": "data-table.component.ts",
+      "community": 77,
+      "community_name": "DataTableComponent",
       "norm_label": "datatablecolumnalign"
     },
     {
@@ -14618,8 +14739,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_app_shared_components_data_table_data_table_types_datatablerowcontext",
-      "community": 115,
-      "community_name": "data-table.component.ts",
+      "community": 77,
+      "community_name": "DataTableComponent",
       "norm_label": "datatablerowcontext"
     },
     {
@@ -14849,7 +14970,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_shared_components_search_input_search_input_component",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "search-input.component.ts"
     },
@@ -14860,7 +14981,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_app_shared_components_search_input_search_input_component_searchinputcomponent",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "searchinputcomponent"
     },
@@ -14871,7 +14992,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_shared_components_search_input_search_input_component_ts_component",
-      "community": 78,
+      "community": 63,
       "community_name": "payment.component.ts",
       "norm_label": "component"
     },
@@ -14937,8 +15058,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_shared_traceability_module",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "traceability.module.ts"
     },
     {
@@ -14948,8 +15069,8 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "src_app_shared_traceability_module_traceabilitymodule",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "traceabilitymodule"
     },
     {
@@ -14959,8 +15080,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ngmodule",
-      "community": 11,
-      "community_name": "TraceabilityModule",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "ngmodule"
     },
     {
@@ -15487,8 +15608,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "src_app_utility_date_only_parsedateonly",
-      "community": 45,
-      "community_name": "academichistory.component.ts",
+      "community": 21,
+      "community_name": "PersonalDetailsComponent",
       "norm_label": "parsedateonly()"
     },
     {
@@ -15828,8 +15949,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_utility_student_fees_plan",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 25,
+      "community_name": "application.service.ts",
       "norm_label": "student-fees-plan.ts"
     },
     {
@@ -15839,8 +15960,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_app_utility_student_fees_plan_selectstudentfeeplan",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 25,
+      "community_name": "application.service.ts",
       "norm_label": "selectstudentfeeplan()"
     },
     {
@@ -15850,8 +15971,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_app_utility_student_fees_plan_selectmatchingstudentfeeplan",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 25,
+      "community_name": "application.service.ts",
       "norm_label": "selectmatchingstudentfeeplan()"
     },
     {
@@ -15861,8 +15982,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_app_utility_student_fees_plan_readstudentfeeinstallmentnumbers",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 25,
+      "community_name": "application.service.ts",
       "norm_label": "readstudentfeeinstallmentnumbers()"
     },
     {
@@ -15872,8 +15993,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "src_app_utility_student_fees_plan_readstudentfeeinstallmentamount",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 25,
+      "community_name": "application.service.ts",
       "norm_label": "readstudentfeeinstallmentamount()"
     },
     {
@@ -15883,8 +16004,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "src_app_utility_student_fees_plan_buildstudentfeepaymentpayload",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 25,
+      "community_name": "application.service.ts",
       "norm_label": "buildstudentfeepaymentpayload()"
     },
     {
@@ -15894,8 +16015,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_app_utility_student_fees_plan_buildstudentfeepaymentpayloadforamount",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 89,
+      "community_name": "AuthSessionStore",
       "norm_label": "buildstudentfeepaymentpayloadforamount()"
     },
     {
@@ -15938,8 +16059,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_app_utility_yearutil_formatfilesize",
-      "community": 45,
-      "community_name": "academichistory.component.ts",
+      "community": 6,
+      "community_name": "admissionform.component.ts",
       "norm_label": "formatfilesize()"
     },
     {
@@ -16081,8 +16202,8 @@
       "source_location": "L358",
       "_origin": "ast",
       "id": "src_app_widgets_admission_forms_academichistory_academichistory_component_academichistorycomponent_createqualificationgroup",
-      "community": 45,
-      "community_name": "academichistory.component.ts",
+      "community": 4,
+      "community_name": "AcademicHistoryComponent",
       "norm_label": ".createqualificationgroup()"
     },
     {
@@ -16103,8 +16224,8 @@
       "source_location": "L391",
       "_origin": "ast",
       "id": "src_app_widgets_admission_forms_academichistory_academichistory_component_academichistorycomponent_addqualification",
-      "community": 45,
-      "community_name": "academichistory.component.ts",
+      "community": 4,
+      "community_name": "AcademicHistoryComponent",
       "norm_label": ".addqualification()"
     },
     {
@@ -17489,8 +17610,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_application_guideline_modal_application_guideline_modal_component",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": "application-guideline-modal.component.ts"
     },
     {
@@ -17500,8 +17621,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_application_guideline_modal_application_guideline_modal_component_applicationguidelinemodalcomponent",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": "applicationguidelinemodalcomponent"
     },
     {
@@ -17511,8 +17632,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_application_guideline_modal_application_guideline_modal_component_ts_component",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": "component"
     },
     {
@@ -17522,8 +17643,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_application_guideline_modal_application_guideline_modal_component_ts_input",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": "input"
     },
     {
@@ -17533,8 +17654,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_application_guideline_modal_application_guideline_modal_component_ts_output",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": "output"
     },
     {
@@ -17544,8 +17665,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_application_guideline_modal_application_guideline_modal_component_applicationguidelinemodalcomponent_onvisiblechange",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": ".onvisiblechange()"
     },
     {
@@ -17555,8 +17676,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_application_guideline_modal_application_guideline_modal_component_applicationguidelinemodalcomponent_onacceptedtoggle",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": ".onacceptedtoggle()"
     },
     {
@@ -17566,8 +17687,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_application_guideline_modal_application_guideline_modal_component_applicationguidelinemodalcomponent_oncontinue",
-      "community": 41,
-      "community_name": "application-guideline.data.ts",
+      "community": 79,
+      "community_name": "ApplicationGuidelineModalComponent",
       "norm_label": ".oncontinue()"
     },
     {
@@ -17742,8 +17863,8 @@
       "source_location": "L213",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_loadopenapplications",
-      "community": 90,
-      "community_name": "Department",
+      "community": 10,
+      "community_name": "PendingPaymentFlowComponent",
       "norm_label": ".loadopenapplications()"
     },
     {
@@ -17930,7 +18051,7 @@
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_computeissubmissioncompleted",
       "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community_name": "application-status.constants.ts",
       "norm_label": ".computeissubmissioncompleted()"
     },
     {
@@ -17995,8 +18116,8 @@
       "source_location": "L568",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_applyapprovalstatusmessage",
-      "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community": 10,
+      "community_name": "PendingPaymentFlowComponent",
       "norm_label": ".applyapprovalstatusmessage()"
     },
     {
@@ -18006,8 +18127,8 @@
       "source_location": "L580",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_applyherostatuscontent",
-      "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community": 10,
+      "community_name": "PendingPaymentFlowComponent",
       "norm_label": ".applyherostatuscontent()"
     },
     {
@@ -18018,7 +18139,7 @@
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_resolveapprovalstatusdefinition",
       "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community_name": "application-status.constants.ts",
       "norm_label": ".resolveapprovalstatusdefinition()"
     },
     {
@@ -18028,8 +18149,8 @@
       "source_location": "L618",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_resolveapprovalstatuskey",
-      "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community": 10,
+      "community_name": "PendingPaymentFlowComponent",
       "norm_label": ".resolveapprovalstatuskey()"
     },
     {
@@ -18039,8 +18160,8 @@
       "source_location": "L632",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_resolveapprovalstatusdetail",
-      "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community": 10,
+      "community_name": "PendingPaymentFlowComponent",
       "norm_label": ".resolveapprovalstatusdetail()"
     },
     {
@@ -18050,8 +18171,8 @@
       "source_location": "L643",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_resolveapprovalmessagetone",
-      "community": 71,
-      "community_name": "normalizeApplicationStatusKey",
+      "community": 10,
+      "community_name": "PendingPaymentFlowComponent",
       "norm_label": ".resolveapprovalmessagetone()"
     },
     {
@@ -18193,8 +18314,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "src_app_widgets_services_form_service_formservice_setacademichistoryformdata",
-      "community": 45,
-      "community_name": "academichistory.component.ts",
+      "community": 4,
+      "community_name": "AcademicHistoryComponent",
       "norm_label": ".setacademichistoryformdata()"
     },
     {
@@ -18336,8 +18457,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "src_app_widgets_sidebar_sidebar_component_sidebarcomponent",
-      "community": 89,
-      "community_name": "AuthSessionStore",
+      "community": 94,
+      "community_name": "SidebarComponent",
       "norm_label": "sidebarcomponent"
     },
     {
@@ -18347,8 +18468,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_widgets_sidebar_sidebar_component_ts_component",
-      "community": 89,
-      "community_name": "AuthSessionStore",
+      "community": 94,
+      "community_name": "SidebarComponent",
       "norm_label": "component"
     },
     {
@@ -18358,8 +18479,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_app_widgets_sidebar_sidebar_component_sidebarcomponent_constructor",
-      "community": 89,
-      "community_name": "AuthSessionStore",
+      "community": 94,
+      "community_name": "SidebarComponent",
       "norm_label": ".constructor()"
     },
     {
@@ -18369,8 +18490,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "src_app_widgets_sidebar_sidebar_component_sidebarcomponent_togglesidebar",
-      "community": 89,
-      "community_name": "AuthSessionStore",
+      "community": 94,
+      "community_name": "SidebarComponent",
       "norm_label": ".togglesidebar()"
     },
     {
@@ -18380,8 +18501,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "src_app_widgets_sidebar_sidebar_component_sidebarcomponent_onsidebarhide",
-      "community": 89,
-      "community_name": "AuthSessionStore",
+      "community": 94,
+      "community_name": "SidebarComponent",
       "norm_label": ".onsidebarhide()"
     },
     {
@@ -18391,8 +18512,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "src_app_widgets_sidebar_sidebar_component_sidebarcomponent_close",
-      "community": 89,
-      "community_name": "AuthSessionStore",
+      "community": 94,
+      "community_name": "SidebarComponent",
       "norm_label": ".close()"
     },
     {
@@ -18402,8 +18523,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_app_widgets_sidebar_sidebar_component_sidebarcomponent_logout",
-      "community": 89,
-      "community_name": "AuthSessionStore",
+      "community": 94,
+      "community_name": "SidebarComponent",
       "norm_label": ".logout()"
     },
     {
@@ -19351,9 +19472,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 106,
+      "community": 31,
       "norm_label": "otp page template",
-      "community_name": "Password Reset Template",
+      "community_name": "Admission Portal Login Template",
       "id": "src_app_pages_auth_otp_page_otp_page_component_otppagetemplate"
     },
     {
@@ -19393,9 +19514,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 106,
+      "community": 31,
       "norm_label": "dual-mode otp flow (verify vs reset)",
-      "community_name": "Password Reset Template",
+      "community_name": "Admission Portal Login Template",
       "id": "src_app_pages_auth_otp_page_otp_page_component_ispasswordresetflow"
     },
     {
@@ -19407,9 +19528,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 106,
+      "community": 31,
       "norm_label": "password reset template",
-      "community_name": "Password Reset Template",
+      "community_name": "Admission Portal Login Template",
       "id": "src_app_pages_auth_passwordreset_passwordreset_component_passwordresettemplate"
     },
     {
@@ -19421,9 +19542,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 106,
+      "community": 31,
       "norm_label": "new password reset form",
-      "community_name": "Password Reset Template",
+      "community_name": "Admission Portal Login Template",
       "id": "src_app_pages_auth_passwordreset_passwordreset_component_resetform"
     },
     {
@@ -19435,9 +19556,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 106,
+      "community": 31,
       "norm_label": "password strength checklist",
-      "community_name": "Password Reset Template",
+      "community_name": "Admission Portal Login Template",
       "id": "src_app_pages_auth_passwordreset_passwordreset_component_passwordchecklist"
     },
     {
@@ -19449,9 +19570,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 106,
+      "community": 31,
       "norm_label": "password reset successful dialog",
-      "community_name": "Password Reset Template",
+      "community_name": "Admission Portal Login Template",
       "id": "src_app_pages_auth_passwordreset_passwordreset_component_passwordresetsuccessdialog"
     },
     {
@@ -19575,9 +19696,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 106,
+      "community": 31,
       "norm_label": "signup password strength checklist",
-      "community_name": "Password Reset Template",
+      "community_name": "Admission Portal Login Template",
       "id": "src_app_pages_auth_sign_up_sign_up_component_signuppasswordchecklist"
     },
     {
@@ -19631,9 +19752,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 38,
       "norm_label": "payment row template",
-      "community_name": "App Data Table Component",
+      "community_name": "pending-payment-flow.component.ts",
       "id": "src_app_pages_payment_payment_component_paymentrowtemplate"
     },
     {
@@ -19645,9 +19766,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 38,
       "norm_label": "receipt download action",
-      "community_name": "App Data Table Component",
+      "community_name": "pending-payment-flow.component.ts",
       "id": "src_app_pages_payment_payment_component_receiptdownload"
     },
     {
@@ -19939,9 +20060,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 38,
+      "community": 54,
       "norm_label": "app status indicator component",
-      "community_name": "pending-payment-flow.component.ts",
+      "community_name": "Admission Stepper Flow",
       "id": "src_app_shared_components_status_indicator_status_indicator_component_appstatusindicator"
     },
     {
@@ -44487,7 +44608,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/components/public-brand/public-brand.component.ts",
-      "source_location": "L24",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_components_public_brand_public_brand_component",
@@ -44771,7 +44892,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L44",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_components_public_header_public_header_component_publicheadercomponent",
@@ -44782,7 +44903,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L31",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_components_public_header_public_header_component_publicheadercomponent",
@@ -44793,7 +44914,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L49",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_components_public_header_public_header_component_publicheadercomponent",
@@ -44804,7 +44925,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L40",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_components_public_header_public_header_component_publicheadercomponent",
@@ -44851,7 +44972,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L48",
+      "source_location": "L51",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -44864,7 +44985,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/components/public-header/public-header.component.ts",
-      "source_location": "L50",
+      "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_components_public_header_public_header_component_publicheadercomponent_onescape",
@@ -45516,6 +45637,277 @@
       "_origin": "ast",
       "source": "src_app_public_services_public_content_service",
       "target": "src_app_public_data_public_content_data_social_links",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/directors-speech/directors-speech-section.component.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_directors_speech_directors_speech_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_facilities_facilities_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/hero/hero-section.component.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_hero_hero_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/management-team/management-team-section.component.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_management_team_management_team_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/news/news-section.component.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_news_news_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/objectives/objectives-section.component.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_objectives_objectives_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/programmes/programmes-section.component.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_programmes_programmes_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "target": "directive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_ngondestroy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_ngoninit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_reveal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/directors-speech/directors-speech-section.component.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_directors_speech_directors_speech_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_facilities_facilities_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/hero/hero-section.component.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_hero_hero_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/management-team/management-team-section.component.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_management_team_management_team_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/news/news-section.component.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_news_news_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/objectives/objectives-section.component.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_objectives_objectives_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/programmes/programmes-section.component.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_programmes_programmes_section_component",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_ngoninit",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_reveal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_ngondestroy",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/directives/reveal-on-scroll.directive.ts",
+      "source_location": "L84",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_reveal",
+      "target": "src_app_public_directives_reveal_on_scroll_directive_revealonscrolldirective_cleanup",
       "confidence_score": 1.0
     },
     {
@@ -46520,7 +46912,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/directors-speech/directors-speech-section.component.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_directors_speech_directors_speech_section_component",
@@ -46555,7 +46947,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/directors-speech/directors-speech-section.component.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -46567,7 +46959,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
-      "source_location": "L13",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_facilities_facilities_section_component",
@@ -46599,10 +46991,54 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent",
+      "target": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_ngafterviewinit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent",
+      "target": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_ngondestroy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent",
+      "target": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_scrollby",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent",
+      "target": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_updatescrollstate",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
-      "source_location": "L6",
+      "source_location": "L10",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -46611,10 +47047,22 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/public/sections/facilities/facilities-section.component.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_ngafterviewinit",
+      "target": "src_app_public_sections_facilities_facilities_section_component_facilitiessectioncomponent_updatescrollstate",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/hero/hero-section.component.ts",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_hero_hero_section_component",
@@ -46649,7 +47097,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/hero/hero-section.component.ts",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -46661,7 +47109,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/management-team/management-team-section.component.ts",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_management_team_management_team_section_component",
@@ -46696,7 +47144,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/management-team/management-team-section.component.ts",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -46708,7 +47156,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/news/news-section.component.ts",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_news_news_section_component",
@@ -46767,7 +47215,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/news/news-section.component.ts",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_news_news_section_component_newssectioncomponent",
@@ -46778,7 +47226,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/news/news-section.component.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -46792,7 +47240,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/public/sections/news/news-section.component.ts",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_news_news_section_component_newssectioncomponent_formatdate",
@@ -46802,7 +47250,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/objectives/objectives-section.component.ts",
-      "source_location": "L11",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_objectives_objectives_section_component",
@@ -46837,7 +47285,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/objectives/objectives-section.component.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -46849,7 +47297,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/programmes/programmes-section.component.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_public_sections_programmes_programmes_section_component",
@@ -46884,7 +47332,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/app/public/sections/programmes/programmes-section.component.ts",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -61868,5 +62316,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a57f0d4e90e62913b0122eabf85845bb8299c9c4"
+  "built_at_commit": "62374bef0a44d20ef198762a779c99a063628c88"
 }

@@ -25,6 +25,14 @@
   border-radius: var(--pub-radius);
   overflow: hidden;
   box-shadow: var(--pub-shadow-card);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.team__card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--pub-shadow-raised);
 }
 
 .team__photo {

@@ -1,8 +1,8 @@
 @if (speech(); as content) {
   <div class="pub-shell speech__layout">
-    <app-public-image class="speech__portrait" [src]="content.portraitUrl" [alt]="content.portraitAlt" />
+    <app-public-image class="speech__portrait" appReveal [src]="content.portraitUrl" [alt]="content.portraitAlt" />
 
-    <figure class="speech__card">
+    <figure class="speech__card" appReveal [revealDelay]="140">
       <span class="speech__quote speech__quote--open" aria-hidden="true">&ldquo;</span>
       <span class="speech__quote speech__quote--close" aria-hidden="true">&rdquo;</span>
 

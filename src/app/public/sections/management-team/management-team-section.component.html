@@ -1,9 +1,9 @@
 <div class="pub-shell">
-  <h2 class="pub-section-title team__heading">{{ heading() }}</h2>
+  <h2 class="pub-section-title team__heading" appReveal>{{ heading() }}</h2>
 
   <ul class="team__grid">
     @for (member of team(); track member.id) {
-      <li class="team__card">
+      <li class="team__card" appReveal [revealDelay]="$index * 90">
         <app-public-image class="team__photo" [src]="member.photoUrl" [alt]="'Portrait of ' + member.name" />
         <div class="team__meta">
           <h3 class="team__name">{{ member.name }}</h3>

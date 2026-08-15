@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { PublicContentService } from '../../services/public-content.service';
 import { PublicImageComponent } from '../../components/public-image/public-image.component';
+import { RevealOnScrollDirective } from '../../directives/reveal-on-scroll.directive';
 
 /**
  * "Academics Programs" block. Reused on the Programmes page, where the
@@ -11,7 +12,7 @@ import { PublicImageComponent } from '../../components/public-image/public-image
 @Component({
   selector: 'app-programmes-section',
   standalone: true,
-  imports: [RouterLink, PublicImageComponent],
+  imports: [RouterLink, PublicImageComponent, RevealOnScrollDirective],
   templateUrl: './programmes-section.component.html',
   styleUrl: './programmes-section.component.scss'
 })

@@ -5,9 +5,52 @@
   overflow: hidden;
 }
 
+.facilities__head {
+  margin-bottom: 2.5rem;
+}
+
 .facilities__heading {
   color: #ffffff;
-  margin-bottom: 2.5rem;
+}
+
+.facilities__controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.facilities__control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  background: transparent;
+  color: #ffffff;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.facilities__control:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.16);
+  border-color: #ffffff;
+}
+
+.facilities__control:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.facilities__control:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 
 /* The scroller — not the <ul> — carries the gutter. `src/styles.scss` sets a
@@ -51,6 +94,11 @@
   flex: 0 0 auto;
   width: clamp(200px, 62vw, 232px);
   scroll-snap-align: start;
+  transition: transform 0.2s ease;
+}
+
+.facilities__item:hover {
+  transform: translateY(-4px);
 }
 
 .facilities__image {

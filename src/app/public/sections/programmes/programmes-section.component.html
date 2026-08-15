@@ -1,10 +1,11 @@
 <div class="pub-shell">
-  <h2 class="pub-section-title programmes__heading">{{ heading() }}</h2>
+  <h2 class="pub-section-title programmes__heading" appReveal>{{ heading() }}</h2>
 
   <div class="programmes__layout" [class.programmes__layout--no-image]="!showImage()">
     @if (showImage()) {
       <app-public-image
         class="programmes__image"
+        appReveal
         [src]="image()"
         alt="Students outside the College of Nursing Sciences building"
       />
@@ -12,7 +13,7 @@
 
     <ul class="programmes__list">
       @for (programme of programmes(); track programme.id) {
-        <li class="programmes__item">
+        <li class="programmes__item" appReveal [revealDelay]="$index * 70">
           @if (programme.route) {
             <a class="programmes__link" [routerLink]="programme.route">
               <span>{{ programme.name }}</span>

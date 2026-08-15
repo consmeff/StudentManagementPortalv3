@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { PublicContentService } from '../../services/public-content.service';
 import { PublicImageComponent } from '../../components/public-image/public-image.component';
 import { formatLongDateWithOrdinal } from '../../utils/format-date';
+import { RevealOnScrollDirective } from '../../directives/reveal-on-scroll.directive';
 
 /**
  * "News & Announcements" block. Reused on the Media page with `limit` cleared
@@ -12,7 +13,7 @@ import { formatLongDateWithOrdinal } from '../../utils/format-date';
 @Component({
   selector: 'app-news-section',
   standalone: true,
-  imports: [RouterLink, PublicImageComponent],
+  imports: [RouterLink, PublicImageComponent, RevealOnScrollDirective],
   templateUrl: './news-section.component.html',
   styleUrl: './news-section.component.scss'
 })

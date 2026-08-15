@@ -19,7 +19,10 @@
     }
   </nav>
 
-  <a class="pub-btn pub-btn--primary pub-header__cta" [routerLink]="applyRoute">{{ applyLabel }}</a>
+  <div class="pub-header__actions">
+    <a class="pub-btn pub-btn--outline pub-header__login" [routerLink]="loginRoute">Login</a>
+    <a class="pub-btn pub-btn--primary" [routerLink]="applyRoute">{{ applyLabel }}</a>
+  </div>
 
   <button
     type="button"
@@ -46,6 +49,9 @@
         {{ item.label }}
       </a>
     }
-    <a class="pub-btn pub-btn--primary pub-header__panel-cta" [routerLink]="applyRoute">{{ applyLabel }}</a>
+    <div class="pub-header__panel-actions">
+      <a class="pub-btn pub-btn--outline" [routerLink]="loginRoute">Login</a>
+      <a class="pub-btn pub-btn--primary" [routerLink]="applyRoute">{{ applyLabel }}</a>
+    </div>
   </nav>
 </div>
