@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1733 nodes · 3324 edges · 145 communities (78 shown, 67 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 91 edges (avg confidence: 0.86)
+- 1733 nodes · 3324 edges · 146 communities (79 shown, 67 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 88 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e01e33b2`
+- Built from commit: `5280c589`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -118,9 +118,10 @@
 - package.json
 - @angular/compiler
 - PortalShellComponent
-- @angular/common
+- Password Reset Template
 - vercel.json
-- autoprefixer
+- @angular/compiler-cli
+- @angular/platform-browser
 - @angular-eslint/eslint-plugin
 - @angular-eslint/eslint-plugin-template
 - @angular-eslint/template-parser
@@ -186,7 +187,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (145 total, 67 thin omitted)
+## Communities (146 total, 67 thin omitted)
 
 ### Community 0 - "ReturningFlowService"
 Cohesion: 0.05
@@ -277,8 +278,8 @@ Cohesion: 0.05
 Nodes (11): RegisteredCourse, AdmittedAcceptancePaymentComponent, Component, AdmittedCoursesComponent, Component, AdmittedDashboardComponent, Component, AdmittedPaymentComponent (+3 more)
 
 ### Community 31 - "Admission Portal Login Template"
-Cohesion: 0.13
-Nodes (18): Personal Details Step Component, Dual-Mode OTP Flow (verify vs reset), OTP Form (six-box entry), OTP Page Template, OTP Resend Countdown, Password Strength Checklist, Password Reset Successful Dialog, Password Reset Template (+10 more)
+Cohesion: 0.20
+Nodes (11): Personal Details Step Component, OTP Form (six-box entry), OTP Resend Countdown, Email OTP Request Form, Request Password Reset Template, Auth Split-Panel Carousel, Login Form (email + password), Admission Portal Login Template (+3 more)
 
 ### Community 32 - "NextOfKinComponent"
 Cohesion: 0.18
@@ -305,12 +306,12 @@ Cohesion: 0.20
 Nodes (15): AST-Only Update (No API Cost), Community Structure, Cross-File Relationships, God Nodes, graphify-out/graph.json, graphify-out/GRAPH_REPORT.md, graphify, graphify explain (+7 more)
 
 ### Community 38 - "pending-payment-flow.component.ts"
-Cohesion: 0.21
-Nodes (13): ApplicationStatusKey, ACTION_LABELS, APPROVAL_STATUS_MESSAGES, DashboardApprovalMessage, HERO_CONTENT, ROUTES, STATUS_MATCHERS, STEP_CONTENT (+5 more)
+Cohesion: 0.22
+Nodes (12): ACTION_LABELS, APPROVAL_STATUS_MESSAGES, DashboardApprovalMessage, HERO_CONTENT, ROUTES, STATUS_MATCHERS, STEP_CONTENT, UI_COPY (+4 more)
 
 ### Community 39 - "application-status.constants.ts"
-Cohesion: 0.20
-Nodes (11): APPLICATION_STATUS_DEFINITIONS, APPLICATION_STATUS_DESCRIPTIONS, APPLICATION_STATUS_LABELS, APPLICATION_STATUS_OPTIONS, APPLICATION_STATUS_ORDER, APPLICATION_STATUS_TONES, ApplicationStatusDefinition, ApplicationStatusOption (+3 more)
+Cohesion: 0.22
+Nodes (11): APPLICATION_STATUS_DEFINITIONS, APPLICATION_STATUS_DESCRIPTIONS, APPLICATION_STATUS_LABELS, APPLICATION_STATUS_OPTIONS, APPLICATION_STATUS_ORDER, APPLICATION_STATUS_TONES, ApplicationStatusDefinition, ApplicationStatusKey (+3 more)
 
 ### Community 40 - "ReturningCoursesComponent"
 Cohesion: 0.15
@@ -362,7 +363,7 @@ Nodes (10): Admission Stepper Flow, Academic History Step Component, Application
 
 ### Community 55 - "dependencies"
 Cohesion: 0.18
-Nodes (11): @angular/animations, @angular/platform-browser, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/platform-browser, chartjs-adapter-date-fns (+3 more)
+Nodes (11): @angular/animations, @angular/common, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/common, chartjs-adapter-date-fns (+3 more)
 
 ### Community 56 - "app.routes.ts"
 Cohesion: 0.22
@@ -446,7 +447,7 @@ Nodes (7): development, aot, buildTarget, namedChunks, optimization, outputHashi
 
 ### Community 83 - "devDependencies"
 Cohesion: 0.29
-Nodes (7): @angular/compiler-cli, @angular-devkit/build-angular, devDependencies, @angular/cli, @angular/compiler-cli, @angular-devkit/build-angular, @angular/cli
+Nodes (7): @angular-devkit/build-angular, autoprefixer, devDependencies, @angular/cli, @angular-devkit/build-angular, autoprefixer, @angular/cli
 
 ### Community 85 - "InactivityService"
 Cohesion: 0.31
@@ -477,8 +478,8 @@ Cohesion: 0.40
 Nodes (5): extract-i18n, test, architect, builder, builder
 
 ### Community 93 - "admitted-profile.component.ts"
-Cohesion: 0.33
-Nodes (5): App Status Indicator Component, StatusIndicatorComponent, StatusTone, Component, Input
+Cohesion: 0.29
+Nodes (6): ApplicationStatusTone, App Status Indicator Component, StatusIndicatorComponent, StatusTone, Component, Input
 
 ### Community 96 - "FilterSelectComponent"
 Cohesion: 0.40
@@ -491,6 +492,10 @@ Nodes (4): MIT License (Sakai template), PrimeTek (copyright holder), Angular CL
 ### Community 100 - "package.json"
 Cohesion: 0.50
 Nodes (3): name, private, version
+
+### Community 103 - "Password Reset Template"
+Cohesion: 0.29
+Nodes (7): Dual-Mode OTP Flow (verify vs reset), OTP Page Template, Password Strength Checklist, Password Reset Successful Dialog, Password Reset Template, New Password Reset Form, Signup Password Strength Checklist
 
 ## Ambiguous Edges - Review These
 - `Edit Lock Policy` → `App Status Indicator Component`  [AMBIGUOUS]
