@@ -3,7 +3,6 @@
 @use 'primeicons/primeicons.css';
 @use './assets/demo/demo.scss';
 @use './assets/demo/theme' as *;
-@use './app/public/public-theme.scss';
 
 :root,
 [data-theme='light'] {
