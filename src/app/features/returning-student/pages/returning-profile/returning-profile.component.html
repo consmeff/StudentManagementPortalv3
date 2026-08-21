@@ -14,7 +14,7 @@
         <div *ngSwitchCase="'overview'" class="overview-block">
           <h2>Profile Overview</h2>
           <div class="photo-row">
-            <img src="assets/logo.png" alt="Student photo" />
+            <img [src]="flow.studentPhotoUrl()" alt="Student photo" />
             <button type="button" class="change-photo"><i class="pi pi-link"></i> Change Photo</button>
           </div>
           <div class="meta-grid">
@@ -32,7 +32,7 @@
               <h3>Personal Information</h3>
               <div class="card-actions" *ngIf="isEditingPersonal(); else personalEditAction">
                 <button type="button" class="mini-btn neutral" (click)="cancelEdit('personal')">Cancel</button>
-                <button type="button" class="mini-btn primary" (click)="save('personal')">Save</button>
+                <button type="button" class="mini-btn primary" [disabled]="isSaving('personal')" (click)="save('personal')">{{ isSaving('personal') ? 'Saving...' : 'Save' }}</button>
               </div>
               <ng-template #personalEditAction>
                 <button type="button" class="icon-edit-btn" (click)="startEdit('personal')" aria-label="Edit personal information">
@@ -77,7 +77,7 @@
               <h3>Residential Information</h3>
               <div class="card-actions" *ngIf="isEditingResidential(); else residentialEditAction">
                 <button type="button" class="mini-btn neutral" (click)="cancelEdit('residential')">Cancel</button>
-                <button type="button" class="mini-btn primary" (click)="save('residential')">Save</button>
+                <button type="button" class="mini-btn primary" [disabled]="isSaving('residential')" (click)="save('residential')">{{ isSaving('residential') ? 'Saving...' : 'Save' }}</button>
               </div>
               <ng-template #residentialEditAction>
                 <button type="button" class="icon-edit-btn" (click)="startEdit('residential')" aria-label="Edit residential information">
@@ -110,7 +110,7 @@
               <h3>Next of Kin Information</h3>
               <div class="card-actions" *ngIf="isEditingNextOfKin(); else nokEditAction">
                 <button type="button" class="mini-btn neutral" (click)="cancelEdit('nok')">Cancel</button>
-                <button type="button" class="mini-btn primary" (click)="save('nok')">Save</button>
+                <button type="button" class="mini-btn primary" [disabled]="isSaving('nok')" (click)="save('nok')">{{ isSaving('nok') ? 'Saving...' : 'Save' }}</button>
               </div>
               <ng-template #nokEditAction>
                 <button type="button" class="icon-edit-btn" (click)="startEdit('nok')" aria-label="Edit next of kin information">
@@ -151,7 +151,7 @@
               <h3>Next of Kin Residence</h3>
               <div class="card-actions" *ngIf="isEditingNextOfKinResidence(); else nokResidenceEditAction">
                 <button type="button" class="mini-btn neutral" (click)="cancelEdit('nok-residence')">Cancel</button>
-                <button type="button" class="mini-btn primary" (click)="save('nok-residence')">Save</button>
+                <button type="button" class="mini-btn primary" [disabled]="isSaving('nok-residence')" (click)="save('nok-residence')">{{ isSaving('nok-residence') ? 'Saving...' : 'Save' }}</button>
               </div>
               <ng-template #nokResidenceEditAction>
                 <button type="button" class="icon-edit-btn" (click)="startEdit('nok-residence')" aria-label="Edit next of kin residence">

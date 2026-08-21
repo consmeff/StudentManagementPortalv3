@@ -18,3 +18,10 @@ export const RETURNING_STUDENT_FAILED_GRADE = 'F';
 export const RETURNING_STUDENT_PAYMENT_LABEL = {
   paidInFull: 'Paid in full'
 } as const;
+
+export const RETURNING_STUDENT_PROFILE_MESSAGE = {
+  saved: 'Profile changes saved successfully.',
+  saveFailed: 'Unable to save profile changes right now.',
+  passwordUpdated: 'Password updated successfully.',
+  passwordFailed: 'Unable to update password right now.'
+} as const;

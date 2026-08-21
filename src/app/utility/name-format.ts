@@ -4,6 +4,12 @@ type StructuredNameInput = {
   middleName?: string | null | undefined;
 };
 
+export type StructuredNameParts = {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+};
+
 export function formatStructuredName({ firstName, lastName, middleName }: StructuredNameInput): string {
   const normalizedLastName = normalizeNamePart(lastName);
   const normalizedFirstName = normalizeNamePart(firstName);
@@ -55,4 +61,36 @@ function toTitleCase(value: string): string {
 
 function normalizeNamePart(value: string | null | undefined): string {
   return (value ?? '').trim().replace(/\s+/g, ' ');
+}
+
+/**
+ * Inverse of formatStructuredName, so an edited display name can be sent back
+ * to the API as separate name parts.
+ */
+export function splitDisplayName(displayName: string | null | undefined): StructuredNameParts {
+  const normalizedName = normalizeNamePart(displayName);
+  if (!normalizedName) {
+    return { firstName: '', lastName: '', middleName: '' };
+  }
+
+  if (normalizedName.includes(',')) {
+    const [surnamePart, ...remainingParts] = normalizedName.split(',');
+    const givenNames = normalizeNamePart(remainingParts.join(' ')).split(' ').filter(Boolean);
+    return {
+      firstName: toTitleCase(givenNames[0] ?? ''),
+      lastName: toTitleCase(surnamePart),
+      middleName: toTitleCase(givenNames.slice(1).join(' '))
+    };
+  }
+
+  const parts = normalizedName.split(' ').filter(Boolean);
+  if (parts.length === 1) {
+    return { firstName: toTitleCase(parts[0]), lastName: '', middleName: '' };
+  }
+
+  return {
+    firstName: toTitleCase(parts[0]),
+    lastName: toTitleCase(parts[parts.length - 1]),
+    middleName: toTitleCase(parts.slice(1, -1).join(' '))
+  };
 }

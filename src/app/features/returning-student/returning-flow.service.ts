@@ -12,12 +12,18 @@ import {
   RETURNING_STUDENT_FAILED_GRADE,
   RETURNING_STUDENT_PAYMENT_LABEL,
   RETURNING_STUDENT_PROFILE_CONFIG,
+  RETURNING_STUDENT_PROFILE_MESSAGE,
   RETURNING_STUDENT_STATUS_LABEL
 } from '../../constants/returning-student.constants';
+import {
+  StudentAddressPayload,
+  StudentGuardianPayload,
+  StudentProfileUpdatePayload
+} from '../../data/application/student-profile.dto';
 import { ApplicationService } from '../../services/application.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
-import { parseDateOnly } from '../../utility/date-only';
-import { formatStructuredName, normalizeDisplayName } from '../../utility/name-format';
+import { formatDateOnly, parseDateOnly } from '../../utility/date-only';
+import { formatStructuredName, normalizeDisplayName, splitDisplayName } from '../../utility/name-format';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
@@ -163,6 +169,14 @@ export type NextOfKinData = {
   alternatePhone: string;
 };
 
+export type EditableProfileSection = 'personal' | 'residential' | 'nok' | 'nok-residence';
+
+export type ProfileSectionDraft =
+  | { section: 'personal'; data: PersonalContactData }
+  | { section: 'residential'; data: AddressData }
+  | { section: 'nok'; data: NextOfKinData }
+  | { section: 'nok-residence'; data: AddressData };
+
 export type ReturningAnnouncementFeedItem = {
   title: string;
   body: string;
@@ -191,7 +205,7 @@ function mapStudentAddress(address: Address | null): AddressData {
     return buildEmptyAddress();
   }
   return {
-    houseNumber: address.address ?? '',
+    houseNumber: readAddressHouseNumber(address.address),
     streetName: address.street_name ?? '',
     landmark: address.land_mark ?? '',
     areaTown: address.city ?? '',
@@ -200,13 +214,67 @@ function mapStudentAddress(address: Address | null): AddressData {
   };
 }
 
+function composeAddressLine(address: AddressData): string {
+  return [address.houseNumber, address.streetName, address.landmark, address.areaTown]
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(', ');
+}
+
+function readAddressHouseNumber(addressLine: string | null | undefined): string {
+  return (addressLine ?? '').split(',')[0].trim();
+}
+
+function prunePayload<TPayload extends object>(payload: TPayload): TPayload {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== '')
+  ) as TPayload;
+}
+
+function readDisabilityPayload(personalContact: PersonalContactData): string | null {
+  if (personalContact.disability.trim().toLowerCase() !== RETURNING_STUDENT_DISABILITY_LABEL.present.toLowerCase()) {
+    return null;
+  }
+  return personalContact.specificDisability.trim() || RETURNING_STUDENT_DISABILITY_LABEL.present;
+}
+
+function buildAddressPayload(address: AddressData): StudentAddressPayload {
+  return prunePayload({
+    address: composeAddressLine(address),
+    street_name: address.streetName,
+    land_mark: address.landmark,
+    city: address.areaTown
+  });
+}
+
+function buildGuardianPayload(guardian: NextOfKinData, residence: AddressData): StudentGuardianPayload {
+  return prunePayload({
+    title: guardian.title,
+    first_name: guardian.firstName,
+    last_name: guardian.lastName,
+    other_names: guardian.middleName,
+    email: guardian.email,
+    occupation: guardian.occupation,
+    phone_number: guardian.phone,
+    alt_phone_number: guardian.alternatePhone,
+    residential_address: composeAddressLine(residence),
+    state_of_origin: residence.state,
+    lga: residence.lga
+  });
+}
+
 function mapGuardianAddress(guardian: AryParentOrGuardian | null): AddressData {
   if (!guardian) {
     return buildEmptyAddress();
   }
+  const [houseNumber = '', streetName = '', landmark = '', areaTown = ''] = (guardian.residential_address ?? '')
+    .split(',')
+    .map((part) => part.trim());
   return {
-    ...buildEmptyAddress(),
-    streetName: guardian.residential_address ?? '',
+    houseNumber,
+    streetName,
+    landmark,
+    areaTown,
     state: guardian.state_of_origin ?? '',
     lga: guardian.lga ?? ''
   };
@@ -290,6 +358,8 @@ export class ReturningFlowService {
   readonly loadingStudentDashboard = signal(false);
 
   readonly loadingStudentProfile = signal(false);
+
+  readonly savingProfileSection = signal<EditableProfileSection | null>(null);
 
   readonly loadingStudentResults = signal(false);
 
@@ -848,24 +918,76 @@ export class ReturningFlowService {
     this.activeProfileTab.set(tab);
   }
 
-  updatePersonalContact(patch: Partial<PersonalContactData>): void {
-    this.personalContact.set({ ...this.personalContact(), ...patch });
+  async saveProfileSection(draft: ProfileSectionDraft): Promise<{ ok: boolean; message: string }> {
+    this.savingProfileSection.set(draft.section);
+    try {
+      const response = await firstValueFrom(
+        this.appService.updateStudentProfile(this.buildProfileSectionPayload(draft))
+      );
+      const profile = response?.data ?? null;
+      if (profile) {
+        this.authSessionStore.setStudentProfile(profile);
+        this.applyStudentProfileSnapshot(profile);
+      } else {
+        this.applyProfileSectionDraft(draft);
+      }
+      return { ok: true, message: RETURNING_STUDENT_PROFILE_MESSAGE.saved };
+    } catch (error) {
+      return {
+        ok: false,
+        message: this.resolveRequestErrorMessage(error, RETURNING_STUDENT_PROFILE_MESSAGE.saveFailed)
+      };
+    } finally {
+      this.savingProfileSection.set(null);
+    }
   }
 
-  updateResidentialAddress(patch: Partial<AddressData>): void {
-    this.residentialAddress.set({ ...this.residentialAddress(), ...patch });
+  private buildProfileSectionPayload(draft: ProfileSectionDraft): StudentProfileUpdatePayload {
+    if (draft.section === 'personal') {
+      return this.buildPersonalContactPayload(draft.data);
+    }
+    if (draft.section === 'residential') {
+      return { residential_address: buildAddressPayload(draft.data) };
+    }
+    if (draft.section === 'nok') {
+      return { primary_parent_or_guardian: buildGuardianPayload(draft.data, this.nextOfKinResidence()) };
+    }
+    return { primary_parent_or_guardian: buildGuardianPayload(this.nextOfKin(), draft.data) };
   }
 
-  updateNextOfKin(patch: Partial<NextOfKinData>): void {
-    this.nextOfKin.set({ ...this.nextOfKin(), ...patch });
+  private buildPersonalContactPayload(personalContact: PersonalContactData): StudentProfileUpdatePayload {
+    const { firstName, lastName, middleName } = splitDisplayName(personalContact.fullName);
+    return prunePayload({
+      first_name: firstName,
+      last_name: lastName,
+      other_names: middleName,
+      email: personalContact.email,
+      phone_number: personalContact.phone,
+      alt_phone_number: personalContact.alternatePhone,
+      dob: formatDateOnly(parseDateOnly(personalContact.dateOfBirth)),
+      gender: personalContact.gender,
+      marital_status: personalContact.maritalStatus,
+      nationality: personalContact.nationality,
+      state_of_origin: personalContact.stateOfOrigin,
+      lga: personalContact.lgaOfOrigin,
+      disability: readDisabilityPayload(personalContact)
+    });
   }
 
-  updateNextOfKinResidence(patch: Partial<AddressData>): void {
-    this.nextOfKinResidence.set({ ...this.nextOfKinResidence(), ...patch });
-  }
-
-  saveProfileChanges(): { ok: boolean; message: string } {
-    return { ok: true, message: 'Profile changes saved successfully.' };
+  private applyProfileSectionDraft(draft: ProfileSectionDraft): void {
+    if (draft.section === 'personal') {
+      this.personalContact.set(draft.data);
+      return;
+    }
+    if (draft.section === 'residential') {
+      this.residentialAddress.set(draft.data);
+      return;
+    }
+    if (draft.section === 'nok') {
+      this.nextOfKin.set(draft.data);
+      return;
+    }
+    this.nextOfKinResidence.set(draft.data);
   }
 
   async updateAccountPassword(
@@ -891,11 +1013,11 @@ export class ReturningFlowService {
           confirm_password: confirmPassword
         })
       );
-      return { ok: true, message: 'Password updated successfully.' };
+      return { ok: true, message: RETURNING_STUDENT_PROFILE_MESSAGE.passwordUpdated };
     } catch (error) {
       return {
         ok: false,
-        message: this.resolvePasswordChangeErrorMessage(error)
+        message: this.resolveRequestErrorMessage(error, RETURNING_STUDENT_PROFILE_MESSAGE.passwordFailed)
       };
     }
   }
@@ -1490,14 +1612,12 @@ export class ReturningFlowService {
     this.hostelApplicationStatus.set(hasAllocation ? 'allocated' : 'request');
   }
 
-  private resolvePasswordChangeErrorMessage(error: unknown): string {
+  private resolveRequestErrorMessage(error: unknown, fallbackMessage: string): string {
     if (error instanceof HttpErrorResponse) {
       const errorPayload = this.toRecord(error.error);
-      return this.readErrorMessage(errorPayload)
-        ?? error.message
-        ?? 'Unable to update password right now.';
+      return this.readErrorMessage(errorPayload) ?? error.message ?? fallbackMessage;
     }
-    return 'Unable to update password right now.';
+    return fallbackMessage;
   }
 
   private readErrorMessage(source: Record<string, unknown>): string | null {
