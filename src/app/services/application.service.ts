@@ -22,6 +22,7 @@ import {
   StudentHostelRoomOption
 } from '../data/application/student-hostel.dto';
 import { StudentResultsResponse } from '../data/application/student-results.dto';
+import { StudentProfileUpdatePayload } from '../data/application/student-profile.dto';
 import {
   StudentFeePartPaymentConfig,
   StudentFeePartPaymentEntry,
@@ -53,6 +54,8 @@ export class ApplicationService {
   private readonly acceptanceFeeEndpoint = `${this.apiRoot}/api/v1/applicants/acceptance-fee`;
 
   private readonly changePasswordEndpoint = `${this.apiRoot}/password/change`;
+
+  private readonly studentProfileEndpoint = `${this.apiRoot}/api/v1/students/single`;
 
   private readonly studentHostelAllocationEndpoint = `${this.apiRoot}/api/v1/hostels/students/allocation`;
 
@@ -110,7 +113,13 @@ export class ApplicationService {
   }
 
   studentData(): Observable<StudentSingleResponse> {
-    return this.http.get<unknown>(`${this.apiRoot}/api/v1/students/single`).pipe(
+    return this.http.get<unknown>(this.studentProfileEndpoint).pipe(
+      map((response) => this.normalizeStudentSingleResponse(response))
+    );
+  }
+
+  updateStudentProfile(payload: StudentProfileUpdatePayload): Observable<StudentSingleResponse> {
+    return this.http.patch<unknown>(this.studentProfileEndpoint, payload).pipe(
       map((response) => this.normalizeStudentSingleResponse(response))
     );
   }

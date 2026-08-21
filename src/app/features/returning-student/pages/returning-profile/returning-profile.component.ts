@@ -3,7 +3,15 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { AddressData, NextOfKinData, PersonalContactData, ReturningFlowService, ReturningProfileTab } from '../../returning-flow.service';
+import {
+  AddressData,
+  EditableProfileSection,
+  NextOfKinData,
+  PersonalContactData,
+  ProfileSectionDraft,
+  ReturningFlowService,
+  ReturningProfileTab
+} from '../../returning-flow.service';
 
 @Component({
   selector: 'app-returning-profile',
@@ -42,8 +50,6 @@ export class ReturningProfileComponent implements OnInit {
 
   readonly showConfirm = signal(false);
 
-  readonly savingSection = signal<string | null>(null);
-
   readonly isUpdatingPassword = signal(false);
 
   readonly isEditingPersonal = signal(false);
@@ -63,7 +69,11 @@ export class ReturningProfileComponent implements OnInit {
   readonly nextOfKinResidenceDraft = signal<AddressData>(this.flow.nextOfKinResidence());
 
   ngOnInit(): void {
-    this.flow.loadStudentProfile();
+    this.flow.loadStudentProfile(true);
+  }
+
+  isSaving(section: EditableProfileSection): boolean {
+    return this.flow.savingProfileSection() === section;
   }
 
   setTab(tab: ReturningProfileTab): void {
@@ -144,20 +154,8 @@ export class ReturningProfileComponent implements OnInit {
     this.nextOfKinResidenceDraft.set({ ...this.nextOfKinResidenceDraft(), [key]: value });
   }
 
-  save(section: EditableProfileSection): void {
-    if (section === 'personal') {
-      this.flow.updatePersonalContact(this.personalDraft());
-    } else if (section === 'residential') {
-      this.flow.updateResidentialAddress(this.residentialDraft());
-    } else if (section === 'nok') {
-      this.flow.updateNextOfKin(this.nextOfKinDraft());
-    } else {
-      this.flow.updateNextOfKinResidence(this.nextOfKinResidenceDraft());
-    }
-
-    this.savingSection.set(section);
-    const result = this.flow.saveProfileChanges();
-    this.savingSection.set(null);
+  async save(section: EditableProfileSection): Promise<void> {
+    const result = await this.flow.saveProfileSection(this.buildSectionDraft(section));
     this.messageService.add({
       severity: result.ok ? 'success' : 'warn',
       summary: 'Profile',
@@ -166,6 +164,19 @@ export class ReturningProfileComponent implements OnInit {
     if (result.ok) {
       this.setEditing(section, false);
     }
+  }
+
+  private buildSectionDraft(section: EditableProfileSection): ProfileSectionDraft {
+    if (section === 'personal') {
+      return { section, data: this.personalDraft() };
+    }
+    if (section === 'residential') {
+      return { section, data: this.residentialDraft() };
+    }
+    if (section === 'nok') {
+      return { section, data: this.nextOfKinDraft() };
+    }
+    return { section, data: this.nextOfKinResidenceDraft() };
   }
 
   async savePassword(): Promise<void> {
@@ -189,4 +200,3 @@ export class ReturningProfileComponent implements OnInit {
   }
 }
 
-type EditableProfileSection = 'personal' | 'residential' | 'nok' | 'nok-residence';
