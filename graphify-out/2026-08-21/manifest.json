@@ -130,9 +130,9 @@
     "semantic_hash": "85a1be95123164d5097a12ee22e46373"
   },
   "src/app/data/application/registrantdatadto.ts": {
-    "mtime": 1782721712.9080207,
-    "ast_hash": "8f18257416c1a13078880034518089a7",
-    "semantic_hash": "8f18257416c1a13078880034518089a7"
+    "mtime": 1787340568.526227,
+    "ast_hash": "68a251417a82d740ab766750fc407499",
+    "semantic_hash": ""
   },
   "src/app/data/application/student-cgpa-trend.dto.ts": {
     "mtime": 1783248561.1855187,
@@ -250,9 +250,9 @@
     "semantic_hash": "32f1806b9f5fc78788504991bc8704fc"
   },
   "src/app/features/returning-student/pages/returning-dashboard/returning-dashboard.component.ts": {
-    "mtime": 1783246400.0092096,
-    "ast_hash": "243435142986e88edc847290afb26e03",
-    "semantic_hash": "243435142986e88edc847290afb26e03"
+    "mtime": 1787340568.5297258,
+    "ast_hash": "ad99e58907b2bf3a9efa39449ef4c226",
+    "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-hostel/returning-hostel.component.ts": {
     "mtime": 1783257881.2274413,
@@ -265,9 +265,9 @@
     "semantic_hash": "a80b63e1c5d81e57e02bed4b48b64a3b"
   },
   "src/app/features/returning-student/pages/returning-profile/returning-profile.component.ts": {
-    "mtime": 1783255882.807002,
-    "ast_hash": "211760d69987fac85edf74f1157e0997",
-    "semantic_hash": "211760d69987fac85edf74f1157e0997"
+    "mtime": 1787340593.209495,
+    "ast_hash": "78cda4ca21f56c189d87558425d59e9c",
+    "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-results/returning-results.component.ts": {
     "mtime": 1783247027.9841475,
@@ -275,8 +275,8 @@
     "semantic_hash": "a191450ecd4a0d11d64b31a7146bd350"
   },
   "src/app/features/returning-student/returning-flow.service.ts": {
-    "mtime": 1785874351.9600885,
-    "ast_hash": "a335a540c8e4c118f1e1a9d222a57f00",
+    "mtime": 1787340586.7799459,
+    "ast_hash": "d35ed6bdb480dc81091103f1b3863128",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/returning-student.routes.ts": {
@@ -780,9 +780,9 @@
     "semantic_hash": "3b19a85a996c3c1057105d8fdc559531"
   },
   "src/app/features/returning-student/pages/returning-dashboard/returning-dashboard.component.html": {
-    "mtime": 1783246412.4870605,
-    "ast_hash": "a4db3d20aade15c1681b2c73fad3d6d3",
-    "semantic_hash": "a4db3d20aade15c1681b2c73fad3d6d3"
+    "mtime": 1787340568.52873,
+    "ast_hash": "d6887c464dc75ae969518919ad9098b9",
+    "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-hostel/returning-hostel.component.html": {
     "mtime": 1783257864.2385402,
@@ -1002,6 +1002,11 @@
   "src/app/utility/naira-amount.ts": {
     "mtime": 1786648927.1961286,
     "ast_hash": "1f6aeed15d56d680c1cea238ecf4837a",
+    "semantic_hash": ""
+  },
+  "src/app/constants/returning-student.constants.ts": {
+    "mtime": 1787340253.7633216,
+    "ast_hash": "447a03246f79d7fabf3d5d8e2915b182",
     "semantic_hash": ""
   }
 }
