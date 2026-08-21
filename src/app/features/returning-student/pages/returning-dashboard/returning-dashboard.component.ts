@@ -22,6 +22,7 @@ export class ReturningDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     void Promise.allSettled([
+      this.flow.loadStudentProfile(),
       this.flow.loadStudentDashboard(),
       this.flow.loadStudentFeePlan()
     ]);

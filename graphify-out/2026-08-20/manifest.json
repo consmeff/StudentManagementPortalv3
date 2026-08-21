@@ -35,9 +35,9 @@
     "semantic_hash": "0f796657bf0139e60d75b59ba5726556"
   },
   "src/app.routes.ts": {
-    "mtime": 1779700215.9908388,
-    "ast_hash": "65fc6d7dd2a7311b24ee25647fe43834",
-    "semantic_hash": "65fc6d7dd2a7311b24ee25647fe43834"
+    "mtime": 1787229789.8567667,
+    "ast_hash": "5bc2242b0783948e9a83aadbab6903e2",
+    "semantic_hash": ""
   },
   "src/app/constants/academic-history.constants.ts": {
     "mtime": 1784741425.7593744,
@@ -350,9 +350,9 @@
     "semantic_hash": "a8ec855bfc95a7617953e1e74945ac0b"
   },
   "src/app/pages/auth/access.ts": {
-    "mtime": 1779274162.4740524,
-    "ast_hash": "0454fc7966c5ee50a707a462a7a9bf56",
-    "semantic_hash": "0454fc7966c5ee50a707a462a7a9bf56"
+    "mtime": 1786777543.231536,
+    "ast_hash": "551d8120d91448ef7783a5527d373260",
+    "semantic_hash": ""
   },
   "src/app/pages/auth/auth.routes.ts": {
     "mtime": 1779358230.1621063,
@@ -360,9 +360,9 @@
     "semantic_hash": "0b56b08b293a07f3493aeee46ebb19b3"
   },
   "src/app/pages/auth/error.ts": {
-    "mtime": 1779274162.47699,
-    "ast_hash": "416292306865b1c6c7ea020cf735e6c8",
-    "semantic_hash": "416292306865b1c6c7ea020cf735e6c8"
+    "mtime": 1786777544.6999698,
+    "ast_hash": "f9c12373130312103775bcc465f03358",
+    "semantic_hash": ""
   },
   "src/app/pages/auth/logout.ts": {
     "mtime": 1780584710.406074,
@@ -935,9 +935,9 @@
     "semantic_hash": "a6adfceebceefddb0780b7d1cf583c2a"
   },
   "src/index.html": {
-    "mtime": 1779274162.6319225,
-    "ast_hash": "98ae07447b30a2e407554c166821aa17",
-    "semantic_hash": "98ae07447b30a2e407554c166821aa17"
+    "mtime": 1786779322.2159195,
+    "ast_hash": "7b36ff9edda4cc316f3a12a268a524e9",
+    "semantic_hash": ""
   },
   "src/assets/consmmefs-logo.png": {
     "mtime": 1779274162.6149683,
@@ -985,13 +985,13 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1785751918.2086127,
-    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
+    "mtime": 1786776564.8579488,
+    "ast_hash": "eaf8023376e6a4d42d7f2b3e25fb9a13",
     "semantic_hash": ""
   },
   ".claude/settings.local.json": {
-    "mtime": 1786651223.917995,
-    "ast_hash": "b50e94158f7071e98966e03f1a6d4a6b",
+    "mtime": 1786781037.8724883,
+    "ast_hash": "5f06c7908bc6d1799e8229d5967f7808",
     "semantic_hash": ""
   },
   "src/app/data/application/acceptance-fee.dto.ts": {

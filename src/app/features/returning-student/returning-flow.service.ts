@@ -6,9 +6,18 @@ import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/s
 import { StudentDashboardAnnouncement, StudentDashboardResponse } from '../../data/application/student-dashboard.dto';
 import { StudentHostelAllocation, StudentHostelOption, StudentHostelRoomOption } from '../../data/application/student-hostel.dto';
 import { StudentResultsResponse } from '../../data/application/student-results.dto';
+import { Address, AryParentOrGuardian, StudentSingleData } from '../../data/application/registrantdatadto';
+import {
+  RETURNING_STUDENT_DISABILITY_LABEL,
+  RETURNING_STUDENT_FAILED_GRADE,
+  RETURNING_STUDENT_PAYMENT_LABEL,
+  RETURNING_STUDENT_PROFILE_CONFIG,
+  RETURNING_STUDENT_STATUS_LABEL
+} from '../../constants/returning-student.constants';
 import { ApplicationService } from '../../services/application.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
-import { normalizeDisplayName } from '../../utility/name-format';
+import { parseDateOnly } from '../../utility/date-only';
+import { formatStructuredName, normalizeDisplayName } from '../../utility/name-format';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
@@ -166,25 +175,64 @@ export type SemesterGpaPoint = {
   active: boolean;
 };
 
+function buildEmptyAddress(): AddressData {
+  return {
+    houseNumber: '',
+    streetName: '',
+    landmark: '',
+    areaTown: '',
+    state: '',
+    lga: ''
+  };
+}
+
+function mapStudentAddress(address: Address | null): AddressData {
+  if (!address) {
+    return buildEmptyAddress();
+  }
+  return {
+    houseNumber: address.address ?? '',
+    streetName: address.street_name ?? '',
+    landmark: address.land_mark ?? '',
+    areaTown: address.city ?? '',
+    state: address.state?.name ?? '',
+    lga: address.lga?.name ?? ''
+  };
+}
+
+function mapGuardianAddress(guardian: AryParentOrGuardian | null): AddressData {
+  if (!guardian) {
+    return buildEmptyAddress();
+  }
+  return {
+    ...buildEmptyAddress(),
+    streetName: guardian.residential_address ?? '',
+    state: guardian.state_of_origin ?? '',
+    lga: guardian.lga ?? ''
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class ReturningFlowService {
   private readonly appService = inject(ApplicationService);
 
   private readonly authSessionStore = inject(AuthSessionStore);
 
-  readonly studentName = signal('ISHOLA, Hassan Gbadebo');
+  private studentProfileRequest: Promise<void> | null = null;
 
-  readonly matricNo = signal('CONSMMEFS/NUR/2024/0142');
+  readonly studentName = signal('');
 
-  readonly program = signal('Nursing Science');
+  readonly matricNo = signal('');
 
-  readonly session = signal('2025/2026');
+  readonly program = signal('');
 
-  readonly level = signal('OND 2');
+  readonly session = signal('');
 
-  readonly semester = signal('1st Semester');
+  readonly level = signal('');
 
-  readonly selectedResultSemester = signal('OND 1 First Semester');
+  readonly semester = signal('');
+
+  readonly selectedResultSemester = signal('');
 
   readonly activeProfileTab = signal<ReturningProfileTab>('overview');
 
@@ -209,21 +257,21 @@ export class ReturningFlowService {
     bed: ''
   });
 
-  readonly cumulativeGpa = signal(3.78);
+  readonly cumulativeGpa = signal(0);
 
-  readonly gpaClass = signal('Second Class Upper');
+  readonly gpaClass = signal('');
 
-  readonly gpaDelta = signal('from 3.68');
+  readonly gpaDelta = signal('');
 
-  readonly currentCgpa = signal(3.67);
+  readonly currentCgpa = signal(0);
 
-  readonly bestSemesterGpa = signal(3.78);
+  readonly bestSemesterGpa = signal(0);
 
-  readonly lowestSemesterGpa = signal(3.56);
+  readonly lowestSemesterGpa = signal(0);
 
-  readonly semestersCompleted = signal(2);
+  readonly semestersCompleted = signal(0);
 
-  readonly semestersTotal = signal(4);
+  readonly semestersTotal = signal(0);
 
   readonly totalSchoolFees = 600000;
 
@@ -241,6 +289,8 @@ export class ReturningFlowService {
 
   readonly loadingStudentDashboard = signal(false);
 
+  readonly loadingStudentProfile = signal(false);
+
   readonly loadingStudentResults = signal(false);
 
   readonly loadingStudentCgpaTrend = signal(false);
@@ -256,6 +306,8 @@ export class ReturningFlowService {
   readonly studentDashboard = signal<StudentDashboardResponse | null>(null);
 
   readonly hasLoadedStudentDashboard = signal(false);
+
+  readonly hasLoadedStudentProfile = signal(false);
 
   readonly studentResults = signal<StudentResultsResponse | null>(null);
 
@@ -310,6 +362,12 @@ export class ReturningFlowService {
 
   readonly totalRegisteredCount = computed(() => this.registeredCourses().length);
 
+  readonly failedRegisteredCoursesCount = computed(() =>
+    (this.studentResults()?.results ?? []).filter(
+      (result) => (result.grade ?? '').trim().toUpperCase() === RETURNING_STUDENT_FAILED_GRADE
+    ).length
+  );
+
   readonly configuredTotalSchoolFees = computed(() =>
     this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? this.totalSchoolFees
   );
@@ -342,20 +400,15 @@ export class ReturningFlowService {
 
   readonly fees = signal<FeeItem[]>([]);
 
-  readonly announcementFeed = signal([
-    {
-      title: 'Course registration now open - 200 Level',
-      body: 'All 200-level students are invited to register for 1st semester courses. Registration closes 14 December. Students with outstanding fees must pay before access.',
-      timeAgo: '5h ago'
-    },
-    {
-      title: 'Course registration now open - 200 Level',
-      body: 'All 200-level students are invited to register for 1st semester courses. Registration closes 14 December. Students with outstanding fees must pay before access.',
-      timeAgo: '5h ago'
-    }
-  ]);
+  readonly announcementFeed = signal<ReturningAnnouncementFeedItem[]>([]);
 
   readonly studentPhotoUrl = computed(() => this.authSessionStore.studentProfile()?.passport_photo?.file_url || 'assets/logo.png');
+
+  readonly displayStudentName = computed(() =>
+    this.studentName() || normalizeDisplayName(this.authSessionStore.name())
+  );
+
+  readonly displayMatricNo = computed(() => this.matricNo() || this.authSessionStore.matriculationNo());
 
   readonly dashboardAnnouncementFeed = computed<ReturningAnnouncementFeedItem[]>(() => {
     if (!this.hasLoadedStudentDashboard()) {
@@ -365,7 +418,7 @@ export class ReturningFlowService {
   });
 
   readonly dashboardOutstandingAmount = computed(() =>
-    Math.max(0, this.studentDashboard()?.fee_info.total_due ?? this.outstandingAmount())
+    Math.max(0, this.studentDashboard()?.fee_info.total_due ?? this.schoolFeesRemaining())
   );
 
   readonly dashboardTotalFeeBenchmark = computed(() => {
@@ -382,7 +435,7 @@ export class ReturningFlowService {
   readonly dashboardPaymentProgressPercent = computed(() => {
     const feeInfo = this.studentDashboard()?.fee_info;
     if (!feeInfo) {
-      return this.paymentProgressPercent();
+      return this.schoolFeesProgressPercent();
     }
     const paidAmount = Math.max(0, feeInfo.total_paid);
     const dueAmount = Math.max(0, feeInfo.total_due);
@@ -396,25 +449,21 @@ export class ReturningFlowService {
   readonly dashboardOutstandingInstallmentLabel = computed(() => {
     const feeInfo = this.studentDashboard()?.fee_info;
     if (!feeInfo) {
-      return this.outstandingInstallmentLabel();
+      return this.buildInstallmentLabel(this.schoolFeePaymentCount(), this.schoolFeesRemaining());
     }
-    if (feeInfo.total_due <= 0) {
-      return 'Paid in full';
-    }
-    const installmentNo = feeInfo.number_of_payments + 1;
-    return `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`;
+    return this.buildInstallmentLabel(feeInfo.number_of_payments, feeInfo.total_due);
   });
 
   readonly dashboardRegisteredCoursesCount = computed(() =>
-    this.studentDashboard()?.courses_info.registered_courses ?? this.totalCoursesSelected()
+    this.studentDashboard()?.courses_info.registered_courses ?? this.totalRegisteredCount()
   );
 
   readonly dashboardRegisteredUnitsCount = computed(() =>
-    this.studentDashboard()?.courses_info.units ?? this.totalUnitsSelected()
+    this.studentDashboard()?.courses_info.units ?? this.totalRegisteredUnits()
   );
 
   readonly dashboardFailedCoursesCount = computed(() =>
-    this.studentDashboard()?.courses_info.failed_courses ?? this.carryoverCourses().length
+    this.studentDashboard()?.courses_info.failed_courses ?? this.failedRegisteredCoursesCount()
   );
 
   readonly dashboardFailedCoursesLabel = computed(() => {
@@ -656,58 +705,44 @@ export class ReturningFlowService {
   readonly cgpaTrackerWorstLabel = computed(() => this.describeCgpaTrendPoint(this.studentCgpaTrend()?.trend, 'worst'));
 
   readonly profileOverview = signal<ProfileOverviewData>({
-    fullName: 'ISHOLA, Hassan Gbadebo',
-    matricNo: 'CONSMMEFS/NUR/2024/0142',
-    level: 'OND 2',
-    admissionYear: '2024/25',
-    status: 'Active'
+    fullName: '',
+    matricNo: '',
+    level: '',
+    admissionYear: '',
+    status: ''
   });
 
   readonly personalContact = signal<PersonalContactData>({
-    fullName: 'ISHOLA, Hassan Gbadebo',
-    email: 'igbadeobh@gmail.com',
-    phone: '0802 773 6450',
-    alternatePhone: '0702 308 4619',
-    dateOfBirth: '14 March 2004',
-    gender: 'Male',
-    maritalStatus: 'Single',
-    nationality: 'Nigerian',
-    stateOfOrigin: 'Oyo State',
-    lgaOfOrigin: 'Oyo North',
-    disability: 'No',
-    specificDisability: 'None'
+    fullName: '',
+    email: '',
+    phone: '',
+    alternatePhone: '',
+    dateOfBirth: '',
+    gender: '',
+    maritalStatus: '',
+    nationality: '',
+    stateOfOrigin: '',
+    lgaOfOrigin: '',
+    disability: '',
+    specificDisability: ''
   });
 
-  readonly residentialAddress = signal<AddressData>({
-    houseNumber: '3',
-    streetName: 'Akin Bayo close',
-    landmark: 'Grey Hotel',
-    areaTown: 'Akinyele',
-    state: 'Oyo State',
-    lga: 'Akinyele'
-  });
+  readonly residentialAddress = signal<AddressData>(buildEmptyAddress());
 
   readonly nextOfKin = signal<NextOfKinData>({
-    fullName: 'ISHOLA, Dada Haruna',
-    email: 'ihadola@gmail.com',
-    firstName: 'Dada',
-    middleName: 'Haruna',
-    lastName: 'Ishola',
-    title: 'Chief',
-    relationship: 'Father',
-    occupation: 'Trader',
-    phone: '0707 289 0246',
-    alternatePhone: '0702 308 4619'
+    fullName: '',
+    email: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    title: '',
+    relationship: '',
+    occupation: '',
+    phone: '',
+    alternatePhone: ''
   });
 
-  readonly nextOfKinResidence = signal<AddressData>({
-    houseNumber: '3',
-    streetName: 'Akin Bayo close',
-    landmark: 'Grey Hotel',
-    areaTown: 'Akinyele',
-    state: 'Oyo State',
-    lga: 'Akinyele'
-  });
+  readonly nextOfKinResidence = signal<AddressData>(buildEmptyAddress());
 
   toggleCourseSelection(course: ReturningCourse, checked: boolean): void {
     if (course.locked || course.category === 'carryover') {
@@ -975,9 +1010,139 @@ export class ReturningFlowService {
         this.authSessionStore.setPaymentStatus('paid');
       }
       this.syncReturningModuleAccess();
+    } catch {
+      await this.loadStudentDashboardFallback(forceReload);
     } finally {
       this.loadingStudentDashboard.set(false);
     }
+  }
+
+  /**
+   * The dashboard aggregate is not always available, so the student identity and
+   * academic figures are rebuilt from the endpoints that back each card.
+   */
+  private async loadStudentDashboardFallback(forceReload: boolean): Promise<void> {
+    const shouldLoadRegisteredCourses = forceReload || this.registeredCourses().length === 0;
+    await Promise.allSettled([
+      this.loadStudentProfile(forceReload),
+      this.loadStudentCgpaTrend(forceReload),
+      this.loadStudentResults(forceReload),
+      ...(shouldLoadRegisteredCourses ? [this.loadRegisteredCourses()] : [])
+    ]);
+    this.syncReturningModuleAccess();
+  }
+
+  async loadStudentProfile(forceReload = false): Promise<void> {
+    if (this.hasLoadedStudentProfile() && !forceReload) {
+      return;
+    }
+    this.studentProfileRequest ??= this.requestStudentProfile();
+    await this.studentProfileRequest;
+  }
+
+  private async requestStudentProfile(): Promise<void> {
+    this.loadingStudentProfile.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.studentData());
+      const profile = response?.data ?? null;
+      if (!profile) {
+        return;
+      }
+      this.authSessionStore.setStudentProfile(profile);
+      this.applyStudentProfileSnapshot(profile);
+      this.hasLoadedStudentProfile.set(true);
+    } catch {
+      this.hasLoadedStudentProfile.set(false);
+    } finally {
+      this.loadingStudentProfile.set(false);
+      this.studentProfileRequest = null;
+    }
+  }
+
+  private applyStudentProfileSnapshot(profile: StudentSingleData): void {
+    const fullName = formatStructuredName({
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      middleName: profile.other_names
+    });
+    const levelName = profile.level?.name ?? '';
+    const sessionName = profile.session?.name ?? '';
+
+    this.studentName.set(fullName || this.studentName());
+    this.matricNo.set(profile.matriculation_number || this.matricNo());
+    this.program.set(profile.department?.name ?? this.program());
+    this.session.set(sessionName || this.session());
+    this.level.set(levelName || this.level());
+    this.semester.set(profile.semester?.name ?? this.semester());
+
+    this.profileOverview.set({
+      fullName,
+      matricNo: profile.matriculation_number ?? '',
+      level: levelName,
+      admissionYear: sessionName,
+      status: profile.deleted_at
+        ? RETURNING_STUDENT_STATUS_LABEL.inactive
+        : RETURNING_STUDENT_STATUS_LABEL.active
+    });
+
+    this.personalContact.set({
+      fullName,
+      email: profile.email ?? '',
+      phone: profile.phone_number ?? '',
+      alternatePhone: profile.alt_phone_number ?? '',
+      dateOfBirth: this.formatDateOfBirth(profile.dob),
+      gender: this.personalContact().gender,
+      maritalStatus: profile.marital_status ?? '',
+      nationality: profile.nationality ?? '',
+      stateOfOrigin: profile.state_of_origin ?? '',
+      lgaOfOrigin: profile.lga ?? '',
+      disability: profile.disability
+        ? RETURNING_STUDENT_DISABILITY_LABEL.present
+        : RETURNING_STUDENT_DISABILITY_LABEL.absent,
+      specificDisability: profile.disability ?? ''
+    });
+
+    this.residentialAddress.set(mapStudentAddress(profile.residential_address));
+
+    const guardian = profile.primary_parent_or_guardian;
+    this.nextOfKin.set({
+      fullName: guardian
+        ? formatStructuredName({
+            firstName: guardian.first_name,
+            lastName: guardian.last_name,
+            middleName: guardian.other_names
+          })
+        : '',
+      email: guardian?.email ?? '',
+      firstName: guardian?.first_name ?? '',
+      middleName: guardian?.other_names ?? '',
+      lastName: guardian?.last_name ?? '',
+      title: guardian?.title ?? '',
+      relationship: this.nextOfKin().relationship,
+      occupation: guardian?.occupation ?? '',
+      phone: guardian?.phone_number ?? '',
+      alternatePhone: guardian?.alt_phone_number ?? ''
+    });
+    this.nextOfKinResidence.set(mapGuardianAddress(guardian));
+  }
+
+  private formatDateOfBirth(dateOfBirth: string | null): string {
+    const parsedDate = parseDateOnly(dateOfBirth);
+    if (!parsedDate) {
+      return '';
+    }
+    return parsedDate.toLocaleDateString(
+      RETURNING_STUDENT_PROFILE_CONFIG.dateOfBirthLocale,
+      RETURNING_STUDENT_PROFILE_CONFIG.dateOfBirthOptions
+    );
+  }
+
+  private buildInstallmentLabel(paymentsMade: number, amountDue: number): string {
+    if (amountDue <= 0) {
+      return RETURNING_STUDENT_PAYMENT_LABEL.paidInFull;
+    }
+    const installmentNo = paymentsMade + 1;
+    return `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`;
   }
 
   async loadStudentResults(forceReload = false): Promise<void> {

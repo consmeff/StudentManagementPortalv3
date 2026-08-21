@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -13,7 +13,7 @@ import { AddressData, NextOfKinData, PersonalContactData, ReturningFlowService, 
   templateUrl: './returning-profile.component.html',
   styleUrl: './returning-profile.component.scss'
 })
-export class ReturningProfileComponent {
+export class ReturningProfileComponent implements OnInit {
   readonly flow = inject(ReturningFlowService);
 
   private readonly messageService = inject(MessageService);
@@ -61,6 +61,10 @@ export class ReturningProfileComponent {
   readonly nextOfKinDraft = signal<NextOfKinData>(this.flow.nextOfKin());
 
   readonly nextOfKinResidenceDraft = signal<AddressData>(this.flow.nextOfKinResidence());
+
+  ngOnInit(): void {
+    this.flow.loadStudentProfile();
+  }
 
   setTab(tab: ReturningProfileTab): void {
     this.flow.setProfileTab(tab);

@@ -11,7 +11,11 @@ export const appRoutes: Routes = [
         component: AppLayout,
         canActivate: [authGuard],
         children: [
+            // Portal entry points. Both resolve the signed-in user's segment and
+            // redirect to their dashboard; `portal` is kept alongside `''` because
+            // the auth error and access-denied pages link to it by name.
             { path: '', pathMatch: 'full', canActivate: [portalEntryGuard], component: PortalEntryStubComponent },
+            { path: 'portal', pathMatch: 'full', canActivate: [portalEntryGuard], component: PortalEntryStubComponent },
             {
                 path: 'new',
                 canMatch: [portalSegmentGuard],
@@ -40,6 +44,9 @@ export const appRoutes: Routes = [
     },
 
     { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
-    
-    { path: '**', redirectTo: '/auth/login' } // This will catch all unknown routes
+
+    // Unknown routes fall through to the portal entry, which sends signed-out
+    // visitors to the login page via `authGuard`. The public marketing site now
+    // lives in its own deployment (../consmmefs-home) and is no longer routed here.
+    { path: '**', redirectTo: '' }
 ];
