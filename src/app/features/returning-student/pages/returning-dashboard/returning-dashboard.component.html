@@ -2,13 +2,13 @@
   <section class="student-hero">
     <img [src]="flow.studentPhotoUrl()" alt="Student profile" class="student-photo" />
     <div class="student-meta">
-      <h1>{{ flow.studentName() }}</h1>
-      <p>{{ flow.matricNo() }}</p>
+      <h1>{{ flow.displayStudentName() }}</h1>
+      <p>{{ flow.displayMatricNo() }}</p>
       <div class="student-tags">
-        <span>{{ flow.program() }}</span>
-        <span>{{ flow.session() }}</span>
-        <span>{{ flow.level() }}</span>
-        <span>{{ flow.semester() }}</span>
+        <span *ngIf="flow.program()">{{ flow.program() }}</span>
+        <span *ngIf="flow.session()">{{ flow.session() }}</span>
+        <span *ngIf="flow.level()">{{ flow.level() }}</span>
+        <span *ngIf="flow.semester()">{{ flow.semester() }}</span>
       </div>
     </div>
   </section>
@@ -18,7 +18,7 @@
       <h3>Cumulative GPA</h3>
       <strong>{{ flow.dashboardCgpaDisplay() }}</strong>
       <p>{{ flow.dashboardCgpaClass() }}</p>
-      <span class="chip positive">↑ {{ flow.dashboardGpaDeltaLabel() }}</span>
+      <span class="chip positive" *ngIf="flow.dashboardGpaDeltaLabel()">↑ {{ flow.dashboardGpaDeltaLabel() }}</span>
     </article>
 
     <article class="summary-card">

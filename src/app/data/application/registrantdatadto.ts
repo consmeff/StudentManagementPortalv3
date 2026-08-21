@@ -153,6 +153,18 @@ export type StudentDepartment = {
   code: string;
 };
 
+export type StudentProgram = {
+  id: number;
+  name: string;
+  code: string;
+};
+
+export type StudentSemester = {
+  id: number;
+  name: string;
+  is_active?: boolean;
+};
+
 export type StudentAdmissionDocuments = {
   testimonial: CertificateOfBirth | null;
   recommendation_letter_1: CertificateOfBirth | null;
@@ -170,9 +182,9 @@ export type StudentSingleData = {
   alt_phone_number: string;
   level: StudentLevel | null;
   session: Session | null;
-  semester: unknown;
+  semester: StudentSemester | null;
   department: StudentDepartment | null;
-  program: unknown;
+  program: StudentProgram | null;
   admission_documents: StudentAdmissionDocuments | null;
   admission_document_verified: boolean;
   dob: string | null;
