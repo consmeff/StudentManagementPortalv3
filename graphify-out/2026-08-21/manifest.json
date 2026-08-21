@@ -265,8 +265,8 @@
     "semantic_hash": "a80b63e1c5d81e57e02bed4b48b64a3b"
   },
   "src/app/features/returning-student/pages/returning-profile/returning-profile.component.ts": {
-    "mtime": 1787340593.209495,
-    "ast_hash": "78cda4ca21f56c189d87558425d59e9c",
+    "mtime": 1787343014.2807045,
+    "ast_hash": "d653449c9724be7f749bb0c1bce123a3",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-results/returning-results.component.ts": {
@@ -275,8 +275,8 @@
     "semantic_hash": "a191450ecd4a0d11d64b31a7146bd350"
   },
   "src/app/features/returning-student/returning-flow.service.ts": {
-    "mtime": 1787340586.7799459,
-    "ast_hash": "d35ed6bdb480dc81091103f1b3863128",
+    "mtime": 1787342944.5199485,
+    "ast_hash": "3ad13e7b00d54b6b16b5852ec866f6fc",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/returning-student.routes.ts": {
@@ -415,8 +415,8 @@
     "semantic_hash": "2b2637fa956769e3b5bf0a147a437924"
   },
   "src/app/services/application.service.ts": {
-    "mtime": 1786648001.5292656,
-    "ast_hash": "3a5ef4c0289a38d78e46a9df7c2641d4",
+    "mtime": 1787342841.6493325,
+    "ast_hash": "43e612944296193d104a3c55ce3992e4",
     "semantic_hash": ""
   },
   "src/app/services/auth.guard.guard.ts": {
@@ -605,8 +605,8 @@
     "semantic_hash": "6bcc4d8f54b602e90437e6bff265dbd5"
   },
   "src/app/utility/name-format.ts": {
-    "mtime": 1785874334.75028,
-    "ast_hash": "4dd0b19a8fff7700630e58a6bcaddc1d",
+    "mtime": 1787342813.6053298,
+    "ast_hash": "65ab5684494ee9f59361b347c6e447e1",
     "semantic_hash": ""
   },
   "src/app/utility/student-fees-plan.ts": {
@@ -795,9 +795,9 @@
     "semantic_hash": "91981e2404c96171b44ed26c12540f8b"
   },
   "src/app/features/returning-student/pages/returning-profile/returning-profile.component.html": {
-    "mtime": 1783255890.437279,
-    "ast_hash": "f34bb335484b0c88efdb6dfc10d1b32c",
-    "semantic_hash": "f34bb335484b0c88efdb6dfc10d1b32c"
+    "mtime": 1787343137.3050032,
+    "ast_hash": "a3be59dca24d9794c79df7caa8af4ad9",
+    "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-results/returning-results.component.html": {
     "mtime": 1783247041.701107,
@@ -1005,8 +1005,13 @@
     "semantic_hash": ""
   },
   "src/app/constants/returning-student.constants.ts": {
-    "mtime": 1787340253.7633216,
-    "ast_hash": "447a03246f79d7fabf3d5d8e2915b182",
+    "mtime": 1787342935.489445,
+    "ast_hash": "edbfc90c4d39679181acfa1578e3624b",
+    "semantic_hash": ""
+  },
+  "src/app/data/application/student-profile.dto.ts": {
+    "mtime": 1787342821.1657777,
+    "ast_hash": "0ab110b2cf7fbdf65cb4d78ecd94a0ef",
     "semantic_hash": ""
   }
 }
