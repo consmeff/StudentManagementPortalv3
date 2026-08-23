@@ -52,10 +52,23 @@ export const ACTION_LABELS = {
   viewApplicationSummary: 'View Application Summary',
 } as const;
 
+const POST_PAYMENT_APPROVAL_STATUSES = [
+  'submitted',
+  'approved',
+  'rejected',
+  'resubmitted',
+  'shortlisted',
+  'admitted',
+  'compliance_required',
+  'admitted_internally',
+  'auto_rejected',
+] as const;
+
 export const STATUS_MATCHERS = {
   paymentNegativeKeywords: ['pending', 'fail', 'unpaid'],
   paymentPositiveKeywords: ['paid', 'complete', 'success'],
-  submissionCompleted: ['submitted', 'approved', 'rejected', 'resubmitted', 'shortlisted', 'admitted', 'compliance_required', 'admitted_internally', 'auto_rejected'],
+  submissionCompleted: POST_PAYMENT_APPROVAL_STATUSES,
+  applicationFeeSettled: POST_PAYMENT_APPROVAL_STATUSES,
 } as const;
 
 export type DashboardApprovalMessage = {
