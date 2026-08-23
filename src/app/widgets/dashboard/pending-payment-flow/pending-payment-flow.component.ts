@@ -337,7 +337,26 @@ export class PendingPaymentFlowComponent implements OnInit {
   }
 
   private isPaymentCompleted(): boolean {
-    return this.isPaymentCompletedValue(this.getEffectivePaymentStatus());
+    const registrant = this.registrantData();
+    return this.isPaymentCompletedValue(this.getEffectivePaymentStatus())
+      || this.isPaymentCompletedValue(registrant?.payment_status ?? '')
+      || this.hasProgressedPastApplicationFee(registrant);
+  }
+
+  private hasProgressedPastApplicationFee(data: RegistrantData | null): boolean {
+    if (!data) {
+      return false;
+    }
+
+    const approvalStatusKey = normalizeApplicationStatusKey(data.approval_status);
+    if ((STATUS_MATCHERS.applicationFeeSettled as readonly string[]).includes(approvalStatusKey)) {
+      return true;
+    }
+
+    return this.computeIsPersonalSectionCompleted(data)
+      || this.computeIsKinSectionCompleted(data)
+      || this.computeIsAcademicSectionCompleted(data)
+      || this.computeAreDocumentsUploaded(data);
   }
 
   private hasValue(value: unknown): boolean {
