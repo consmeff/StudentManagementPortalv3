@@ -29,3 +29,19 @@ export type PaginatedPaymentsResponse = {
   previous: string | null;
   results: PaymentHistoryItem[];
 };
+
+export type PaymentReceiptVerification = {
+  is_valid: boolean;
+  status: string;
+  message: string;
+  receipt_no: string | null;
+  reference_no: string;
+  payment_type: string | null;
+  amount: number | null;
+  amount_paid: number | null;
+  paid_by: string | null;
+  application_no: string | null;
+  session: string | null;
+  issued_at: string | null;
+  verified_at: string | null;
+};

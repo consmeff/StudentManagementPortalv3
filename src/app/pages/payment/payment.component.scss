@@ -104,6 +104,8 @@ app-data-table {
 .actions-cell {
   display: flex;
   justify-content: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .status-pill {
@@ -142,7 +144,8 @@ app-data-table {
   color: var(--app-text-secondary);
 }
 
-.download-btn {
+.download-btn,
+.receipt-btn {
   min-width: fit-content;
   background: transparent !important;
 }
@@ -204,7 +207,8 @@ app-pagination {
     margin-bottom: 0.35rem;
   }
 
-  .download-btn {
+  .download-btn,
+  .receipt-btn {
     min-width: 100%;
   }
 }

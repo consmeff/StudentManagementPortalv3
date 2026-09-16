@@ -4,6 +4,7 @@ import { authGuard } from './app/services/auth.guard.guard';
 import { portalEntryGuard } from './app/services/portal-entry.guard';
 import { portalSegmentGuard } from './app/services/portal-segment.guard';
 import { PortalEntryStubComponent } from './app/features/shared/portal-entry-stub.component';
+import { matchPaymentReceiptVerificationRoute } from './app/utility/payment-receipt-url';
 
 export const appRoutes: Routes = [
     {
@@ -44,6 +45,15 @@ export const appRoutes: Routes = [
     },
 
     { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
+
+    // Target of the QR code printed on a receipt: {origin}/payment-receipt-verify/?ref_id={ref_id}.
+    // Public, because it calls the unauthenticated
+    // GET /api/v1/payments/payments/{ref_id}/verify endpoint.
+    {
+        matcher: matchPaymentReceiptVerificationRoute,
+        loadComponent: () => import('./app/pages/payment-receipt/payment-receipt.component')
+            .then((module) => module.PaymentReceiptComponent)
+    },
 
     // Unknown routes fall through to the portal entry, which sends signed-out
     // visitors to the login page via `authGuard`. The public marketing site now

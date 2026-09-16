@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { SKIP_ERROR_TOAST } from '../constants/http-context.constants';
 import { AcceptanceFee } from '../data/application/acceptance-fee.dto';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
 import { PasswordChangePayload } from '../data/application/password-change.dto';
 import {
   PaginatedPaymentsResponse,
   PaymentHistoryItem,
+  PaymentReceiptVerification,
   PaymentRefResponse
 } from '../data/application/payment.data';
 import { PreRegistrationDataDTO } from '../data/application/preregistrationdatadto';
@@ -213,10 +215,18 @@ export class ApplicationService {
   }
 
   getPaymentReceipt(refId: string): Observable<HttpResponse<Blob>> {
-    return this.http.get(`${this.apiRoot}/api/v1/payments/payments/${encodeURIComponent(refId)}/receipt`, {
+    return this.http.get(`${this.paymentsEndpoint}/${encodeURIComponent(refId)}/receipt`, {
       observe: 'response',
       responseType: 'blob'
     });
+  }
+
+  verifyPaymentReceipt(refId: string): Observable<PaymentReceiptVerification> {
+    return this.http.get<unknown>(`${this.paymentsEndpoint}/${encodeURIComponent(refId)}/verify`, {
+      context: new HttpContext().set(SKIP_ERROR_TOAST, true)
+    }).pipe(
+      map((response) => this.normalizePaymentReceiptVerification(response, refId))
+    );
   }
 
   submitApplication(payload: { applicant_no: string }): Observable<any> {
@@ -421,6 +431,25 @@ export class ApplicationService {
       created_at: this.readString(rawResponse, 'created_at'),
       applicant_no: this.readString(rawResponse, 'applicant_no'),
       applicant_name: this.readString(rawResponse, 'applicant_name')
+    };
+  }
+
+  private normalizePaymentReceiptVerification(response: unknown, refId: string): PaymentReceiptVerification {
+    const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
+    return {
+      is_valid: rawResponse['is_valid'] === true,
+      status: this.readString(rawResponse, 'status'),
+      message: this.readString(rawResponse, 'message'),
+      receipt_no: this.readNullableString(rawResponse, 'receipt_no'),
+      reference_no: this.readNullableString(rawResponse, 'reference_no') ?? refId,
+      payment_type: this.readNullableString(rawResponse, 'payment_type'),
+      amount: this.parseNumericValue(rawResponse['amount']),
+      amount_paid: this.parseNumericValue(rawResponse['amount_paid']),
+      paid_by: this.readNullableString(rawResponse, 'paid_by'),
+      application_no: this.readNullableString(rawResponse, 'application_no'),
+      session: this.readNullableString(rawResponse, 'session'),
+      issued_at: this.readNullableString(rawResponse, 'issued_at'),
+      verified_at: this.readNullableString(rawResponse, 'verified_at')
     };
   }
 

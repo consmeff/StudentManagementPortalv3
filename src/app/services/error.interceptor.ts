@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
+import { SKIP_ERROR_TOAST } from '../constants/http-context.constants';
 
 const INTERCEPTOR_SUMMARIES = {
   network: 'Network Error',
@@ -14,7 +15,7 @@ const INTERCEPTOR_SUMMARIES = {
 
 export const errorInterceptor: HttpInterceptorFn = (request, next) => {
   const messageService = inject(MessageService);
-  const skipErrorToast = request.headers.has('X-Skip-Error-Toast');
+  const skipErrorToast = request.context.get(SKIP_ERROR_TOAST);
 
   return next(request).pipe(
     catchError((error: unknown) => {

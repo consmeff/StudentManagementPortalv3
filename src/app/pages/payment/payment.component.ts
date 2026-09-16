@@ -7,10 +7,16 @@ import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMa
 
 import {
   PAYMENT_PAGE_CONFIG,
-  PAYMENT_STATUS_CLASS,
   PAYMENT_TABLE_COLUMNS,
   PAYMENT_TABLE_GRID_TEMPLATE
 } from '../../constants/payment-page.constants';
+import {
+  formatPaymentCurrency,
+  formatPaymentDate,
+  resolvePaymentStatusClass
+} from '../../utility/payment-format';
+import { buildPaymentReceiptVerificationPath } from '../../utility/payment-receipt-url';
+import { downloadBlobResponse } from '../../utility/file-download';
 import { PaginatedPaymentsResponse, PaymentHistoryItem } from '../../data/application/payment.data';
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { ApplicationService } from '../../services/application.service';
@@ -97,6 +103,15 @@ export class PaymentComponent implements OnInit {
     this.observePaymentQueryState();
   }
 
+  openReceiptPage(item: PaymentHistoryItem): void {
+    const referenceId = item.ref_id.trim();
+    if (!referenceId) {
+      return;
+    }
+
+    globalThis.open(buildPaymentReceiptVerificationPath(referenceId), '_blank', 'noopener');
+  }
+
   downloadReceipt(item: PaymentHistoryItem): void {
     const referenceId = item.ref_id.trim();
     if (!referenceId) {
@@ -115,46 +130,15 @@ export class PaymentComponent implements OnInit {
   }
 
   formatDate(value: string): string {
-    if (!value) {
-      return '—';
-    }
-
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return '—';
-    }
-
-    return date.toLocaleDateString(PAYMENT_PAGE_CONFIG.dateLocale, {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
+    return formatPaymentDate(value);
   }
 
   formatCurrency(amount: number | null): string {
-    if (amount === null) {
-      return '—';
-    }
-
-    return new Intl.NumberFormat(PAYMENT_PAGE_CONFIG.currencyLocale, {
-      style: 'currency',
-      currency: PAYMENT_PAGE_CONFIG.currencyCode,
-      maximumFractionDigits: 2
-    }).format(amount);
+    return formatPaymentCurrency(amount);
   }
 
   paymentStatusClass(status: string): string {
-    const normalizedStatus = status.toLowerCase().trim();
-    if (normalizedStatus.includes('complete') || normalizedStatus.includes('success') || normalizedStatus.includes('paid')) {
-      return PAYMENT_STATUS_CLASS.completed;
-    }
-    if (normalizedStatus.includes('fail') || normalizedStatus.includes('cancel')) {
-      return PAYMENT_STATUS_CLASS.failed;
-    }
-    if (normalizedStatus.includes('pending') || normalizedStatus.includes('processing')) {
-      return PAYMENT_STATUS_CLASS.pending;
-    }
-    return PAYMENT_STATUS_CLASS.default;
+    return resolvePaymentStatusClass(status);
   }
 
   isReceiptLoading(refId: string): boolean {
@@ -339,32 +323,10 @@ export class PaymentComponent implements OnInit {
   }
 
   private downloadReceiptResponse(response: HttpResponse<Blob>, referenceId: string): void {
-    const receiptFile = response.body;
-    if (!receiptFile || receiptFile.size === 0) {
-      return;
-    }
-
-    const receiptFileName = this.extractReceiptFileName(response, referenceId);
-    this.downloadBlob(receiptFile, receiptFileName);
-  }
-
-  private extractReceiptFileName(response: HttpResponse<Blob>, referenceId: string): string {
-    const contentDisposition = response.headers.get('content-disposition') ?? '';
-    const matchedFileName = contentDisposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
-    if (matchedFileName?.[1]) {
-      return decodeURIComponent(matchedFileName[1].replace(/"/g, '').trim());
-    }
-
-    return `payment-receipt-${referenceId}.${PAYMENT_PAGE_CONFIG.defaultReceiptExtension}`;
-  }
-
-  private downloadBlob(blob: Blob, fileName: string): void {
-    const objectUrl = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = objectUrl;
-    anchor.download = fileName;
-    anchor.click();
-    URL.revokeObjectURL(objectUrl);
+    downloadBlobResponse(
+      response,
+      `payment-receipt-${referenceId}.${PAYMENT_PAGE_CONFIG.defaultReceiptExtension}`
+    );
   }
 
   private resolveTotalRecordsLabel(): string {

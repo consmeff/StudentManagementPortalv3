@@ -11,7 +11,8 @@ import { ThemeService } from '../../../services/theme.service';
 import { UserPortalService } from '../../../services/user-portal.service';
 import { TECHNICAL_SUPPORT_MESSAGE } from '../../../constants/support.constants';
 import { extractHttpErrorMessage } from '../../../services/error.interceptor';
-import { PENDING_VERIFICATION_REDIRECT_REASON } from '../../../constants/auth.constants';
+import { AUTH_RETURN_URL_QUERY_PARAM, PENDING_VERIFICATION_REDIRECT_REASON } from '../../../constants/auth.constants';
+import { resolveSafeReturnUrl } from '../../../utility/safe-return-url';
 
 import { TraceabilityModule } from '../../../shared/traceability.module';
 
@@ -52,7 +53,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
 
   errorMessage = '';
 
-  private returnUrl = '/';
+  private returnUrl: string | null = null;
 
   loginForm!: FormGroup;
 
@@ -82,6 +83,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
       password: new FormControl('', Validators.required),
       rememberMe: new FormControl(false, Validators.required)
     });
+    this.returnUrl = resolveSafeReturnUrl(this.route.snapshot.queryParamMap.get(AUTH_RETURN_URL_QUERY_PARAM));
     this.startCarousel();
   }
 
@@ -105,7 +107,7 @@ export class ConsmeffLoginComponent implements OnInit, OnDestroy {
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Login', detail: 'Login Successful' });
         this.isLoading.set(false);
-        this.router.navigateByUrl(this.userPortalService.landingUrl());
+        this.router.navigateByUrl(this.returnUrl ?? this.userPortalService.landingUrl());
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

@@ -1,0 +1,24 @@
+<svg
+  *ngIf="canRender(); else unavailableTemplate"
+  class="qr-code__canvas"
+  role="img"
+  xmlns="http://www.w3.org/2000/svg"
+  [attr.aria-label]="accessibleLabel()"
+  [attr.viewBox]="viewBox()"
+  [attr.width]="size()"
+  [attr.height]="size()"
+  shape-rendering="crispEdges"
+>
+  <rect
+    x="0"
+    y="0"
+    [attr.width]="canvasSize()"
+    [attr.height]="canvasSize()"
+    [attr.fill]="lightColor()"
+  ></rect>
+  <path [attr.d]="modulePath()" [attr.fill]="darkColor()"></path>
+</svg>
+
+<ng-template #unavailableTemplate>
+  <p class="qr-code__unavailable">{{ unavailableMessage() }}</p>
+</ng-template>
