@@ -1,12 +1,10 @@
-import { HttpResponse } from '@angular/common/http';
 import { Component, DestroyRef, Inject, OnInit, computed, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, distinctUntilChanged, finalize, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 
 import { AUTH_RETURN_URL_QUERY_PARAM } from '../../constants/auth.constants';
-import { PAYMENT_PAGE_CONFIG } from '../../constants/payment-page.constants';
 import {
   PAYMENT_RECEIPT_CONFIG,
   PAYMENT_RECEIPT_FIELD_LABELS,
@@ -23,11 +21,11 @@ import {
 } from '../../constants/payment-receipt.types';
 import { PaymentReceiptVerification } from '../../data/application/payment.data';
 import { ApplicationService } from '../../services/application.service';
+import { PaymentReceiptService } from '../../services/payment-receipt.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { QrCodeComponent } from '../../shared/components/qr-code/qr-code.component';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { AuthSessionStore } from '../../store/auth-session.store';
-import { downloadBlobResponse } from '../../utility/file-download';
 import { buildPaymentReceiptVerificationPath } from '../../utility/payment-receipt-url';
 import {
   displayPaymentValue,
@@ -54,7 +52,7 @@ export class PaymentReceiptComponent implements OnInit {
 
   readonly verification = signal<PaymentReceiptVerification | null>(null);
 
-  readonly isDownloading = signal<boolean>(false);
+  readonly isDownloading = computed(() => this.receiptDownloads.isDownloading(this.referenceId()));
 
   readonly isLoading = computed(() => this.receiptState() === PAYMENT_RECEIPT_STATE.loading);
 
@@ -83,6 +81,7 @@ export class PaymentReceiptComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly appService: ApplicationService,
+    private readonly receiptDownloads: PaymentReceiptService,
     @Inject(AuthSessionStore) private readonly authSessionStore: InstanceType<typeof AuthSessionStore>,
     private readonly destroyRef: DestroyRef
   ) {
@@ -103,19 +102,7 @@ export class PaymentReceiptComponent implements OnInit {
   }
 
   downloadReceipt(): void {
-    const referenceId = this.referenceId();
-    if (referenceId.length === 0 || this.isDownloading()) {
-      return;
-    }
-
-    this.isDownloading.set(true);
-    this.appService.getPaymentReceipt(referenceId).pipe(
-      take(1),
-      tap((response) => this.saveReceiptFile(response, referenceId)),
-      catchError(() => EMPTY),
-      finalize(() => this.isDownloading.set(false)),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe();
+    this.receiptDownloads.downloadReceipt(this.referenceId());
   }
 
   private observeReferenceId(): void {
@@ -146,13 +133,6 @@ export class PaymentReceiptComponent implements OnInit {
         this.receiptState.set(PAYMENT_RECEIPT_STATE.error);
         return EMPTY;
       })
-    );
-  }
-
-  private saveReceiptFile(response: HttpResponse<Blob>, referenceId: string): void {
-    downloadBlobResponse(
-      response,
-      `payment-receipt-${referenceId}.${PAYMENT_PAGE_CONFIG.defaultReceiptExtension}`
     );
   }
 

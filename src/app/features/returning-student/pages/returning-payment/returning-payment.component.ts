@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { PaymentWorkflowService } from '../../../../services/payment-workflow.service';
+import { PaymentReceiptService } from '../../../../services/payment-receipt.service';
+import { PAYMENT_TYPE_KEYWORDS } from '../../../../constants/payment-receipt.constants';
 import { buildStudentFeePaymentPayloadForAmount } from '../../../../utility/student-fees-plan';
 import { ReturningFlowService } from '../../returning-flow.service';
 
@@ -29,6 +31,8 @@ export class ReturningPaymentComponent implements OnInit {
   private readonly messageService = inject(MessageService);
 
   private readonly paymentWorkflow = inject(PaymentWorkflowService);
+
+  readonly receiptDownloads = inject(PaymentReceiptService);
 
   readonly flow = inject(ReturningFlowService);
 
@@ -314,48 +318,25 @@ export class ReturningPaymentComponent implements OnInit {
   }
 
   downloadSchoolFeeReceipt(referenceNo?: string): void {
-    const selected = referenceNo
-      ? this.schoolFeePaymentHistory().find((item) => item.referenceNo === referenceNo) || null
-      : null;
-    const entries = selected ? [selected] : this.schoolFeePaymentHistory();
-    const title = selected ? 'School Fees Receipt' : 'Full School Fees Receipt';
+    if (referenceNo) {
+      this.receiptDownloads.downloadReceipt(referenceNo);
+      return;
+    }
 
-    const lines = [
-      title,
-      `Student: ${this.flow.studentName()}`,
-      `Matric No: ${this.flow.matricNo()}`,
-      ...entries.flatMap((entry) => [
-        `${entry.installmentLabel}`,
-        `Ref No: ${entry.referenceNo}`,
-        `Amount: ${this.formatNaira(entry.amount)}`,
-        `Date: ${this.formatDate(entry.paidAt)}`
-      ]),
-      `Total Paid: ${this.totalPaid()}`,
-      `Outstanding: ${this.remainingAmount()}`
-    ];
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = selected ? `receipt-${selected.referenceNo}.txt` : 'school-fees-full-receipt.txt';
-    anchor.click();
-    URL.revokeObjectURL(url);
+    this.receiptDownloads.downloadReceiptsForPaymentType(PAYMENT_TYPE_KEYWORDS.schoolFees, { latestOnly: false });
   }
 
   downloadFeeReceipt(feeId: string): void {
-    const entries = this.paymentHistory().filter((item) => item.feeId === feeId);
-    if (entries.length === 0) {
+    const fee = this.flow.fees().find((item) => item.id === feeId);
+    if (!fee) {
       return;
     }
-    this.downloadGenericReceipt(entries, `${feeId}-receipt.txt`);
+
+    this.receiptDownloads.downloadReceiptsForPaymentType(fee.name, { latestOnly: true });
   }
 
   downloadHistoryReceipt(referenceNo: string): void {
-    const entry = this.paymentHistory().find((item) => item.referenceNo === referenceNo);
-    if (!entry) {
-      return;
-    }
-    this.downloadGenericReceipt([entry], `receipt-${referenceNo}.txt`);
+    this.receiptDownloads.downloadReceipt(referenceNo);
   }
 
   onAmountChange(value: string): void {
@@ -418,11 +399,8 @@ export class ReturningPaymentComponent implements OnInit {
     return status === 'paid' ? 'status-chip status-success' : 'status-chip status-danger';
   }
 
-  canDownloadReceipt(feeId: string, status: string): boolean {
-    if (feeId === 'school-fees') {
-      return status === 'paid';
-    }
-    return status === 'paid' && this.paymentHistory().some((item) => item.feeId === feeId);
+  canDownloadReceipt(status: string): boolean {
+    return status === 'paid';
   }
 
   invoicePaymentTypeLabel(): string {
@@ -483,35 +461,7 @@ export class ReturningPaymentComponent implements OnInit {
     return normalized ? Number(normalized) : 0;
   }
 
-  private formatDate(value: Date): string {
-    return value.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  }
-
   private formatNaira(value: number): string {
     return `₦${value.toLocaleString('en-NG')}`;
-  }
-
-  private downloadGenericReceipt(
-    entries: Array<{ paymentType: string; referenceNo: string; amount: number; paidAt: Date }>,
-    fileName: string
-  ): void {
-    const lines = [
-      'Payment Receipt',
-      `Student: ${this.flow.studentName()}`,
-      `Matric No: ${this.flow.matricNo()}`,
-      ...entries.flatMap((entry) => [
-        `Payment Type: ${entry.paymentType}`,
-        `Ref No: ${entry.referenceNo}`,
-        `Amount: ${this.formatNaira(entry.amount)}`,
-        `Date: ${this.formatDate(entry.paidAt)}`
-      ])
-    ];
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = fileName;
-    anchor.click();
-    URL.revokeObjectURL(url);
   }
 }
