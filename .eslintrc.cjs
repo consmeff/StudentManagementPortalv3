@@ -94,6 +94,19 @@ module.exports = {
             }
         },
         {
+            // The QR encoder implements ISO/IEC 18004 bit packing, Reed-Solomon
+            // arithmetic and module placement. Bitwise operators and in-place
+            // matrix writes are the specification's own vocabulary here, so the
+            // stylistic bans that apply to application code are lifted.
+            files: ['src/app/utility/qr-code*.ts'],
+            rules: {
+                'no-bitwise': 'off',
+                'no-continue': 'off',
+                'no-param-reassign': 'off',
+                'no-restricted-syntax': 'off'
+            }
+        },
+        {
             files: ['**/*.html'],
             extends: ['plugin:@angular-eslint/template/recommended', 'plugin:@angular-eslint/template/accessibility', 'prettier']
         },

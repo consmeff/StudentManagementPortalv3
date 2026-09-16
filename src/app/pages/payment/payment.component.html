@@ -61,6 +61,15 @@
       <app-button
         type="button"
         variant="muted"
+        class="receipt-btn"
+        iconClass="pi pi-qrcode"
+        (buttonClick)="openReceiptPage(item)"
+      >
+        Receipt
+      </app-button>
+      <app-button
+        type="button"
+        variant="muted"
         class="download-btn"
         iconClass="pi pi-download"
         [disabled]="isReceiptLoading(item.ref_id)"

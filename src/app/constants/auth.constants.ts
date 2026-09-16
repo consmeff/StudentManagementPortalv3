@@ -3,3 +3,7 @@
  * so the OTP page can explain the redirect instead of looking like a random jump.
  */
 export const PENDING_VERIFICATION_REDIRECT_REASON = 'pending_verification';
+
+export const AUTH_RETURN_URL_QUERY_PARAM = 'returnUrl';
+
+export const AUTH_RETURN_URL_BLOCKED_PREFIX = '/auth';
