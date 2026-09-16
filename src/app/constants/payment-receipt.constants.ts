@@ -56,3 +56,16 @@ export const PAYMENT_RECEIPT_FIELD_LABELS = {
   issuedAt: 'Issued At',
   verifiedAt: 'Verified At'
 } as const;
+
+export const PAYMENT_RECEIPT_DOWNLOAD = {
+  lookupPageSize: 100,
+  lookupOrdering: '-created_at',
+  toastSummary: 'Receipt',
+  emptyFileDetail: 'The receipt file for this payment is not available yet.',
+  noCompletedPaymentsDetail: 'No completed payment was found to generate a receipt for.'
+} as const;
+
+export const PAYMENT_TYPE_KEYWORDS = {
+  schoolFees: 'school fee',
+  acceptanceFee: 'acceptance'
+} as const;

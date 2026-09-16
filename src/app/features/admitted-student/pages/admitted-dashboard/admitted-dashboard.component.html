@@ -75,7 +75,7 @@
       >
         Pay School Fee
       </button>
-      <button pButton type="button" class="secondary-btn" (click)="downloadReceipt()">
+      <button pButton type="button" class="secondary-btn" (click)="downloadReceipt()" [disabled]="receiptDownloads.activeDownloadKey() !== null">
         Download Receipt
       </button>
     </div>

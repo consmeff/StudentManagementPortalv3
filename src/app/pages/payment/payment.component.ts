@@ -1,9 +1,8 @@
-import { HttpResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, DestroyRef, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMap, tap } from 'rxjs/operators';
 
 import {
   PAYMENT_PAGE_CONFIG,
@@ -16,10 +15,10 @@ import {
   resolvePaymentStatusClass
 } from '../../utility/payment-format';
 import { buildPaymentReceiptVerificationPath } from '../../utility/payment-receipt-url';
-import { downloadBlobResponse } from '../../utility/file-download';
 import { PaginatedPaymentsResponse, PaymentHistoryItem } from '../../data/application/payment.data';
 import { WidgetsService } from '../../widgets/services/widgets.service';
 import { ApplicationService } from '../../services/application.service';
+import { PaymentReceiptService } from '../../services/payment-receipt.service';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -51,8 +50,6 @@ export class PaymentComponent implements OnInit {
   readonly sidebarVisible = signal<boolean>(false);
 
   readonly isLoading = signal<boolean>(false);
-
-  readonly activeReceiptRefId = signal<string | null>(null);
 
   readonly paymentHistory = signal<PaymentHistoryItem[]>([]);
 
@@ -91,6 +88,7 @@ export class PaymentComponent implements OnInit {
   constructor(
     private readonly widgetService: WidgetsService,
     private readonly appService: ApplicationService,
+    private readonly receiptDownloads: PaymentReceiptService,
     private readonly destroyRef: DestroyRef,
     private readonly route: ActivatedRoute,
     private readonly router: Router
@@ -113,20 +111,7 @@ export class PaymentComponent implements OnInit {
   }
 
   downloadReceipt(item: PaymentHistoryItem): void {
-    const referenceId = item.ref_id.trim();
-    if (!referenceId) {
-      return;
-    }
-
-    this.activeReceiptRefId.set(referenceId);
-    this.appService.getPaymentReceipt(referenceId).pipe(
-      take(1),
-      tap((receiptResponse) => this.downloadReceiptResponse(receiptResponse, referenceId)),
-      finalize(() => {
-        this.activeReceiptRefId.set(null);
-      }),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe();
+    this.receiptDownloads.downloadReceipt(item.ref_id);
   }
 
   formatDate(value: string): string {
@@ -142,7 +127,7 @@ export class PaymentComponent implements OnInit {
   }
 
   isReceiptLoading(refId: string): boolean {
-    return this.activeReceiptRefId() === refId;
+    return this.receiptDownloads.isDownloading(refId);
   }
 
   trackPaymentRow(index: number, item: PaymentHistoryItem): string {
@@ -320,13 +305,6 @@ export class PaymentComponent implements OnInit {
       },
       queryParamsHandling: 'merge'
     });
-  }
-
-  private downloadReceiptResponse(response: HttpResponse<Blob>, referenceId: string): void {
-    downloadBlobResponse(
-      response,
-      `payment-receipt-${referenceId}.${PAYMENT_PAGE_CONFIG.defaultReceiptExtension}`
-    );
   }
 
   private resolveTotalRecordsLabel(): string {

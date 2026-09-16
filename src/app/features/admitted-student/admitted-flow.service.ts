@@ -190,7 +190,6 @@ export class AdmittedFlowService {
     });
   });
 
-  readonly receiptUrl = computed(() => this.registrantData()?.payment_slip?.file_url || '');
 
   readonly profilePhotoUrl = computed(() =>
     this.studentProfile()?.passport_photo?.file_url

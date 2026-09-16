@@ -28,7 +28,7 @@
         <strong>{{ "₦" + item.amount.toLocaleString("en-NG") }}</strong>
         <span>{{ item.paidAt | date: "dd MMM yyyy" }}</span>
       </div>
-      <button pButton type="button" class="icon-btn" (click)="downloadReceipt(item.referenceNo)">
+      <button pButton type="button" class="icon-btn" (click)="downloadReceipt(item.referenceNo)" [disabled]="receiptDownloads.activeDownloadKey() !== null">
         <i class="pi pi-download"></i>
       </button>
     </div>
@@ -80,7 +80,7 @@
       type="button"
       class="secondary-btn"
       *ngIf="paymentHistory().length > 0"
-      (click)="downloadReceipt()"
+      (click)="downloadReceipt()" [disabled]="receiptDownloads.activeDownloadKey() !== null"
     >
       Download Receipt
     </button>
@@ -88,7 +88,7 @@
 
   <ng-template #fullyPaidAction>
     <div class="actions">
-      <button pButton type="button" class="secondary-btn" (click)="downloadReceipt()">
+      <button pButton type="button" class="secondary-btn" (click)="downloadReceipt()" [disabled]="receiptDownloads.activeDownloadKey() !== null">
         Download Full Receipt
       </button>
     </div>

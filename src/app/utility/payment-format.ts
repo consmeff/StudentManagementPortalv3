@@ -67,6 +67,10 @@ export function resolvePaymentStatusClass(status: string): string {
   return PAYMENT_STATUS_CLASS.default;
 }
 
+export function isSuccessfulPaymentStatus(status: string): boolean {
+  return matchesAnyKeyword(status.toLowerCase().trim(), SUCCESSFUL_STATUS_KEYWORDS);
+}
+
 function parsePaymentDate(value: string | null): Date | null {
   if (!value) {
     return null;

@@ -49,8 +49,9 @@
                   pButton
                   type="button"
                   class="table-action-btn"
-                  *ngIf="canDownloadReceipt(fee.id, fee.status); else makeMandatoryPayment"
+                  *ngIf="canDownloadReceipt(fee.status); else makeMandatoryPayment"
                   (click)="fee.id === 'school-fees' ? downloadSchoolFeeReceipt() : downloadFeeReceipt(fee.id)"
+                  [disabled]="receiptDownloads.activeDownloadKey() !== null"
                 >
                   <i class="pi pi-download"></i>
                   <span>Download Receipt</span>
@@ -94,8 +95,9 @@
                   pButton
                   type="button"
                   class="table-action-btn"
-                  *ngIf="canDownloadReceipt(fee.id, fee.status); else makeOptionalPayment"
+                  *ngIf="canDownloadReceipt(fee.status); else makeOptionalPayment"
                   (click)="downloadFeeReceipt(fee.id)"
+                  [disabled]="receiptDownloads.activeDownloadKey() !== null"
                 >
                   <i class="pi pi-download"></i>
                   <span>Download Receipt</span>
@@ -132,7 +134,8 @@
               <td>{{ item.referenceNo }}</td>
               <td>{{ paidAmountLabel(item.amount) }}</td>
               <td>
-                <button pButton type="button" class="table-action-btn" (click)="downloadHistoryReceipt(item.referenceNo)">
+                <button pButton type="button" class="table-action-btn" (click)="downloadHistoryReceipt(item.referenceNo)"
+                  [disabled]="receiptDownloads.activeDownloadKey() !== null">
                   <i class="pi pi-download"></i>
                   <span>Download</span>
                 </button>
@@ -250,7 +253,8 @@
             <strong>{{ "₦" + item.amount.toLocaleString("en-NG") }}</strong>
             <span>{{ item.paidAt | date: "dd MMM yyyy" }}</span>
           </div>
-          <button pButton type="button" class="icon-btn" (click)="downloadSchoolFeeReceipt(item.referenceNo)">
+          <button pButton type="button" class="icon-btn" (click)="downloadSchoolFeeReceipt(item.referenceNo)"
+                  [disabled]="receiptDownloads.activeDownloadKey() !== null">
             <i class="pi pi-download"></i>
           </button>
         </div>
@@ -290,14 +294,16 @@
         <button pButton type="button" class="secondary-btn" *ngIf="schoolFeePaymentHistory().length > 0" (click)="proceedToCourseRegistration()">
           Proceed to Course Registration
         </button>
-        <button pButton type="button" class="secondary-btn" *ngIf="schoolFeePaymentHistory().length > 0" (click)="downloadSchoolFeeReceipt()">
+        <button pButton type="button" class="secondary-btn" *ngIf="schoolFeePaymentHistory().length > 0" (click)="downloadSchoolFeeReceipt()"
+                [disabled]="receiptDownloads.activeDownloadKey() !== null">
           Download Receipt
         </button>
       </div>
 
       <ng-template #fullyPaidAction>
         <div class="actions">
-          <button pButton type="button" class="secondary-btn" (click)="downloadSchoolFeeReceipt()">
+          <button pButton type="button" class="secondary-btn" (click)="downloadSchoolFeeReceipt()"
+                  [disabled]="receiptDownloads.activeDownloadKey() !== null">
             Download Full Receipt
           </button>
         </div>
