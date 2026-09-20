@@ -38,7 +38,9 @@
   border: 1px solid var(--app-border);
   border-radius: 1rem;
   background: var(--app-surface);
-  overflow: hidden;
+  max-height: min(60vh, 42rem);
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 .table-card h2 {

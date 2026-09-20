@@ -65,7 +65,9 @@
   margin-top: 1rem;
   border: 1px solid var(--app-border);
   border-radius: 0.95rem;
-  overflow: hidden;
+  max-height: min(60vh, 42rem);
+  overflow-y: auto;
+  overflow-x: auto;
   background: var(--app-surface);
 }
 

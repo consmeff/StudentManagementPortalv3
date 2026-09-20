@@ -479,7 +479,6 @@ export class AdmittedFlowService {
   async loadSnapshot(): Promise<void> {
     const appNo = this.authSessionStore.applicationNo() || '';
     const hasStudentSnapshot = !!this.authSessionStore.studentProfile();
-    await this.loadAcceptanceFee();
     if (!appNo && !hasStudentSnapshot) {
       this.registrantData.set(null);
       return;
@@ -537,22 +536,6 @@ export class AdmittedFlowService {
     const payload = { course_ids: this.selectedCourseIds() };
     await firstValueFrom(this.appService.registerCourses(payload));
     this.registrationSubmitted.set(true);
-  }
-
-  async loadAcceptanceFee(): Promise<void> {
-    if (this.loadingAcceptanceFee()) {
-      return;
-    }
-
-    this.loadingAcceptanceFee.set(true);
-    try {
-      const response = await firstValueFrom(this.appService.getAcceptanceFee());
-      this.acceptanceFeeDetail.set(response);
-    } catch {
-      // Keep the configured defaults when the acceptance fee endpoint is unavailable.
-    } finally {
-      this.loadingAcceptanceFee.set(false);
-    }
   }
 
   async loadStudentFeePlan(): Promise<void> {

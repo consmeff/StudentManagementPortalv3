@@ -20,6 +20,7 @@ import { StatusTone } from '../../../shared/components/status-indicator/status-i
 import { ApplicationStatusDefinition, ApplicationStatusKey } from '../../../constants/application-status.types';
 import { getApplicationStatusDefinition, normalizeApplicationStatusKey } from '../../../constants/application-status.utils';
 import { formatStructuredName } from '../../../utility/name-format';
+import { UserPortalService } from '../../../services/user-portal.service';
 import {
   APPROVAL_STATUS_MESSAGES,
   ACTION_LABELS,
@@ -76,6 +77,8 @@ export class PendingPaymentFlowComponent implements OnInit {
   private readonly authSessionStore = inject(AuthSessionStore);
 
   private readonly paymentWorkflow = inject(PaymentWorkflowService);
+
+  private readonly userPortalService = inject(UserPortalService);
 
   readonly applicationFee = signal<ApplicationFeeAmounts>(DEFAULT_APPLICATION_FEE_AMOUNTS);
 
@@ -152,6 +155,10 @@ export class PendingPaymentFlowComponent implements OnInit {
   }
 
   async loadApplicationFee(): Promise<void> {
+    if (!this.userPortalService.isNewCandidatePortal()) {
+      return;
+    }
+
     try {
       const response = await firstValueFrom(this.appService.getAcceptanceFee());
       this.applicationFee.set({

@@ -22,7 +22,7 @@ export class DataTableComponent<TRowData> {
 
   readonly gridTemplateColumns = input<string>(DATA_TABLE_CONFIG.defaultGridTemplateColumns);
 
-  readonly scrollable = input<boolean>(false);
+  readonly scrollable = input<boolean>(true);
 
   readonly scrollHeight = input<string>('flex');
 
