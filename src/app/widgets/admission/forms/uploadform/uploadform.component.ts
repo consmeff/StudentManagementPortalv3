@@ -78,7 +78,7 @@ export class UploadFormComponent implements AfterViewInit {
 
   fileObjects: TUploadFile = {
     certificateofbirth: {},
-    olevels: [],
+    o_level_result: [],
     passport: {},
     origin: {},
     utme: {}
@@ -112,7 +112,7 @@ export class UploadFormComponent implements AfterViewInit {
         this.fileObjects = f as TUploadFile;
         // Ensure nested objects are initialized
         if (!this.fileObjects.certificateofbirth) this.fileObjects.certificateofbirth = {};
-        if (!this.fileObjects.olevels) this.fileObjects.olevels = [];
+        if (!this.fileObjects.o_level_result) this.fileObjects.o_level_result = [];
         if (!this.fileObjects.passport) this.fileObjects.passport = {};
         if (!this.fileObjects.origin) this.fileObjects.origin = {};
         if (!this.fileObjects.utme) this.fileObjects.utme = {};
@@ -185,10 +185,10 @@ export class UploadFormComponent implements AfterViewInit {
         await firstValueFrom(this.appservice.uploadFile(_ppFD))
           .then((data: CertificateOfBirth) => {
             if (data) {
-              if (!this.fileObjects.olevels) {
-                this.fileObjects.olevels = [];
+              if (!this.fileObjects.o_level_result) {
+                this.fileObjects.o_level_result = [];
               }
-              this.fileObjects.olevels[0] = data;
+              this.fileObjects.o_level_result[0] = data;
               this.showSuccess("O'Level Result uploaded successfully");
             }
             this.isLoadingOlevel = false;
@@ -303,8 +303,8 @@ export class UploadFormComponent implements AfterViewInit {
         break;
       case 1:
         this.ResultFile = undefined;
-        if (this.fileObjects?.olevels && this.fileObjects.olevels.length > 0) {
-          this.fileObjects.olevels[0] = undefined as any;
+        if (this.fileObjects?.o_level_result && this.fileObjects.o_level_result.length > 0) {
+          this.fileObjects.o_level_result[0] = undefined as any;
         }
         break;
       case 2:
@@ -365,14 +365,14 @@ export class UploadFormComponent implements AfterViewInit {
   }
 
   isOlevelFileAvailable(): boolean {
-    return this.fileObjects?.olevels &&
-      this.fileObjects.olevels.length > 0 &&
-      this.fileObjects.olevels[0] != null &&
-      this.fileObjects.olevels[0] != undefined;
+    return this.fileObjects?.o_level_result &&
+      this.fileObjects.o_level_result.length > 0 &&
+      this.fileObjects.o_level_result[0] != null &&
+      this.fileObjects.o_level_result[0] != undefined;
   }
 
   getOlevelFile(): any {
-    return this.isOlevelFileAvailable() ? this.fileObjects.olevels[0] : null;
+    return this.isOlevelFileAvailable() ? this.fileObjects.o_level_result[0] : null;
   }
 
   showSuccess(detail: string) {

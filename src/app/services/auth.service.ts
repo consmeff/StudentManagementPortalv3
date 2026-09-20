@@ -1,10 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginResponse, ProfilePayload, ProfileSuccessResponse } from '../data/auth/auth.data';
 import { AuthSessionStore } from '../store/auth-session.store';
-import { ApplicationService } from './application.service';
 
 type AuthEmailPayload = {
   email: string;
@@ -40,8 +39,6 @@ export class AuthService {
   private loggedUser: string | null | undefined;
 
   private readonly authSessionStore = inject(AuthSessionStore);
-  private readonly applicationService = inject(ApplicationService);
-
   constructor(private http: HttpClient) { }
 
   login(user: { username: string, password: string }): Observable<LoginResponse> {
@@ -126,30 +123,5 @@ export class AuthService {
   private doLoginUser(username: string, tokens: LoginResponse) {
     this.loggedUser = username;
     this.authSessionStore.setSessionFromLogin(tokens);
-    this.preloadStudentSnapshot(tokens);
-  }
-
-  private preloadStudentSnapshot(tokens: LoginResponse): void {
-    const userType = (tokens.user_type || '').toLowerCase().trim();
-    if (userType === 'applicant') {
-      return;
-    }
-    if (!tokens.access_token) {
-      return;
-    }
-    if (this.authSessionStore.studentProfile()) {
-      return;
-    }
-    this.applicationService.studentData()
-      .pipe(
-        tap((response) => {
-          const profile = response?.data;
-          if (profile?.matriculation_number) {
-            this.authSessionStore.setStudentProfile(profile);
-          }
-        }),
-        catchError(() => of(null))
-      )
-      .subscribe();
   }
 }

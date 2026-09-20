@@ -97,6 +97,12 @@ table thead th,
 
 .p-dialog {
   z-index: calc(var(--app-modal-z-index) + 1) !important;
+  max-height: calc(100dvh - 2rem);
+}
+
+.p-dialog-content {
+  min-height: 0;
+  overflow-y: auto;
 }
 
 

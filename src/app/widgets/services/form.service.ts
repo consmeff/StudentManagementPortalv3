@@ -119,7 +119,7 @@ export class FormService {
     if(payload !=null){
       this._uploadFile.set({
         certificateofbirth: payload.certificateofbirth,
-        olevels: [...(payload.olevels || [])],
+        o_level_result: [...(payload.o_level_result || [])],
         passport: payload.passport,
         origin: payload.origin,
         utme: payload.utme
