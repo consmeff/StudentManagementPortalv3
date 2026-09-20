@@ -945,8 +945,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "package_dependencies_angular_common",
-      "community": 149,
-      "community_name": "@angular/common",
+      "community": 55,
+      "community_name": "dependencies",
       "norm_label": "@angular/common"
     },
     {
@@ -956,8 +956,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "angular_common",
-      "community": 149,
-      "community_name": "@angular/common",
+      "community": 55,
+      "community_name": "dependencies",
       "norm_label": "@angular/common"
     },
     {
@@ -967,8 +967,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "package_dependencies_angular_compiler",
-      "community": 55,
-      "community_name": "dependencies",
+      "community": 149,
+      "community_name": "@angular/compiler",
       "norm_label": "@angular/compiler"
     },
     {
@@ -978,8 +978,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "angular_compiler",
-      "community": 55,
-      "community_name": "dependencies",
+      "community": 149,
+      "community_name": "@angular/compiler",
       "norm_label": "@angular/compiler"
     },
     {
@@ -1638,8 +1638,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "package_devdependencies_eslint",
-      "community": 83,
-      "community_name": "devDependencies",
+      "community": 152,
+      "community_name": "eslint",
       "norm_label": "eslint"
     },
     {
@@ -1649,8 +1649,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "eslint",
-      "community": 83,
-      "community_name": "devDependencies",
+      "community": 152,
+      "community_name": "eslint",
       "norm_label": "eslint"
     },
     {
@@ -1770,8 +1770,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "package_devdependencies_jasmine_core",
-      "community": 124,
-      "community_name": "jasmine-core",
+      "community": 83,
+      "community_name": "devDependencies",
       "norm_label": "jasmine-core"
     },
     {
@@ -1781,8 +1781,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "jasmine_core",
-      "community": 124,
-      "community_name": "jasmine-core",
+      "community": 83,
+      "community_name": "devDependencies",
       "norm_label": "jasmine-core"
     },
     {
@@ -7842,8 +7842,8 @@
       "source_location": "L1078",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_submitcourseregistration",
-      "community": 25,
-      "community_name": ".loadStudentDashboard",
+      "community": 124,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".submitcourseregistration()"
     },
     {
@@ -7996,8 +7996,8 @@
       "source_location": "L1379",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadregisteredcourses",
-      "community": 25,
-      "community_name": ".loadStudentDashboard",
+      "community": 124,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".loadregisteredcourses()"
     },
     {
@@ -8007,8 +8007,8 @@
       "source_location": "L1391",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_submitcourseregistrationfromapi",
-      "community": 25,
-      "community_name": ".loadStudentDashboard",
+      "community": 124,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".submitcourseregistrationfromapi()"
     },
     {
@@ -8139,8 +8139,8 @@
       "source_location": "L1535",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_synccoursereviewstatefromregisteredcourses",
-      "community": 25,
-      "community_name": ".loadStudentDashboard",
+      "community": 124,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".synccoursereviewstatefromregisteredcourses()"
     },
     {
@@ -8161,8 +8161,8 @@
       "source_location": "L1564",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_mapfeeitems",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 25,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".mapfeeitems()"
     },
     {
@@ -8172,8 +8172,8 @@
       "source_location": "L1578",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_resolvefeestatus",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 25,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".resolvefeestatus()"
     },
     {
@@ -8183,8 +8183,8 @@
       "source_location": "L1592",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_normalizefeeidentifier",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 25,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".normalizefeeidentifier()"
     },
     {
@@ -13845,7 +13845,7 @@
       "label": ".setUploadFile()",
       "file_type": "code",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L97",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setuploadfile",
       "community": 50,
@@ -13856,7 +13856,7 @@
       "label": ".dataInitialization()",
       "file_type": "code",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L110",
+      "source_location": "L98",
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_datainitialization",
       "community": 50,
@@ -29288,7 +29288,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L97",
+      "source_location": "L85",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice_setuploadfile",
@@ -49394,7 +49394,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L115",
+      "source_location": "L103",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice_datainitialization",
@@ -53085,7 +53085,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L110",
+      "source_location": "L98",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice",
@@ -53151,7 +53151,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L97",
+      "source_location": "L85",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice",
@@ -53247,7 +53247,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L120",
+      "source_location": "L108",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice_datainitialization",

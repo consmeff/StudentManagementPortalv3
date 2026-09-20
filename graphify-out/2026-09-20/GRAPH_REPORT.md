@@ -1,11 +1,11 @@
 # Graph Report - StudentManagementPortalv3  (2026-09-20)
 
 ## Corpus Check
-- 173 files · ~117,046 words
+- 173 files · ~117,013 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1919 nodes · 3780 edges · 152 communities (79 shown, 73 thin omitted)
+- 1919 nodes · 3780 edges · 153 communities (80 shown, 73 thin omitted)
 - Extraction: 97% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 93 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
@@ -138,7 +138,6 @@
 - eslint-import-resolver-typescript
 - eslint-plugin-import
 - returning-cgpa-tracker.component.ts
-- jasmine-core
 - jwt-decode
 - karma
 - karma-chrome-launcher
@@ -161,9 +160,10 @@
 - @typescript-eslint/parser
 - environment.prod.ts
 - environment.staging.ts
-- @angular/common
+- @angular/compiler
 - autoprefixer
 - @angular-eslint/template-parser
+- eslint
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApplicationService` - 99 edges
@@ -192,10 +192,10 @@
 ## Import Cycles
 - None detected.
 
-## Communities (152 total, 73 thin omitted)
+## Communities (153 total, 73 thin omitted)
 
 ### Community 0 - "ReturningFlowService"
-Cohesion: 0.07
+Cohesion: 0.08
 Nodes (3): StudentDashboardAnnouncement, ReturningFlowService, Injectable
 
 ### Community 1 - "LayoutService"
@@ -356,7 +356,7 @@ Nodes (11): Admission Stepper Flow, Academic History Step Component, Application
 
 ### Community 55 - "dependencies"
 Cohesion: 0.18
-Nodes (11): @angular/animations, @angular/compiler, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/compiler, chartjs-adapter-date-fns (+3 more)
+Nodes (11): @angular/animations, @angular/common, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/common, chartjs-adapter-date-fns (+3 more)
 
 ### Community 56 - "payment-workflow.service.ts"
 Cohesion: 0.19
@@ -444,7 +444,7 @@ Nodes (7): development, aot, buildTarget, namedChunks, optimization, outputHashi
 
 ### Community 83 - "devDependencies"
 Cohesion: 0.29
-Nodes (7): @angular-devkit/build-angular, eslint, devDependencies, @angular/cli, @angular-devkit/build-angular, eslint, @angular/cli
+Nodes (7): @angular-devkit/build-angular, jasmine-core, devDependencies, @angular/cli, @angular-devkit/build-angular, jasmine-core, @angular/cli
 
 ### Community 84 - ".normalizeStudentHostelOption"
 Cohesion: 0.24

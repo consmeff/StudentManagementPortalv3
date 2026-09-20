@@ -123,7 +123,7 @@
   "121": "eslint-import-resolver-typescript",
   "122": "eslint-plugin-import",
   "123": "returning-cgpa-tracker.component.ts",
-  "124": "jasmine-core",
+  "124": ".syncCourseReviewStateFromRegisteredCourses",
   "125": "jwt-decode",
   "126": "karma",
   "127": "karma-chrome-launcher",
@@ -148,7 +148,8 @@
   "146": "environment.staging.ts",
   "147": ".eslintrc.cjs",
   "148": "tailwind.config.js",
-  "149": "@angular/common",
+  "149": "@angular/compiler",
   "150": "autoprefixer",
-  "151": "@angular-eslint/template-parser"
+  "151": "@angular-eslint/template-parser",
+  "152": "eslint"
 }
