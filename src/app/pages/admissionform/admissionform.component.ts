@@ -32,6 +32,8 @@ import { AcademicHistoryComponent } from "../../widgets/admission/forms/academic
 import { UploadFormComponent } from "../../widgets/admission/forms/uploadform/uploadform.component";
 import { ApplicationSummaryComponent } from "../../widgets/admission/forms/applicationsummary/applicationsummary.component";
 
+const DEFAULT_O_LEVEL_RESULT_NAME = 'O Level Result';
+
 @Component({
   selector: 'app-admissionform',
   standalone: true,
@@ -778,11 +780,12 @@ export class AdmissionFormComponent implements OnInit {
     const uploadedOLevelFile = this._uploadFileFormData?.o_level_result?.[0] ?? registrant?.o_level_result?.[0]?.file;
     if (uploadedOLevelFile) {
       if (oLevelResults[0]) {
+        oLevelResults[0].name = oLevelResults[0].name?.trim() || DEFAULT_O_LEVEL_RESULT_NAME;
         oLevelResults[0].file = uploadedOLevelFile;
       } else {
         const existingOLevelResult = registrant?.o_level_result?.[0];
         oLevelResults.push({
-          name: existingOLevelResult?.name ?? '',
+          name: existingOLevelResult?.name?.trim() || DEFAULT_O_LEVEL_RESULT_NAME,
           subjects: existingOLevelResult?.subjects ?? [],
           file: uploadedOLevelFile
         });
