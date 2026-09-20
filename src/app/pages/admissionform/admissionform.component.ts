@@ -775,9 +775,18 @@ export class AdmissionFormComponent implements OnInit {
           file: item.file
         }));
 
-    const uploadedOLevelFile = this._uploadFileFormData?.olevels?.[0] ?? registrant?.o_level_result?.[0]?.file;
-    if (uploadedOLevelFile && oLevelResults[0]) {
-      oLevelResults[0].file = uploadedOLevelFile;
+    const uploadedOLevelFile = this._uploadFileFormData?.o_level_result?.[0] ?? registrant?.o_level_result?.[0]?.file;
+    if (uploadedOLevelFile) {
+      if (oLevelResults[0]) {
+        oLevelResults[0].file = uploadedOLevelFile;
+      } else {
+        const existingOLevelResult = registrant?.o_level_result?.[0];
+        oLevelResults.push({
+          name: existingOLevelResult?.name ?? '',
+          subjects: existingOLevelResult?.subjects ?? [],
+          file: uploadedOLevelFile
+        });
+      }
     }
 
     return oLevelResults;

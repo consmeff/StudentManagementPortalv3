@@ -66,7 +66,7 @@ export interface TOLevelResult extends Omit<OLevelResult, "file"> {
 
 export interface TUploadFile{
     certificateofbirth:CertificateOfBirth;
-    olevels:CertificateOfBirth[];
+    o_level_result:CertificateOfBirth[];
     passport:CertificateOfBirth;
     origin:CertificateOfBirth;
     utme:CertificateOfBirth;

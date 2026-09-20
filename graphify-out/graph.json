@@ -945,8 +945,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "package_dependencies_angular_common",
-      "community": 149,
-      "community_name": "@angular/common",
+      "community": 55,
+      "community_name": "dependencies",
       "norm_label": "@angular/common"
     },
     {
@@ -956,8 +956,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "angular_common",
-      "community": 149,
-      "community_name": "@angular/common",
+      "community": 55,
+      "community_name": "dependencies",
       "norm_label": "@angular/common"
     },
     {
@@ -967,8 +967,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "package_dependencies_angular_compiler",
-      "community": 55,
-      "community_name": "dependencies",
+      "community": 149,
+      "community_name": "@angular/compiler",
       "norm_label": "@angular/compiler"
     },
     {
@@ -978,8 +978,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "angular_compiler",
-      "community": 55,
-      "community_name": "dependencies",
+      "community": 149,
+      "community_name": "@angular/compiler",
       "norm_label": "@angular/compiler"
     },
     {
@@ -1440,8 +1440,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "package_devdependencies_angular_eslint_eslint_plugin",
-      "community": 83,
-      "community_name": "devDependencies",
+      "community": 103,
+      "community_name": "@angular-eslint/eslint-plugin",
       "norm_label": "@angular-eslint/eslint-plugin"
     },
     {
@@ -1451,8 +1451,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "angular_eslint_eslint_plugin",
-      "community": 83,
-      "community_name": "devDependencies",
+      "community": 103,
+      "community_name": "@angular-eslint/eslint-plugin",
       "norm_label": "@angular-eslint/eslint-plugin"
     },
     {
@@ -1616,7 +1616,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "package_devdependencies_autoprefixer",
-      "community": 108,
+      "community": 150,
       "community_name": "autoprefixer",
       "norm_label": "autoprefixer"
     },
@@ -1627,7 +1627,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "autoprefixer",
-      "community": 108,
+      "community": 150,
       "community_name": "autoprefixer",
       "norm_label": "autoprefixer"
     },
@@ -1638,7 +1638,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "package_devdependencies_eslint",
-      "community": 77,
+      "community": 152,
       "community_name": "eslint",
       "norm_label": "eslint"
     },
@@ -1649,7 +1649,7 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "eslint",
-      "community": 77,
+      "community": 152,
       "community_name": "eslint",
       "norm_label": "eslint"
     },
@@ -1770,8 +1770,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "package_devdependencies_jasmine_core",
-      "community": 124,
-      "community_name": "jasmine-core",
+      "community": 83,
+      "community_name": "devDependencies",
       "norm_label": "jasmine-core"
     },
     {
@@ -1781,8 +1781,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "jasmine_core",
-      "community": 124,
-      "community_name": "jasmine-core",
+      "community": 83,
+      "community_name": "devDependencies",
       "norm_label": "jasmine-core"
     },
     {
@@ -2078,7 +2078,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_academic_history_constants",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "academic-history.constants.ts"
     },
@@ -2089,7 +2089,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_academic_history_constants_academic_history_rules",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "academic_history_rules"
     },
@@ -2100,7 +2100,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_app_constants_academic_history_constants_academic_history_awaiting_result_option",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "academic_history_awaiting_result_option"
     },
@@ -2111,7 +2111,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_app_constants_academic_history_constants_academic_history_attempt_options",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "academic_history_attempt_options"
     },
@@ -2122,7 +2122,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application-status.constants.ts"
     },
@@ -2133,7 +2133,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_labels",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application_status_labels"
     },
@@ -2144,7 +2144,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_descriptions",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application_status_descriptions"
     },
@@ -2155,7 +2155,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_tones",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application_status_tones"
     },
@@ -2166,7 +2166,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_definitions",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application_status_definitions"
     },
@@ -2177,7 +2177,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_order",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application_status_order"
     },
@@ -2188,7 +2188,7 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "src_app_constants_application_status_constants_application_status_options",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application_status_options"
     },
@@ -2199,7 +2199,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_application_status_types",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application-status.types.ts"
     },
@@ -2210,7 +2210,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_application_status_types_applicationstatustone",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "applicationstatustone"
     },
@@ -2221,7 +2221,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_app_constants_application_status_types_applicationstatuskey",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "applicationstatuskey"
     },
@@ -2232,7 +2232,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_app_constants_application_status_types_applicationstatusdefinition",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "applicationstatusdefinition"
     },
@@ -2243,7 +2243,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "src_app_constants_application_status_types_applicationstatusoption",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "applicationstatusoption"
     },
@@ -2254,7 +2254,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application-status.utils.ts"
     },
@@ -2265,7 +2265,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils_statusaliasmap",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "statusaliasmap"
     },
@@ -2276,7 +2276,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils_application_status_aliases",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "application_status_aliases"
     },
@@ -2287,7 +2287,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils_normalizeapplicationstatuskey",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": "normalizeapplicationstatuskey()"
     },
@@ -2298,7 +2298,7 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "src_app_constants_application_status_utils_getapplicationstatusdefinition",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": "getapplicationstatusdefinition()"
     },
@@ -2320,7 +2320,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "pending-payment-flow.constants.ts"
     },
@@ -2331,7 +2331,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_hero_content",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "hero_content"
     },
@@ -2342,7 +2342,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_step_content",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "step_content"
     },
@@ -2353,7 +2353,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_routes",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "routes"
     },
@@ -2364,7 +2364,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_action_labels",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "action_labels"
     },
@@ -2375,7 +2375,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_post_payment_approval_statuses",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "post_payment_approval_statuses"
     },
@@ -2386,7 +2386,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_status_matchers",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "status_matchers"
     },
@@ -2397,7 +2397,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_dashboardapprovalmessage",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "dashboardapprovalmessage"
     },
@@ -2408,7 +2408,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_approval_status_messages",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "approval_status_messages"
     },
@@ -2419,7 +2419,7 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "src_app_constants_dashboard_pending_payment_flow_constants_ui_copy",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "ui_copy"
     },
@@ -3398,8 +3398,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_location_dto_countrydto",
-      "community": 90,
-      "community_name": "CountryDTO",
+      "community": 48,
+      "community_name": "application.service.ts",
       "norm_label": "countrydto"
     },
     {
@@ -3420,8 +3420,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_app_data_application_location_dto_lgadto",
-      "community": 90,
-      "community_name": "CountryDTO",
+      "community": 87,
+      "community_name": "ApplicationService",
       "norm_label": "lgadto"
     },
     {
@@ -3695,7 +3695,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_data_application_registrantdatadto_registrantdata",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": "registrantdata"
     },
@@ -3904,7 +3904,7 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "src_app_data_application_registrantdatadto_studentsingledata",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "studentsingledata"
     },
@@ -3915,7 +3915,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_cgpa_trend_dto",
-      "community": 150,
+      "community": 117,
       "community_name": "StudentCgpaTrendResponse",
       "norm_label": "student-cgpa-trend.dto.ts"
     },
@@ -3926,7 +3926,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_cgpa_trend_dto_studentcgpatrenditem",
-      "community": 150,
+      "community": 117,
       "community_name": "StudentCgpaTrendResponse",
       "norm_label": "studentcgpatrenditem"
     },
@@ -3937,7 +3937,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_data_application_student_cgpa_trend_dto_studentcgpatrendresponse",
-      "community": 150,
+      "community": 117,
       "community_name": "StudentCgpaTrendResponse",
       "norm_label": "studentcgpatrendresponse"
     },
@@ -4201,8 +4201,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_results_dto",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 47,
+      "community_name": "StudentResultsResponse",
       "norm_label": "student-results.dto.ts"
     },
     {
@@ -4212,8 +4212,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_data_application_student_results_dto_studentresultitem",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 47,
+      "community_name": "StudentResultsResponse",
       "norm_label": "studentresultitem"
     },
     {
@@ -4223,8 +4223,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_app_data_application_student_results_dto_studentresultsresponse",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 47,
+      "community_name": "StudentResultsResponse",
       "norm_label": "studentresultsresponse"
     },
     {
@@ -4289,7 +4289,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "src_app_data_application_transformer_dto_examrecord",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "examrecord"
     },
@@ -5642,7 +5642,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_admittedacceptancepaymentcomponent",
-      "community": 117,
+      "community": 108,
       "community_name": "AdmittedAcceptancePaymentComponent",
       "norm_label": "admittedacceptancepaymentcomponent"
     },
@@ -5653,7 +5653,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_ts_component",
-      "community": 117,
+      "community": 108,
       "community_name": "AdmittedAcceptancePaymentComponent",
       "norm_label": "component"
     },
@@ -5664,7 +5664,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_admittedacceptancepaymentcomponent_ngoninit",
-      "community": 117,
+      "community": 108,
       "community_name": "AdmittedAcceptancePaymentComponent",
       "norm_label": ".ngoninit()"
     },
@@ -5675,7 +5675,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_admittedacceptancepaymentcomponent_proceedtopayment",
-      "community": 117,
+      "community": 108,
       "community_name": "AdmittedAcceptancePaymentComponent",
       "norm_label": ".proceedtopayment()"
     },
@@ -5686,7 +5686,7 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_acceptance_payment_admitted_acceptance_payment_component_admittedacceptancepaymentcomponent_gobacktodashboard",
-      "community": 117,
+      "community": 108,
       "community_name": "AdmittedAcceptancePaymentComponent",
       "norm_label": ".gobacktodashboard()"
     },
@@ -6137,7 +6137,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent",
-      "community": 103,
+      "community": 90,
       "community_name": "AdmittedProfileComponent",
       "norm_label": "admittedprofilecomponent"
     },
@@ -6148,7 +6148,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_ts_component",
-      "community": 103,
+      "community": 90,
       "community_name": "AdmittedProfileComponent",
       "norm_label": "component"
     },
@@ -6159,7 +6159,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_ngoninit",
-      "community": 103,
+      "community": 90,
       "community_name": "AdmittedProfileComponent",
       "norm_label": ".ngoninit()"
     },
@@ -6170,7 +6170,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_gotopayment",
-      "community": 103,
+      "community": 90,
       "community_name": "AdmittedProfileComponent",
       "norm_label": ".gotopayment()"
     },
@@ -6181,7 +6181,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_onfileupload",
-      "community": 103,
+      "community": 90,
       "community_name": "AdmittedProfileComponent",
       "norm_label": ".onfileupload()"
     },
@@ -6192,7 +6192,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_removeadmissiondocument",
-      "community": 103,
+      "community": 90,
       "community_name": "AdmittedProfileComponent",
       "norm_label": ".removeadmissiondocument()"
     },
@@ -6203,7 +6203,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "src_app_features_admitted_student_pages_admitted_profile_admitted_profile_component_admittedprofilecomponent_submitforverification",
-      "community": 103,
+      "community": 90,
       "community_name": "AdmittedProfileComponent",
       "norm_label": ".submitforverification()"
     },
@@ -6214,7 +6214,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_features_new_candidate_new_candidate_routes",
-      "community": 94,
+      "community": 110,
       "community_name": "new-candidate.routes.ts",
       "norm_label": "new-candidate.routes.ts"
     },
@@ -7402,7 +7402,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_hostelapplicationstatus",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": "hostelapplicationstatus"
     },
@@ -7677,7 +7677,7 @@
       "source_location": "L835",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_adddummypayment",
-      "community": 105,
+      "community": 94,
       "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".adddummypayment()"
     },
@@ -7842,8 +7842,8 @@
       "source_location": "L1078",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_submitcourseregistration",
-      "community": 52,
-      "community_name": ".loadStudentDashboard",
+      "community": 124,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".submitcourseregistration()"
     },
     {
@@ -7853,7 +7853,7 @@
       "source_location": "L1082",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadstudentfeeplan",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".loadstudentfeeplan()"
     },
@@ -7864,7 +7864,7 @@
       "source_location": "L1108",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadstudentdashboard",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".loadstudentdashboard()"
     },
@@ -7875,7 +7875,7 @@
       "source_location": "L1146",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadstudentdashboardfallback",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".loadstudentdashboardfallback()"
     },
@@ -7930,7 +7930,7 @@
       "source_location": "L1262",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_buildinstallmentlabel",
-      "community": 105,
+      "community": 94,
       "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".buildinstallmentlabel()"
     },
@@ -7941,7 +7941,7 @@
       "source_location": "L1270",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadstudentresults",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".loadstudentresults()"
     },
@@ -7952,7 +7952,7 @@
       "source_location": "L1306",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadstudentcgpatrend",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".loadstudentcgpatrend()"
     },
@@ -7996,8 +7996,8 @@
       "source_location": "L1379",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_loadregisteredcourses",
-      "community": 52,
-      "community_name": ".loadStudentDashboard",
+      "community": 124,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".loadregisteredcourses()"
     },
     {
@@ -8007,8 +8007,8 @@
       "source_location": "L1391",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_submitcourseregistrationfromapi",
-      "community": 52,
-      "community_name": ".loadStudentDashboard",
+      "community": 124,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".submitcourseregistrationfromapi()"
     },
     {
@@ -8062,7 +8062,7 @@
       "source_location": "L1424",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_recordverifiedschoolfeeinstallment",
-      "community": 105,
+      "community": 94,
       "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".recordverifiedschoolfeeinstallment()"
     },
@@ -8073,7 +8073,7 @@
       "source_location": "L1474",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_formatcurrency",
-      "community": 105,
+      "community": 94,
       "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".formatcurrency()"
     },
@@ -8084,7 +8084,7 @@
       "source_location": "L1478",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_formatdecimal",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".formatdecimal()"
     },
@@ -8095,7 +8095,7 @@
       "source_location": "L1482",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_formatnullabledecimal",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".formatnullabledecimal()"
     },
@@ -8117,7 +8117,7 @@
       "source_location": "L1503",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_updatestudentschoolfeestatus",
-      "community": 105,
+      "community": 94,
       "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".updatestudentschoolfeestatus()"
     },
@@ -8128,7 +8128,7 @@
       "source_location": "L1523",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_syncreturningmoduleaccess",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".syncreturningmoduleaccess()"
     },
@@ -8139,8 +8139,8 @@
       "source_location": "L1535",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_synccoursereviewstatefromregisteredcourses",
-      "community": 52,
-      "community_name": ".loadStudentDashboard",
+      "community": 124,
+      "community_name": ".syncCourseReviewStateFromRegisteredCourses",
       "norm_label": ".synccoursereviewstatefromregisteredcourses()"
     },
     {
@@ -8150,7 +8150,7 @@
       "source_location": "L1553",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_haspaidstatus",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".haspaidstatus()"
     },
@@ -8161,8 +8161,8 @@
       "source_location": "L1564",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_mapfeeitems",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 25,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".mapfeeitems()"
     },
     {
@@ -8172,8 +8172,8 @@
       "source_location": "L1578",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_resolvefeestatus",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 25,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".resolvefeestatus()"
     },
     {
@@ -8183,8 +8183,8 @@
       "source_location": "L1592",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_normalizefeeidentifier",
-      "community": 0,
-      "community_name": "ReturningFlowService",
+      "community": 25,
+      "community_name": ".loadStudentDashboard",
       "norm_label": ".normalizefeeidentifier()"
     },
     {
@@ -8249,7 +8249,7 @@
       "source_location": "L1654",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_markfeeaspaidbypriority",
-      "community": 105,
+      "community": 94,
       "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".markfeeaspaidbypriority()"
     },
@@ -8260,7 +8260,7 @@
       "source_location": "L1667",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_ordinalsuffix",
-      "community": 105,
+      "community": 94,
       "community_name": ".recordVerifiedSchoolFeeInstallment",
       "norm_label": ".ordinalsuffix()"
     },
@@ -8293,7 +8293,7 @@
       "source_location": "L1714",
       "_origin": "ast",
       "id": "src_app_features_returning_student_returning_flow_service_returningflowservice_resolvecgpaclasslabel",
-      "community": 52,
+      "community": 25,
       "community_name": ".loadStudentDashboard",
       "norm_label": ".resolvecgpaclasslabel()"
     },
@@ -9151,7 +9151,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "src_app_layout_component_app_topbar_apptopbar",
-      "community": 110,
+      "community": 105,
       "community_name": "AppTopbar",
       "norm_label": "apptopbar"
     },
@@ -9162,7 +9162,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_layout_component_app_topbar_ts_component",
-      "community": 110,
+      "community": 105,
       "community_name": "AppTopbar",
       "norm_label": "component"
     },
@@ -9173,7 +9173,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "src_app_layout_component_app_topbar_apptopbar_constructor",
-      "community": 110,
+      "community": 105,
       "community_name": "AppTopbar",
       "norm_label": ".constructor()"
     },
@@ -9184,7 +9184,7 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "src_app_layout_component_app_topbar_apptopbar_ngondestroy",
-      "community": 110,
+      "community": 105,
       "community_name": "AppTopbar",
       "norm_label": ".ngondestroy()"
     },
@@ -9195,7 +9195,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "src_app_layout_component_app_topbar_apptopbar_togglesidebar",
-      "community": 110,
+      "community": 105,
       "community_name": "AppTopbar",
       "norm_label": ".togglesidebar()"
     },
@@ -9206,7 +9206,7 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "src_app_layout_component_app_topbar_apptopbar_toggledarkmode",
-      "community": 110,
+      "community": 105,
       "community_name": "AppTopbar",
       "norm_label": ".toggledarkmode()"
     },
@@ -9217,7 +9217,7 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "src_app_layout_component_app_topbar_apptopbar_resolvemodulename",
-      "community": 110,
+      "community": 105,
       "community_name": "AppTopbar",
       "norm_label": ".resolvemodulename()"
     },
@@ -9701,7 +9701,7 @@
       "source_location": "L542",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_buildpersonaldetailobj",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".buildpersonaldetailobj()"
     },
@@ -9712,7 +9712,7 @@
       "source_location": "L581",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_buildnextofkindetailobj",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".buildnextofkindetailobj()"
     },
@@ -9723,7 +9723,7 @@
       "source_location": "L613",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolvestatename",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolvestatename()"
     },
@@ -9734,7 +9734,7 @@
       "source_location": "L625",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolvelganame",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolvelganame()"
     },
@@ -9778,7 +9778,7 @@
       "source_location": "L711",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_buildsteppayload",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".buildsteppayload()"
     },
@@ -9789,7 +9789,7 @@
       "source_location": "L730",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_buildacademicsteppayload",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".buildacademicsteppayload()"
     },
@@ -9800,7 +9800,7 @@
       "source_location": "L756",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolveacademichistorypayload",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveacademichistorypayload()"
     },
@@ -9811,7 +9811,7 @@
       "source_location": "L769",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolveolevelresultpayload",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveolevelresultpayload()"
     },
@@ -9819,10 +9819,10 @@
       "label": ".resolveUtmeRegNo()",
       "file_type": "code",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L786",
+      "source_location": "L795",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolveutmeregno",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveutmeregno()"
     },
@@ -9830,10 +9830,10 @@
       "label": ".resolveUtmeResultPayload()",
       "file_type": "code",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L791",
+      "source_location": "L800",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolveutmeresultpayload",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveutmeresultpayload()"
     },
@@ -9841,10 +9841,10 @@
       "label": ".resolveDocumentPayload()",
       "file_type": "code",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L807",
+      "source_location": "L816",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolvedocumentpayload",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolvedocumentpayload()"
     },
@@ -9852,10 +9852,10 @@
       "label": ".hasUtmeResultFile()",
       "file_type": "code",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L851",
+      "source_location": "L860",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_hasutmeresultfile",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".hasutmeresultfile()"
     },
@@ -9863,10 +9863,10 @@
       "label": ".resolveUploadedDocument()",
       "file_type": "code",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L856",
+      "source_location": "L865",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolveuploadeddocument",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveuploadeddocument()"
     },
@@ -9874,7 +9874,7 @@
       "label": ".done()",
       "file_type": "code",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L871",
+      "source_location": "L880",
       "_origin": "ast",
       "id": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_done",
       "community": 9,
@@ -10669,7 +10669,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_dashboard_dashboard_component",
-      "community": 94,
+      "community": 110,
       "community_name": "new-candidate.routes.ts",
       "norm_label": "dashboard/dashboard.component.ts"
     },
@@ -10680,7 +10680,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_app_pages_dashboard_dashboard_component_dashboard",
-      "community": 94,
+      "community": 110,
       "community_name": "new-candidate.routes.ts",
       "norm_label": "dashboard"
     },
@@ -10691,7 +10691,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_pages_dashboard_dashboard_component_ts_component",
-      "community": 94,
+      "community": 110,
       "community_name": "new-candidate.routes.ts",
       "norm_label": "component"
     },
@@ -10702,7 +10702,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_pages_pages_routes",
-      "community": 94,
+      "community": 110,
       "community_name": "new-candidate.routes.ts",
       "norm_label": "pages.routes.ts"
     },
@@ -11538,8 +11538,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_countries",
-      "community": 90,
-      "community_name": "CountryDTO",
+      "community": 87,
+      "community_name": "ApplicationService",
       "norm_label": ".countries()"
     },
     {
@@ -11560,8 +11560,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_lgas",
-      "community": 90,
-      "community_name": "CountryDTO",
+      "community": 87,
+      "community_name": "ApplicationService",
       "norm_label": ".lgas()"
     },
     {
@@ -11615,8 +11615,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getstudentresults",
-      "community": 76,
-      "community_name": "returning-flow.service.ts",
+      "community": 47,
+      "community_name": "StudentResultsResponse",
       "norm_label": ".getstudentresults()"
     },
     {
@@ -11626,7 +11626,7 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_getstudentcgpatrend",
-      "community": 150,
+      "community": 117,
       "community_name": "StudentCgpaTrendResponse",
       "norm_label": ".getstudentcgpatrend()"
     },
@@ -11846,8 +11846,8 @@
       "source_location": "L258",
       "_origin": "ast",
       "id": "src_app_services_application_service_applicationservice_normalizecollectionresponse",
-      "community": 90,
-      "community_name": "CountryDTO",
+      "community": 87,
+      "community_name": "ApplicationService",
       "norm_label": ".normalizecollectionresponse()"
     },
     {
@@ -13815,8 +13815,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setcountrydata",
-      "community": 90,
-      "community_name": "CountryDTO",
+      "community": 48,
+      "community_name": "application.service.ts",
       "norm_label": ".setcountrydata()"
     },
     {
@@ -13845,7 +13845,7 @@
       "label": ".setUploadFile()",
       "file_type": "code",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L97",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_setuploadfile",
       "community": 50,
@@ -13856,7 +13856,7 @@
       "label": ".dataInitialization()",
       "file_type": "code",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L110",
+      "source_location": "L98",
       "_origin": "ast",
       "id": "src_app_services_regstore_service_regstoreservice_datainitialization",
       "community": 50,
@@ -14662,7 +14662,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_shared_components_status_indicator_status_indicator_component",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "status-indicator.component.ts"
     },
@@ -14673,7 +14673,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_app_shared_components_status_indicator_status_indicator_component_statustone",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "statustone"
     },
@@ -14684,7 +14684,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_app_shared_components_status_indicator_status_indicator_component_statusindicatorcomponent",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "statusindicatorcomponent"
     },
@@ -14695,7 +14695,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_shared_components_status_indicator_status_indicator_component_ts_component",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "component"
     },
@@ -14706,7 +14706,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_app_shared_components_status_indicator_status_indicator_component_ts_input",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "input"
     },
@@ -14750,7 +14750,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "auth-session.store.ts"
     },
@@ -14761,7 +14761,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_authsessionstate",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "authsessionstate"
     },
@@ -14772,7 +14772,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_initialauthsessionstate",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "initialauthsessionstate"
     },
@@ -14783,7 +14783,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_authsessioncookiestate",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "authsessioncookiestate"
     },
@@ -14794,7 +14794,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_initialauthsessioncookiestate",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "initialauthsessioncookiestate"
     },
@@ -14805,7 +14805,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_portalsessionstateupdate",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "portalsessionstateupdate"
     },
@@ -14816,7 +14816,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_normalizesessionvalue",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "normalizesessionvalue()"
     },
@@ -14827,7 +14827,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_haspaidstatus",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "haspaidstatus()"
     },
@@ -14838,7 +14838,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_buildportalsessionpatch",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "buildportalsessionpatch()"
     },
@@ -14849,7 +14849,7 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_clearauthsessioncookie",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "clearauthsessioncookie()"
     },
@@ -14860,7 +14860,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_writeauthsessioncookie",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "writeauthsessioncookie()"
     },
@@ -14871,7 +14871,7 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "src_app_store_auth_session_store_readauthsessioncookie",
-      "community": 47,
+      "community": 77,
       "community_name": "auth-session.store.ts",
       "norm_label": "readauthsessioncookie()"
     },
@@ -15234,7 +15234,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_utility_date_only",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "date-only.ts"
     },
@@ -15245,7 +15245,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_app_utility_date_only_paddatepart",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "paddatepart()"
     },
@@ -15256,7 +15256,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_app_utility_date_only_formatdateonly",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "formatdateonly()"
     },
@@ -16554,7 +16554,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_utility_yearutil",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "yearutil.ts"
     },
@@ -16565,7 +16565,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_utility_yearutil_getpastyears",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "getpastyears()"
     },
@@ -16576,7 +16576,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_app_utility_yearutil_extractlastyearfromtext",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "extractlastyearfromtext()"
     },
@@ -16587,7 +16587,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_app_utility_yearutil_formatfilesize",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "formatfilesize()"
     },
@@ -16598,7 +16598,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_widgets_admission_forms_academichistory_academichistory_component",
-      "community": 11,
+      "community": 52,
       "community_name": "academichistory.component.ts",
       "norm_label": "academichistory.component.ts"
     },
@@ -18226,7 +18226,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "pending-payment-flow.component.ts"
     },
@@ -18237,7 +18237,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_stepstatus",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "stepstatus"
     },
@@ -18248,7 +18248,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_applicationstep",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "applicationstep"
     },
@@ -18259,7 +18259,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_completedapplicationdetails",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "completedapplicationdetails"
     },
@@ -18281,7 +18281,7 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_approvalstatustone",
-      "community": 71,
+      "community": 11,
       "community_name": "pending-payment-flow.component.ts",
       "norm_label": "approvalstatustone"
     },
@@ -18589,7 +18589,7 @@
       "source_location": "L465",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_computeissubmissioncompleted",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".computeissubmissioncompleted()"
     },
@@ -18655,7 +18655,7 @@
       "source_location": "L594",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_applyapprovalstatusmessage",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".applyapprovalstatusmessage()"
     },
@@ -18666,7 +18666,7 @@
       "source_location": "L606",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_applyherostatuscontent",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".applyherostatuscontent()"
     },
@@ -18677,7 +18677,7 @@
       "source_location": "L636",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_resolveapprovalstatusdefinition",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveapprovalstatusdefinition()"
     },
@@ -18688,7 +18688,7 @@
       "source_location": "L644",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_resolveapprovalstatuskey",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveapprovalstatuskey()"
     },
@@ -18699,7 +18699,7 @@
       "source_location": "L658",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_resolveapprovalstatusdetail",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveapprovalstatusdetail()"
     },
@@ -18710,7 +18710,7 @@
       "source_location": "L669",
       "_origin": "ast",
       "id": "src_app_widgets_dashboard_pending_payment_flow_pending_payment_flow_component_pendingpaymentflowcomponent_resolveapprovalmessagetone",
-      "community": 25,
+      "community": 71,
       "community_name": "RegistrantData",
       "norm_label": ".resolveapprovalmessagetone()"
     },
@@ -29288,7 +29288,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L97",
+      "source_location": "L85",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice_setuploadfile",
@@ -29504,7 +29504,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L807",
+      "source_location": "L816",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolvedocumentpayload",
@@ -29528,7 +29528,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L786",
+      "source_location": "L795",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolveutmeregno",
@@ -29540,7 +29540,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L791",
+      "source_location": "L800",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolveutmeresultpayload",
@@ -29828,7 +29828,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L856",
+      "source_location": "L865",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolveuploadeddocument",
@@ -43435,7 +43435,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L871",
+      "source_location": "L880",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent",
@@ -43479,7 +43479,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L851",
+      "source_location": "L860",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent",
@@ -43567,7 +43567,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L807",
+      "source_location": "L816",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent",
@@ -43622,7 +43622,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L856",
+      "source_location": "L865",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent",
@@ -43633,7 +43633,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L786",
+      "source_location": "L795",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent",
@@ -43644,7 +43644,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L791",
+      "source_location": "L800",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent",
@@ -44155,7 +44155,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L813",
+      "source_location": "L822",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolvedocumentpayload",
@@ -44167,7 +44167,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L814",
+      "source_location": "L823",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolvedocumentpayload",
@@ -44179,7 +44179,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L844",
+      "source_location": "L853",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolvedocumentpayload",
@@ -44191,7 +44191,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/app/pages/admissionform/admissionform.component.ts",
-      "source_location": "L815",
+      "source_location": "L824",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_pages_admissionform_admissionform_component_admissionformcomponent_resolvedocumentpayload",
@@ -49394,7 +49394,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L115",
+      "source_location": "L103",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice_datainitialization",
@@ -53085,7 +53085,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L110",
+      "source_location": "L98",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice",
@@ -53151,7 +53151,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L97",
+      "source_location": "L85",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice",
@@ -53247,7 +53247,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/app/services/regstore.service.ts",
-      "source_location": "L120",
+      "source_location": "L108",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_app_services_regstore_service_regstoreservice_datainitialization",
@@ -65068,5 +65068,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c5a6a29e9473a725bc1ae659a39398d9a5c1a84c"
+  "built_at_commit": "9862dd0978ec89f7c4262716da3211a35e176b9b"
 }

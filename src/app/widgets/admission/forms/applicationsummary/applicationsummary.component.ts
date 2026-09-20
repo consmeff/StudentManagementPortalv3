@@ -212,9 +212,9 @@ ${residential_address.country?.name || ''}
       },
       {
         label: "O' Level Result",
-        fileName: this.extractFileName(uploadData?.olevels?.[0]?.file_url ?? data?.o_level_result?.[0]?.file?.file_url),
-        fileSize: this.toFileSize(uploadData?.olevels?.[0]?.file_size ?? data?.o_level_result?.[0]?.file?.file_size),
-        fileUrl: uploadData?.olevels?.[0]?.file_url ?? data?.o_level_result?.[0]?.file?.file_url ?? ''
+        fileName: this.extractFileName(uploadData?.o_level_result?.[0]?.file_url ?? data?.o_level_result?.[0]?.file?.file_url),
+        fileSize: this.toFileSize(uploadData?.o_level_result?.[0]?.file_size ?? data?.o_level_result?.[0]?.file?.file_size),
+        fileUrl: uploadData?.o_level_result?.[0]?.file_url ?? data?.o_level_result?.[0]?.file?.file_url ?? ''
       },
       {
         label: 'Passport Photograph',

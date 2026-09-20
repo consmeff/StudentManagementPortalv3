@@ -82,23 +82,11 @@ export class RegStoreService {
     this._lgaData.set(payload);
   }
 
-  // setUploadFile(payload:RegistrantDataDTO){
-  //  if(payload.data !=null && payload.data !=undefined){
-  //   let _u:TUploadFile={
-  //     certificateofbirth: payload.data!.certificate_of_birth,
-  //     olevels: payload.data!.o_level_result.map((m)=>m.file),
-  //     passport: payload.data!.passport_photo,
-  //     origin:payload.data!.certificate_of_origin,
-  //     utme: payload.data!.utme_result.file
-  //   };
-  //   this._uploadFile.next(_u);
-  //  }
-  // }
   setUploadFile(payload: RegistrantDataDTO) {
     if (payload.data != null && payload.data != undefined) {
       const _u: TUploadFile = {
         certificateofbirth: payload.data!.certificate_of_birth!,
-        olevels: payload.data!.o_level_result?.map((m) => m.file) || [],
+        o_level_result: payload.data!.o_level_result?.map((m) => m.file) || [],
         passport: payload.data!.passport_photo!,
         origin: payload.data!.certificate_of_origin!,
         utme: payload.data!.utme_result?.file!
