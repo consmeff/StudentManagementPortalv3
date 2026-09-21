@@ -253,6 +253,15 @@
   word-break: break-word;
 }
 
+.receipt-passport {
+  width: 7rem;
+  height: 8.5rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.6rem;
+  object-fit: cover;
+  background: var(--app-surface-alt);
+}
+
 .receipt-qr {
   display: flex;
   flex-direction: column;

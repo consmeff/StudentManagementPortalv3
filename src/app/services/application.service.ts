@@ -447,10 +447,31 @@ export class ApplicationService {
       amount_paid: this.parseNumericValue(rawResponse['amount_paid']),
       paid_by: this.readNullableString(rawResponse, 'paid_by'),
       application_no: this.readNullableString(rawResponse, 'application_no'),
+      passport_photo: this.resolvePaymentReceiptPassportPhoto(rawResponse),
       session: this.readNullableString(rawResponse, 'session'),
       issued_at: this.readNullableString(rawResponse, 'issued_at'),
       verified_at: this.readNullableString(rawResponse, 'verified_at')
     };
+  }
+
+  private resolvePaymentReceiptPassportPhoto(response: Record<string, unknown>): string | null {
+    const candidates: unknown[] = [
+      response['passport_photo'],
+      response['passport'],
+      this.toRecord(response['student'])['passport_photo'],
+      this.toRecord(response['applicant'])['passport_photo'],
+      this.toRecord(response['user'])['passport_photo']
+    ];
+
+    for (const candidate of candidates) {
+      const candidateRecord = this.toRecord(candidate);
+      const fileUrl = candidateRecord['file_url'] ?? candidateRecord['url'] ?? candidate;
+      if (typeof fileUrl === 'string' && fileUrl.trim().length > 0) {
+        return fileUrl.trim();
+      }
+    }
+
+    return null;
   }
 
   private normalizeAcceptanceFeeResponse(response: unknown): AcceptanceFee {

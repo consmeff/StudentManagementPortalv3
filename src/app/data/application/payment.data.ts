@@ -41,6 +41,7 @@ export type PaymentReceiptVerification = {
   amount_paid: number | null;
   paid_by: string | null;
   application_no: string | null;
+  passport_photo: string | null;
   session: string | null;
   issued_at: string | null;
   verified_at: string | null;

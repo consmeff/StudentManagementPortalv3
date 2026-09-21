@@ -56,6 +56,13 @@
           </div>
         </dl>
 
+        <img
+          *ngIf="verification()?.passport_photo as passportPhoto"
+          class="receipt-passport"
+          [src]="passportPhoto"
+          alt="Student passport photograph"
+        />
+
         <aside class="receipt-qr" aria-label="Receipt verification QR code">
           <app-qr-code
             [value]="verificationUrl()"
