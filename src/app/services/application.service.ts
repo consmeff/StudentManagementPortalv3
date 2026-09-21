@@ -456,11 +456,12 @@ export class ApplicationService {
 
   private resolvePaymentReceiptPassportPhoto(response: Record<string, unknown>): string | null {
     const candidates: unknown[] = [
-      response['passport_photo'],
+      response['image'],
       response['passport'],
-      this.toRecord(response['student'])['passport_photo'],
-      this.toRecord(response['applicant'])['passport_photo'],
-      this.toRecord(response['user'])['passport_photo']
+      response['passport_photo'],
+      this.toRecord(response['student'])['image'],
+      this.toRecord(response['applicant'])['image'],
+      this.toRecord(response['user'])['image']
     ];
 
     for (const candidate of candidates) {
