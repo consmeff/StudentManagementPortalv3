@@ -8,6 +8,7 @@ import { PaymentWorkflowService } from '../../../../services/payment-workflow.se
 import { PaymentReceiptService } from '../../../../services/payment-receipt.service';
 import { PAYMENT_TYPE_KEYWORDS } from '../../../../constants/payment-receipt.constants';
 import { buildStudentFeePaymentPayloadForAmount } from '../../../../utility/student-fees-plan';
+import { buildPaymentReceiptVerificationPath } from '../../../../utility/payment-receipt-url';
 
 @Component({
   selector: 'app-admitted-payment',
@@ -123,6 +124,14 @@ export class AdmittedPaymentComponent implements OnInit {
     }
 
     this.receiptDownloads.downloadReceiptsForPaymentType(PAYMENT_TYPE_KEYWORDS.schoolFees, { latestOnly: false });
+  }
+
+  viewReceipt(referenceNo: string): void {
+    const normalizedReference = referenceNo.trim();
+    if (!normalizedReference) {
+      return;
+    }
+    globalThis.open(buildPaymentReceiptVerificationPath(normalizedReference), '_blank', 'noopener');
   }
 
   onAmountChange(value: string): void {

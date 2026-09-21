@@ -28,6 +28,9 @@
         <strong>{{ "₦" + item.amount.toLocaleString("en-NG") }}</strong>
         <span>{{ item.paidAt | date: "dd MMM yyyy" }}</span>
       </div>
+      <button pButton type="button" class="icon-btn" (click)="viewReceipt(item.referenceNo)">
+        <i class="pi pi-qrcode"></i>
+      </button>
       <button pButton type="button" class="icon-btn" (click)="downloadReceipt(item.referenceNo)" [disabled]="receiptDownloads.activeDownloadKey() !== null">
         <i class="pi pi-download"></i>
       </button>

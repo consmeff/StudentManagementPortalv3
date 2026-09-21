@@ -8,6 +8,7 @@ import { PaymentWorkflowService } from '../../../../services/payment-workflow.se
 import { PaymentReceiptService } from '../../../../services/payment-receipt.service';
 import { PAYMENT_TYPE_KEYWORDS } from '../../../../constants/payment-receipt.constants';
 import { buildStudentFeePaymentPayloadForAmount } from '../../../../utility/student-fees-plan';
+import { buildPaymentReceiptVerificationPath } from '../../../../utility/payment-receipt-url';
 import { ReturningFlowService } from '../../returning-flow.service';
 
 type PaymentPageView = 'overview' | 'history' | 'invoice' | 'school-fee';
@@ -337,6 +338,14 @@ export class ReturningPaymentComponent implements OnInit {
 
   downloadHistoryReceipt(referenceNo: string): void {
     this.receiptDownloads.downloadReceipt(referenceNo);
+  }
+
+  viewReceipt(referenceNo: string): void {
+    const normalizedReference = referenceNo.trim();
+    if (!normalizedReference) {
+      return;
+    }
+    globalThis.open(buildPaymentReceiptVerificationPath(normalizedReference), '_blank', 'noopener');
   }
 
   onAmountChange(value: string): void {
