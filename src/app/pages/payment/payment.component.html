@@ -26,59 +26,64 @@
     </div>
   </div>
 
-  <app-data-table
-    [columns]="paymentTableColumns"
-    [rows]="paymentHistory()"
-    [rowTemplate]="paymentRowTemplate"
-    [gridTemplateColumns]="paymentTableGridTemplate"
-    [scrollable]="true"
-    scrollHeight="flex"
-    [loading]="isLoading()"
-    [trackBy]="trackPaymentRow"
-    [activeSortKey]="activeSortKey()"
-    [activeSortDirection]="activeSortDirection()"
-    loadingMessage="Loading payment history..."
-    emptyMessage="No payment history found."
-    (sortChange)="updateOrdering($event)"
-  ></app-data-table>
-
-  <ng-template #paymentRowTemplate let-item>
-    <td class="history-cell" data-label="Date">{{ formatDate(item.created_at) }}</td>
-    <td class="history-cell value-strong" data-label="Payment Type">{{ item.payment_type || '—' }}</td>
-    <td class="history-cell" data-label="Applicant">{{ item.applicant_name || item.applicant_no || '—' }}</td>
-    <td class="history-cell" data-label="Reference Number">{{ item.ref_id || '—' }}</td>
-    <td class="history-cell" data-label="Amount">{{ formatCurrency(item.amount) }}</td>
-    <td class="history-cell" data-label="Amount Paid">{{ formatCurrency(item.amount_paid) }}</td>
-    <td class="history-cell" data-label="Status">
-      <span class="status-pill" [ngClass]="paymentStatusClass(item.status)">{{ item.status || 'Unknown' }}</span>
-    </td>
-    <td class="history-cell summary-cell" data-label="Summary">
-      <span class="summary-text" [attr.title]="item.summary?.trim() ? item.summary : null">
-        {{ item.summary?.trim() ? item.summary : '—' }}
-      </span>
-    </td>
-    <td class="history-cell actions-cell" data-label="Actions">
-      <app-button
-        type="button"
-        variant="muted"
-        class="receipt-btn"
-        iconClass="pi pi-qrcode"
-        (buttonClick)="openReceiptPage(item)"
-      >
-        Receipt
-      </app-button>
-      <app-button
-        type="button"
-        variant="muted"
-        class="download-btn"
-        iconClass="pi pi-download"
-        [disabled]="isReceiptLoading(item.ref_id)"
-        (buttonClick)="downloadReceipt(item)"
-      >
-        {{ isReceiptLoading(item.ref_id) ? 'Preparing...' : 'Download' }}
-      </app-button>
-    </td>
-  </ng-template>
+  <section class="table-card">
+    <table class="fees-table history-table">
+      <thead>
+        <tr>
+          <th>DATE</th>
+          <th>PAYMENT TYPE</th>
+          <th>APPLICANT</th>
+          <th>REFERENCE NUMBER</th>
+          <th>AMOUNT</th>
+          <th>AMOUNT PAID</th>
+          <th>STATUS</th>
+          <th>SUMMARY</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of paymentHistory()">
+          <td>{{ formatDate(item.created_at) }}</td>
+          <td class="value-strong">{{ item.payment_type || '—' }}</td>
+          <td>{{ item.applicant_name || item.applicant_no || '—' }}</td>
+          <td>{{ item.ref_id || '—' }}</td>
+          <td>{{ formatCurrency(item.amount) }}</td>
+          <td>{{ formatCurrency(item.amount_paid) }}</td>
+          <td>
+            <span class="status-pill" [ngClass]="paymentStatusClass(item.status)">{{ item.status || 'Unknown' }}</span>
+          </td>
+          <td>{{ item.summary.trim() ? item.summary : '—' }}</td>
+          <td class="table-actions">
+            <app-button
+              type="button"
+              variant="muted"
+              class="receipt-btn"
+              iconClass="pi pi-qrcode"
+              (buttonClick)="openReceiptPage(item)"
+            >
+              Receipt
+            </app-button>
+            <app-button
+              type="button"
+              variant="muted"
+              class="download-btn"
+              iconClass="pi pi-download"
+              [disabled]="isReceiptLoading(item.ref_id)"
+              (buttonClick)="downloadReceipt(item)"
+            >
+              {{ isReceiptLoading(item.ref_id) ? 'Preparing...' : 'Download' }}
+            </app-button>
+          </td>
+        </tr>
+        <tr *ngIf="!isLoading() && paymentHistory().length === 0">
+          <td colspan="9" class="empty-row">No payment history found.</td>
+        </tr>
+        <tr *ngIf="isLoading()">
+          <td colspan="9" class="empty-row">Loading payment history...</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
   <app-pagination
     *ngIf="showPagination()"
