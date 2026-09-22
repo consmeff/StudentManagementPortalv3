@@ -4,11 +4,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { EMPTY, Subject } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMap, tap } from 'rxjs/operators';
 
-import {
-  PAYMENT_PAGE_CONFIG,
-  PAYMENT_TABLE_COLUMNS,
-  PAYMENT_TABLE_GRID_TEMPLATE
-} from '../../constants/payment-page.constants';
+import { PAYMENT_PAGE_CONFIG } from '../../constants/payment-page.constants';
 import {
   formatPaymentCurrency,
   formatPaymentDate,
@@ -22,7 +18,6 @@ import { PaymentReceiptService } from '../../services/payment-receipt.service';
 import { TraceabilityModule } from '../../shared/traceability.module';
 import { sidebarStateDTO } from '../../data/dashboard/dash.dto';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { DataTableComponent } from '../../shared/components/data-table/data-table.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 
@@ -39,7 +34,6 @@ type TPaymentQueryState = {
   imports: [
     TraceabilityModule,
     ButtonComponent,
-    DataTableComponent,
     PaginationComponent,
     SearchInputComponent
   ],
@@ -74,14 +68,6 @@ export class PaymentComponent implements OnInit {
   readonly showPageSummary = computed(() => !this.isLoading() && this.paymentHistory().length > 0);
 
   readonly showPagination = computed(() => !this.isLoading() && this.paymentHistory().length > 0 && this.totalPages() !== null);
-
-  readonly activeSortKey = computed(() => this.resolveActiveSortKey());
-
-  readonly activeSortDirection = computed(() => this.resolveActiveSortDirection());
-
-  readonly paymentTableColumns = PAYMENT_TABLE_COLUMNS;
-
-  readonly paymentTableGridTemplate = PAYMENT_TABLE_GRID_TEMPLATE;
 
   private readonly searchValueChange$ = new Subject<string>();
 
@@ -130,10 +116,6 @@ export class PaymentComponent implements OnInit {
     return this.receiptDownloads.isDownloading(refId);
   }
 
-  trackPaymentRow(index: number, item: PaymentHistoryItem): string {
-    return item.ref_id || `${index}`;
-  }
-
   goToPage(pageNumber: number): void {
     this.navigateToPage(pageNumber);
   }
@@ -150,11 +132,6 @@ export class PaymentComponent implements OnInit {
   clearSearch(): void {
     this.searchValue.set('');
     this.navigateWithQueryState(PAYMENT_PAGE_CONFIG.defaultPageNumber, this.currentPageSize(), this.currentOrdering(), null);
-  }
-
-  updateOrdering(sortKey: string): void {
-    const nextOrdering = this.resolveNextOrdering(sortKey);
-    this.navigateWithQueryState(PAYMENT_PAGE_CONFIG.defaultPageNumber, this.currentPageSize(), nextOrdering, this.currentSearch());
   }
 
   private observeSidebarState(): void {
@@ -321,40 +298,4 @@ export class PaymentComponent implements OnInit {
     return `Page ${this.currentPage()} of ${resolvedTotalPages}`;
   }
 
-  private resolveActiveSortKey(): string | null {
-    const currentOrdering = this.currentOrdering();
-    if (currentOrdering === null || currentOrdering.trim().length === 0) {
-      return null;
-    }
-
-    return currentOrdering.startsWith('-') ? currentOrdering.slice(1) : currentOrdering;
-  }
-
-  private resolveActiveSortDirection(): 'asc' | 'desc' | null {
-    const currentOrdering = this.currentOrdering();
-    if (currentOrdering === null || currentOrdering.trim().length === 0) {
-      return null;
-    }
-
-    return currentOrdering.startsWith('-') ? 'desc' : 'asc';
-  }
-
-  private resolveNextOrdering(sortKey: string): string | null {
-    const activeSortKey = this.activeSortKey();
-    const activeSortDirection = this.activeSortDirection();
-
-    if (activeSortKey !== sortKey) {
-      return sortKey;
-    }
-
-    if (activeSortDirection === 'asc') {
-      return `-${sortKey}`;
-    }
-
-    if (activeSortDirection === 'desc') {
-      return null;
-    }
-
-    return sortKey;
-  }
 }

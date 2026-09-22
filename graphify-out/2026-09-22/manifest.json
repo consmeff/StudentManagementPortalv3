@@ -415,8 +415,8 @@
     "semantic_hash": "2b2637fa956769e3b5bf0a147a437924"
   },
   "src/app/services/application.service.ts": {
-    "mtime": 1790109528.657804,
-    "ast_hash": "c192678c6dfaee8a40817f71f04eb5ab",
+    "mtime": 1790109643.609531,
+    "ast_hash": "6db0eb43f49c7d40589a1cfd94b60700",
     "semantic_hash": ""
   },
   "src/app/services/auth.guard.guard.ts": {
@@ -1075,8 +1075,8 @@
     "semantic_hash": ""
   },
   "src/app/pages/payment-receipt/payment-receipt.component.html": {
-    "mtime": 1790109528.6478524,
-    "ast_hash": "fc04751ff3a342081c48b5db9026a224",
+    "mtime": 1790110014.5810723,
+    "ast_hash": "2efe54667d5904527261ee422370bed4",
     "semantic_hash": ""
   },
   "src/app/shared/components/qr-code/qr-code.component.html": {

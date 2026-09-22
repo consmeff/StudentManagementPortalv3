@@ -52,6 +52,44 @@ app-data-table {
   margin-bottom: 1rem;
 }
 
+.table-card {
+  margin-top: 0.2rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: var(--app-surface);
+  overflow-x: auto;
+}
+
+.fees-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 72rem;
+}
+
+.fees-table th,
+.fees-table td {
+  padding: 1rem;
+  border-top: 1px solid var(--app-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.fees-table th {
+  color: var(--app-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.fees-table td {
+  color: var(--app-text-primary);
+  vertical-align: middle;
+}
+
+.empty-row {
+  text-align: center !important;
+  color: var(--app-text-secondary) !important;
+}
+
 .search-form {
   display: flex;
   flex-direction: column;
@@ -84,26 +122,8 @@ app-data-table {
   font-weight: 700;
 }
 
-.history-cell {
-  min-width: 0;
-}
-
-.summary-cell {
-  line-height: 1.45;
-  word-break: break-word;
-}
-
-.summary-text {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  word-break: break-word;
-}
-
-.actions-cell {
+.table-actions {
   display: flex;
-  justify-content: flex-start;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
@@ -173,42 +193,6 @@ app-pagination {
   }
 
   .toolbar-btn {
-    min-width: 100%;
-  }
-
-  .history-cell {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-
-  .history-cell::before {
-    content: attr(data-label);
-    color: var(--app-text-muted);
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    flex: 0 0 8rem;
-  }
-
-  .summary-cell,
-  .actions-cell {
-    display: block;
-  }
-
-  .summary-text {
-    display: -webkit-box;
-  }
-
-  .summary-cell::before,
-  .actions-cell::before {
-    display: block;
-    margin-bottom: 0.35rem;
-  }
-
-  .download-btn,
-  .receipt-btn {
     min-width: 100%;
   }
 }

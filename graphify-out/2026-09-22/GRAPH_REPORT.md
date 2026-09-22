@@ -1,7 +1,7 @@
 # Graph Report - StudentManagementPortalv3  (2026-09-22)
 
 ## Corpus Check
-- 173 files · ~117,190 words
+- 173 files · ~117,220 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3c8b1d8e`
+- Built from commit: `3e964ea5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -50,7 +50,7 @@
 - nextofkin.component.ts
 - courseregistration.dto.ts
 - AppConfigService
-- SidebarComponent
+- SignUpComponent
 - options
 - Project Knowledge Graph (graphify-out/)
 - payment-receipt.service.ts
@@ -75,7 +75,7 @@
 - App Data Table Component
 - AdmittedCoursesComponent
 - TopbarComponent
-- @angular/core
+- SidebarComponent
 - ReturningHostelComponent
 - payment.component.ts
 - pending-payment-flow.component.ts
@@ -85,7 +85,7 @@
 - scripts
 - .prettierrc.json
 - name-format.ts
-- SignUpComponent
+- new-candidate.routes.ts
 - app.routes.ts
 - Legacy Applicant Dashboard Template
 - ErrorHandler
@@ -100,11 +100,10 @@
 - development
 - devDependencies
 - AdmittedProfileComponent
-- new-candidate.routes.ts
+- autoprefixer
 - PaymentReceiptComponent
 - Logout
 - Payment Row Template
-- autoprefixer
 - Sidebar Navigation Template
 - architect
 - @angular/forms
@@ -128,7 +127,6 @@
 - @angular/router
 - QrCodeComponent
 - @angular/compiler
-- eslint-config-airbnb-base
 - eslint-config-airbnb-typescript
 - eslint-config-prettier
 - eslint-import-resolver-typescript
@@ -155,7 +153,9 @@
 - @typescript-eslint/parser
 - environment.prod.ts
 - environment.staging.ts
+- @angular/core
 - @angular-eslint/template-parser
+- eslint
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApplicationService` - 100 edges
@@ -215,7 +215,7 @@ Cohesion: 0.12
 Nodes (3): PaymentHistoryItem, PaymentComponent, Component
 
 ### Community 11 - "application-status.constants.ts"
-Cohesion: 0.13
+Cohesion: 0.12
 Nodes (17): APPLICATION_STATUS_DEFINITIONS, APPLICATION_STATUS_DESCRIPTIONS, APPLICATION_STATUS_LABELS, APPLICATION_STATUS_OPTIONS, APPLICATION_STATUS_ORDER, APPLICATION_STATUS_TONES, ApplicationStatusDefinition, ApplicationStatusOption (+9 more)
 
 ### Community 12 - "dashboard.service.ts"
@@ -436,7 +436,7 @@ Nodes (7): development, aot, buildTarget, namedChunks, optimization, outputHashi
 
 ### Community 83 - "devDependencies"
 Cohesion: 0.29
-Nodes (7): @angular-devkit/build-angular, eslint, devDependencies, @angular/cli, @angular-devkit/build-angular, eslint, @angular/cli
+Nodes (7): @angular-devkit/build-angular, eslint-config-airbnb-base, devDependencies, @angular/cli, @angular-devkit/build-angular, eslint-config-airbnb-base, @angular/cli
 
 ### Community 86 - "PaymentReceiptComponent"
 Cohesion: 0.25
