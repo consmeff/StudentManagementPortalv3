@@ -57,22 +57,22 @@
             <app-button
               type="button"
               variant="muted"
-              class="receipt-btn"
+              class="action-icon-button receipt-btn"
               iconClass="pi pi-qrcode"
+              ariaLabel="Receipt"
+              tooltip="Receipt"
               (buttonClick)="openReceiptPage(item)"
-            >
-              Receipt
-            </app-button>
+            ></app-button>
             <app-button
               type="button"
               variant="muted"
-              class="download-btn"
+              class="action-icon-button download-btn"
               iconClass="pi pi-download"
               [disabled]="isReceiptLoading(item.ref_id)"
+              [ariaLabel]="isReceiptLoading(item.ref_id) ? 'Preparing download' : 'Download'"
+              [tooltip]="isReceiptLoading(item.ref_id) ? 'Preparing download' : 'Download'"
               (buttonClick)="downloadReceipt(item)"
-            >
-              {{ isReceiptLoading(item.ref_id) ? 'Preparing...' : 'Download' }}
-            </app-button>
+            ></app-button>
           </td>
         </tr>
         <tr *ngIf="!isLoading() && paymentHistory().length === 0">
