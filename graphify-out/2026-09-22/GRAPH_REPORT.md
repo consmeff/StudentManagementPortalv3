@@ -1,7 +1,7 @@
 # Graph Report - StudentManagementPortalv3  (2026-09-22)
 
 ## Corpus Check
-- 173 files · ~117,213 words
+- 173 files · ~117,190 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -75,7 +75,7 @@
 - App Data Table Component
 - AdmittedCoursesComponent
 - TopbarComponent
-- @angular/common
+- @angular/core
 - ReturningHostelComponent
 - payment.component.ts
 - pending-payment-flow.component.ts
@@ -215,7 +215,7 @@ Cohesion: 0.12
 Nodes (3): PaymentHistoryItem, PaymentComponent, Component
 
 ### Community 11 - "application-status.constants.ts"
-Cohesion: 0.12
+Cohesion: 0.13
 Nodes (17): APPLICATION_STATUS_DEFINITIONS, APPLICATION_STATUS_DESCRIPTIONS, APPLICATION_STATUS_LABELS, APPLICATION_STATUS_OPTIONS, APPLICATION_STATUS_ORDER, APPLICATION_STATUS_TONES, ApplicationStatusDefinition, ApplicationStatusOption (+9 more)
 
 ### Community 12 - "dashboard.service.ts"
@@ -356,7 +356,7 @@ Nodes (11): Admission Stepper Flow, Academic History Step Component, Application
 
 ### Community 55 - "dependencies"
 Cohesion: 0.18
-Nodes (11): @angular/animations, @angular/core, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/core, chartjs-adapter-date-fns (+3 more)
+Nodes (11): @angular/animations, @angular/common, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/common, chartjs-adapter-date-fns (+3 more)
 
 ### Community 57 - "App Data Table Component"
 Cohesion: 0.40

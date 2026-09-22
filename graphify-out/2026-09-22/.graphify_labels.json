@@ -59,7 +59,7 @@
   "57": "App Data Table Component",
   "58": "AdmittedCoursesComponent",
   "59": "TopbarComponent",
-  "60": "@angular/common",
+  "60": "@angular/core",
   "61": "ReturningHostelComponent",
   "62": "payment.component.ts",
   "63": "pending-payment-flow.component.ts",

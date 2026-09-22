@@ -1,101 +1,76 @@
 <main class="receipt-page">
-  <section class="receipt-card" aria-labelledby="receipt-heading">
-    <header class="receipt-header">
-      <div class="receipt-brand">
-        <img class="receipt-logo" [src]="receiptConfig.logoPath" alt="" />
-        <div>
-          <p class="receipt-institution">{{ receiptConfig.institutionName }}</p>
-          <p class="receipt-tagline">{{ receiptConfig.institutionTagline }}</p>
+    <section class="receipt-card" aria-labelledby="receipt-heading">
+        <header class="receipt-header">
+            <div class="receipt-brand">
+                <img class="receipt-logo" [src]="receiptConfig.logoPath" alt="" />
+                <div>
+                    <p class="receipt-institution">{{ receiptConfig.institutionName }}</p>
+                    <p class="receipt-tagline">{{ receiptConfig.institutionTagline }}</p>
+                </div>
+            </div>
+            <div class="receipt-heading-group">
+                <h1 id="receipt-heading" class="receipt-title">{{ receiptConfig.documentTitle }}</h1>
+                <p class="receipt-reference" *ngIf="referenceId()">{{ referenceId() }}</p>
+            </div>
+        </header>
+
+        <div class="receipt-loading" *ngIf="isLoading()" role="status">
+            <p-progressSpinner styleClass="receipt-spinner" strokeWidth="4" ariaLabel="Verifying receipt"></p-progressSpinner>
+            <p>{{ receiptMessages.loading }}</p>
         </div>
-      </div>
-      <div class="receipt-heading-group">
-        <h1 id="receipt-heading" class="receipt-title">{{ receiptConfig.documentTitle }}</h1>
-        <p class="receipt-reference" *ngIf="referenceId()">{{ referenceId() }}</p>
-      </div>
-    </header>
 
-    <div class="receipt-loading" *ngIf="isLoading()" role="status">
-      <p-progressSpinner styleClass="receipt-spinner" strokeWidth="4" ariaLabel="Verifying receipt"></p-progressSpinner>
-      <p>{{ receiptMessages.loading }}</p>
-    </div>
-
-    <div class="receipt-notice" *ngIf="notice() as activeNotice" role="alert">
-      <i class="receipt-notice-icon" [ngClass]="activeNotice.iconClass" aria-hidden="true"></i>
-      <div class="receipt-notice-content">
-        <p class="receipt-notice-title">{{ activeNotice.title }}</p>
-        <p class="receipt-notice-detail">{{ activeNotice.detail }}</p>
-        <app-button
-          *ngIf="referenceId()"
-          type="button"
-          variant="outline"
-          iconClass="pi pi-refresh"
-          (buttonClick)="retry()"
-        >
-          Try again
-        </app-button>
-      </div>
-    </div>
-
-    <ng-container *ngIf="result() as activeResult">
-      <div class="verification-banner" [ngClass]="activeResult.toneClass" role="status">
-        <i class="verification-icon" [ngClass]="activeResult.iconClass" aria-hidden="true"></i>
-        <div>
-          <p class="verification-title">{{ activeResult.title }}</p>
-          <p class="verification-detail">{{ activeResult.detail }}</p>
+        <div class="receipt-notice" *ngIf="notice() as activeNotice" role="alert">
+            <i class="receipt-notice-icon" [ngClass]="activeNotice.iconClass" aria-hidden="true"></i>
+            <div class="receipt-notice-content">
+                <p class="receipt-notice-title">{{ activeNotice.title }}</p>
+                <p class="receipt-notice-detail">{{ activeNotice.detail }}</p>
+                <app-button *ngIf="referenceId()" type="button" variant="outline" iconClass="pi pi-refresh" (buttonClick)="retry()"> Try again </app-button>
+            </div>
         </div>
-        <span class="status-pill" *ngIf="verification()?.status" [ngClass]="statusClass()">
-          {{ verification()?.status }}
-        </span>
-      </div>
 
-      <div class="receipt-body" *ngIf="isValidReceipt()">
-        <dl class="detail-list">
-          <div class="detail-row" *ngFor="let field of detailFields()">
-            <dt>{{ field.label }}</dt>
-            <dd>{{ field.value }}</dd>
-          </div>
-        </dl>
+        <ng-container *ngIf="result() as activeResult">
+            <div class="flex flex-col md:flex-row-reverse gap-4 md:gap-8 md:items-center justify-between mb-6">
+                <img *ngIf="verification()?.passport_photo as passportPhoto" class="verification-passport" [src]="passportPhoto" alt="Student passport photograph" />
+                <div class="verification-banner" [ngClass]="activeResult.toneClass" role="status">
+                    <i class="verification-icon" [ngClass]="activeResult.iconClass" aria-hidden="true"></i>
+                    <div class="verification-message">
+                        <p class="verification-title">{{ activeResult.title }}</p>
+                        <p class="verification-detail">{{ activeResult.detail }}</p>
+                    </div>
+                    <span class="status-pill" *ngIf="verification()?.status" [ngClass]="statusClass()">
+                        {{ verification()?.status }}
+                    </span>
+                </div>
+            </div>
 
-        <img
-          *ngIf="verification()?.passport_photo as passportPhoto"
-          class="receipt-passport"
-          [src]="passportPhoto"
-          alt="Student passport photograph"
-        />
+            <div class="receipt-body" *ngIf="isValidReceipt()">
+                <dl class="detail-list">
+                    <div class="detail-row" *ngFor="let field of detailFields()">
+                        <dt>{{ field.label }}</dt>
+                        <dd>{{ field.value }}</dd>
+                    </div>
+                </dl>
 
-        <aside class="receipt-qr" aria-label="Receipt verification QR code">
-          <app-qr-code
-            [value]="verificationUrl()"
-            [size]="receiptConfig.qrSizePx"
-            [description]="qrDescription()"
-          ></app-qr-code>
-          <p class="receipt-qr-instruction">{{ receiptConfig.qrInstruction }}</p>
-        </aside>
-      </div>
+                <aside class="receipt-qr" aria-label="Receipt verification QR code">
+                    <app-qr-code [value]="verificationUrl()" [size]="receiptConfig.qrSizePx" [description]="qrDescription()"></app-qr-code>
+                    <p class="receipt-qr-instruction">{{ receiptConfig.qrInstruction }}</p>
+                </aside>
+            </div>
 
-      <footer class="receipt-actions" *ngIf="isValidReceipt()">
-        <app-button type="button" variant="outline" iconClass="pi pi-print" (buttonClick)="printVerification()">
-          Print
-        </app-button>
+            <footer class="receipt-actions" *ngIf="isValidReceipt()">
+                <app-button type="button" variant="outline" iconClass="pi pi-print" (buttonClick)="printVerification()"> Print </app-button>
 
-        <app-button
-          *ngIf="isSignedIn(); else signInToDownload"
-          type="button"
-          variant="primary"
-          iconClass="pi pi-download"
-          [disabled]="isDownloading()"
-          (buttonClick)="downloadReceipt()"
-        >
-          {{ isDownloading() ? receiptMessages.preparingDownload : 'Download receipt' }}
-        </app-button>
+                <app-button *ngIf="isSignedIn(); else signInToDownload" type="button" variant="primary" iconClass="pi pi-download" [disabled]="isDownloading()" (buttonClick)="downloadReceipt()">
+                    {{ isDownloading() ? receiptMessages.preparingDownload : 'Download receipt' }}
+                </app-button>
 
-        <ng-template #signInToDownload>
-          <a class="receipt-sign-in-link" [routerLink]="receiptConfig.loginPath" [queryParams]="signInQueryParams()">
-            <i class="pi pi-sign-in" aria-hidden="true"></i>
-            Sign in to download receipt
-          </a>
-        </ng-template>
-      </footer>
-    </ng-container>
-  </section>
+                <ng-template #signInToDownload>
+                    <a class="receipt-sign-in-link" [routerLink]="receiptConfig.loginPath" [queryParams]="signInQueryParams()">
+                        <i class="pi pi-sign-in" aria-hidden="true"></i>
+                        Sign in to download receipt
+                    </a>
+                </ng-template>
+            </footer>
+        </ng-container>
+    </section>
 </main>

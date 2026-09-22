@@ -155,9 +155,19 @@
   border-radius: 0.7rem;
 }
 
-.verification-banner > div {
+.verification-message {
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.verification-passport {
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--app-border);
+  border-radius: 0.6rem;
+  object-fit: cover;
+  background: var(--app-surface-alt);
+  flex: 0 0 auto;
 }
 
 .verification-icon {
@@ -253,15 +263,6 @@
   word-break: break-word;
 }
 
-.receipt-passport {
-  width: 7rem;
-  height: 8.5rem;
-  border: 1px solid var(--app-border);
-  border-radius: 0.6rem;
-  object-fit: cover;
-  background: var(--app-surface-alt);
-}
-
 .receipt-qr {
   display: flex;
   flex-direction: column;
@@ -320,6 +321,16 @@
 
   .verification-banner {
     flex-wrap: wrap;
+  }
+
+  .verification-passport {
+    order: -1;
+    width: 120px;
+    height: 120px;
+  }
+
+  .verification-message {
+    flex-basis: calc(100% - 2.35rem);
   }
 
   .receipt-qr {
