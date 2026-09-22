@@ -399,15 +399,26 @@ export class ApplicationService {
   }
 
   private normalizePaginatedPaymentsResponse(response: unknown): PaginatedPaymentsResponse {
+    const responseArray = Array.isArray(response) ? response : null;
     const rawResponse = this.getNestedRecord(response, 'data') ?? this.toRecord(response);
-    const resultsSource = Array.isArray(rawResponse['results'])
-      ? rawResponse['results']
-      : Array.isArray(rawResponse['data'])
-        ? rawResponse['data']
-        : [];
+    let resultsSource: unknown[] = responseArray ?? [];
+    if (!responseArray) {
+      if (Array.isArray(rawResponse['results'])) {
+        resultsSource = rawResponse['results'];
+      } else if (Array.isArray(rawResponse['data'])) {
+        resultsSource = rawResponse['data'];
+      } else if (Array.isArray(rawResponse['payments'])) {
+        resultsSource = rawResponse['payments'];
+      }
+    }
     const primaryCount = this.readNumber(rawResponse, 'count');
     const fallbackCount = this.readNumber(rawResponse, 'total');
-    const count = primaryCount > 0 ? primaryCount : fallbackCount;
+    let count = resultsSource.length;
+    if (primaryCount > 0) {
+      count = primaryCount;
+    } else if (fallbackCount > 0) {
+      count = fallbackCount;
+    }
     const next = this.readNullableString(rawResponse, 'next') ?? this.readNullableString(rawResponse, 'next_page_url');
     const previous = this.readNullableString(rawResponse, 'previous') ?? this.readNullableString(rawResponse, 'prev_page_url');
 
