@@ -1,16 +1,16 @@
 # Graph Report - StudentManagementPortalv3  (2026-09-22)
 
 ## Corpus Check
-- 173 files · ~117,081 words
+- 173 files · ~117,061 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1917 nodes · 3780 edges · 156 communities (86 shown, 70 thin omitted)
+- 1917 nodes · 3780 edges · 157 communities (84 shown, 73 thin omitted)
 - Extraction: 97% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 93 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d1d11088`
+- Built from commit: `3e964ea5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -33,7 +33,7 @@
 - TraceabilitySeeder
 - Academic History Form Template
 - ThemeService
-- .toRecord
+- ApplicationService
 - qr-code-matrix.ts
 - ApplicationSummaryComponent
 - PersonalDetailsComponent
@@ -63,7 +63,7 @@
 - PaymentReceiptService
 - personaldetailsdto.ts
 - payment-workflow.service.ts
-- @angular/common
+- StudentDashboardAnnouncement
 - JwtService
 - RegistrantDataDTO
 - registrantdatadto.ts
@@ -85,7 +85,7 @@
 - scripts
 - .prettierrc.json
 - name-format.ts
-- returning-profile.component.ts
+- new-candidate.routes.ts
 - app.config.ts
 - Legacy Applicant Dashboard Template
 - ErrorHandler
@@ -93,18 +93,18 @@
 - consmeff
 - returning-flow.service.ts
 - auth-session.store.ts
-- student-dashboard.dto.ts
+- AdmittedDashboardComponent
 - date-fns
 - Country Flag Sprite Sheet (flags_responsive.png)
 - angular.json
 - development
 - devDependencies
 - AdmittedProfileComponent
-- eslint
+- autoprefixer
 - PaymentReceiptComponent
 - returning-payment.component.ts
 - Admission Form Template
-- jasmine-core
+- returning-profile.component.ts
 - payment-receipt.service.ts
 - Sidebar Navigation Template
 - architect
@@ -118,6 +118,7 @@
 - package.json
 - Department
 - PortalShellComponent
+- @angular-eslint/eslint-plugin
 - vercel.json
 - .buildPersonalContactPayload
 - @angular/platform-browser
@@ -125,8 +126,8 @@
 - AppFloatingConfigurator
 - @angular-eslint/eslint-plugin-template
 - InactivityService
+- .normalizeAcceptanceFeeResponse
 - CountryDTO
-- AdmittedDashboardComponent
 - @angular/platform-browser-dynamic
 - @angular/router
 - QrCodeComponent
@@ -161,13 +162,13 @@
 - environment.prod.ts
 - environment.staging.ts
 - AdmittedAcceptancePaymentComponent
-- ApplicationService
+- StudentSingleResponse
 - @angular-eslint/template-parser
-- new-candidate.routes.ts
-- StatusIndicatorComponent
+- eslint
 - .normalizeStudentFeePlansResponse
+- StatusIndicatorComponent
+- @angular/common
 - eslint-config-airbnb-base
-- autoprefixer
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApplicationService` - 100 edges
@@ -196,11 +197,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (156 total, 70 thin omitted)
-
-### Community 0 - "ReturningFlowService"
-Cohesion: 0.08
-Nodes (3): StudentDashboardAnnouncement, ReturningFlowService, Injectable
+## Communities (157 total, 73 thin omitted)
 
 ### Community 1 - "LayoutService"
 Cohesion: 0.08
@@ -258,9 +255,9 @@ Nodes (25): Cascading State to Local Government Dropdown Pattern, PrimeNG Reacti
 Cohesion: 0.11
 Nodes (6): PasswordResetComponent, Component, RequestPasswordResetComponent, Component, ThemeService, Injectable
 
-### Community 18 - ".toRecord"
-Cohesion: 0.16
-Nodes (4): PaginatedPaymentsResponse, PaymentReceiptVerification, StudentDashboardResponse, StudentResultsResponse
+### Community 18 - "ApplicationService"
+Cohesion: 0.10
+Nodes (8): PaginatedPaymentsResponse, PaymentReceiptVerification, PaymentRefResponse, StudentDashboardResponse, StudentResultItem, StudentResultsResponse, ApplicationService, Injectable
 
 ### Community 19 - "qr-code-matrix.ts"
 Cohesion: 0.05
@@ -303,8 +300,8 @@ Cohesion: 0.18
 Nodes (4): AddressComponents, parseAddress(), NextOfKinComponent, Component
 
 ### Community 33 - "application.service.ts"
-Cohesion: 0.10
-Nodes (19): AcceptanceFee, AvailableCourse, AvailableCoursesResponse, CourseInfo, flattenRegisteredCoursesResponse(), RegisterCoursesPayload, RegisteredCoursesResponse, PasswordChangePayload (+11 more)
+Cohesion: 0.11
+Nodes (18): AvailableCourse, AvailableCoursesResponse, CourseInfo, flattenRegisteredCoursesResponse(), RegisterCoursesPayload, RegisteredCoursesResponse, PasswordChangePayload, StudentFeePartPaymentConfig (+10 more)
 
 ### Community 34 - "AppConfigService"
 Cohesion: 0.20
@@ -419,12 +416,8 @@ Cohesion: 0.22
 Nodes (8): bracketSameLine, overrides, printWidth, semi, singleQuote, tabWidth, trailingComma, useTabs
 
 ### Community 69 - "name-format.ts"
-Cohesion: 0.33
+Cohesion: 0.38
 Nodes (9): buildStudentDisplayName(), composeDisplayName(), formatStructuredName(), normalizeDisplayName(), normalizeNamePart(), splitDisplayName(), StructuredNameInput, StructuredNameParts (+1 more)
-
-### Community 70 - "returning-profile.component.ts"
-Cohesion: 0.18
-Nodes (5): AddressData, NextOfKinData, PersonalContactData, ProfileSectionDraft, ReturningProfileTab
 
 ### Community 71 - "app.config.ts"
 Cohesion: 0.13
@@ -444,7 +437,7 @@ Nodes (8): prefix, projectType, root, schematics, sourceRoot, consmeff, style, @
 
 ### Community 76 - "returning-flow.service.ts"
 Cohesion: 0.09
-Nodes (27): RETURNING_STUDENT_DISABILITY_LABEL, RETURNING_STUDENT_PAYMENT_LABEL, RETURNING_STUDENT_PROFILE_CONFIG, RETURNING_STUDENT_PROFILE_MESSAGE, RETURNING_STUDENT_STATUS_LABEL, StudentAddressPayload, StudentGuardianPayload, StudentResultItem (+19 more)
+Nodes (28): RETURNING_STUDENT_DISABILITY_LABEL, RETURNING_STUDENT_PAYMENT_LABEL, RETURNING_STUDENT_PROFILE_CONFIG, RETURNING_STUDENT_PROFILE_MESSAGE, RETURNING_STUDENT_STATUS_LABEL, StudentDashboardCoursesInfo, StudentDashboardFeeInfo, StudentAddressPayload (+20 more)
 
 ### Community 77 - "auth-session.store.ts"
 Cohesion: 0.21
@@ -464,7 +457,7 @@ Nodes (7): development, aot, buildTarget, namedChunks, optimization, outputHashi
 
 ### Community 83 - "devDependencies"
 Cohesion: 0.29
-Nodes (7): @angular-devkit/build-angular, @angular-eslint/eslint-plugin, devDependencies, @angular/cli, @angular-devkit/build-angular, @angular-eslint/eslint-plugin, @angular/cli
+Nodes (7): @angular-devkit/build-angular, jasmine-core, devDependencies, @angular/cli, @angular-devkit/build-angular, jasmine-core, @angular/cli
 
 ### Community 86 - "PaymentReceiptComponent"
 Cohesion: 0.25
@@ -477,6 +470,10 @@ Nodes (6): PAYMENT_TYPE_KEYWORDS, PaymentPageView, buildPaymentReceiptVerificati
 ### Community 88 - "Admission Form Template"
 Cohesion: 0.29
 Nodes (7): ActivPulse Spectra Branding Link, App Footer Template, Technical Support Message, Admission Form Template, Registration Complete Dialog, App Button Component, Icon Position Variant API
+
+### Community 89 - "returning-profile.component.ts"
+Cohesion: 0.18
+Nodes (5): AddressData, NextOfKinData, PersonalContactData, ProfileSectionDraft, ReturningProfileTab
 
 ### Community 90 - "payment-receipt.service.ts"
 Cohesion: 0.29
@@ -522,10 +519,6 @@ Nodes (3): INACTIVITY_PROVIDERS, InactivityService, Injectable
 Cohesion: 0.25
 Nodes (7): Behaviour when the value cannot be encoded, Capacity, Encoder internals, First consumer, Inputs, QrCodeComponent, Usage
 
-### Community 150 - "ApplicationService"
-Cohesion: 0.12
-Nodes (4): PaymentRefResponse, StudentSingleResponse, ApplicationService, Injectable
-
 ### Community 154 - "StatusIndicatorComponent"
 Cohesion: 0.67
 Nodes (3): StatusIndicatorComponent, Component, Input
@@ -547,7 +540,7 @@ Nodes (3): StatusIndicatorComponent, Component, Input
 ## Knowledge Gaps
 - **259 isolated node(s):** `useTabs`, `tabWidth`, `trailingComma`, `semi`, `singleQuote` (+254 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **70 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **73 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -564,5 +557,5 @@ _Questions this graph is uniquely positioned to answer:_
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
 - **What is the exact relationship between `Wide Horizontal Logo Wordmark (SVG-wrapped raster, 1358x311)` and `Institution Identity: College of Nursing Sciences, Muslim Medical Foundation`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `ApplicationService` connect `ApplicationService` to `program.component.ts`, `admissionform.component.ts`, `PaymentComponent`, `pending-payment-flow.component.ts`, `.toRecord`, `payment-receipt.component.ts`, `app.menu.ts`, `UploadFormComponent`, `.normalizeStudentFeePlansResponse`, `application.service.ts`, `payment.component.ts`, `PaymentReceiptService`, `payment-workflow.service.ts`, `RegistrantDataDTO`, `academichistory.component.ts`, `.normalizeStudentHostelOption`, `xdashboard/dashboard.component.ts`, `returning-flow.service.ts`, `PaymentReceiptComponent`, `payment-receipt.service.ts`, `CountryDTO`, `.normalizeStudentCgpaTrendResponse`?**
+- **Why does `ApplicationService` connect `ApplicationService` to `program.component.ts`, `admissionform.component.ts`, `PaymentComponent`, `pending-payment-flow.component.ts`, `StudentSingleResponse`, `payment-receipt.component.ts`, `app.menu.ts`, `.normalizeStudentFeePlansResponse`, `UploadFormComponent`, `application.service.ts`, `payment.component.ts`, `PaymentReceiptService`, `payment-workflow.service.ts`, `RegistrantDataDTO`, `academichistory.component.ts`, `.normalizeStudentHostelOption`, `xdashboard/dashboard.component.ts`, `returning-flow.service.ts`, `PaymentReceiptComponent`, `payment-receipt.service.ts`, `.normalizeAcceptanceFeeResponse`, `CountryDTO`, `.normalizeStudentCgpaTrendResponse`?**
   _High betweenness centrality (0.067) - this node is a cross-community bridge._
