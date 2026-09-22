@@ -32,6 +32,10 @@ export class ButtonComponent {
 
   readonly iconPosition = input<'left' | 'right'>('left');
 
+  readonly ariaLabel = input('');
+
+  readonly tooltip = input('');
+
   readonly forwardedClass = input('', { alias: 'class' });
 
   readonly buttonClick = output<MouseEvent>();
