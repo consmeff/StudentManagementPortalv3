@@ -1,11 +1,11 @@
 # Graph Report - StudentManagementPortalv3  (2026-09-22)
 
 ## Corpus Check
-- 173 files · ~117,061 words
+- 173 files · ~117,081 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1917 nodes · 3780 edges · 158 communities (86 shown, 72 thin omitted)
+- 1917 nodes · 3780 edges · 156 communities (86 shown, 70 thin omitted)
 - Extraction: 97% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 93 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
@@ -63,7 +63,7 @@
 - PaymentReceiptService
 - personaldetailsdto.ts
 - payment-workflow.service.ts
-- Password Reset Template
+- @angular/common
 - JwtService
 - RegistrantDataDTO
 - registrantdatadto.ts
@@ -100,7 +100,7 @@
 - development
 - devDependencies
 - AdmittedProfileComponent
-- @angular/core
+- eslint
 - PaymentReceiptComponent
 - returning-payment.component.ts
 - Admission Form Template
@@ -118,7 +118,6 @@
 - package.json
 - Department
 - PortalShellComponent
-- @angular-eslint/eslint-plugin
 - vercel.json
 - .buildPersonalContactPayload
 - @angular/platform-browser
@@ -165,7 +164,6 @@
 - ApplicationService
 - @angular-eslint/template-parser
 - new-candidate.routes.ts
-- StudentDashboardAnnouncement
 - StatusIndicatorComponent
 - .normalizeStudentFeePlansResponse
 - eslint-config-airbnb-base
@@ -198,7 +196,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (158 total, 72 thin omitted)
+## Communities (156 total, 70 thin omitted)
+
+### Community 0 - "ReturningFlowService"
+Cohesion: 0.08
+Nodes (3): StudentDashboardAnnouncement, ReturningFlowService, Injectable
 
 ### Community 1 - "LayoutService"
 Cohesion: 0.08
@@ -293,8 +295,8 @@ Cohesion: 0.15
 Nodes (9): NgModule, validationCheckDTO, Logout, Component, LOGIN_CAROUSEL_IMAGES, TraceabilityModule, AuthSessionStore, passwordStrength() (+1 more)
 
 ### Community 31 - "Admission Portal Login Template"
-Cohesion: 0.20
-Nodes (11): Personal Details Step Component, OTP Form (six-box entry), OTP Resend Countdown, Email OTP Request Form, Request Password Reset Template, Auth Split-Panel Carousel, Login Form (email + password), Admission Portal Login Template (+3 more)
+Cohesion: 0.13
+Nodes (18): Personal Details Step Component, Dual-Mode OTP Flow (verify vs reset), OTP Form (six-box entry), OTP Page Template, OTP Resend Countdown, Password Strength Checklist, Password Reset Successful Dialog, Password Reset Template (+10 more)
 
 ### Community 32 - "NextOfKinComponent"
 Cohesion: 0.18
@@ -348,10 +350,6 @@ Nodes (8): AcademicHistory, Address, AryParentOrGuardian, CertificateOfBirth, OL
 Cohesion: 0.19
 Nodes (9): StudentFeePaymentPayload, PaymentRefResponse, PaymentWorkflowHooks, PaymentWorkflowService, PaystackCallbackResponse, PaystackHandler, PaystackPopType, PaystackSetupConfig (+1 more)
 
-### Community 48 - "Password Reset Template"
-Cohesion: 0.29
-Nodes (7): Dual-Mode OTP Flow (verify vs reset), OTP Page Template, Password Strength Checklist, Password Reset Successful Dialog, Password Reset Template, New Password Reset Form, Signup Password Strength Checklist
-
 ### Community 50 - "RegistrantDataDTO"
 Cohesion: 0.24
 Nodes (4): PreRegistrationDataDTO, RegistrantDataDTO, RegStoreService, Injectable
@@ -374,7 +372,7 @@ Nodes (10): Admission Stepper Flow, Academic History Step Component, Application
 
 ### Community 55 - "dependencies"
 Cohesion: 0.18
-Nodes (11): @angular/animations, @angular/common, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/common, chartjs-adapter-date-fns (+3 more)
+Nodes (11): @angular/animations, @angular/core, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/core, chartjs-adapter-date-fns (+3 more)
 
 ### Community 56 - ".normalizeStudentHostelOption"
 Cohesion: 0.24
@@ -421,7 +419,7 @@ Cohesion: 0.22
 Nodes (8): bracketSameLine, overrides, printWidth, semi, singleQuote, tabWidth, trailingComma, useTabs
 
 ### Community 69 - "name-format.ts"
-Cohesion: 0.38
+Cohesion: 0.33
 Nodes (9): buildStudentDisplayName(), composeDisplayName(), formatStructuredName(), normalizeDisplayName(), normalizeNamePart(), splitDisplayName(), StructuredNameInput, StructuredNameParts (+1 more)
 
 ### Community 70 - "returning-profile.component.ts"
@@ -466,7 +464,7 @@ Nodes (7): development, aot, buildTarget, namedChunks, optimization, outputHashi
 
 ### Community 83 - "devDependencies"
 Cohesion: 0.29
-Nodes (7): @angular-devkit/build-angular, eslint, devDependencies, @angular/cli, @angular-devkit/build-angular, eslint, @angular/cli
+Nodes (7): @angular-devkit/build-angular, @angular-eslint/eslint-plugin, devDependencies, @angular/cli, @angular-devkit/build-angular, @angular-eslint/eslint-plugin, @angular/cli
 
 ### Community 86 - "PaymentReceiptComponent"
 Cohesion: 0.25
@@ -549,7 +547,7 @@ Nodes (3): StatusIndicatorComponent, Component, Input
 ## Knowledge Gaps
 - **259 isolated node(s):** `useTabs`, `tabWidth`, `trailingComma`, `semi`, `singleQuote` (+254 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **72 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **70 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
