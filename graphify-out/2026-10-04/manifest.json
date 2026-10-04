@@ -215,9 +215,9 @@
     "semantic_hash": "6f697e7f80702667ad144d6dd1da57fd"
   },
   "src/app/features/admitted-student/pages/admitted-courses/admitted-courses.component.ts": {
-    "mtime": 1784105497.6850781,
-    "ast_hash": "69ba7087601eb40cc83a463e910b3d9b",
-    "semantic_hash": "69ba7087601eb40cc83a463e910b3d9b"
+    "mtime": 1791143002.088245,
+    "ast_hash": "1a7ded28e4bcaea50df0d87c8516d3fb",
+    "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-dashboard/admitted-dashboard.component.ts": {
     "mtime": 1789594685.8429942,
@@ -245,9 +245,9 @@
     "semantic_hash": "e514a8104d4671ce810ed6ca972799ee"
   },
   "src/app/features/returning-student/pages/returning-courses/returning-courses.component.ts": {
-    "mtime": 1784106181.2690809,
-    "ast_hash": "32f1806b9f5fc78788504991bc8704fc",
-    "semantic_hash": "32f1806b9f5fc78788504991bc8704fc"
+    "mtime": 1791142988.5513995,
+    "ast_hash": "78866e8101eed21d2c4d327f7763b51d",
+    "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-dashboard/returning-dashboard.component.ts": {
     "mtime": 1787340568.5297258,
@@ -275,8 +275,8 @@
     "semantic_hash": "a191450ecd4a0d11d64b31a7146bd350"
   },
   "src/app/features/returning-student/returning-flow.service.ts": {
-    "mtime": 1791142597.3686244,
-    "ast_hash": "94bab6a40013477d221a8f9e391f1298",
+    "mtime": 1791142988.5504026,
+    "ast_hash": "755bfc91c53fd42f89b02580760445e3",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/returning-student.routes.ts": {
@@ -750,9 +750,9 @@
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-courses/admitted-courses.component.html": {
-    "mtime": 1784105510.974354,
-    "ast_hash": "39bfdacf36b53dd7d2e7bc3fc6e62026",
-    "semantic_hash": "39bfdacf36b53dd7d2e7bc3fc6e62026"
+    "mtime": 1791142988.5541975,
+    "ast_hash": "8e81576bce57c3da86a2713b0ba7bd9e",
+    "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-dashboard/admitted-dashboard.component.html": {
     "mtime": 1791115069.4195545,
@@ -1117,6 +1117,11 @@
   "src/app/constants/dashboard/pending-payment-flow.types.ts": {
     "mtime": 1791114453.985869,
     "ast_hash": "412c9090e7dc5ac1b8704904e451feb6",
+    "semantic_hash": ""
+  },
+  "src/app/utility/registered-courses.ts": {
+    "mtime": 1791142988.4127421,
+    "ast_hash": "8ee51f6cbc394dbfee4e52ded3bcdbe0",
     "semantic_hash": ""
   }
 }
