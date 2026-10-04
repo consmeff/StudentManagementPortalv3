@@ -755,8 +755,8 @@
     "semantic_hash": "39bfdacf36b53dd7d2e7bc3fc6e62026"
   },
   "src/app/features/admitted-student/pages/admitted-dashboard/admitted-dashboard.component.html": {
-    "mtime": 1789594695.7622974,
-    "ast_hash": "4da32df46bed8d686944db51a6381624",
+    "mtime": 1791115069.4195545,
+    "ast_hash": "d6ee51777b6859868b6a426057a43351",
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-payment/admitted-payment.component.html": {
@@ -775,8 +775,8 @@
     "semantic_hash": "bbcbce7fe8c0f40a1c3a73cc22c5b3c7"
   },
   "src/app/features/returning-student/pages/returning-courses/returning-courses.component.html": {
-    "mtime": 1791114301.7880456,
-    "ast_hash": "ad5a63cfe109e6e3166430526b15cf96",
+    "mtime": 1791115307.263834,
+    "ast_hash": "2f9bd0687ad2d01ef16fdd45ae215ee4",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-dashboard/returning-dashboard.component.html": {
