@@ -51,7 +51,7 @@ export class AdmittedPaymentComponent implements OnInit {
 
   readonly paymentValidationMessage = computed(() => this.validateAmountInput(this.amountToPay()));
 
-  readonly canSubmitPayment = computed(() => this.paymentValidationMessage() === null && !!this.flow.studentFeePlan());
+  readonly canSubmitPayment = computed(() => this.paymentValidationMessage() === null);
 
   ngOnInit(): void {
     this.flow.loadSnapshot()

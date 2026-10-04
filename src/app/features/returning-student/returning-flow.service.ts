@@ -22,6 +22,7 @@ import {
 } from '../../data/application/student-profile.dto';
 import { ApplicationService } from '../../services/application.service';
 import { UserPortalService } from '../../services/user-portal.service';
+import { isFirstSemesterRegisteredCourse, isSecondSemesterRegisteredCourse } from '../../utility/registered-courses';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatDateOnly, parseDateOnly } from '../../utility/date-only';
 import { formatStructuredName, normalizeDisplayName, splitDisplayName } from '../../utility/name-format';
@@ -421,13 +422,18 @@ export class ReturningFlowService {
     && this.registeredCourses().every((course) => course.is_approved)
   );
 
-  readonly firstSemesterRegistered = computed(() => {
-    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('first'));
-  });
+  readonly firstSemesterRegistered = computed(() =>
+    this.registeredCourses().filter((course) => isFirstSemesterRegisteredCourse(course))
+  );
 
-  readonly secondSemesterRegistered = computed(() => {
-    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('second'));
-  });
+  readonly secondSemesterRegistered = computed(() =>
+    this.registeredCourses().filter((course) => isSecondSemesterRegisteredCourse(course))
+  );
+
+  readonly slipRegisteredCourses = computed(() => [
+    ...this.firstSemesterRegistered(),
+    ...this.secondSemesterRegistered(),
+  ]);
 
   readonly totalRegisteredUnits = computed(() => 
     this.registeredCourses().reduce((sum, course) => sum + course.units, 0)
@@ -458,12 +464,13 @@ export class ReturningFlowService {
     this.studentSchoolFeeStatus()?.payment_status.number_of_payments ?? this.schoolFeeInstallments().length
   );
 
-  readonly hasPaidFirstSchoolFeeInstallment = computed(() =>
-    this.schoolFeePaymentCount() > 0
-    || this.schoolFeesPaid() > 0
-    || (this.studentDashboard()?.fee_info.total_paid ?? 0) > 0
-    || (this.studentDashboard()?.fee_info.total_due ?? 0) <= 0
-  );
+  readonly hasPaidFirstSchoolFeeInstallment = computed(() => {
+    const dashboardFeeInfo = this.studentDashboard()?.fee_info;
+    return this.schoolFeePaymentCount() > 0
+      || this.schoolFeesPaid() > 0
+      || (dashboardFeeInfo?.total_paid ?? 0) > 0
+      || (!!dashboardFeeInfo && dashboardFeeInfo.total_due <= 0);
+  });
 
   readonly canAccessCoursesModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
 
@@ -1383,6 +1390,12 @@ export class ReturningFlowService {
   }
 
   async loadRegisteredCourses(): Promise<void> {
+    await this.ensureSchoolFeeStatusLoaded();
+    if (!this.hasPaidFirstSchoolFeeInstallment()) {
+      this.registeredCourses.set([]);
+      this.courseReviewState.set('locked');
+      return;
+    }
     try {
       const response = await firstValueFrom(this.appService.getCurrentCourses());
       const flattened = flattenRegisteredCoursesResponse(response);
@@ -1392,6 +1405,13 @@ export class ReturningFlowService {
       this.registeredCourses.set([]);
       this.syncCourseReviewStateFromRegisteredCourses();
     }
+  }
+
+  private async ensureSchoolFeeStatusLoaded(): Promise<void> {
+    if (this.studentSchoolFeeStatus() || this.studentDashboard()) {
+      return;
+    }
+    await this.loadStudentFeePlan();
   }
 
   async submitCourseRegistrationFromApi(): Promise<void> {

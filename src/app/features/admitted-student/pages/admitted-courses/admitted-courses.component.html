@@ -93,7 +93,7 @@
 
           <div class="slip-footer">
             <app-button
-              *ngIf="areRegisteredCoursesApproved()"
+              *ngIf="canDownloadCourseSlip()"
               iconClass="pi pi-download"
               (buttonClick)="downloadCourseSlip()"
             >

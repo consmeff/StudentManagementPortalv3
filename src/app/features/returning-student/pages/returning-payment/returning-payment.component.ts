@@ -130,7 +130,7 @@ export class ReturningPaymentComponent implements OnInit {
 
   readonly paymentValidationMessage = computed(() => this.validateAmountInput(this.amountToPay()));
 
-  readonly canSubmitPayment = computed(() => this.paymentValidationMessage() === null && !!this.flow.studentFeePlan());
+  readonly canSubmitPayment = computed(() => this.paymentValidationMessage() === null);
 
   readonly schoolFeeCardTitle = computed(() => {
     if (!this.flow.canAddSchoolFeeInstallment()) {

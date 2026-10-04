@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { ReturningCourse, ReturningFlowService, ResitCourse } from '../../returning-flow.service';
 
+import { downloadCourseSlipFile } from '../../../../utility/registered-courses';
 @Component({
   selector: 'app-returning-courses',
   standalone: true,
@@ -21,7 +22,7 @@ export class ReturningCoursesComponent implements OnInit {
   readonly selectedResit = signal<ResitCourse | null>(null);
 
   readonly canDownloadCourseSlip = computed(() =>
-    this.flow.areRegisteredCoursesApproved()
+    this.flow.slipRegisteredCourses().length > 0 && this.flow.areRegisteredCoursesApproved()
   );
 
   readonly canSubmit = computed(() =>
@@ -81,47 +82,23 @@ export class ReturningCoursesComponent implements OnInit {
   });
 
   downloadCourseSlip(): void {
-    const lines = [
-      'Course Registration Slip',
-      `Student: ${this.flow.studentName()}`,
-      `Matric Number: ${this.flow.matricNo()}`,
-      `Session: ${this.flow.session()}`,
-      `Level: ${this.flow.level()}`,
-      ''
-    ];
-    const courses = this.flow.hasRegisteredCourses() ? this.flow.registeredCourses() : this.flow.selectedCoursesFromApi();
-    courses.forEach((course) => {
-      let code: string;
-      let title: string;
-      if ('course' in course && course.course && 'course' in (course.course as any)) {
-        // RegisteredCourse
-        code = (course.course as any).course.code;
-        title = (course.course as any).course.title;
-      } else if ('course' in course && course.course) {
-        // AvailableCourse
-        code = (course.course as any).code;
-        title = (course.course as any).title;
-      } else {
-        // Fallback
-        code = (course as any).code || 'N/A';
-        title = (course as any).title || 'N/A';
-      }
-      lines.push(`${code} - ${title} (${course.units} Units)`);
-    });
-    lines.push('');
-    const totalCount = this.flow.hasRegisteredCourses() ? this.flow.totalRegisteredCount() : this.flow.totalCoursesSelectedFromApi();
-    const totalUnits = this.flow.hasRegisteredCourses() ? this.flow.totalRegisteredUnits() : this.flow.totalUnitsSelectedFromApi();
-    lines.push(`Total Courses: ${totalCount}`);
-    lines.push(`Total Units: ${totalUnits}`);
-
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `course-slip-${this.flow.matricNo().replace(/[^\w-]/g, '-')}.txt`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    if (!this.canDownloadCourseSlip()) {
+      return;
+    }
+    downloadCourseSlipFile(
+      [
+        'Course Registration Slip',
+        `Student: ${this.flow.studentName()}`,
+        `Matric Number: ${this.flow.matricNo()}`,
+        `Session: ${this.flow.session()}`,
+        `Level: ${this.flow.level()}`,
+        '',
+      ],
+      this.flow.slipRegisteredCourses(),
+      `course-slip-${this.flow.matricNo().replace(/[^\w-]/g, '-')}.txt`
+    );
   }
+
 
   downloadResitSchedule(course: ResitCourse): void {
     const lines = [

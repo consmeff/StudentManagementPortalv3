@@ -10,6 +10,7 @@ import { UserPortalService } from '../../services/user-portal.service';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
+  selectMatchingStudentFeePlan,
 } from '../../utility/student-fees-plan';
 import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
 
@@ -44,6 +45,8 @@ export class AdmittedFlowService {
   private readonly userPortalService = inject(UserPortalService);
 
   readonly loadingSnapshot = signal(false);
+
+  readonly loadingStudentFeePlan = signal(false);
 
   readonly loadingCourses = signal(false);
 
@@ -520,6 +523,7 @@ export class AdmittedFlowService {
         await this.loadApplicantSnapshot(appNo);
       }
       await this.loadAcceptanceFee();
+      await this.loadStudentFeePlan();
       await this.loadCourses();
       await this.loadRegisteredCourses();
     } finally {
@@ -538,6 +542,11 @@ export class AdmittedFlowService {
   }
 
   async loadRegisteredCourses(): Promise<void> {
+    if (!this.hasInternalPayment()) {
+      this.registeredCourses.set([]);
+      this.registrationSubmitted.set(false);
+      return;
+    }
     try {
       const response = await firstValueFrom(this.appService.getCurrentCourses());
       const registeredCourses = flattenRegisteredCoursesResponse(response);
@@ -565,6 +574,29 @@ export class AdmittedFlowService {
     const payload = { course_ids: this.selectedCourseIds() };
     await firstValueFrom(this.appService.registerCourses(payload));
     this.registrationSubmitted.set(true);
+  }
+
+  async loadStudentFeePlan(): Promise<void> {
+    this.loadingStudentFeePlan.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getStudentSchoolFeeStatus());
+      this.studentSchoolFeeStatus.set(response);
+      this.studentFeePlan.set(response);
+    } catch {
+      await this.loadStudentFeePlanFallback();
+    } finally {
+      this.loadingStudentFeePlan.set(false);
+    }
+  }
+
+  private async loadStudentFeePlanFallback(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.appService.getStudentFeePlans());
+      const departmentId = this.registrantData()?.department?.id ?? null;
+      this.studentFeePlan.set(selectMatchingStudentFeePlan(response.data, departmentId, null));
+    } catch {
+      this.studentFeePlan.set(null);
+    }
   }
 
   async loadAcceptanceFee(): Promise<void> {
