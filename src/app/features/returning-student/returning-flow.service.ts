@@ -21,6 +21,7 @@ import {
   StudentProfileUpdatePayload
 } from '../../data/application/student-profile.dto';
 import { ApplicationService } from '../../services/application.service';
+import { UserPortalService } from '../../services/user-portal.service';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatDateOnly, parseDateOnly } from '../../utility/date-only';
 import { formatStructuredName, normalizeDisplayName, splitDisplayName } from '../../utility/name-format';
@@ -285,6 +286,8 @@ export class ReturningFlowService {
   private readonly appService = inject(ApplicationService);
 
   private readonly authSessionStore = inject(AuthSessionStore);
+
+  private readonly userPortalService = inject(UserPortalService);
 
   private studentProfileRequest: Promise<void> | null = null;
 
@@ -1080,6 +1083,9 @@ export class ReturningFlowService {
   }
 
   async loadStudentFeePlan(): Promise<void> {
+    if (!this.userPortalService.isReturningPortal()) {
+      return;
+    }
     this.loadingStudentFeePlan.set(true);
     try {
       const response = await firstValueFrom(this.appService.getStudentFeePlans());

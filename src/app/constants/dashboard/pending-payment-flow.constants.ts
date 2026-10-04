@@ -144,3 +144,16 @@ export const UI_COPY = {
   initializeApplicationError: 'Unable to initialize your application for payment. Please try again.',
   missingApplicationNoError: 'Unable to continue because application number was not returned.',
 } as const;
+
+export const SHORTLISTED_EXAM_INFO = {
+  title: 'Exam Information',
+  examType: 'CBT (Computer Based Test)',
+  pendingValue: 'To be communicated',
+  labels: {
+    examType: 'Exam Type:',
+    examNumber: 'Exam Number:',
+    date: 'Date:',
+    time: 'Time:',
+    venue: 'Venue:',
+  },
+} as const;

@@ -51,7 +51,7 @@
 
     <!-- Stepper Section -->
     <div class="stepper-wrapper">
-      <p-stepper [(value)]="activeStepIndex" [linear]="false">
+      <p-stepper [value]="activeStepIndex" (valueChange)="onActiveStepChange($event)" [linear]="false">
         
         <p-step-list>
           <p-step [value]="1" [class.is-completed-step]="isCompletedStep(1)">

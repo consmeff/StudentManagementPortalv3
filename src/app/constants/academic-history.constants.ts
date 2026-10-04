@@ -8,6 +8,8 @@ export const ACADEMIC_HISTORY_RULES = {
 
 export const ACADEMIC_HISTORY_AWAITING_RESULT_OPTION = 'Awaiting Result' as const;
 
+export const ACADEMIC_HISTORY_NO_GRADE_OPTION = '-' as const;
+
 export const ACADEMIC_HISTORY_ATTEMPT_OPTIONS = [
   '1',
   '2',

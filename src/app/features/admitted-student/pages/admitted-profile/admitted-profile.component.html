@@ -147,7 +147,7 @@
         iconClass="pi pi-check"
         (buttonClick)="submitForVerification()"
         [disabled]="flow.submittingProfileDocuments() || !flow.canSubmitProfileDocuments()"
-      >{{ flow.submittingProfileDocuments() ? 'Submitting...' : 'Submit for Verification' }}</app-button>
+      >{{ submitVerificationLabel() }}</app-button>
     </div>
   </ng-template>
 </div>

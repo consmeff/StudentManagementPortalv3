@@ -6,10 +6,10 @@ import { ApplicationService } from '../../services/application.service';
 import { RegistrantData, StudentSingleData } from '../../data/application/registrantdatadto';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatStructuredName } from '../../utility/name-format';
+import { UserPortalService } from '../../services/user-portal.service';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
-  selectMatchingStudentFeePlan,
 } from '../../utility/student-fees-plan';
 import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
 
@@ -41,9 +41,9 @@ export class AdmittedFlowService {
 
   private readonly authSessionStore = inject(AuthSessionStore);
 
-  readonly loadingSnapshot = signal(false);
+  private readonly userPortalService = inject(UserPortalService);
 
-  readonly loadingStudentFeePlan = signal(false);
+  readonly loadingSnapshot = signal(false);
 
   readonly loadingCourses = signal(false);
 
@@ -56,6 +56,8 @@ export class AdmittedFlowService {
   readonly uploadedTestimonial = signal<any>(null);
 
   readonly submittingProfileDocuments = signal(false);
+
+  readonly sessionSubmittedDocumentSignature = signal<string | null>(null);
 
   readonly registrantData = signal<RegistrantData | null>(null);
 
@@ -321,9 +323,32 @@ export class AdmittedFlowService {
     return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: this.normalizeDocumentUrl(testimonialUrl), uploaded: !!testimonialFile };
   });
 
+  private readonly currentProfileDocumentSignature = computed(() =>
+    this.buildDocumentSignature([...this.recommendationLetters(), this.testimonialDocument()].map((document) => document.fileUrl))
+  );
+
+  private readonly serverSubmittedDocumentSignature = computed(() => {
+    if (!this.hasAllSubmittedProfileDocuments()) {
+      return null;
+    }
+    const admissionDocuments = this.studentProfile()?.admission_documents;
+    return this.buildDocumentSignature([
+      admissionDocuments?.recommendation_letter_1?.file_url,
+      admissionDocuments?.recommendation_letter_2?.file_url,
+      admissionDocuments?.testimonial?.file_url,
+    ].map((fileUrl) => this.normalizeDocumentUrl(fileUrl ?? '')));
+  });
+
+  readonly areProfileDocumentsAlreadySubmitted = computed(() => {
+    const currentSignature = this.currentProfileDocumentSignature();
+    return currentSignature === this.sessionSubmittedDocumentSignature()
+      || currentSignature === this.serverSubmittedDocumentSignature();
+  });
+
   readonly canSubmitProfileDocuments = computed(() =>
     this.recommendationLetters().every((document) => document.uploaded)
     && this.testimonialDocument().uploaded
+    && !this.areProfileDocumentsAlreadySubmitted()
   );
 
   readonly hasMissingProfileDocuments = computed(() =>
@@ -331,9 +356,7 @@ export class AdmittedFlowService {
     || !this.testimonialDocument().uploaded
   );
 
-  readonly canShowSubmitProfileDocumentsButton = computed(() =>
-    !this.isAdmissionDocumentsVerified() && !this.hasAllSubmittedProfileDocuments()
-  );
+  readonly canShowSubmitProfileDocumentsButton = computed(() => !this.isAdmissionDocumentsVerified());
 
   async uploadDocument(file: File, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
     if (this.isAdmissionDocumentsVerified()) {
@@ -393,6 +416,8 @@ export class AdmittedFlowService {
         }
       };
       await firstValueFrom(this.appService.submitProfileDocuments(payload));
+      this.sessionSubmittedDocumentSignature.set(this.currentProfileDocumentSignature());
+      await this.refreshStudentProfile();
       await this.loadSnapshot();
     } finally {
       this.submittingProfileDocuments.set(false);
@@ -438,6 +463,10 @@ export class AdmittedFlowService {
       return {};
     }
     return fallback || {};
+  }
+
+  private buildDocumentSignature(fileUrls: string[]): string {
+    return fileUrls.join('|');
   }
 
   private hasAllSubmittedProfileDocuments(): boolean {
@@ -490,7 +519,7 @@ export class AdmittedFlowService {
       if (!this.authSessionStore.studentProfile() && appNo) {
         await this.loadApplicantSnapshot(appNo);
       }
-      await this.loadStudentFeePlan();
+      await this.loadAcceptanceFee();
       await this.loadCourses();
       await this.loadRegisteredCourses();
     } finally {
@@ -538,19 +567,18 @@ export class AdmittedFlowService {
     this.registrationSubmitted.set(true);
   }
 
-  async loadStudentFeePlan(): Promise<void> {
-    this.loadingStudentFeePlan.set(true);
+  async loadAcceptanceFee(): Promise<void> {
+    if (!this.userPortalService.isAdmittedPortal() || this.acceptanceFeeDetail()) {
+      return;
+    }
+    this.loadingAcceptanceFee.set(true);
     try {
-      const response = await firstValueFrom(this.appService.getStudentSchoolFeeStatus());
-      this.studentSchoolFeeStatus.set(response);
-      this.studentFeePlan.set(response);
+      const response = await firstValueFrom(this.appService.getAcceptanceFee());
+      this.acceptanceFeeDetail.set(response);
     } catch {
-      const response = await firstValueFrom(this.appService.getStudentFeePlans());
-      const departmentId = this.registrantData()?.department?.id ?? null;
-      const selectedPlan = selectMatchingStudentFeePlan(response.data, departmentId, null);
-      this.studentFeePlan.set(selectedPlan);
+      this.acceptanceFeeDetail.set(null);
     } finally {
-      this.loadingStudentFeePlan.set(false);
+      this.loadingAcceptanceFee.set(false);
     }
   }
 
@@ -684,6 +712,10 @@ export class AdmittedFlowService {
     if (this.authSessionStore.studentProfile()) {
       return;
     }
+    await this.refreshStudentProfile();
+  }
+
+  private async refreshStudentProfile(): Promise<void> {
     try {
       const response = await firstValueFrom(this.appService.studentData());
       const profile: StudentSingleData | null = response?.data ?? null;

@@ -39,6 +39,9 @@ export interface RegistrantData {
   secondary_parent_or_guardian: AryParentOrGuardian|undefined;
   approval_status:              string;
   compliance_directive?:        string | null;
+  exam_date?:                   string | null;
+  exam_time?:                   string | null;
+  exam_venue?:                  string | null;
   payment_record:               null;
   program:                      Department;
   session:                      Session;
