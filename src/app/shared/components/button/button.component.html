@@ -2,8 +2,6 @@
   [attr.type]="type()"
   [class]="buttonClass()"
   [disabled]="disabled()"
-  [attr.aria-label]="ariaLabel() || null"
-  [attr.title]="tooltip() || null"
   (click)="handleClick($event)"
 >
   @if (iconClass() && iconPosition() === 'left') {

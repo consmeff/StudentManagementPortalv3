@@ -54,19 +54,16 @@ app-data-table {
 
 .table-card {
   margin-top: 0.2rem;
-  flex: 0 0 auto;
-  min-height: 5rem;
   border: 1px solid var(--app-border);
   border-radius: 1rem;
   background: var(--app-surface);
-  overflow: auto;
+  overflow-x: auto;
 }
 
 .fees-table {
   width: 100%;
   border-collapse: collapse;
   min-width: 72rem;
-  min-height: 5rem;
 }
 
 .fees-table th,
@@ -86,10 +83,6 @@ app-data-table {
 .fees-table td {
   color: var(--app-text-primary);
   vertical-align: middle;
-}
-
-.fees-table tbody tr {
-  height: 5rem;
 }
 
 .empty-row {
@@ -173,15 +166,8 @@ app-data-table {
 
 .download-btn,
 .receipt-btn {
-  width: 2.75rem;
-  min-width: 2.75rem;
-  height: 2.75rem;
-  padding: 0;
+  min-width: fit-content;
   background: transparent !important;
-}
-
-.action-icon-button .btn-label {
-  display: none;
 }
 
 app-pagination {
