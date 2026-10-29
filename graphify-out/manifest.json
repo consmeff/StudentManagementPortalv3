@@ -75,9 +75,9 @@
     "semantic_hash": "20a50a0db2dd6a600e82503d89023caa"
   },
   "src/app/constants/payment-page.constants.ts": {
-    "mtime": 1779274162.4312825,
-    "ast_hash": "f9149077be01e1e36f68c6fe6ed07845",
-    "semantic_hash": "f9149077be01e1e36f68c6fe6ed07845"
+    "mtime": 1791144188.038656,
+    "ast_hash": "de771f2509f16ce8ff5ffc69deb5868d",
+    "semantic_hash": ""
   },
   "src/app/constants/support.constants.ts": {
     "mtime": 1780475403.0715954,
@@ -130,8 +130,8 @@
     "semantic_hash": "85a1be95123164d5097a12ee22e46373"
   },
   "src/app/data/application/registrantdatadto.ts": {
-    "mtime": 1791114455.7810664,
-    "ast_hash": "697e5c1fbd4f52fb613d5567e7db4c46",
+    "mtime": 1791144423.9206562,
+    "ast_hash": "f251e2a8e1727d69ed72b9b1749f69ca",
     "semantic_hash": ""
   },
   "src/app/data/application/student-cgpa-trend.dto.ts": {
@@ -200,8 +200,8 @@
     "semantic_hash": "e3e6df67990c185f1b5d579646000862"
   },
   "src/app/features/admitted-student/admitted-flow.service.ts": {
-    "mtime": 1791142606.9643905,
-    "ast_hash": "53c182f5b0bdd7a9746f7ddf61c8a990",
+    "mtime": 1793287092.94691,
+    "ast_hash": "5cda4fabd244e9ecc0e8f4b438bf45d9",
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/admitted-student.routes.ts": {
@@ -220,8 +220,8 @@
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-dashboard/admitted-dashboard.component.ts": {
-    "mtime": 1789594685.8429942,
-    "ast_hash": "77fc7170220989d2bf1bf0f12e08cad5",
+    "mtime": 1793287099.203132,
+    "ast_hash": "aecd7b015ff53217579eb7639eb11afe",
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-payment/admitted-payment.component.ts": {
@@ -230,8 +230,8 @@
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-profile/admitted-profile.component.ts": {
-    "mtime": 1791114095.3220203,
-    "ast_hash": "22493bb9a674e8b30791229406d082fb",
+    "mtime": 1791144439.5924098,
+    "ast_hash": "614a9cdc8faa6d709b4829037d686e6b",
     "semantic_hash": ""
   },
   "src/app/features/new-candidate/new-candidate.routes.ts": {
@@ -245,8 +245,8 @@
     "semantic_hash": "e514a8104d4671ce810ed6ca972799ee"
   },
   "src/app/features/returning-student/pages/returning-courses/returning-courses.component.ts": {
-    "mtime": 1791142988.5513995,
-    "ast_hash": "78866e8101eed21d2c4d327f7763b51d",
+    "mtime": 1791144122.399519,
+    "ast_hash": "35342ee5a5fdbfbdd725e960640a1c1a",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-dashboard/returning-dashboard.component.ts": {
@@ -275,8 +275,8 @@
     "semantic_hash": "a191450ecd4a0d11d64b31a7146bd350"
   },
   "src/app/features/returning-student/returning-flow.service.ts": {
-    "mtime": 1791142988.5504026,
-    "ast_hash": "755bfc91c53fd42f89b02580760445e3",
+    "mtime": 1791144188.2612612,
+    "ast_hash": "948dff3af2d52079d9195db7313ce10f",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/returning-student.routes.ts": {
@@ -415,8 +415,8 @@
     "semantic_hash": "2b2637fa956769e3b5bf0a147a437924"
   },
   "src/app/services/application.service.ts": {
-    "mtime": 1790109643.609531,
-    "ast_hash": "6db0eb43f49c7d40589a1cfd94b60700",
+    "mtime": 1793287092.0964684,
+    "ast_hash": "c2affa21a4dabc093d8f31e523b4069f",
     "semantic_hash": ""
   },
   "src/app/services/auth.guard.guard.ts": {
@@ -745,18 +745,18 @@
     "semantic_hash": "9f7fd7eb259089822e41fbeb609e4e29"
   },
   "src/app/features/admitted-student/pages/admitted-acceptance-payment/admitted-acceptance-payment.component.html": {
-    "mtime": 1786648038.6403694,
-    "ast_hash": "07dbd4384e2358b4f6f53b25222f4e2e",
+    "mtime": 1793287094.973073,
+    "ast_hash": "7499a3279ee0e9b269d294426d233524",
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-courses/admitted-courses.component.html": {
-    "mtime": 1791142988.5541975,
-    "ast_hash": "8e81576bce57c3da86a2713b0ba7bd9e",
+    "mtime": 1791144158.002215,
+    "ast_hash": "a2a4770fb7193a839d0272f577fc507e",
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-dashboard/admitted-dashboard.component.html": {
-    "mtime": 1791115069.4195545,
-    "ast_hash": "d6ee51777b6859868b6a426057a43351",
+    "mtime": 1793287096.6989856,
+    "ast_hash": "69641b519241171afad31d045ff9e032",
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-payment/admitted-payment.component.html": {
@@ -765,8 +765,8 @@
     "semantic_hash": ""
   },
   "src/app/features/admitted-student/pages/admitted-profile/admitted-profile.component.html": {
-    "mtime": 1791114095.3230205,
-    "ast_hash": "c292d1e3486af8f0d8416c731d1efd13",
+    "mtime": 1791144423.9246457,
+    "ast_hash": "6149ed67107810f1db0d56f5a8b34254",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-cgpa-tracker/returning-cgpa-tracker.component.html": {
@@ -775,8 +775,8 @@
     "semantic_hash": "bbcbce7fe8c0f40a1c3a73cc22c5b3c7"
   },
   "src/app/features/returning-student/pages/returning-courses/returning-courses.component.html": {
-    "mtime": 1791115307.263834,
-    "ast_hash": "2f9bd0687ad2d01ef16fdd45ae215ee4",
+    "mtime": 1791144158.0012176,
+    "ast_hash": "9d4a13d8d5cb2c2674bf729c3bd22a92",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-dashboard/returning-dashboard.component.html": {
@@ -995,8 +995,8 @@
     "semantic_hash": ""
   },
   "src/app/data/application/acceptance-fee.dto.ts": {
-    "mtime": 1786647969.0218098,
-    "ast_hash": "b56811b7e046a2446d1a58f54b2ddcac",
+    "mtime": 1793287050.2766547,
+    "ast_hash": "6d483375056b63b14f365dd311b5356c",
     "semantic_hash": ""
   },
   "src/app/utility/naira-amount.ts": {
@@ -1005,8 +1005,8 @@
     "semantic_hash": ""
   },
   "src/app/constants/returning-student.constants.ts": {
-    "mtime": 1787342935.489445,
-    "ast_hash": "edbfc90c4d39679181acfa1578e3624b",
+    "mtime": 1791144188.0376587,
+    "ast_hash": "b20b88eb72de79b65c34e2ffef491fc8",
     "semantic_hash": ""
   },
   "src/app/data/application/student-profile.dto.ts": {
@@ -1105,8 +1105,8 @@
     "semantic_hash": ""
   },
   "src/app/constants/admitted-profile.constants.ts": {
-    "mtime": 1791114095.2384717,
-    "ast_hash": "0438dfc3a1d468538a1eb7e2d8e7cd12",
+    "mtime": 1791144423.9216535,
+    "ast_hash": "9d06086226575b6791e6b83a5600e0d5",
     "semantic_hash": ""
   },
   "src/app/utility/scroll-to-top.ts": {

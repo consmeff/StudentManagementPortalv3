@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { ReturningCourse, ReturningFlowService, ResitCourse } from '../../returning-flow.service';
+import { ReturningFlowService, ResitCourse } from '../../returning-flow.service';
 
 import { downloadCourseSlipFile } from '../../../../utility/registered-courses';
+import { RETURNING_PAYMENTS_ROUTE } from '../../../../constants/returning-student.constants';
 @Component({
   selector: 'app-returning-courses',
   standalone: true,
@@ -118,7 +119,7 @@ export class ReturningCoursesComponent implements OnInit {
     URL.revokeObjectURL(url);
   }
 
-  payResitFee(course: ResitCourse): void {
-    this.flow.addDummyPayment(course.fee);
+  payResitFee(): void {
+    void this.router.navigateByUrl(RETURNING_PAYMENTS_ROUTE);
   }
 }

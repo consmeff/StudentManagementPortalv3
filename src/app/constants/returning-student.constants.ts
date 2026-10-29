@@ -15,6 +15,8 @@ export const RETURNING_STUDENT_DISABILITY_LABEL = {
 
 export const RETURNING_STUDENT_FAILED_GRADE = 'F';
 
+export const RETURNING_PAYMENTS_ROUTE = '/returning/payment';
+
 export const RETURNING_STUDENT_PAYMENT_LABEL = {
   paidInFull: 'Paid in full'
 } as const;

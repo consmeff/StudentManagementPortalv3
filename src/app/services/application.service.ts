@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { SKIP_ERROR_TOAST } from '../constants/http-context.constants';
+import { PAYMENT_PAGE_CONFIG } from '../constants/payment-page.constants';
 import { AcceptanceFee } from '../data/application/acceptance-fee.dto';
 import { CountryDTO, StatesDTO, LGADTO } from '../data/application/location.dto';
 import { PasswordChangePayload } from '../data/application/password-change.dto';
@@ -496,11 +497,18 @@ export class ApplicationService {
         rawResponse['fee'],
         rawResponse['value']
       ),
-      processing_fee: this.readFirstNumericValue(
+      service_charge: this.readFirstNumericValue(
+        rawResponse['service_charge'],
         rawResponse['processing_fee'],
         rawResponse['processing_fee_amount'],
         rawResponse['convenience_fee']
       ),
+      total_amount_payable: this.readFirstNumericValue(
+        rawResponse['total_amount_payable'],
+        rawResponse['total_amount'],
+        rawResponse['total']
+      ),
+      currency: this.readFirstDisplayValue(rawResponse['currency'], PAYMENT_PAGE_CONFIG.currencyCode),
       label: this.readFirstDisplayValue(rawResponse['label'], rawResponse['name'], rawResponse['title'])
     };
   }

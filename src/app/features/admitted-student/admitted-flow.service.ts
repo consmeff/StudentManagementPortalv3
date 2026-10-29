@@ -7,6 +7,7 @@ import { RegistrantData, StudentSingleData } from '../../data/application/regist
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatStructuredName } from '../../utility/name-format';
 import { UserPortalService } from '../../services/user-portal.service';
+import { PAYMENT_PAGE_CONFIG, SINGLE_PAYMENT_INSTALLMENT_COUNT } from '../../constants/payment-page.constants';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
@@ -30,11 +31,6 @@ export type SchoolFeePaymentRecord = {
   paidAt: Date;
 };
 
-const DEFAULT_ACCEPTANCE_FEE = 30000;
-const DEFAULT_PROCESSING_FEE = 500;
-const DEFAULT_STUDENT_FEE_TOTAL = 600000;
-const DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT = 500000;
-const DEFAULT_STUDENT_FEE_INSTALLMENTS = 3;
 
 @Injectable({ providedIn: 'root' })
 export class AdmittedFlowService {
@@ -86,23 +82,29 @@ export class AdmittedFlowService {
 
   readonly loadingAcceptanceFee = signal(false);
 
-  readonly acceptanceFee = computed(() => this.acceptanceFeeDetail()?.amount ?? DEFAULT_ACCEPTANCE_FEE);
+  readonly acceptanceFee = computed(() => this.acceptanceFeeDetail()?.amount ?? 0);
 
-  readonly processingFee = computed(() => this.acceptanceFeeDetail()?.processing_fee ?? DEFAULT_PROCESSING_FEE);
+  readonly serviceCharge = computed(() => this.acceptanceFeeDetail()?.service_charge ?? 0);
 
-  readonly totalPay = computed(() => this.acceptanceFee() + this.processingFee());
+  readonly totalPay = computed(
+    () => this.acceptanceFeeDetail()?.total_amount_payable ?? this.acceptanceFee() + this.serviceCharge()
+  );
+
+  readonly acceptanceFeeCurrency = computed(
+    () => this.acceptanceFeeDetail()?.currency ?? PAYMENT_PAGE_CONFIG.currencyCode
+  );
 
   readonly totalSchoolFees = computed(() =>
-    this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? DEFAULT_STUDENT_FEE_TOTAL
+    this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? 0
   );
 
   readonly maxInstallments = computed(() => {
     const configuredInstallments = readStudentFeeInstallmentNumbers(this.studentFeePlan());
-    return configuredInstallments.length || DEFAULT_STUDENT_FEE_INSTALLMENTS;
+    return configuredInstallments.length || SINGLE_PAYMENT_INSTALLMENT_COUNT;
   });
 
   readonly minFirstInstallment = computed(() =>
-    readStudentFeeInstallmentAmount(this.studentFeePlan(), 1) ?? DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT
+    readStudentFeeInstallmentAmount(this.studentFeePlan(), 1) ?? 0
   );
 
   readonly schoolFeePaymentCount = computed(() =>
@@ -151,7 +153,7 @@ export class AdmittedFlowService {
     || '—'
   );
 
-  readonly levelName = computed(() => this.studentProfile()?.level?.name || 'ND 1');
+  readonly levelName = computed(() => this.studentProfile()?.level?.name || '—');
 
   readonly admissionDate = computed(() => {
     const data = this.registrantData();
@@ -215,7 +217,11 @@ export class AdmittedFlowService {
   readonly isSchoolFeesFullyPaid = computed(() => this.remainingSchoolFees() <= 0);
 
   readonly schoolFeeProgressPercent = computed(() => {
-    const ratio = this.paidSchoolFees() / this.totalSchoolFees();
+    const totalSchoolFees = this.totalSchoolFees();
+    if (totalSchoolFees <= 0) {
+      return 0;
+    }
+    const ratio = this.paidSchoolFees() / totalSchoolFees;
     return Math.max(0, Math.min(100, Math.round(ratio * 100)));
   });
 
@@ -258,6 +264,12 @@ export class AdmittedFlowService {
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
   readonly isAdmissionDocumentsVerified = computed(() => !!this.studentProfile()?.admission_document_verified);
+
+  readonly isAdmissionDocumentsFlagged = computed(() =>
+    !this.isAdmissionDocumentsVerified() && !!this.studentProfile()?.admission_documents_flagged
+  );
+
+  readonly admissionComplianceDirective = computed(() => this.studentProfile()?.compliance_directive?.trim() ?? '');
 
   readonly isAllDocumentsVerified = computed(() => {
     const student = this.studentProfile() as unknown as Record<string, unknown> | null;
@@ -599,6 +611,13 @@ export class AdmittedFlowService {
     }
   }
 
+  async refreshProfileVerificationState(): Promise<void> {
+    if (!this.shouldLoadStudentSnapshot()) {
+      return;
+    }
+    await this.refreshStudentProfile();
+  }
+
   async loadAcceptanceFee(): Promise<void> {
     if (!this.userPortalService.isAdmittedPortal() || this.acceptanceFeeDetail()) {
       return;
@@ -691,7 +710,7 @@ export class AdmittedFlowService {
     return date.toLocaleDateString('en-GB');
   }
 
-  private formatCurrency(value: number): string {
+  formatCurrency(value: number): string {
     return `₦${value.toLocaleString('en-NG')}`;
   }
 

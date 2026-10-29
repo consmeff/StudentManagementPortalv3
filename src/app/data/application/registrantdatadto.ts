@@ -190,6 +190,7 @@ export type StudentSingleData = {
   program: StudentProgram | null;
   admission_documents: StudentAdmissionDocuments | null;
   admission_document_verified: boolean;
+  admission_documents_flagged?: boolean;
   dob: string | null;
   certificate_of_birth: CertificateOfBirth | null;
   o_level_result: OLevelResult[] | null;

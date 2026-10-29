@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdmittedFlowService } from '../../admitted-flow.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
@@ -20,11 +20,6 @@ export class AdmittedDashboardComponent implements OnInit {
 
   readonly receiptDownloads = inject(PaymentReceiptService);
 
-  readonly amountPaid = computed(() => {
-    const total = this.flow.totalPay();
-    return this.formatNaira(total);
-  });
-
   ngOnInit(): void {
     void this.flow.loadSnapshot();
   }
@@ -39,9 +34,5 @@ export class AdmittedDashboardComponent implements OnInit {
 
   downloadReceipt(): void {
     this.receiptDownloads.downloadReceiptsForPaymentType(PAYMENT_TYPE_KEYWORDS.acceptanceFee, { latestOnly: true });
-  }
-
-  private formatNaira(value: number): string {
-    return `₦${value.toLocaleString('en-NG')}`;
   }
 }

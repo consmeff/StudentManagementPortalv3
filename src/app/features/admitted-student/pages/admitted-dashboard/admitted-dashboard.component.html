@@ -49,7 +49,7 @@
       </div>
       <div class="detail-row">
         <span>Amount Paid:</span>
-        <strong>{{ amountPaid() }}</strong>
+        <strong>{{ flow.totalPay() | currency: flow.acceptanceFeeCurrency() : 'symbol-narrow' }}</strong>
       </div>
       <div class="detail-row">
         <span>Date & Time:</span>
@@ -60,7 +60,7 @@
 
   <div class="action-stack" *ngIf="!flow.isAcceptancePaid(); else postPaymentActions">
     <button pButton type="button" class="primary-btn" (click)="goToAcceptancePayment()">
-      Pay Acceptance Fee - ₦{{ flow.acceptanceFee().toLocaleString('en-NG') }}
+      Pay Acceptance Fee - {{ flow.acceptanceFee() | currency: flow.acceptanceFeeCurrency() : 'symbol-narrow' }}
     </button>
   </div>
 

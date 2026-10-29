@@ -42,7 +42,7 @@
           </div>
         </div>
         <div class="profile-photo">
-          <img src="https://via.placeholder.com/150" alt="Profile Photo" />
+          <img [src]="flow.studentPhotoUrl()" alt="Profile Photo" />
         </div>
       </div>
 
@@ -172,7 +172,7 @@
       </div>
 
       <div class="action-row">
-        <app-button iconClass="pi pi-credit-card" (buttonClick)="payResitFee(detail)">
+        <app-button iconClass="pi pi-credit-card" (buttonClick)="payResitFee()">
           Pay Resit Fee - {{ flow.formatCurrency(detail.fee) }}
         </app-button>
       </div>
@@ -188,8 +188,10 @@
       <div class="state-icon">🔒</div>
       <h2>Course registration is locked</h2>
       <p>
-        You need to make your first school fees payment before you can register for courses. Your minimum first
-        payment is ₦500,000.
+        You need to make your first school fees payment before you can register for courses.
+        <span *ngIf="flow.configuredMinimumFirstPayment() > 0">
+          Your minimum first payment is {{ flow.formatCurrency(flow.configuredMinimumFirstPayment()) }}.
+        </span>
       </p>
       <app-button iconClass="pi pi-credit-card" (buttonClick)="goToPayment()">Make Payment</app-button>
     </section>
@@ -243,7 +245,7 @@
               </div>
             </div>
             <div class="profile-photo">
-              <img src="https://via.placeholder.com/150" alt="Profile Photo" />
+              <img [src]="flow.studentPhotoUrl()" alt="Profile Photo" />
             </div>
           </div>
 
