@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, timer } from 'rxjs';
+import { ACCEPTANCE_PAYMENT_SYNC_CONFIG } from '../../constants/admitted-flow.constants';
 import { AcceptanceFee } from '../../data/application/acceptance-fee.dto';
 import { StudentFeePlan, StudentSchoolFeeStatus } from '../../data/application/student-fees.dto';
 import { ApplicationService } from '../../services/application.service';
@@ -540,6 +541,45 @@ export class AdmittedFlowService {
       await this.loadRegisteredCourses();
     } finally {
       this.loadingSnapshot.set(false);
+    }
+  }
+
+  async syncAcceptancePayment(returnedReference: string | null): Promise<void> {
+    const paymentReference = returnedReference ?? (this.authSessionStore.paymentRef() || null);
+    if (!paymentReference || this.isAcceptancePaid()) {
+      return;
+    }
+
+    const maxAttempts = returnedReference
+      ? ACCEPTANCE_PAYMENT_SYNC_CONFIG.maxPollingAttempts
+      : ACCEPTANCE_PAYMENT_SYNC_CONFIG.singleAttempt;
+
+    for (let attempt = 1; attempt <= maxAttempts && !this.isAcceptancePaid(); attempt++) {
+      if (attempt > 1) {
+        await firstValueFrom(timer(ACCEPTANCE_PAYMENT_SYNC_CONFIG.retryDelayMs));
+      }
+      await this.verifyPaymentReference(paymentReference);
+      await this.refreshApplicantSnapshot();
+    }
+  }
+
+  private async verifyPaymentReference(paymentReference: string): Promise<void> {
+    try {
+      await firstValueFrom(this.appService.verifyPayment({ ref_id: paymentReference }, { silent: true }));
+    } catch {
+      // Verification can fail while the gateway is still settling; the snapshot refresh decides the status.
+    }
+  }
+
+  private async refreshApplicantSnapshot(): Promise<void> {
+    const appNo = this.authSessionStore.applicationNo() || '';
+    if (!appNo) {
+      return;
+    }
+    try {
+      await this.loadApplicantSnapshot(appNo);
+    } catch {
+      // Keep the current snapshot when the refresh fails; the next attempt or page load retries.
     }
   }
 

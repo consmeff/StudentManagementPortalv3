@@ -161,8 +161,10 @@ export class ApplicationService {
     return this.http.post<any>(`${this.apiRoot}/api/v1/uploads`, fileData);
   }
 
-  verifyPayment(ref: { ref_id: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiRoot}/api/v1/callbacks/verify-payment-status`, ref);
+  verifyPayment(ref: { ref_id: string }, options: { silent: boolean } = { silent: false }): Observable<any> {
+    return this.http.post<any>(`${this.apiRoot}/api/v1/callbacks/verify-payment-status`, ref, {
+      context: new HttpContext().set(SKIP_ERROR_TOAST, options.silent)
+    });
   }
 
   getPaymentRef(refPayload: { application_no: string }): Observable<PaymentRefResponse> {

@@ -55,8 +55,8 @@ export class AdmittedAcceptancePaymentComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: title, detail: message }),
         onWarning: (title, message) =>
           this.messageService.add({ severity: 'warn', summary: title, detail: message }),
-        onVerified: () => {
-          void this.flow.loadSnapshot();
+        onVerified: (reference) => {
+          void this.flow.syncAcceptancePayment(reference ?? null);
         },
         postVerifyNavigateTo: '/admitted/dashboard'
       });
