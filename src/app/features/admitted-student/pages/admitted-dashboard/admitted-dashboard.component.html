@@ -60,7 +60,7 @@
 
   <div class="action-stack" *ngIf="!flow.isAcceptancePaid(); else postPaymentActions">
     <button pButton type="button" class="primary-btn" (click)="goToAcceptancePayment()">
-      Pay Acceptance Fee - {{ flow.acceptanceFee() | currency: flow.acceptanceFeeCurrency() : 'symbol-narrow' }}
+      Pay Acceptance Fee
     </button>
   </div>
 
