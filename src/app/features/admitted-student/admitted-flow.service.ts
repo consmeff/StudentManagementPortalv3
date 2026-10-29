@@ -112,6 +112,10 @@ export class AdmittedFlowService {
     this.studentSchoolFeeStatus()?.payment_status.number_of_payments ?? this.schoolFeePayments().length
   );
 
+  readonly isFinalInstallmentDue = computed(() =>
+    this.schoolFeePaymentCount() > 0 && this.schoolFeePaymentCount() >= this.maxInstallments() - 1
+  );
+
   readonly applicantName = computed(() => {
     const student = this.studentProfile();
     if (student) {
@@ -200,9 +204,11 @@ export class AdmittedFlowService {
 
 
   readonly profilePhotoUrl = computed(() =>
-    this.studentProfile()?.passport_photo?.file_url
-    || this.registrantData()?.passport_photo?.file_url
-    || ''
+    this.normalizeDocumentUrl(
+      this.studentProfile()?.passport_photo?.file_url
+      || this.registrantData()?.passport_photo?.file_url
+      || ''
+    )
   );
 
   readonly paidSchoolFees = computed(() =>
@@ -230,7 +236,7 @@ export class AdmittedFlowService {
     if (this.isSchoolFeesFullyPaid()) {
       return 'Payment Completed';
     }
-    if (this.remainingSchoolFees() <= 50000 && this.schoolFeePaymentCount() >= 2) {
+    if (this.isFinalInstallmentDue()) {
       return 'Final Balance';
     }
     if (this.schoolFeePaymentCount() > 0) {
@@ -534,6 +540,8 @@ export class AdmittedFlowService {
       await this.loadStudentSnapshotAfterFirstInstallment();
       if (!this.authSessionStore.studentProfile() && appNo) {
         await this.loadApplicantSnapshot(appNo);
+      } else if (!this.profilePhotoUrl()) {
+        await this.refreshApplicantSnapshot();
       }
       await this.loadAcceptanceFee();
       await this.loadStudentFeePlan();
@@ -844,7 +852,7 @@ export class AdmittedFlowService {
   }
 
   private normalizeDocumentUrl(value: string): string {
-    return value.replace(/[`\\s]+/g, '').trim();
+    return value.replace(/[`\s]+/g, '').trim();
   }
 
   private tryParseJsonValue(value: unknown): unknown {

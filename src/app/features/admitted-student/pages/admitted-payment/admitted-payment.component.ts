@@ -7,6 +7,7 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { PaymentWorkflowService } from '../../../../services/payment-workflow.service';
 import { PaymentReceiptService } from '../../../../services/payment-receipt.service';
 import { PAYMENT_TYPE_KEYWORDS } from '../../../../constants/payment-receipt.constants';
+import { INSTALLMENT_PLURAL_MAPPING, PAYMENT_PLURAL_MAPPING } from '../../../../constants/payment-page.constants';
 import { buildStudentFeePaymentPayloadForAmount } from '../../../../utility/student-fees-plan';
 import { buildPaymentReceiptVerificationPath } from '../../../../utility/payment-receipt-url';
 
@@ -30,6 +31,10 @@ export class AdmittedPaymentComponent implements OnInit {
   readonly flow = inject(AdmittedFlowService);
 
   readonly isProcessing = signal(false);
+
+  readonly installmentPluralMapping = INSTALLMENT_PLURAL_MAPPING;
+
+  readonly paymentPluralMapping = PAYMENT_PLURAL_MAPPING;
 
   readonly amountToPay = signal('');
 

@@ -7,6 +7,7 @@ import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { PaymentWorkflowService } from '../../../../services/payment-workflow.service';
 import { PaymentReceiptService } from '../../../../services/payment-receipt.service';
 import { PAYMENT_TYPE_KEYWORDS } from '../../../../constants/payment-receipt.constants';
+import { PAYMENT_PLURAL_MAPPING } from '../../../../constants/payment-page.constants';
 import { buildStudentFeePaymentPayloadForAmount } from '../../../../utility/student-fees-plan';
 import { buildPaymentReceiptVerificationPath } from '../../../../utility/payment-receipt-url';
 import { ReturningFlowService } from '../../returning-flow.service';
@@ -38,6 +39,8 @@ export class ReturningPaymentComponent implements OnInit {
   readonly flow = inject(ReturningFlowService);
 
   readonly isProcessing = signal(false);
+
+  readonly paymentPluralMapping = PAYMENT_PLURAL_MAPPING;
 
   readonly amountToPay = signal('');
 
@@ -136,7 +139,7 @@ export class ReturningPaymentComponent implements OnInit {
     if (!this.flow.canAddSchoolFeeInstallment()) {
       return 'Payment Completed';
     }
-    if (this.flow.schoolFeesRemaining() <= 50000 && this.flow.schoolFeePaymentCount() >= 2) {
+    if (this.flow.isFinalSchoolFeeInstallmentDue()) {
       return 'Final Balance';
     }
     if (this.flow.schoolFeePaymentCount() > 0) {

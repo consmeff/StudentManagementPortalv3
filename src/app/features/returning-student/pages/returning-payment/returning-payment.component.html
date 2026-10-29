@@ -282,7 +282,7 @@
             inputmode="numeric"
           />
         </div>
-        <small class="hint">Maximum of 3 payments allowed across the full academic session</small>
+        <small class="hint">Maximum of {{ flow.configuredMaxInstallments() | i18nPlural: paymentPluralMapping }} allowed across the full academic session</small>
         <small class="hint" *ngIf="flow.studentFeePlan()">Minimum amount: {{ minimumAmountHint() }}</small>
         <small class="hint" *ngIf="flow.studentFeePlan()">Maximum amount: {{ maximumAmountHint() }}</small>
         <small class="hint" *ngIf="schoolFeePaymentHistory().length === 0">
