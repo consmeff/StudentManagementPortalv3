@@ -3,7 +3,12 @@
     <section class="locked-state">
       <div class="state-icon">🔒</div>
       <h2>Course registration is locked</h2>
-      <p>You need to make your first school fees payment before you can register for courses. Your minimum first payment is ₦500,000.</p>
+      <p>
+        You need to make your first school fees payment before you can register for courses.
+        <span *ngIf="flow.minFirstInstallment() > 0">
+          Your minimum first payment is {{ flow.formatCurrency(flow.minFirstInstallment()) }}.
+        </span>
+      </p>
       <app-button iconClass="pi pi-credit-card" (buttonClick)="goToPayment()">Make Payment</app-button>
     </section>
   </ng-container>
@@ -93,7 +98,7 @@
 
           <div class="slip-footer">
             <app-button
-              *ngIf="areRegisteredCoursesApproved()"
+              *ngIf="canDownloadCourseSlip()"
               iconClass="pi pi-download"
               (buttonClick)="downloadCourseSlip()"
             >

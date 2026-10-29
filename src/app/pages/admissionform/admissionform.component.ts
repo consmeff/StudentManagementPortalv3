@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -26,6 +26,7 @@ import { TraceabilityModule } from '../../shared/traceability.module';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { normalizeApplicationStatusKey } from '../../constants/application-status.utils';
 import { formatDateOnly } from '../../utility/date-only';
+import { scrollToPageTop } from '../../utility/scroll-to-top';
 import { PersonalDetailsComponent } from '../../widgets/admission/forms/personaldetails/personaldetails.component';
 import { NextOfKinComponent } from '../../widgets/admission/forms/nextofkin/nextofkin.component';
 import { AcademicHistoryComponent } from "../../widgets/admission/forms/academichistory/academichistory.component";
@@ -96,6 +97,8 @@ export class AdmissionFormComponent implements OnInit {
   messageService = inject(MessageService);
 
   authSessionStore = inject(AuthSessionStore);
+
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
   formStepStatus: formstepDTO = {
     academicValid: false,
@@ -251,7 +254,15 @@ export class AdmissionFormComponent implements OnInit {
     if (!this.canNavigateToStep(step)) {
       return;
     }
+    this.onActiveStepChange(step);
+  }
+
+  onActiveStepChange(step: number | undefined): void {
+    if (step === undefined || step === this.activeStepIndex) {
+      return;
+    }
     this.activeStepIndex = step;
+    scrollToPageTop(this.elementRef.nativeElement);
   }
 
   canNavigateToStep(step: number): boolean {

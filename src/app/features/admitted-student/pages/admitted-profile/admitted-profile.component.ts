@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdmittedFlowService } from '../../admitted-flow.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { StatusIndicatorComponent } from '../../../../shared/components/status-indicator/status-indicator.component';
+import { FLAGGED_ADMISSION_DOCUMENTS_COPY, SUBMIT_VERIFICATION_LABELS } from '../../../../constants/admitted-profile.constants';
 
 @Component({
   selector: 'app-admitted-profile',
@@ -18,8 +19,24 @@ export class AdmittedProfileComponent implements OnInit {
 
   readonly flow = inject(AdmittedFlowService);
 
+  readonly flaggedDocumentsCopy = FLAGGED_ADMISSION_DOCUMENTS_COPY;
+
+  readonly submitVerificationLabel = computed(() => {
+    if (this.flow.submittingProfileDocuments()) {
+      return SUBMIT_VERIFICATION_LABELS.submitting;
+    }
+    const hasSubmittedThisVisit = this.flow.sessionSubmittedDocumentSignature() !== null;
+    if (this.flow.isAdmissionDocumentsFlagged() && !hasSubmittedThisVisit) {
+      return SUBMIT_VERIFICATION_LABELS.resubmit;
+    }
+    if (this.flow.areProfileDocumentsAlreadySubmitted()) {
+      return SUBMIT_VERIFICATION_LABELS.submitted;
+    }
+    return SUBMIT_VERIFICATION_LABELS.idle;
+  });
+
   ngOnInit(): void {
-    void this.flow.loadSnapshot();
+    void this.flow.loadSnapshot().then(() => this.flow.refreshProfileVerificationState());
   }
 
   goToPayment(): void {

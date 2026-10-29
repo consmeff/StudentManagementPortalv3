@@ -18,12 +18,6 @@ export class UserPortalService {
         .toLowerCase()
         .trim();
 
-    console.log('Portal resolution:', {
-      userType,
-      matricNo: this.authSessionStore.matriculationNo(),
-      applicationNo: this.authSessionStore.applicationNo()
-    });
-
     if (ADMITTED_USER_TYPES.includes(userType)) {
       return 'admitted';
     }
@@ -45,6 +39,10 @@ export class UserPortalService {
 
   isAdmittedPortal(): boolean {
     return this.portalSegment() === 'admitted';
+  }
+
+  isReturningPortal(): boolean {
+    return this.portalSegment() === 'returning';
   }
 
   hasPendingAcceptanceFee(): boolean {

@@ -42,7 +42,7 @@
           </div>
         </div>
         <div class="profile-photo">
-          <img src="https://via.placeholder.com/150" alt="Profile Photo" />
+          <img [src]="flow.studentPhotoUrl()" alt="Profile Photo" />
         </div>
       </div>
 
@@ -112,7 +112,7 @@
         </app-button>
       </div>
       <div class="action-row secondary">
-        <app-button variant="neutral" iconClass="pi pi-file" (buttonClick)="openResitList()">Course Resit</app-button>
+        <!-- <app-button variant="neutral" iconClass="pi pi-file" (buttonClick)="openResitList()">Course Resit</app-button> -->
         <app-button variant="outline" iconClass="pi pi-arrow-left" (buttonClick)="backToRegistration()">Back</app-button>
       </div>
     </section>
@@ -172,7 +172,7 @@
       </div>
 
       <div class="action-row">
-        <app-button iconClass="pi pi-credit-card" (buttonClick)="payResitFee(detail)">
+        <app-button iconClass="pi pi-credit-card" (buttonClick)="payResitFee()">
           Pay Resit Fee - {{ flow.formatCurrency(detail.fee) }}
         </app-button>
       </div>
@@ -188,8 +188,10 @@
       <div class="state-icon">🔒</div>
       <h2>Course registration is locked</h2>
       <p>
-        You need to make your first school fees payment before you can register for courses. Your minimum first
-        payment is ₦500,000.
+        You need to make your first school fees payment before you can register for courses.
+        <span *ngIf="flow.configuredMinimumFirstPayment() > 0">
+          Your minimum first payment is {{ flow.formatCurrency(flow.configuredMinimumFirstPayment()) }}.
+        </span>
       </p>
       <app-button iconClass="pi pi-credit-card" (buttonClick)="goToPayment()">Make Payment</app-button>
     </section>
@@ -243,7 +245,7 @@
               </div>
             </div>
             <div class="profile-photo">
-              <img src="https://via.placeholder.com/150" alt="Profile Photo" />
+              <img [src]="flow.studentPhotoUrl()" alt="Profile Photo" />
             </div>
           </div>
 
@@ -294,9 +296,9 @@
               Download Course Slip
             </app-button>
           </div>
-          <div class="action-row secondary">
+          <!-- <div class="action-row secondary">
             <app-button variant="neutral" iconClass="pi pi-file" (buttonClick)="openResitList()">Course Resit</app-button>
-          </div>
+          </div> -->
         </section>
       </ng-container>
 
@@ -323,7 +325,7 @@
             <div class="meta">
               <strong>{{ course.course.code }}</strong>
               <span>{{ course.course.title }}</span>
-              <span *ngIf="course.is_elective" style="color: var(--app-primary); font-size: 0.8rem; font-style: italic;">(Elective)</span>
+              <span *ngIf="course.is_elective" class="elective-tag">(Elective)</span>
             </div>
             <div class="units">{{ course.units }}<span>Units</span></div>
           </label>

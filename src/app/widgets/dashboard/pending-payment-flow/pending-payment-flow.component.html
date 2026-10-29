@@ -40,6 +40,15 @@
                 </div>
             </div>
         </section>
+        <section class="details-section" *ngIf="shortlistedExamDetails().length">
+            <h3 class="title-small">{{ examInfoTitle }}</h3>
+            <div class="details-card">
+                <div class="details-row" *ngFor="let row of shortlistedExamDetails()">
+                    <span class="body-small">{{ row.label }}</span>
+                    <strong class="title-small">{{ row.value }}</strong>
+                </div>
+            </div>
+        </section>
         <div class="summary-action">
             <app-button type="button" variant="primary" class="continue-btn summary-btn" (buttonClick)="isComplianceIssued() ? editApplicationDetails() : viewApplicationSummary()">
                 {{ isComplianceIssued() ? actionLabels.editApplicationDetails : actionLabels.viewApplicationSummary }}

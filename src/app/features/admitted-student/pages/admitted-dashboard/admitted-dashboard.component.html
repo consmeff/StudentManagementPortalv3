@@ -5,7 +5,7 @@
   <section class="hero-card">
     <div class="hero-icon">{{ flow.isAcceptancePaid() ? "✓" : "📄" }}</div>
     <div class="hero-copy">
-      <h2>{{ flow.isAcceptancePaid() ? "Your place is secured" : "Congratulations - you've been offered admission" }}</h2>
+      <h2>{{ flow.isAcceptancePaid() ? "Offer Accepted" : "Congratulations - you've been offered admission" }}</h2>
       <p *ngIf="!flow.isAcceptancePaid()">
         We're thrilled to inform you that you've officially been offered a provisional admission into
         the {{ flow.programName() }} program for {{ flow.academicSession() }} academic session.
@@ -49,7 +49,7 @@
       </div>
       <div class="detail-row">
         <span>Amount Paid:</span>
-        <strong>{{ amountPaid() }}</strong>
+        <strong>{{ flow.totalPay() | currency: flow.acceptanceFeeCurrency() : 'symbol-narrow' }}</strong>
       </div>
       <div class="detail-row">
         <span>Date & Time:</span>
@@ -60,7 +60,7 @@
 
   <div class="action-stack" *ngIf="!flow.isAcceptancePaid(); else postPaymentActions">
     <button pButton type="button" class="primary-btn" (click)="goToAcceptancePayment()">
-      Pay Acceptance Fee - ₦{{ flow.acceptanceFee().toLocaleString('en-NG') }}
+      Pay Acceptance Fee - {{ flow.acceptanceFee() | currency: flow.acceptanceFeeCurrency() : 'symbol-narrow' }}
     </button>
   </div>
 
@@ -76,7 +76,7 @@
         Pay School Fee
       </button>
       <button pButton type="button" class="secondary-btn" (click)="downloadReceipt()" [disabled]="receiptDownloads.activeDownloadKey() !== null">
-        Download Receipt
+        Download Acceptance Fee Receipt
       </button>
     </div>
   </ng-template>

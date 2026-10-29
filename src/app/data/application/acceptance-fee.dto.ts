@@ -1,5 +1,7 @@
 export type AcceptanceFee = {
   amount: number | null;
-  processing_fee: number | null;
+  service_charge: number | null;
+  total_amount_payable: number | null;
+  currency: string;
   label: string;
 };

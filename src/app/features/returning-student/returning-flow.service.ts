@@ -15,12 +15,15 @@ import {
   RETURNING_STUDENT_PROFILE_MESSAGE,
   RETURNING_STUDENT_STATUS_LABEL
 } from '../../constants/returning-student.constants';
+import { SINGLE_PAYMENT_INSTALLMENT_COUNT } from '../../constants/payment-page.constants';
 import {
   StudentAddressPayload,
   StudentGuardianPayload,
   StudentProfileUpdatePayload
 } from '../../data/application/student-profile.dto';
 import { ApplicationService } from '../../services/application.service';
+import { UserPortalService } from '../../services/user-portal.service';
+import { isFirstSemesterRegisteredCourse, isSecondSemesterRegisteredCourse } from '../../utility/registered-courses';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatDateOnly, parseDateOnly } from '../../utility/date-only';
 import { formatStructuredName, normalizeDisplayName, splitDisplayName } from '../../utility/name-format';
@@ -30,15 +33,6 @@ import {
   selectStudentFeePlan,
 } from '../../utility/student-fees-plan';
 import { AvailableCourse, RegisteredCourse, flattenRegisteredCoursesResponse } from '../../data/application/courseregistration.dto';
-
-export type ReturningCourse = {
-  code: string;
-  title: string;
-  units: number;
-  category: 'carryover' | 'level';
-  locked?: boolean;
-  selectedByDefault?: boolean;
-};
 
 export type ReturningPaymentRecord = {
   feeId: string;
@@ -286,6 +280,8 @@ export class ReturningFlowService {
 
   private readonly authSessionStore = inject(AuthSessionStore);
 
+  private readonly userPortalService = inject(UserPortalService);
+
   private studentProfileRequest: Promise<void> | null = null;
 
   readonly studentName = signal('');
@@ -304,10 +300,10 @@ export class ReturningFlowService {
 
   readonly activeProfileTab = signal<ReturningProfileTab>('overview');
 
-  readonly hostelApplicationStatus = signal<HostelApplicationStatus>('allocated');
+  readonly hostelApplicationStatus = signal<HostelApplicationStatus>('request');
 
   readonly hostelApplicationDraft = signal<HostelApplicationPayload>({
-    academicSession: '2025/2026',
+    academicSession: '',
     preferredHostel: '',
     preferredBlock: '',
     specialNeeds: '',
@@ -340,12 +336,6 @@ export class ReturningFlowService {
   readonly semestersCompleted = signal(0);
 
   readonly semestersTotal = signal(0);
-
-  readonly totalSchoolFees = 600000;
-
-  readonly minimumFirstPayment = 500000;
-
-  readonly maxInstallments = 3;
 
   readonly paymentHistory = signal<ReturningPaymentRecord[]>([]);
 
@@ -418,13 +408,18 @@ export class ReturningFlowService {
     && this.registeredCourses().every((course) => course.is_approved)
   );
 
-  readonly firstSemesterRegistered = computed(() => {
-    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('first'));
-  });
+  readonly firstSemesterRegistered = computed(() =>
+    this.registeredCourses().filter((course) => isFirstSemesterRegisteredCourse(course))
+  );
 
-  readonly secondSemesterRegistered = computed(() => {
-    return this.registeredCourses().filter(c => c.semester.toLowerCase().includes('second'));
-  });
+  readonly secondSemesterRegistered = computed(() =>
+    this.registeredCourses().filter((course) => isSecondSemesterRegisteredCourse(course))
+  );
+
+  readonly slipRegisteredCourses = computed(() => [
+    ...this.firstSemesterRegistered(),
+    ...this.secondSemesterRegistered(),
+  ]);
 
   readonly totalRegisteredUnits = computed(() => 
     this.registeredCourses().reduce((sum, course) => sum + course.units, 0)
@@ -439,28 +434,29 @@ export class ReturningFlowService {
   );
 
   readonly configuredTotalSchoolFees = computed(() =>
-    this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? this.totalSchoolFees
+    this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? 0
   );
 
   readonly configuredMaxInstallments = computed(() => {
     const configuredInstallments = readStudentFeeInstallmentNumbers(this.studentFeePlan());
-    return configuredInstallments.length || this.maxInstallments;
+    return configuredInstallments.length || SINGLE_PAYMENT_INSTALLMENT_COUNT;
   });
 
   readonly configuredMinimumFirstPayment = computed(() =>
-    readStudentFeeInstallmentAmount(this.studentFeePlan(), 1) ?? this.minimumFirstPayment
+    readStudentFeeInstallmentAmount(this.studentFeePlan(), 1) ?? 0
   );
 
   readonly schoolFeePaymentCount = computed(() =>
     this.studentSchoolFeeStatus()?.payment_status.number_of_payments ?? this.schoolFeeInstallments().length
   );
 
-  readonly hasPaidFirstSchoolFeeInstallment = computed(() =>
-    this.schoolFeePaymentCount() > 0
-    || this.schoolFeesPaid() > 0
-    || (this.studentDashboard()?.fee_info.total_paid ?? 0) > 0
-    || (this.studentDashboard()?.fee_info.total_due ?? 0) <= 0
-  );
+  readonly hasPaidFirstSchoolFeeInstallment = computed(() => {
+    const dashboardFeeInfo = this.studentDashboard()?.fee_info;
+    return this.schoolFeePaymentCount() > 0
+      || this.schoolFeesPaid() > 0
+      || (dashboardFeeInfo?.total_paid ?? 0) > 0
+      || (!!dashboardFeeInfo && dashboardFeeInfo.total_due <= 0);
+  });
 
   readonly canAccessCoursesModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
 
@@ -557,68 +553,13 @@ export class ReturningFlowService {
 
   readonly courseReviewState = signal<CourseReviewState>('locked');
 
-  readonly coursePool = signal<ReturningCourse[]>([
-    { code: 'NUR 101', title: 'Introduction to Nursing', units: 3, category: 'carryover', selectedByDefault: true },
-    { code: 'NUR 111', title: 'Nursing Practices in Nigeria', units: 2, category: 'carryover', selectedByDefault: true },
-    { code: 'NUR 211', title: 'Human Anatomy III', units: 3, category: 'level', selectedByDefault: true },
-    { code: 'NUR 212', title: 'Human Anatomy III', units: 3, category: 'level', selectedByDefault: true },
-    { code: 'NUR 213', title: 'Human Anatomy III', units: 3, category: 'level' },
-    { code: 'NUR 214', title: 'Human Anatomy III', units: 3, category: 'level' },
-    { code: 'NUR 215', title: 'Human Anatomy III', units: 3, category: 'level' },
-    { code: 'NUR 216', title: 'Human Anatomy III', units: 3, category: 'level' },
-    { code: 'NUR 217', title: 'Human Anatomy III', units: 3, category: 'level', locked: true },
-    { code: 'NUR 218', title: 'Human Anatomy III', units: 3, category: 'level' },
-    { code: 'NUR 219', title: 'Human Anatomy III', units: 3, category: 'level' }
-  ]);
+  readonly resitCourses = signal<ResitCourse[]>([]);
 
-  readonly resitCourses = signal<ResitCourse[]>([
-    {
-      code: 'NUR 111',
-      title: 'Human Anatomy I',
-      units: 3,
-      score: 36,
-      registered: true,
-      test: 13,
-      exam: 23,
-      total: 36,
-      countdown: { days: 9, hours: 13, mins: 16, secs: 10 },
-      examDate: '20 May 2026',
-      examTime: '9:00 AM',
-      duration: '3 hours',
-      venue: 'Hall 6, Block F',
-      fee: 5000
-    },
-    {
-      code: 'NUR 113',
-      title: 'Human Anatomy I',
-      units: 3,
-      score: 36,
-      test: 13,
-      exam: 23,
-      total: 36,
-      countdown: { days: 9, hours: 13, mins: 16, secs: 10 },
-      examDate: '20 May 2026',
-      examTime: '9:00 AM',
-      duration: '3 hours',
-      venue: 'Hall 6, Block F',
-      fee: 5000
-    }
-  ]);
+  readonly semesterResultRows = signal<SemesterResultRow[]>([]);
 
-  readonly semesterResultRows = signal<SemesterResultRow[]>([
-    { code: 'NUR 211', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
-    { code: 'NUR 212', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
-    { code: 'NUR 213', title: 'Human Anatomy III', units: 3, ca: 20, exam: 15, total: 35, grade: 'F' },
-    { code: 'NUR 214', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
-    { code: 'NUR 215', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
-    { code: 'NUR 216', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
-    { code: 'NUR 217', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' },
-    { code: 'NUR 218', title: 'Human Anatomy III', units: 3, ca: 20, exam: 55, total: 75, grade: 'A' }
-  ]);
+  readonly resultSemesterOptions = signal<string[]>([]);
 
-  readonly resultSemesterOptions = signal(['OND 1 First Semester', 'HND 1 First Semester', 'OND 2 First Semester']);
-
-  readonly hostelSessionOptions = signal(['2025/2026']);
+  readonly hostelSessionOptions = signal<string[]>([]);
 
   readonly cgpaThresholds = signal<CgpaThreshold[]>([
     { scoreRange: '70 - 100', letterGrade: 'A', gradePoint: '5', cgpaRange: '4.50 - 5.00', classOfDegree: 'First Class' },
@@ -629,55 +570,7 @@ export class ReturningFlowService {
     { scoreRange: '0 - 39', letterGrade: 'F', gradePoint: '0', cgpaRange: '0.00 - 0.99', classOfDegree: 'Fail' }
   ]);
 
-  readonly semesterGpaPoints = signal([
-    { label: '1st Semester\nOND 1', value: 3.78, active: true },
-    { label: '2nd Semester\nOND 1', value: 3.56, active: true },
-    { label: '1st Semester\nOND 2', value: null, active: false },
-    { label: '2nd Semester\nOND 2', value: null, active: false }
-  ]);
-
-  readonly selectedCourseCodes = signal<string[]>(
-    this.coursePool()
-      .filter((course) => course.selectedByDefault)
-      .map((course) => course.code)
-  );
-
-  readonly paidAmount = computed(() =>
-    this.schoolFeeInstallments().reduce((sum, entry) => sum + entry.amount, 0)
-  );
-
-  readonly outstandingAmount = computed(() => Math.max(0, this.totalSchoolFees - this.paidAmount()));
-
-  readonly outstandingInstallmentLabel = computed(() => {
-    const installmentNo = this.paymentHistory().length + 1;
-    return `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`;
-  });
-
   readonly hasInternalPayment = computed(() => this.hasPaidFirstSchoolFeeInstallment());
-
-  readonly paymentProgressPercent = computed(() =>
-    Math.max(0, Math.min(100, Math.round((this.paidAmount() / this.totalSchoolFees) * 100)))
-  );
-
-  readonly selectedCourses = computed(() =>
-    this.coursePool().filter((course) => this.selectedCourseCodes().includes(course.code))
-  );
-
-  readonly totalUnitsSelected = computed(() =>
-    this.selectedCourses().reduce((sum, course) => sum + course.units, 0)
-  );
-
-  readonly totalCoursesSelected = computed(() => this.selectedCourses().length);
-
-  readonly carryoverCourses = computed(() =>
-    this.coursePool().filter((course) => course.category === 'carryover')
-  );
-
-  readonly levelCourses = computed(() =>
-    this.coursePool().filter((course) => course.category === 'level')
-  );
-
-  readonly hasFailedCourse = computed(() => this.carryoverCourses().length > 0);
 
   readonly schoolFeesPaid = computed(() =>
     this.studentSchoolFeeStatus()?.payment_status.total_paid
@@ -689,9 +582,13 @@ export class ReturningFlowService {
     ?? Math.max(0, this.configuredTotalSchoolFees() - this.schoolFeesPaid())
   );
 
-  readonly schoolFeesProgressPercent = computed(() =>
-    Math.max(0, Math.min(100, Math.round((this.schoolFeesPaid() / this.configuredTotalSchoolFees()) * 100)))
-  );
+  readonly schoolFeesProgressPercent = computed(() => {
+    const totalSchoolFees = this.configuredTotalSchoolFees();
+    if (totalSchoolFees <= 0) {
+      return 0;
+    }
+    return Math.max(0, Math.min(100, Math.round((this.schoolFeesPaid() / totalSchoolFees) * 100)));
+  });
 
   readonly canAddSchoolFeeInstallment = computed(() =>
     this.resolveNextSchoolFeeAmount() > 0
@@ -761,7 +658,7 @@ export class ReturningFlowService {
   readonly cgpaTrackerTrendPoints = computed<SemesterGpaPoint[]>(() => {
     const trend = this.studentCgpaTrend()?.trend;
     if (!trend || trend.length === 0) {
-      return this.semesterGpaPoints();
+      return [];
     }
     return trend.map((item) => ({
       label: `${item.semester}\n${item.session}`,
@@ -813,55 +710,6 @@ export class ReturningFlowService {
   });
 
   readonly nextOfKinResidence = signal<AddressData>(buildEmptyAddress());
-
-  toggleCourseSelection(course: ReturningCourse, checked: boolean): void {
-    if (course.locked || course.category === 'carryover') {
-      return;
-    }
-    const current = this.selectedCourseCodes();
-    if (checked && !current.includes(course.code)) {
-      this.selectedCourseCodes.set([...current, course.code]);
-      return;
-    }
-    if (!checked && current.includes(course.code)) {
-      this.selectedCourseCodes.set(current.filter((code) => code !== course.code));
-    }
-  }
-
-  isSelected(code: string): boolean {
-    return this.selectedCourseCodes().includes(code);
-  }
-
-  addDummyPayment(amount: number): { ok: boolean; message: string } {
-    const normalizedAmount = Math.floor(amount || 0);
-    if (normalizedAmount <= 0) {
-      return { ok: false, message: 'Enter a valid payment amount.' };
-    }
-    if (!this.hasInternalPayment() && normalizedAmount < this.minimumFirstPayment) {
-      return { ok: false, message: `Minimum first payment is ${this.formatCurrency(this.minimumFirstPayment)}.` };
-    }
-    if (normalizedAmount > this.outstandingAmount()) {
-      return { ok: false, message: `Amount cannot exceed ${this.formatCurrency(this.outstandingAmount())}.` };
-    }
-    if (this.paymentHistory().length >= this.maxInstallments) {
-      return { ok: false, message: 'Maximum installment count reached.' };
-    }
-
-    const installmentNo = this.paymentHistory().length + 1;
-    const paidAt = new Date();
-    const entry: ReturningPaymentRecord = {
-      feeId: 'school-fees',
-      paymentType: 'School Fees',
-      installmentLabel: `${installmentNo}${this.ordinalSuffix(installmentNo)} Installment`,
-      amount: normalizedAmount,
-      paidAt,
-      referenceNo: `RET-${paidAt.getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`
-    };
-    this.paymentHistory.set([...this.paymentHistory(), entry]);
-    this.markFeeAsPaidByPriority();
-    this.syncCourseReviewStateFromRegisteredCourses();
-    return { ok: true, message: 'Payment recorded successfully.' };
-  }
 
   payFee(feeId: string): { ok: boolean; message: string } {
     const target = this.fees().find((fee) => fee.id === feeId);
@@ -1080,6 +928,9 @@ export class ReturningFlowService {
   }
 
   async loadStudentFeePlan(): Promise<void> {
+    if (!this.userPortalService.isReturningPortal()) {
+      return;
+    }
     this.loadingStudentFeePlan.set(true);
     try {
       const response = await firstValueFrom(this.appService.getStudentFeePlans());
@@ -1377,6 +1228,12 @@ export class ReturningFlowService {
   }
 
   async loadRegisteredCourses(): Promise<void> {
+    await this.ensureSchoolFeeStatusLoaded();
+    if (!this.hasPaidFirstSchoolFeeInstallment()) {
+      this.registeredCourses.set([]);
+      this.courseReviewState.set('locked');
+      return;
+    }
     try {
       const response = await firstValueFrom(this.appService.getCurrentCourses());
       const flattened = flattenRegisteredCoursesResponse(response);
@@ -1386,6 +1243,13 @@ export class ReturningFlowService {
       this.registeredCourses.set([]);
       this.syncCourseReviewStateFromRegisteredCourses();
     }
+  }
+
+  private async ensureSchoolFeeStatusLoaded(): Promise<void> {
+    if (this.studentSchoolFeeStatus() || this.studentDashboard()) {
+      return;
+    }
+    await this.loadStudentFeePlan();
   }
 
   async submitCourseRegistrationFromApi(): Promise<void> {
@@ -1408,13 +1272,6 @@ export class ReturningFlowService {
 
   isCourseSelectedFromApi(courseId: number): boolean {
     return this.selectedCourseIds().includes(courseId);
-  }
-
-  suggestedAmount(): number {
-    if (!this.hasInternalPayment()) {
-      return Math.min(this.minimumFirstPayment, this.outstandingAmount());
-    }
-    return this.outstandingAmount();
   }
 
   suggestedSchoolFeeAmount(): number {

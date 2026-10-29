@@ -1,16 +1,16 @@
-# Graph Report - StudentManagementPortalv3  (2026-09-22)
+# Graph Report - StudentManagementPortalv3  (2026-10-29)
 
 ## Corpus Check
-- 173 files · ~117,061 words
+- 177 files · ~116,769 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1917 nodes · 3780 edges · 157 communities (84 shown, 73 thin omitted)
+- 1935 nodes · 3829 edges · 151 communities (81 shown, 70 thin omitted)
 - Extraction: 97% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 93 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3e964ea5`
+- Built from commit: `c71e5f5a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -29,22 +29,22 @@
 - pending-payment-flow.component.ts
 - dashboard.service.ts
 - Returning Dashboard Template
-- returning-student.routes.ts
+- application-status.constants.ts
 - TraceabilitySeeder
 - Academic History Form Template
 - ThemeService
-- ApplicationService
+- .toRecord
 - qr-code-matrix.ts
 - ApplicationSummaryComponent
 - PersonalDetailsComponent
 - TraceabilitySeeder
 - payment-receipt.component.ts
-- app.menu.ts
+- UserPortalService
 - OtpPageComponent
 - AuthService
 - UploadFormComponent
 - AppSidebar
-- AuthSessionStore
+- sign-up.component.ts
 - AdmittedPaymentComponent
 - Admission Portal Login Template
 - NextOfKinComponent
@@ -53,17 +53,17 @@
 - SignUpComponent
 - options
 - Project Knowledge Graph (graphify-out/)
-- payment.component.ts
+- payment-format.ts
 - application-guideline.data.ts
 - ReturningCoursesComponent
-- ConsmeffLoginComponent
+- app.config.ts
 - exceljs
 - ReturningProfileComponent
 - NavigationAccessService
 - PaymentReceiptService
 - personaldetailsdto.ts
 - payment-workflow.service.ts
-- StudentDashboardAnnouncement
+- RegistrantData
 - JwtService
 - RegistrantDataDTO
 - registrantdatadto.ts
@@ -73,20 +73,20 @@
 - dependencies
 - .normalizeStudentHostelOption
 - App Data Table Component
-- AdmittedCoursesComponent
+- registered-courses.ts
 - TopbarComponent
-- LoadingService
-- button.component.ts
-- xdashboard/dashboard.component.ts
-- .loadStudentDashboard
+- application/payment.data.ts
+- returning-student.routes.ts
+- payment.component.ts
+- Registration Form (regForm)
 - Payment History Template
 - CONSMMEF Institutional Seal (favicon-sized crest)
 - production
 - scripts
 - .prettierrc.json
 - name-format.ts
-- new-candidate.routes.ts
-- app.config.ts
+- SidebarComponent
+- app.routes.ts
 - Legacy Applicant Dashboard Template
 - ErrorHandler
 - staging
@@ -99,17 +99,17 @@
 - angular.json
 - development
 - devDependencies
-- AdmittedProfileComponent
+- admitted-profile.component.ts
 - autoprefixer
 - PaymentReceiptComponent
 - returning-payment.component.ts
-- Admission Form Template
-- returning-profile.component.ts
+- Payment Row Template
+- PreRegistrationDataDTO
 - payment-receipt.service.ts
 - Sidebar Navigation Template
 - architect
 - @angular/forms
-- app.layout.ts
+- AppTopbar
 - @angular/compiler-cli
 - FilterSelectComponent
 - DesignerService
@@ -120,24 +120,23 @@
 - PortalShellComponent
 - @angular-eslint/eslint-plugin
 - vercel.json
-- .buildPersonalContactPayload
+- StudentResultsResponse
 - @angular/platform-browser
 - chart.js
-- AppFloatingConfigurator
+- student-dashboard.dto.ts
 - @angular-eslint/eslint-plugin-template
-- InactivityService
-- .normalizeAcceptanceFeeResponse
-- CountryDTO
+- @angular/core
+- ApplicationService
+- StatesDTO
 - @angular/platform-browser-dynamic
 - @angular/router
 - QrCodeComponent
-- ReturningDashboardComponent
+- jasmine-core
 - @angular/compiler
 - eslint-config-airbnb-typescript
 - eslint-config-prettier
 - eslint-import-resolver-typescript
 - eslint-plugin-import
-- .applyStudentProfileSnapshot
 - .normalizeStudentCgpaTrendResponse
 - jwt-decode
 - karma
@@ -162,20 +161,16 @@
 - environment.prod.ts
 - environment.staging.ts
 - AdmittedAcceptancePaymentComponent
-- StudentSingleResponse
 - @angular-eslint/template-parser
-- eslint
 - .normalizeStudentFeePlansResponse
-- StatusIndicatorComponent
-- @angular/common
 - eslint-config-airbnb-base
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApplicationService` - 100 edges
-2. `ReturningFlowService` - 70 edges
-3. `AdmissionFormComponent` - 52 edges
-4. `AcademicHistoryComponent` - 47 edges
-5. `AdmittedFlowService` - 45 edges
+2. `ReturningFlowService` - 67 edges
+3. `AdmissionFormComponent` - 53 edges
+4. `AdmittedFlowService` - 50 edges
+5. `AcademicHistoryComponent` - 48 edges
 6. `PendingPaymentFlowComponent` - 44 edges
 7. `ReturningPaymentComponent` - 37 edges
 8. `ApplicationSummaryComponent` - 33 edges
@@ -187,21 +182,25 @@
   src/app/shared/components/status-indicator/status-indicator.component.ts → src/app/pages/payment/payment.component.html
 - `Admission Stepper Flow` --semantically_similar_to--> `Application Progress Widget`  [INFERRED] [semantically similar]
   src/app/pages/admissionform/admissionform.component.html → src/app/pages/xdashboard/dashboard.component.html
+- `StatusTone` --implements--> `App Status Indicator Component`  [EXTRACTED]
+  src/app/shared/components/status-indicator/status-indicator.component.ts → src/app/shared/components/status-indicator/status-indicator.component.html
 - `MIT License (Sakai template)` --references--> `Sakai19 Angular Project`  [INFERRED]
   LICENSE.md → README.md
-- `Edit Lock Policy` --conceptually_related_to--> `App Status Indicator Component`  [AMBIGUOUS]
-  src/app/pages/admissionform/admissionform.component.html → src/app/shared/components/status-indicator/status-indicator.component.html
 - `Dashboard Template` --semantically_similar_to--> `Legacy Applicant Dashboard Template`  [INFERRED] [semantically similar]
   src/app/pages/dashboard/dashboard.component.html → src/app/pages/xdashboard/dashboard.component.html
 
 ## Import Cycles
 - None detected.
 
-## Communities (157 total, 73 thin omitted)
+## Communities (151 total, 70 thin omitted)
+
+### Community 0 - "ReturningFlowService"
+Cohesion: 0.06
+Nodes (3): StudentDashboardAnnouncement, ReturningFlowService, Injectable
 
 ### Community 1 - "LayoutService"
-Cohesion: 0.08
-Nodes (14): HostBinding, AppConfigurator, KeyOfType, presets, SurfacesType, Component, AppMenuitem, Component (+6 more)
+Cohesion: 0.06
+Nodes (20): HostBinding, AppConfigurator, KeyOfType, presets, SurfacesType, Component, AppFloatingConfigurator, Component (+12 more)
 
 ### Community 2 - "DataTableComponent"
 Cohesion: 0.22
@@ -212,24 +211,20 @@ Cohesion: 0.06
 Nodes (15): AppInitResponse, AppInitResponseDTO, Convert, DepartmentsDTO, Faculty, Level, OpenApplicationDTO, Program (+7 more)
 
 ### Community 4 - "AcademicHistoryComponent"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (3): OLevelResult, AcademicHistoryComponent, Component
 
 ### Community 5 - "AdmittedFlowService"
-Cohesion: 0.09
+Cohesion: 0.08
 Nodes (3): AdmittedFlowService, Injectable, readStudentFeeInstallmentAmount()
 
 ### Community 6 - "admissionform.component.ts"
-Cohesion: 0.15
-Nodes (18): formstepDTO, Countries, LGA, States, StatesDTO, CertificateOfBirth, LGA, TNextOfKinDTO (+10 more)
-
-### Community 9 - "AdmissionFormComponent"
-Cohesion: 0.10
-Nodes (3): RegistrantData, AdmissionFormComponent, Component
+Cohesion: 0.14
+Nodes (18): formstepDTO, Countries, CountryDTO, LGA, States, CertificateOfBirth, LGA, TNextOfKinDTO (+10 more)
 
 ### Community 11 - "pending-payment-flow.component.ts"
-Cohesion: 0.10
-Nodes (29): APPLICATION_STATUS_DEFINITIONS, APPLICATION_STATUS_DESCRIPTIONS, APPLICATION_STATUS_LABELS, APPLICATION_STATUS_OPTIONS, APPLICATION_STATUS_ORDER, APPLICATION_STATUS_TONES, ApplicationStatusDefinition, ApplicationStatusKey (+21 more)
+Cohesion: 0.15
+Nodes (18): ApplicationStatusKey, ApplicationStatusTone, ACTION_LABELS, APPROVAL_STATUS_MESSAGES, DashboardApprovalMessage, HERO_CONTENT, POST_PAYMENT_APPROVAL_STATUSES, ROUTES (+10 more)
 
 ### Community 12 - "dashboard.service.ts"
 Cohesion: 0.10
@@ -239,9 +234,9 @@ Nodes (19): HierarchyInfo, HierarchyLevel, HierarchySummary, HierarchyTreeNode, 
 Cohesion: 0.10
 Nodes (30): Acceptance Fee Invoice Generation, Admitted Acceptance Payment Template, Admitted Course Registration Slip, Payment-Gated Course Registration, Admitted Courses Template, Acceptance-Paid Dashboard State Switch, Admitted Dashboard Template, Three-Installment School Fee Policy (+22 more)
 
-### Community 14 - "returning-student.routes.ts"
-Cohesion: 0.24
-Nodes (4): ReturningCgpaTrackerComponent, Component, ReturningResultsComponent, Component
+### Community 14 - "application-status.constants.ts"
+Cohesion: 0.12
+Nodes (12): APPLICATION_STATUS_DEFINITIONS, APPLICATION_STATUS_DESCRIPTIONS, APPLICATION_STATUS_LABELS, APPLICATION_STATUS_OPTIONS, APPLICATION_STATUS_ORDER, APPLICATION_STATUS_TONES, ApplicationStatusDefinition, ApplicationStatusOption (+4 more)
 
 ### Community 15 - "TraceabilitySeeder"
 Cohesion: 0.14
@@ -252,56 +247,56 @@ Cohesion: 0.12
 Nodes (25): Cascading State to Local Government Dropdown Pattern, PrimeNG Reactive Form Control Convention, Awaiting Result Conditional Exam Grades Branch, Exam Attempt Count FormArray (Sittings), JAMB Details Sub-Form, Optional Other Qualifications FormArray, School Completion Age Validation, Academic History Form Template (+17 more)
 
 ### Community 17 - "ThemeService"
-Cohesion: 0.11
-Nodes (6): PasswordResetComponent, Component, RequestPasswordResetComponent, Component, ThemeService, Injectable
-
-### Community 18 - "ApplicationService"
 Cohesion: 0.10
-Nodes (8): PaginatedPaymentsResponse, PaymentReceiptVerification, PaymentRefResponse, StudentDashboardResponse, StudentResultItem, StudentResultsResponse, ApplicationService, Injectable
+Nodes (8): Logout, Component, RequestPasswordResetComponent, Component, LOGIN_CAROUSEL_IMAGES, ThemeService, Injectable, resolveSafeReturnUrl()
 
 ### Community 19 - "qr-code-matrix.ts"
 Cohesion: 0.05
 Nodes (73): QR_ALIGNMENT_PATTERN_CENTERS, QR_CODE_CONFIG, QR_CODE_DEFAULTS, QR_ERROR_CORRECTION_INDICATORS, QR_FORMAT_INFORMATION, QR_GALOIS_FIELD, QR_MASK_PENALTY, QR_PAD_CODEWORDS (+65 more)
+
+### Community 20 - "ApplicationSummaryComponent"
+Cohesion: 0.17
+Nodes (3): TPersonalDetailDTO, ApplicationSummaryComponent, Component
 
 ### Community 22 - "TraceabilitySeeder"
 Cohesion: 0.16
 Nodes (6): TraceabilityEvent, crypto, fs, main(), path, TraceabilitySeeder
 
 ### Community 23 - "payment-receipt.component.ts"
-Cohesion: 0.18
-Nodes (12): PAYMENT_RECEIPT_CONFIG, PAYMENT_RECEIPT_FIELD_LABELS, PAYMENT_RECEIPT_MESSAGES, PAYMENT_RECEIPT_NOTICES, PAYMENT_RECEIPT_RESULT, PAYMENT_RECEIPT_STATE, PaymentReceiptField, PaymentReceiptNotice (+4 more)
+Cohesion: 0.24
+Nodes (9): PAYMENT_RECEIPT_CONFIG, PAYMENT_RECEIPT_FIELD_LABELS, PAYMENT_RECEIPT_MESSAGES, PAYMENT_RECEIPT_NOTICES, PAYMENT_RECEIPT_RESULT, PAYMENT_RECEIPT_STATE, PaymentReceiptNotice, PaymentReceiptResult (+1 more)
 
-### Community 24 - "app.menu.ts"
-Cohesion: 0.15
-Nodes (12): SidebarMenuItem, featureAccessGuard(), ProtectedPageFeature, ALL_ROLES, RoleId, UserToken, ADMITTED_USER_TYPES, NEW_CANDIDATE_USER_TYPES (+4 more)
+### Community 24 - "UserPortalService"
+Cohesion: 0.11
+Nodes (14): SidebarMenuItem, Dashboard, Component, featureAccessGuard(), ProtectedPageFeature, ALL_ROLES, RoleId, UserToken (+6 more)
 
 ### Community 25 - "OtpPageComponent"
-Cohesion: 0.15
+Cohesion: 0.17
 Nodes (3): OtpPageComponent, Component, ViewChildren
 
 ### Community 26 - "AuthService"
 Cohesion: 0.10
-Nodes (10): LoginResponse, ProfileFailResponse, ProfilePayload, ProfileSuccessResponse, AuthEmailPayload, AuthOtpPayload, AuthOtpTokenResponse, AuthService (+2 more)
+Nodes (5): LoginResponse, PasswordResetComponent, Component, AuthService, Injectable
 
 ### Community 28 - "AppSidebar"
 Cohesion: 0.17
 Nodes (3): HostListener, AppSidebar, Component
 
-### Community 29 - "AuthSessionStore"
-Cohesion: 0.15
-Nodes (9): NgModule, validationCheckDTO, Logout, Component, LOGIN_CAROUSEL_IMAGES, TraceabilityModule, AuthSessionStore, passwordStrength() (+1 more)
+### Community 29 - "sign-up.component.ts"
+Cohesion: 0.19
+Nodes (9): ProfileFailResponse, ProfilePayload, ProfileSuccessResponse, validationCheckDTO, AuthEmailPayload, AuthOtpPayload, AuthOtpTokenResponse, RefreshTokenResponse (+1 more)
 
 ### Community 31 - "Admission Portal Login Template"
-Cohesion: 0.13
-Nodes (18): Personal Details Step Component, Dual-Mode OTP Flow (verify vs reset), OTP Form (six-box entry), OTP Page Template, OTP Resend Countdown, Password Strength Checklist, Password Reset Successful Dialog, Password Reset Template (+10 more)
+Cohesion: 0.20
+Nodes (11): Dual-Mode OTP Flow (verify vs reset), OTP Form (six-box entry), OTP Page Template, OTP Resend Countdown, Password Reset Successful Dialog, Password Reset Template, Email OTP Request Form, Request Password Reset Template (+3 more)
 
 ### Community 32 - "NextOfKinComponent"
 Cohesion: 0.18
 Nodes (4): AddressComponents, parseAddress(), NextOfKinComponent, Component
 
 ### Community 33 - "application.service.ts"
-Cohesion: 0.11
-Nodes (18): AvailableCourse, AvailableCoursesResponse, CourseInfo, flattenRegisteredCoursesResponse(), RegisterCoursesPayload, RegisteredCoursesResponse, PasswordChangePayload, StudentFeePartPaymentConfig (+10 more)
+Cohesion: 0.10
+Nodes (20): PAYMENT_PAGE_CONFIG, AcceptanceFee, AvailableCourse, AvailableCoursesResponse, CourseInfo, flattenRegisteredCoursesResponse(), RegisterCoursesPayload, RegisteredCoursesResponse (+12 more)
 
 ### Community 34 - "AppConfigService"
 Cohesion: 0.20
@@ -315,25 +310,25 @@ Nodes (15): options, assets, browser, index, inlineStyleLanguage, outputPath, po
 Cohesion: 0.20
 Nodes (15): AST-Only Update (No API Cost), Community Structure, Cross-File Relationships, God Nodes, graphify-out/graph.json, graphify-out/GRAPH_REPORT.md, graphify, graphify explain (+7 more)
 
-### Community 38 - "payment.component.ts"
-Cohesion: 0.13
-Nodes (17): PAYMENT_PAGE_CONFIG, PAYMENT_RECEIPT_KEYS, PAYMENT_STATUS_CLASS, PAYMENT_TABLE_COLUMNS, TPaymentQueryState, SearchInputComponent, Component, FAILED_STATUS_KEYWORDS (+9 more)
+### Community 38 - "payment-format.ts"
+Cohesion: 0.15
+Nodes (12): PAYMENT_RECEIPT_KEYS, PAYMENT_STATUS_CLASS, PAYMENT_TABLE_COLUMNS, PaymentReceiptField, displayPaymentValue(), FAILED_STATUS_KEYWORDS, formatPaymentCurrency(), formatPaymentDate() (+4 more)
 
 ### Community 39 - "application-guideline.data.ts"
 Cohesion: 0.12
 Nodes (17): ApplicationFeeAmounts, ApplicationGuidelineContent, buildApplicationFeeHeading(), buildApplicationGuidelineContent(), DEFAULT_APPLICATION_FEE_AMOUNTS, GuidelineSection, convertBelowThousandToWords(), convertWholeNumberToWords() (+9 more)
 
 ### Community 40 - "ReturningCoursesComponent"
-Cohesion: 0.14
-Nodes (4): ReturningCoursesComponent, Component, ResitCourse, ReturningCourse
+Cohesion: 0.15
+Nodes (3): ReturningCoursesComponent, Component, ResitCourse
 
-### Community 41 - "ConsmeffLoginComponent"
-Cohesion: 0.13
-Nodes (11): SKIP_ERROR_TOAST, ConsmeffLoginComponent, PENDING_VERIFICATION_STATUSES, Component, buildErrorSummary(), collectMessages(), collectMessagesRecursively(), errorInterceptor() (+3 more)
+### Community 41 - "app.config.ts"
+Cohesion: 0.05
+Nodes (24): AppComponent, Component, appConfig, SKIP_ERROR_TOAST, GlobalLoadingComponent, Component, ConsmeffLoginComponent, PENDING_VERIFICATION_STATUSES (+16 more)
 
 ### Community 43 - "ReturningProfileComponent"
-Cohesion: 0.30
-Nodes (3): ReturningProfileComponent, Component, EditableProfileSection
+Cohesion: 0.15
+Nodes (8): ReturningProfileComponent, Component, AddressData, EditableProfileSection, NextOfKinData, PersonalContactData, ProfileSectionDraft, ReturningProfileTab
 
 ### Community 44 - "NavigationAccessService"
 Cohesion: 0.13
@@ -348,52 +343,56 @@ Cohesion: 0.19
 Nodes (9): StudentFeePaymentPayload, PaymentRefResponse, PaymentWorkflowHooks, PaymentWorkflowService, PaystackCallbackResponse, PaystackHandler, PaystackPopType, PaystackSetupConfig (+1 more)
 
 ### Community 50 - "RegistrantDataDTO"
-Cohesion: 0.24
-Nodes (4): PreRegistrationDataDTO, RegistrantDataDTO, RegStoreService, Injectable
+Cohesion: 0.31
+Nodes (3): RegistrantDataDTO, RegStoreService, Injectable
 
 ### Community 51 - "registrantdatadto.ts"
 Cohesion: 0.14
 Nodes (13): Address, AryParentOrGuardian, Country, Department, Session, State, StudentAdmissionDocuments, StudentDepartment (+5 more)
 
 ### Community 52 - "academichistory.component.ts"
-Cohesion: 0.18
-Nodes (12): ACADEMIC_HISTORY_ATTEMPT_OPTIONS, ACADEMIC_HISTORY_AWAITING_RESULT_OPTION, ACADEMIC_HISTORY_RULES, AcademicHistory, ExamRecord, TAcademicHistory, formatDateOnly(), padDatePart() (+4 more)
+Cohesion: 0.17
+Nodes (13): ACADEMIC_HISTORY_ATTEMPT_OPTIONS, ACADEMIC_HISTORY_AWAITING_RESULT_OPTION, ACADEMIC_HISTORY_NO_GRADE_OPTION, ACADEMIC_HISTORY_RULES, AcademicHistory, ExamRecord, TAcademicHistory, formatDateOnly() (+5 more)
 
 ### Community 53 - "PaginationComponent"
 Cohesion: 0.17
 Nodes (4): PAGINATION_CONFIG, PaginationComponent, Component, PaginationItem
 
 ### Community 54 - "Admission Stepper Flow"
-Cohesion: 0.22
-Nodes (10): Admission Stepper Flow, Academic History Step Component, Application Summary Step Component, Next of Kin Step Component, Document Upload Step Component, Compliance Directive Notice, Form Step Status Gating, Edit Lock Policy (+2 more)
+Cohesion: 0.20
+Nodes (11): Admission Stepper Flow, Academic History Step Component, Application Summary Step Component, Next of Kin Step Component, Document Upload Step Component, Compliance Directive Notice, Form Step Status Gating, Edit Lock Policy (+3 more)
 
 ### Community 55 - "dependencies"
 Cohesion: 0.18
-Nodes (11): @angular/animations, @angular/core, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/core, chartjs-adapter-date-fns (+3 more)
+Nodes (11): @angular/animations, @angular/common, chartjs-adapter-date-fns, @ngrx/signals, dependencies, @angular/animations, @angular/common, chartjs-adapter-date-fns (+3 more)
 
 ### Community 56 - ".normalizeStudentHostelOption"
-Cohesion: 0.24
-Nodes (4): StudentHostelAllocation, StudentHostelListResponse, StudentHostelOption, StudentHostelRoomOption
+Cohesion: 0.33
+Nodes (3): StudentHostelListResponse, StudentHostelOption, StudentHostelRoomOption
 
 ### Community 57 - "App Data Table Component"
-Cohesion: 0.29
-Nodes (7): Payment Row Template, Payment Table Columns, Receipt Download Action, App Data Table Component, Row Template Projection, Sortable Column Headers, Loading and Empty State Messaging
+Cohesion: 0.40
+Nodes (5): Payment Table Columns, App Data Table Component, Row Template Projection, Sortable Column Headers, Loading and Empty State Messaging
 
-### Community 58 - "AdmittedCoursesComponent"
-Cohesion: 0.23
-Nodes (3): RegisteredCourse, AdmittedCoursesComponent, Component
-
-### Community 60 - "LoadingService"
-Cohesion: 0.19
-Nodes (5): GlobalLoadingComponent, Component, LoadingInterceptor(), LoadingService, Injectable
-
-### Community 61 - "button.component.ts"
+### Community 58 - "registered-courses.ts"
 Cohesion: 0.14
-Nodes (6): ReturningHostelComponent, Component, ButtonComponent, ButtonType, ButtonVariant, Component
+Nodes (11): RegisteredCourse, AdmittedCoursesComponent, Component, downloadCourseSlipFile(), FIRST_SEMESTER_MARKERS, formatRegisteredCourseLine(), isFirstSemesterRegisteredCourse(), isSecondSemesterRegisteredCourse() (+3 more)
 
-### Community 62 - "xdashboard/dashboard.component.ts"
-Cohesion: 0.19
-Nodes (6): sidebarStateDTO, Injectable, WidgetsService, SidebarComponent, SidebarMenuItem, Component
+### Community 60 - "application/payment.data.ts"
+Cohesion: 0.25
+Nodes (4): PaginatedPaymentsResponse, PaymentHistoryItem, PaymentRefResponse, PaymentStatus
+
+### Community 61 - "returning-student.routes.ts"
+Cohesion: 0.08
+Nodes (12): ReturningCgpaTrackerComponent, Component, ReturningDashboardComponent, Component, ReturningHostelComponent, Component, ReturningResultsComponent, Component (+4 more)
+
+### Community 62 - "payment.component.ts"
+Cohesion: 0.20
+Nodes (10): NgModule, sidebarStateDTO, TPaymentQueryState, SearchInputComponent, Component, TraceabilityModule, AuthSessionStore, Injectable (+2 more)
+
+### Community 63 - "Registration Form (regForm)"
+Cohesion: 0.29
+Nodes (7): Personal Details Step Component, Password Strength Checklist, New Password Reset Form, Applicant Identity Fields, Registration Form (regForm), Signup Password Strength Checklist, New Account Registration Template
 
 ### Community 64 - "Payment History Template"
 Cohesion: 0.29
@@ -416,12 +415,12 @@ Cohesion: 0.22
 Nodes (8): bracketSameLine, overrides, printWidth, semi, singleQuote, tabWidth, trailingComma, useTabs
 
 ### Community 69 - "name-format.ts"
-Cohesion: 0.38
-Nodes (9): buildStudentDisplayName(), composeDisplayName(), formatStructuredName(), normalizeDisplayName(), normalizeNamePart(), splitDisplayName(), StructuredNameInput, StructuredNameParts (+1 more)
+Cohesion: 0.18
+Nodes (14): StudentSingleData, buildEmptyAddress(), mapGuardianAddress(), mapStudentAddress(), readAddressHouseNumber(), buildStudentDisplayName(), composeDisplayName(), formatStructuredName() (+6 more)
 
-### Community 71 - "app.config.ts"
-Cohesion: 0.13
-Nodes (12): AppComponent, Component, appConfig, PortalEntryStubComponent, Component, appRoutes, authGuard(), jwtInterceptor() (+4 more)
+### Community 71 - "app.routes.ts"
+Cohesion: 0.15
+Nodes (12): PortalEntryStubComponent, Component, AppFooter, Component, AppLayout, Component, authGuard(), portalEntryGuard() (+4 more)
 
 ### Community 72 - "Legacy Applicant Dashboard Template"
 Cohesion: 0.33
@@ -436,8 +435,8 @@ Cohesion: 0.25
 Nodes (8): prefix, projectType, root, schematics, sourceRoot, consmeff, style, @schematics/angular:component
 
 ### Community 76 - "returning-flow.service.ts"
-Cohesion: 0.09
-Nodes (28): RETURNING_STUDENT_DISABILITY_LABEL, RETURNING_STUDENT_PAYMENT_LABEL, RETURNING_STUDENT_PROFILE_CONFIG, RETURNING_STUDENT_PROFILE_MESSAGE, RETURNING_STUDENT_STATUS_LABEL, StudentDashboardCoursesInfo, StudentDashboardFeeInfo, StudentAddressPayload (+20 more)
+Cohesion: 0.11
+Nodes (25): RETURNING_STUDENT_DISABILITY_LABEL, RETURNING_STUDENT_PAYMENT_LABEL, RETURNING_STUDENT_PROFILE_CONFIG, RETURNING_STUDENT_PROFILE_MESSAGE, RETURNING_STUDENT_STATUS_LABEL, StudentAddressPayload, StudentGuardianPayload, StudentProfileUpdatePayload (+17 more)
 
 ### Community 77 - "auth-session.store.ts"
 Cohesion: 0.21
@@ -457,27 +456,27 @@ Nodes (7): development, aot, buildTarget, namedChunks, optimization, outputHashi
 
 ### Community 83 - "devDependencies"
 Cohesion: 0.29
-Nodes (7): @angular-devkit/build-angular, jasmine-core, devDependencies, @angular/cli, @angular-devkit/build-angular, jasmine-core, @angular/cli
+Nodes (7): @angular-devkit/build-angular, eslint, devDependencies, @angular/cli, @angular-devkit/build-angular, eslint, @angular/cli
+
+### Community 84 - "admitted-profile.component.ts"
+Cohesion: 0.16
+Nodes (7): FLAGGED_ADMISSION_DOCUMENTS_COPY, SUBMIT_VERIFICATION_LABELS, AdmittedProfileComponent, Component, StatusIndicatorComponent, Component, Input
 
 ### Community 86 - "PaymentReceiptComponent"
 Cohesion: 0.25
 Nodes (3): Inject, PaymentReceiptComponent, Component
 
 ### Community 87 - "returning-payment.component.ts"
-Cohesion: 0.27
+Cohesion: 0.24
 Nodes (6): PAYMENT_TYPE_KEYWORDS, PaymentPageView, buildPaymentReceiptVerificationPath(), buildStudentFeePaymentPayload(), buildStudentFeePaymentPayloadForAmount(), readStudentFeeInstallmentNumbers()
 
-### Community 88 - "Admission Form Template"
-Cohesion: 0.29
-Nodes (7): ActivPulse Spectra Branding Link, App Footer Template, Technical Support Message, Admission Form Template, Registration Complete Dialog, App Button Component, Icon Position Variant API
-
-### Community 89 - "returning-profile.component.ts"
-Cohesion: 0.18
-Nodes (5): AddressData, NextOfKinData, PersonalContactData, ProfileSectionDraft, ReturningProfileTab
+### Community 88 - "Payment Row Template"
+Cohesion: 0.22
+Nodes (9): ActivPulse Spectra Branding Link, App Footer Template, Technical Support Message, Admission Form Template, Registration Complete Dialog, Payment Row Template, Receipt Download Action, App Button Component (+1 more)
 
 ### Community 90 - "payment-receipt.service.ts"
-Cohesion: 0.29
-Nodes (6): PAYMENT_RECEIPT_DOWNLOAD, PaymentHistoryItem, PaymentStatus, downloadBlob(), downloadBlobResponse(), resolveFileNameFromResponse()
+Cohesion: 0.27
+Nodes (7): PAYMENT_RECEIPT_DOWNLOAD, downloadBlob(), downloadBlobResponse(), resolveFileNameFromResponse(), isSuccessfulPaymentStatus(), matchesAnyKeyword(), resolvePaymentStatusClass()
 
 ### Community 91 - "Sidebar Navigation Template"
 Cohesion: 0.40
@@ -486,10 +485,6 @@ Nodes (6): Sidebar Navigation Template, Dark Mode Theme Toggle, Topbar Sidebar T
 ### Community 92 - "architect"
 Cohesion: 0.40
 Nodes (5): extract-i18n, test, architect, builder, builder
-
-### Community 94 - "app.layout.ts"
-Cohesion: 0.18
-Nodes (6): AppFooter, Component, AppLayout, Component, AppTopbar, Component
 
 ### Community 96 - "FilterSelectComponent"
 Cohesion: 0.40
@@ -507,21 +502,13 @@ Nodes (3): name, private, version
 Cohesion: 0.47
 Nodes (3): Datum, Department, programSelectionOption
 
-### Community 108 - "AppFloatingConfigurator"
-Cohesion: 0.22
-Nodes (6): AppFloatingConfigurator, Component, Access, Component, Error, Component
-
-### Community 110 - "InactivityService"
-Cohesion: 0.31
-Nodes (3): INACTIVITY_PROVIDERS, InactivityService, Injectable
+### Community 111 - "ApplicationService"
+Cohesion: 0.14
+Nodes (4): StudentSingleResponse, StudentHostelAllocation, ApplicationService, Injectable
 
 ### Community 115 - "QrCodeComponent"
 Cohesion: 0.25
 Nodes (7): Behaviour when the value cannot be encoded, Capacity, Encoder internals, First consumer, Inputs, QrCodeComponent, Usage
-
-### Community 154 - "StatusIndicatorComponent"
-Cohesion: 0.67
-Nodes (3): StatusIndicatorComponent, Component, Input
 
 ## Ambiguous Edges - Review These
 - `Edit Lock Policy` → `App Status Indicator Component`  [AMBIGUOUS]
@@ -538,9 +525,9 @@ Nodes (3): StatusIndicatorComponent, Component, Input
   src/assets/images/logo.svg · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **259 isolated node(s):** `useTabs`, `tabWidth`, `trailingComma`, `semi`, `singleQuote` (+254 more)
+- **262 isolated node(s):** `useTabs`, `tabWidth`, `trailingComma`, `semi`, `singleQuote` (+257 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **73 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **70 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -557,5 +544,5 @@ _Questions this graph is uniquely positioned to answer:_
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
 - **What is the exact relationship between `Wide Horizontal Logo Wordmark (SVG-wrapped raster, 1358x311)` and `Institution Identity: College of Nursing Sciences, Muslim Medical Foundation`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `ApplicationService` connect `ApplicationService` to `program.component.ts`, `admissionform.component.ts`, `PaymentComponent`, `pending-payment-flow.component.ts`, `StudentSingleResponse`, `payment-receipt.component.ts`, `app.menu.ts`, `.normalizeStudentFeePlansResponse`, `UploadFormComponent`, `application.service.ts`, `payment.component.ts`, `PaymentReceiptService`, `payment-workflow.service.ts`, `RegistrantDataDTO`, `academichistory.component.ts`, `.normalizeStudentHostelOption`, `xdashboard/dashboard.component.ts`, `returning-flow.service.ts`, `PaymentReceiptComponent`, `payment-receipt.service.ts`, `.normalizeAcceptanceFeeResponse`, `CountryDTO`, `.normalizeStudentCgpaTrendResponse`?**
-  _High betweenness centrality (0.067) - this node is a cross-community bridge._
+- **Why does `ApplicationService` connect `ApplicationService` to `program.component.ts`, `admissionform.component.ts`, `pending-payment-flow.component.ts`, `.toRecord`, `ApplicationSummaryComponent`, `payment-receipt.component.ts`, `UserPortalService`, `.normalizeStudentFeePlansResponse`, `UploadFormComponent`, `application.service.ts`, `PaymentReceiptService`, `payment-workflow.service.ts`, `RegistrantDataDTO`, `academichistory.component.ts`, `.normalizeStudentHostelOption`, `application/payment.data.ts`, `payment.component.ts`, `returning-flow.service.ts`, `PaymentReceiptComponent`, `PreRegistrationDataDTO`, `payment-receipt.service.ts`, `StudentResultsResponse`, `StatesDTO`, `.normalizeStudentCgpaTrendResponse`?**
+  _High betweenness centrality (0.070) - this node is a cross-community bridge._

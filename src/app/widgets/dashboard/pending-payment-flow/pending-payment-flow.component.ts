@@ -7,7 +7,6 @@ import { TraceabilityModule } from '../../../shared/traceability.module';
 import { ApplicationService } from '../../../services/application.service';
 import { Datum, Department, DepartmentsDTO, OpenApplicationDTO } from '../../../data/application/admission.dto';
 import {
-  ApplicationFeeAmounts,
   DEFAULT_APPLICATION_FEE_AMOUNTS,
   buildApplicationGuidelineContent,
 } from '../../../data/dashboard/application-guideline.data';
@@ -20,16 +19,17 @@ import { StatusTone } from '../../../shared/components/status-indicator/status-i
 import { ApplicationStatusDefinition, ApplicationStatusKey } from '../../../constants/application-status.types';
 import { getApplicationStatusDefinition, normalizeApplicationStatusKey } from '../../../constants/application-status.utils';
 import { formatStructuredName } from '../../../utility/name-format';
-import { UserPortalService } from '../../../services/user-portal.service';
 import {
   APPROVAL_STATUS_MESSAGES,
   ACTION_LABELS,
   HERO_CONTENT,
   ROUTES,
+  SHORTLISTED_EXAM_INFO,
   STATUS_MATCHERS,
   STEP_CONTENT,
   UI_COPY,
 } from '../../../constants/dashboard/pending-payment-flow.constants';
+import { ExamDetailRow } from '../../../constants/dashboard/pending-payment-flow.types';
 
 type StepStatus = 'completed' | 'active' | 'inactive';
 
@@ -78,11 +78,7 @@ export class PendingPaymentFlowComponent implements OnInit {
 
   private readonly paymentWorkflow = inject(PaymentWorkflowService);
 
-  private readonly userPortalService = inject(UserPortalService);
-
-  readonly applicationFee = signal<ApplicationFeeAmounts>(DEFAULT_APPLICATION_FEE_AMOUNTS);
-
-  readonly guidelineContent = computed(() => buildApplicationGuidelineContent(this.applicationFee()));
+  readonly guidelineContent = signal(buildApplicationGuidelineContent(DEFAULT_APPLICATION_FEE_AMOUNTS)).asReadonly();
 
   readonly actionLabels = ACTION_LABELS;
 
@@ -144,30 +140,30 @@ export class PendingPaymentFlowComponent implements OnInit {
 
   readonly activeApprovalStatusKey = signal<ApplicationStatusKey>('unknown');
 
+  readonly examInfoTitle = SHORTLISTED_EXAM_INFO.title;
+
+  readonly shortlistedExamDetails = computed<ExamDetailRow[]>(() => {
+    if (this.activeApprovalStatusKey() !== 'shortlisted') {
+      return [];
+    }
+    const registrant = this.registrantData();
+    const { labels, examType } = SHORTLISTED_EXAM_INFO;
+    return [
+      { label: labels.examType, value: examType },
+      { label: labels.examNumber, value: this.examValueOrPending(registrant?.application_no) },
+      { label: labels.date, value: this.examValueOrPending(this.formatDisplayDate(registrant?.exam_date ?? undefined)) },
+      { label: labels.time, value: this.examValueOrPending(registrant?.exam_time) },
+      { label: labels.venue, value: this.examValueOrPending(registrant?.exam_venue) },
+    ];
+  });
+
   ngOnInit(): void {
     this.dashboardName.set(this.authSessionStore.name() || UI_COPY.defaultApplicantName);
     this.dashboardPaymentStatus.set(
       this.authSessionStore.paymentStatus() || UI_COPY.defaultPaymentStatus
     );
     this.recomputeDashboardState();
-    void this.loadApplicationFee();
     void this.loadRegistrantSnapshot();
-  }
-
-  async loadApplicationFee(): Promise<void> {
-    if (!this.userPortalService.isNewCandidatePortal()) {
-      return;
-    }
-
-    try {
-      const response = await firstValueFrom(this.appService.getAcceptanceFee());
-      this.applicationFee.set({
-        amount: response.amount ?? DEFAULT_APPLICATION_FEE_AMOUNTS.amount,
-        processingFee: response.processing_fee ?? DEFAULT_APPLICATION_FEE_AMOUNTS.processingFee,
-      });
-    } catch {
-      // Keep the configured defaults when the acceptance fee endpoint is unavailable.
-    }
   }
 
   onPrimaryAction(): void {
@@ -712,6 +708,14 @@ export class PendingPaymentFlowComponent implements OnInit {
       uniqueDepartments.set(department.id, department);
     });
     return Array.from(uniqueDepartments.values());
+  }
+
+  private examValueOrPending(value: string | null | undefined): string {
+    const trimmedValue = value?.trim() ?? '';
+    if (!trimmedValue || trimmedValue === '—') {
+      return SHORTLISTED_EXAM_INFO.pendingValue;
+    }
+    return trimmedValue;
   }
 
   private formatDisplayDate(value: string | Date | undefined): string {

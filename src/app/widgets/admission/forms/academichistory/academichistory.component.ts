@@ -20,6 +20,7 @@ import { ExamRecord, TAcademicHistory, TOLevelResult, TPersonalDetailDTO, TUtmeR
 import {
   ACADEMIC_HISTORY_ATTEMPT_OPTIONS,
   ACADEMIC_HISTORY_AWAITING_RESULT_OPTION,
+  ACADEMIC_HISTORY_NO_GRADE_OPTION,
   ACADEMIC_HISTORY_RULES
 } from '../../../../constants/academic-history.constants';
 import { formatDateOnly, parseDateOnly } from '../../../../utility/date-only';
@@ -140,8 +141,8 @@ export class AcademicHistoryComponent implements OnInit {
           value: exam
         }));
 
-        this.grades = data.subject_grades;
-        this.gradeDropdownOptions = data.subject_grades.map(grade => ({
+        this.grades = this.withNoGradeOption(data.subject_grades);
+        this.gradeDropdownOptions = this.grades.map(grade => ({
           label: grade,
           value: grade
         }));
@@ -287,6 +288,13 @@ export class AcademicHistoryComponent implements OnInit {
       this.formStepStatus.academicValid = false;
       this._formStepService.setFormSteps(this.formStepStatus);
     }
+  }
+
+  private withNoGradeOption(grades: string[]): string[] {
+    if (grades.includes(ACADEMIC_HISTORY_NO_GRADE_OPTION)) {
+      return grades;
+    }
+    return [...grades, ACADEMIC_HISTORY_NO_GRADE_OPTION];
   }
 
   preparePayload() {

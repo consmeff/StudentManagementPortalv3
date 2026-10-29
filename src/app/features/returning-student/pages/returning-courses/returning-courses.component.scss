@@ -2,6 +2,15 @@
   padding: 1.5rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  color: var(--app-text-primary);
+
+  h1 {
+    color: var(--app-text-primary);
+  }
+
+  > p {
+    color: var(--app-text-secondary);
+  }
 }
 
 .locked-state {
@@ -31,6 +40,7 @@
   margin-bottom: 2rem;
   padding: 1rem 1.5rem;
   background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 0.5rem;
 
   div {
@@ -59,6 +69,7 @@
     padding: 1rem 1.5rem;
     margin-bottom: 0.75rem;
     background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background 0.2s ease;
@@ -87,6 +98,12 @@
       span {
         font-size: 0.875rem;
         color: var(--app-text-secondary);
+      }
+
+      .elective-tag {
+        color: var(--app-primary);
+        font-size: 0.8rem;
+        font-style: italic;
       }
     }
 
@@ -117,10 +134,12 @@
 
 /* Course Slip Page Styles */
 .slip-page {
-  background: white;
+  background: var(--app-surface);
+  color: var(--app-text-primary);
+  border: 1px solid var(--app-border);
   border-radius: 1rem;
   padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: var(--app-shadow-sm);
 }
 
 .slip-header {
@@ -134,10 +153,13 @@
   h2 {
     font-size: 1.5rem;
     margin: 0;
+    color: var(--app-text-primary);
   }
 
   .level-selector {
     padding: 0.5rem 1rem;
+    background: var(--app-surface-alt);
+    color: var(--app-text-primary);
     border: 1px solid var(--app-border);
     border-radius: 0.5rem;
     font-weight: 500;
@@ -276,6 +298,8 @@
 /* Resit Styles */
 .resit-list-card {
   background: var(--app-surface);
+  color: var(--app-text-primary);
+  border: 1px solid var(--app-border);
   border-radius: 0.5rem;
   padding: 1.5rem;
 
@@ -285,7 +309,8 @@
   }
 
   .resit-item {
-    background: white;
+    background: var(--app-surface-alt);
+    border: 1px solid var(--app-border);
     border-radius: 0.5rem;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -350,7 +375,7 @@
     margin-bottom: 1.5rem;
 
     .score-badge {
-      background: var(--app-error);
+      background: var(--app-danger);
       color: white;
       width: 4rem;
       height: 4rem;
@@ -379,6 +404,7 @@
       align-items: center;
       gap: 0.5rem;
       background: none;
+      color: var(--app-text-primary);
       border: 1px solid var(--app-border);
       border-radius: 0.5rem;
       padding: 0.75rem 1rem;
@@ -389,6 +415,7 @@
 
   .countdown-box {
     background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 0.75rem;
     padding: 1.5rem;
     display: flex;
@@ -416,6 +443,7 @@
 
   .exam-card {
     background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 0.75rem;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
@@ -439,9 +467,55 @@
 }
 
 .info-banner {
-  background: #fef3c7;
-  border-left: 4px solid #f59e0b;
+  background: color-mix(in srgb, var(--app-info) 15%, var(--app-surface));
+  color: var(--app-text-primary);
+  border-left: 4px solid var(--app-info);
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
   border-radius: 0 0.5rem 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .returning-courses-page {
+    padding: 1rem;
+  }
+
+  .slip-page {
+    padding: 1.25rem;
+  }
+
+  .slip-header,
+  .signatures-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .student-info-grid,
+  .semesters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-info-grid .profile-photo {
+    justify-content: flex-start;
+  }
+
+  .semesters-grid .semester-card:first-child {
+    border-right: none;
+    border-bottom: 1px solid var(--app-border);
+  }
+
+  .resit-detail-page {
+    .resit-head {
+      flex-wrap: wrap;
+    }
+
+    .countdown-box {
+      gap: 1rem;
+    }
+
+    .exam-card {
+      grid-template-columns: 1fr;
+    }
+  }
 }

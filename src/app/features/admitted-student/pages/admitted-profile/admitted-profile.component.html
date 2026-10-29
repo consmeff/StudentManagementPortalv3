@@ -36,6 +36,15 @@
       </div>
     </section>
 
+    <section class="flagged-notice" *ngIf="flow.isAdmissionDocumentsFlagged()" role="alert">
+      <span class="pi pi-exclamation-triangle flagged-icon" aria-hidden="true"></span>
+      <div>
+        <strong>{{ flaggedDocumentsCopy.title }}</strong>
+        <p *ngIf="flow.admissionComplianceDirective()">{{ flow.admissionComplianceDirective() }}</p>
+        <small>{{ flaggedDocumentsCopy.instruction }}</small>
+      </div>
+    </section>
+
     <!-- Letters of Recommendation -->
     <section class="docs-section">
       <h3>Letters of Recommendation</h3>
@@ -147,7 +156,7 @@
         iconClass="pi pi-check"
         (buttonClick)="submitForVerification()"
         [disabled]="flow.submittingProfileDocuments() || !flow.canSubmitProfileDocuments()"
-      >{{ flow.submittingProfileDocuments() ? 'Submitting...' : 'Submit for Verification' }}</app-button>
+      >{{ submitVerificationLabel() }}</app-button>
     </div>
   </ng-template>
 </div>

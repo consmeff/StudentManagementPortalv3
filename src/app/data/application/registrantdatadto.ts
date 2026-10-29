@@ -39,6 +39,9 @@ export interface RegistrantData {
   secondary_parent_or_guardian: AryParentOrGuardian|undefined;
   approval_status:              string;
   compliance_directive?:        string | null;
+  exam_date?:                   string | null;
+  exam_time?:                   string | null;
+  exam_venue?:                  string | null;
   payment_record:               null;
   program:                      Department;
   session:                      Session;
@@ -187,6 +190,7 @@ export type StudentSingleData = {
   program: StudentProgram | null;
   admission_documents: StudentAdmissionDocuments | null;
   admission_document_verified: boolean;
+  admission_documents_flagged?: boolean;
   dob: string | null;
   certificate_of_birth: CertificateOfBirth | null;
   o_level_result: OLevelResult[] | null;

@@ -6,6 +6,8 @@ import { ApplicationService } from '../../services/application.service';
 import { RegistrantData, StudentSingleData } from '../../data/application/registrantdatadto';
 import { AuthSessionStore } from '../../store/auth-session.store';
 import { formatStructuredName } from '../../utility/name-format';
+import { UserPortalService } from '../../services/user-portal.service';
+import { PAYMENT_PAGE_CONFIG, SINGLE_PAYMENT_INSTALLMENT_COUNT } from '../../constants/payment-page.constants';
 import {
   readStudentFeeInstallmentAmount,
   readStudentFeeInstallmentNumbers,
@@ -29,17 +31,14 @@ export type SchoolFeePaymentRecord = {
   paidAt: Date;
 };
 
-const DEFAULT_ACCEPTANCE_FEE = 30000;
-const DEFAULT_PROCESSING_FEE = 500;
-const DEFAULT_STUDENT_FEE_TOTAL = 600000;
-const DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT = 500000;
-const DEFAULT_STUDENT_FEE_INSTALLMENTS = 3;
 
 @Injectable({ providedIn: 'root' })
 export class AdmittedFlowService {
   private readonly appService = inject(ApplicationService);
 
   private readonly authSessionStore = inject(AuthSessionStore);
+
+  private readonly userPortalService = inject(UserPortalService);
 
   readonly loadingSnapshot = signal(false);
 
@@ -56,6 +55,8 @@ export class AdmittedFlowService {
   readonly uploadedTestimonial = signal<any>(null);
 
   readonly submittingProfileDocuments = signal(false);
+
+  readonly sessionSubmittedDocumentSignature = signal<string | null>(null);
 
   readonly registrantData = signal<RegistrantData | null>(null);
 
@@ -81,23 +82,29 @@ export class AdmittedFlowService {
 
   readonly loadingAcceptanceFee = signal(false);
 
-  readonly acceptanceFee = computed(() => this.acceptanceFeeDetail()?.amount ?? DEFAULT_ACCEPTANCE_FEE);
+  readonly acceptanceFee = computed(() => this.acceptanceFeeDetail()?.amount ?? 0);
 
-  readonly processingFee = computed(() => this.acceptanceFeeDetail()?.processing_fee ?? DEFAULT_PROCESSING_FEE);
+  readonly serviceCharge = computed(() => this.acceptanceFeeDetail()?.service_charge ?? 0);
 
-  readonly totalPay = computed(() => this.acceptanceFee() + this.processingFee());
+  readonly totalPay = computed(
+    () => this.acceptanceFeeDetail()?.total_amount_payable ?? this.acceptanceFee() + this.serviceCharge()
+  );
+
+  readonly acceptanceFeeCurrency = computed(
+    () => this.acceptanceFeeDetail()?.currency ?? PAYMENT_PAGE_CONFIG.currencyCode
+  );
 
   readonly totalSchoolFees = computed(() =>
-    this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? DEFAULT_STUDENT_FEE_TOTAL
+    this.studentSchoolFeeStatus()?.amount ?? this.studentFeePlan()?.amount ?? 0
   );
 
   readonly maxInstallments = computed(() => {
     const configuredInstallments = readStudentFeeInstallmentNumbers(this.studentFeePlan());
-    return configuredInstallments.length || DEFAULT_STUDENT_FEE_INSTALLMENTS;
+    return configuredInstallments.length || SINGLE_PAYMENT_INSTALLMENT_COUNT;
   });
 
   readonly minFirstInstallment = computed(() =>
-    readStudentFeeInstallmentAmount(this.studentFeePlan(), 1) ?? DEFAULT_STUDENT_FEE_FIRST_INSTALLMENT
+    readStudentFeeInstallmentAmount(this.studentFeePlan(), 1) ?? 0
   );
 
   readonly schoolFeePaymentCount = computed(() =>
@@ -146,7 +153,7 @@ export class AdmittedFlowService {
     || '—'
   );
 
-  readonly levelName = computed(() => this.studentProfile()?.level?.name || 'ND 1');
+  readonly levelName = computed(() => this.studentProfile()?.level?.name || '—');
 
   readonly admissionDate = computed(() => {
     const data = this.registrantData();
@@ -210,7 +217,11 @@ export class AdmittedFlowService {
   readonly isSchoolFeesFullyPaid = computed(() => this.remainingSchoolFees() <= 0);
 
   readonly schoolFeeProgressPercent = computed(() => {
-    const ratio = this.paidSchoolFees() / this.totalSchoolFees();
+    const totalSchoolFees = this.totalSchoolFees();
+    if (totalSchoolFees <= 0) {
+      return 0;
+    }
+    const ratio = this.paidSchoolFees() / totalSchoolFees;
     return Math.max(0, Math.min(100, Math.round(ratio * 100)));
   });
 
@@ -253,6 +264,12 @@ export class AdmittedFlowService {
   readonly canAccessProfileVerification = computed(() => this.hasInternalPayment());
 
   readonly isAdmissionDocumentsVerified = computed(() => !!this.studentProfile()?.admission_document_verified);
+
+  readonly isAdmissionDocumentsFlagged = computed(() =>
+    !this.isAdmissionDocumentsVerified() && !!this.studentProfile()?.admission_documents_flagged
+  );
+
+  readonly admissionComplianceDirective = computed(() => this.studentProfile()?.compliance_directive?.trim() ?? '');
 
   readonly isAllDocumentsVerified = computed(() => {
     const student = this.studentProfile() as unknown as Record<string, unknown> | null;
@@ -321,9 +338,32 @@ export class AdmittedFlowService {
     return { label: 'Secondary School Testimonial', fileName: testimonialFile, fileUrl: this.normalizeDocumentUrl(testimonialUrl), uploaded: !!testimonialFile };
   });
 
+  private readonly currentProfileDocumentSignature = computed(() =>
+    this.buildDocumentSignature([...this.recommendationLetters(), this.testimonialDocument()].map((document) => document.fileUrl))
+  );
+
+  private readonly serverSubmittedDocumentSignature = computed(() => {
+    if (!this.hasAllSubmittedProfileDocuments()) {
+      return null;
+    }
+    const admissionDocuments = this.studentProfile()?.admission_documents;
+    return this.buildDocumentSignature([
+      admissionDocuments?.recommendation_letter_1?.file_url,
+      admissionDocuments?.recommendation_letter_2?.file_url,
+      admissionDocuments?.testimonial?.file_url,
+    ].map((fileUrl) => this.normalizeDocumentUrl(fileUrl ?? '')));
+  });
+
+  readonly areProfileDocumentsAlreadySubmitted = computed(() => {
+    const currentSignature = this.currentProfileDocumentSignature();
+    return currentSignature === this.sessionSubmittedDocumentSignature()
+      || currentSignature === this.serverSubmittedDocumentSignature();
+  });
+
   readonly canSubmitProfileDocuments = computed(() =>
     this.recommendationLetters().every((document) => document.uploaded)
     && this.testimonialDocument().uploaded
+    && !this.areProfileDocumentsAlreadySubmitted()
   );
 
   readonly hasMissingProfileDocuments = computed(() =>
@@ -331,9 +371,7 @@ export class AdmittedFlowService {
     || !this.testimonialDocument().uploaded
   );
 
-  readonly canShowSubmitProfileDocumentsButton = computed(() =>
-    !this.isAdmissionDocumentsVerified() && !this.hasAllSubmittedProfileDocuments()
-  );
+  readonly canShowSubmitProfileDocumentsButton = computed(() => !this.isAdmissionDocumentsVerified());
 
   async uploadDocument(file: File, documentType: 'recommendation_letter_1' | 'recommendation_letter_2' | 'testimonial'): Promise<void> {
     if (this.isAdmissionDocumentsVerified()) {
@@ -393,6 +431,8 @@ export class AdmittedFlowService {
         }
       };
       await firstValueFrom(this.appService.submitProfileDocuments(payload));
+      this.sessionSubmittedDocumentSignature.set(this.currentProfileDocumentSignature());
+      await this.refreshStudentProfile();
       await this.loadSnapshot();
     } finally {
       this.submittingProfileDocuments.set(false);
@@ -438,6 +478,10 @@ export class AdmittedFlowService {
       return {};
     }
     return fallback || {};
+  }
+
+  private buildDocumentSignature(fileUrls: string[]): string {
+    return fileUrls.join('|');
   }
 
   private hasAllSubmittedProfileDocuments(): boolean {
@@ -490,6 +534,7 @@ export class AdmittedFlowService {
       if (!this.authSessionStore.studentProfile() && appNo) {
         await this.loadApplicantSnapshot(appNo);
       }
+      await this.loadAcceptanceFee();
       await this.loadStudentFeePlan();
       await this.loadCourses();
       await this.loadRegisteredCourses();
@@ -509,6 +554,11 @@ export class AdmittedFlowService {
   }
 
   async loadRegisteredCourses(): Promise<void> {
+    if (!this.hasInternalPayment()) {
+      this.registeredCourses.set([]);
+      this.registrationSubmitted.set(false);
+      return;
+    }
     try {
       const response = await firstValueFrom(this.appService.getCurrentCourses());
       const registeredCourses = flattenRegisteredCoursesResponse(response);
@@ -545,12 +595,41 @@ export class AdmittedFlowService {
       this.studentSchoolFeeStatus.set(response);
       this.studentFeePlan.set(response);
     } catch {
-      const response = await firstValueFrom(this.appService.getStudentFeePlans());
-      const departmentId = this.registrantData()?.department?.id ?? null;
-      const selectedPlan = selectMatchingStudentFeePlan(response.data, departmentId, null);
-      this.studentFeePlan.set(selectedPlan);
+      await this.loadStudentFeePlanFallback();
     } finally {
       this.loadingStudentFeePlan.set(false);
+    }
+  }
+
+  private async loadStudentFeePlanFallback(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.appService.getStudentFeePlans());
+      const departmentId = this.registrantData()?.department?.id ?? null;
+      this.studentFeePlan.set(selectMatchingStudentFeePlan(response.data, departmentId, null));
+    } catch {
+      this.studentFeePlan.set(null);
+    }
+  }
+
+  async refreshProfileVerificationState(): Promise<void> {
+    if (!this.shouldLoadStudentSnapshot()) {
+      return;
+    }
+    await this.refreshStudentProfile();
+  }
+
+  async loadAcceptanceFee(): Promise<void> {
+    if (!this.userPortalService.isAdmittedPortal() || this.acceptanceFeeDetail()) {
+      return;
+    }
+    this.loadingAcceptanceFee.set(true);
+    try {
+      const response = await firstValueFrom(this.appService.getAcceptanceFee());
+      this.acceptanceFeeDetail.set(response);
+    } catch {
+      this.acceptanceFeeDetail.set(null);
+    } finally {
+      this.loadingAcceptanceFee.set(false);
     }
   }
 
@@ -631,7 +710,7 @@ export class AdmittedFlowService {
     return date.toLocaleDateString('en-GB');
   }
 
-  private formatCurrency(value: number): string {
+  formatCurrency(value: number): string {
     return `₦${value.toLocaleString('en-NG')}`;
   }
 
@@ -684,6 +763,10 @@ export class AdmittedFlowService {
     if (this.authSessionStore.studentProfile()) {
       return;
     }
+    await this.refreshStudentProfile();
+  }
+
+  private async refreshStudentProfile(): Promise<void> {
     try {
       const response = await firstValueFrom(this.appService.studentData());
       const profile: StudentSingleData | null = response?.data ?? null;
