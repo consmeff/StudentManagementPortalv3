@@ -450,6 +450,10 @@ export class ReturningFlowService {
     this.studentSchoolFeeStatus()?.payment_status.number_of_payments ?? this.schoolFeeInstallments().length
   );
 
+  readonly isFinalSchoolFeeInstallmentDue = computed(() =>
+    this.schoolFeePaymentCount() > 0 && this.schoolFeePaymentCount() >= this.configuredMaxInstallments() - 1
+  );
+
   readonly hasPaidFirstSchoolFeeInstallment = computed(() => {
     const dashboardFeeInfo = this.studentDashboard()?.fee_info;
     return this.schoolFeePaymentCount() > 0

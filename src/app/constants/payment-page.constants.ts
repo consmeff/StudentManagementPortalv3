@@ -44,3 +44,13 @@ export const PAYMENT_TABLE_COLUMNS: ReadonlyArray<DataTableColumn> = [
 export const PAYMENT_TABLE_GRID_TEMPLATE = '1.05fr 1.4fr 1.4fr 1.3fr 1fr 1fr 0.9fr 1.8fr auto';
 
 export const SINGLE_PAYMENT_INSTALLMENT_COUNT = 1;
+
+export const INSTALLMENT_PLURAL_MAPPING: Readonly<Record<string, string>> = {
+  '=1': '1 installment',
+  other: '# installments'
+};
+
+export const PAYMENT_PLURAL_MAPPING: Readonly<Record<string, string>> = {
+  '=1': '1 payment',
+  other: '# payments'
+};

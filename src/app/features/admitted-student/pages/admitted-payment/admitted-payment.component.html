@@ -1,11 +1,14 @@
 <div class="payment-page">
   <h1>School fees payment</h1>
-  <p class="page-copy">Your fees can be paid in up to 3 installments. A minimum first payment applies.</p>
+  <p class="page-copy">
+    Your fees can be paid in up to {{ flow.maxInstallments() | i18nPlural: installmentPluralMapping }}.
+    <ng-container *ngIf="flow.minFirstInstallment() > 0">A minimum first payment applies.</ng-container>
+  </p>
 
   <section class="summary-card">
     <div class="summary-top">
       <h3>{{ flow.schoolFeeCardTitle() }}</h3>
-      <p>{{ flow.academicSession() }} Academic Session • 100 Level</p>
+      <p>{{ flow.academicSession() }} Academic Session • {{ flow.levelName() }}</p>
     </div>
     <div class="summary-amount">{{ flow.schoolFeeMainValue() }}</div>
     <div class="progress-track">
@@ -53,7 +56,7 @@
         class="title-xlarge!"
       />
     </div>
-    <small class="hint body-small">Maximum of 3 payments allowed across the full academic session</small>
+    <small class="hint body-small">Maximum of {{ flow.maxInstallments() | i18nPlural: paymentPluralMapping }} allowed across the full academic session</small>
     <small class="hint body-small" *ngIf="flow.studentFeePlan()">Minimum amount: {{ minimumAmountHint() }}</small>
     <small class="hint body-small" *ngIf="flow.studentFeePlan()">Maximum amount: {{ maximumAmountHint() }}</small>
     <small class="hint body-small" *ngIf="paymentHistory().length === 0">
