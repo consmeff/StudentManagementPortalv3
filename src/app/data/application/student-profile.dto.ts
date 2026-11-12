@@ -3,6 +3,7 @@ export type StudentAddressPayload = {
   street_name?: string;
   land_mark?: string;
   city?: string;
+  lga_id?: number;
 };
 
 export type StudentGuardianPayload = {
@@ -10,11 +11,14 @@ export type StudentGuardianPayload = {
   first_name?: string;
   last_name?: string;
   other_names?: string;
+  gender?: string;
   email?: string;
   occupation?: string;
   phone_number?: string;
   alt_phone_number?: string;
   residential_address?: string;
+  correspondence_address?: string;
+  nationality?: string;
   state_of_origin?: string;
   lga?: string;
 };
@@ -23,16 +27,16 @@ export type StudentProfileUpdatePayload = {
   first_name?: string;
   last_name?: string;
   other_names?: string;
-  email?: string;
   phone_number?: string;
   alt_phone_number?: string;
-  dob?: string;
-  gender?: string;
+  dob?: string | null;
   marital_status?: string;
   nationality?: string;
   state_of_origin?: string;
   lga?: string;
   disability?: string | null;
   residential_address?: StudentAddressPayload;
+  correspondence_address?: StudentAddressPayload;
   primary_parent_or_guardian?: StudentGuardianPayload;
+  secondary_parent_or_guardian?: StudentGuardianPayload;
 };

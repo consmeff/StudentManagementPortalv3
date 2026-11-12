@@ -1,5 +1,24 @@
+<p-toast position="top-right"></p-toast>
 <div class="profile-page">
-  <h1>Document Verification</h1>
+  <h1>{{ pageCopy.title }}</h1>
+
+  <div class="profile-tabs" role="group" [attr.aria-label]="pageCopy.tabsLabel">
+    @for (tab of tabs; track tab.id) {
+      <button
+        type="button"
+        class="profile-tab"
+        [class.active]="activeTab() === tab.id"
+        [attr.aria-pressed]="activeTab() === tab.id"
+        (click)="setTab(tab.id)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  @if (activeTab() === tabIds.personal) {
+    <app-student-profile-details></app-student-profile-details>
+  } @else {
   <p class="intro-copy">
     Some of your documents from the application stage have been carried over. You are expected to upload the remaining ones.
   </p>
@@ -55,7 +74,7 @@
             type="file"
             accept=".pdf,.jpg,.jpeg,.png"
             (change)="onFileUpload($event, i === 0 ? 'recommendation_letter_1' : 'recommendation_letter_2')"
-            style="display: none"
+            hidden
           />
           <ng-container *ngIf="doc.uploaded; else uploadPlaceholder">
             <div class="uploaded-doc">
@@ -108,7 +127,7 @@
           type="file"
           accept=".pdf,.jpg,.jpeg,.png"
           (change)="onFileUpload($event, 'testimonial')"
-          style="display: none"
+          hidden
         />
         <ng-container *ngIf="flow.testimonialDocument().uploaded; else testimonialPlaceholder">
           <div class="uploaded-doc">
@@ -159,4 +178,5 @@
       >{{ submitVerificationLabel() }}</app-button>
     </div>
   </ng-template>
+  }
 </div>

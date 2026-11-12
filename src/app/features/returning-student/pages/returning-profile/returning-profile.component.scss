@@ -92,88 +92,13 @@
   color: var(--app-text-primary);
 }
 
-.forms-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.form-card {
-  border: 1px solid var(--app-border);
-  border-radius: 0.95rem;
-  background: var(--app-surface);
-  padding: 0.8rem;
-}
-
-.card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  margin-bottom: 0.6rem;
-}
-
-.card-head h3 {
-  margin: 0;
-  color: var(--app-text-primary);
-}
-
-.card-actions {
-  display: flex;
-  gap: 0.45rem;
-}
-
-.icon-edit-btn {
-  border: 1px solid var(--app-border);
-  background: var(--app-surface);
-  color: var(--app-text-secondary);
-  border-radius: 0.45rem;
-  width: 2rem;
-  height: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mini-btn {
-  border: none;
-  border-radius: 0.45rem;
-  padding: 0.35rem 0.75rem;
-  font-weight: 700;
-}
-
-.mini-btn.neutral {
-  background: var(--app-surface-alt);
-  color: var(--app-text-secondary);
-}
-
-.mini-btn.primary {
-  background: var(--app-primary);
-  color: var(--app-surface);
-}
-
-.form-grid.two {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem 0.8rem;
-}
-
-.display-grid.two {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem 0.8rem;
-}
-
-.form-grid label > span,
-.account-card label > span,
-.display-grid > div > span {
+.account-card label > span {
   display: block;
   margin-bottom: 0.25rem;
   color: var(--app-text-secondary);
   font-weight: 500;
 }
 
-.form-grid input,
 .account-card input {
   width: 100%;
   border: 1px solid var(--app-border);
@@ -182,11 +107,6 @@
   background: var(--app-surface);
   color: var(--app-text-primary);
   font-family: inherit;
-}
-
-.display-grid > div > strong {
-  color: var(--app-text-primary);
-  font-weight: 700;
 }
 
 .account-card {
@@ -235,8 +155,5 @@
     border-bottom: 1px solid var(--app-border);
     padding-right: 0;
     padding-bottom: 0.8rem;
-  }
-  .form-grid.two {
-    grid-template-columns: 1fr;
   }
 }
