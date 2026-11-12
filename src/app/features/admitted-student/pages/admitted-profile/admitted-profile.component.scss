@@ -261,3 +261,34 @@
     cursor: not-allowed;
   }
 }
+
+.profile-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--app-border);
+  padding-bottom: 0.6rem;
+}
+
+.profile-tab {
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  background: transparent;
+  color: var(--app-text-secondary);
+  cursor: pointer;
+
+  &.active {
+    background: var(--app-surface-alt);
+    color: var(--app-primary);
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-tab {
+    flex: 1 1 100%;
+    text-align: left;
+  }
+}

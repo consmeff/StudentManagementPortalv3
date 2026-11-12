@@ -183,6 +183,7 @@ export type StudentSingleData = {
   email: string;
   phone_number: string;
   alt_phone_number: string;
+  gender?: string | null;
   level: StudentLevel | null;
   session: Session | null;
   semester: StudentSemester | null;

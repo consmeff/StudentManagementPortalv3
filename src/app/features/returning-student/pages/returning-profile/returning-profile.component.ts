@@ -1,42 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { RETURNING_PROFILE_TOAST_SUMMARY } from '../../../../constants/returning-student.constants';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import {
-  AddressData,
-  EditableProfileSection,
-  NextOfKinData,
-  PersonalContactData,
-  ProfileSectionDraft,
-  ReturningFlowService,
-  ReturningProfileTab
-} from '../../returning-flow.service';
+import { StudentProfileDetailsComponent } from '../../../../shared/components/student-profile-details/student-profile-details.component';
+import { ReturningFlowService, ReturningProfileTab } from '../../returning-flow.service';
 
 @Component({
   selector: 'app-returning-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent],
+  imports: [CommonModule, FormsModule, ToastModule, ButtonComponent, StudentProfileDetailsComponent],
   providers: [MessageService],
   templateUrl: './returning-profile.component.html',
   styleUrl: './returning-profile.component.scss'
 })
 export class ReturningProfileComponent implements OnInit {
-  readonly flow = inject(ReturningFlowService);
-
-  private readonly messageService = inject(MessageService);
-
   readonly activeTab = computed(() => this.flow.activeProfileTab());
 
   readonly overview = computed(() => this.flow.profileOverview());
-
-  readonly personal = computed(() => this.flow.personalContact());
-
-  readonly residential = computed(() => this.flow.residentialAddress());
-
-  readonly nextOfKin = computed(() => this.flow.nextOfKin());
-
-  readonly nextOfKinResidence = computed(() => this.flow.nextOfKinResidence());
 
   readonly currentPassword = signal('');
 
@@ -52,131 +35,17 @@ export class ReturningProfileComponent implements OnInit {
 
   readonly isUpdatingPassword = signal(false);
 
-  readonly isEditingPersonal = signal(false);
-
-  readonly isEditingResidential = signal(false);
-
-  readonly isEditingNextOfKin = signal(false);
-
-  readonly isEditingNextOfKinResidence = signal(false);
-
-  readonly personalDraft = signal<PersonalContactData>(this.flow.personalContact());
-
-  readonly residentialDraft = signal<AddressData>(this.flow.residentialAddress());
-
-  readonly nextOfKinDraft = signal<NextOfKinData>(this.flow.nextOfKin());
-
-  readonly nextOfKinResidenceDraft = signal<AddressData>(this.flow.nextOfKinResidence());
+  constructor(
+    readonly flow: ReturningFlowService,
+    private readonly messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.flow.loadStudentProfile(true);
   }
 
-  isSaving(section: EditableProfileSection): boolean {
-    return this.flow.savingProfileSection() === section;
-  }
-
   setTab(tab: ReturningProfileTab): void {
     this.flow.setProfileTab(tab);
-  }
-
-  private resetPersonalDraft(): void {
-    this.personalDraft.set(this.flow.personalContact());
-  }
-
-  private resetResidentialDraft(): void {
-    this.residentialDraft.set(this.flow.residentialAddress());
-  }
-
-  private resetNextOfKinDraft(): void {
-    this.nextOfKinDraft.set(this.flow.nextOfKin());
-  }
-
-  private resetNextOfKinResidenceDraft(): void {
-    this.nextOfKinResidenceDraft.set(this.flow.nextOfKinResidence());
-  }
-
-  private setEditing(section: EditableProfileSection, value: boolean): void {
-    if (section === 'personal') {
-      this.isEditingPersonal.set(value);
-      return;
-    }
-    if (section === 'residential') {
-      this.isEditingResidential.set(value);
-      return;
-    }
-    if (section === 'nok') {
-      this.isEditingNextOfKin.set(value);
-      return;
-    }
-    this.isEditingNextOfKinResidence.set(value);
-  }
-
-  startEdit(section: EditableProfileSection): void {
-    if (section === 'personal') {
-      this.resetPersonalDraft();
-    } else if (section === 'residential') {
-      this.resetResidentialDraft();
-    } else if (section === 'nok') {
-      this.resetNextOfKinDraft();
-    } else {
-      this.resetNextOfKinResidenceDraft();
-    }
-    this.setEditing(section, true);
-  }
-
-  cancelEdit(section: EditableProfileSection): void {
-    if (section === 'personal') {
-      this.resetPersonalDraft();
-    } else if (section === 'residential') {
-      this.resetResidentialDraft();
-    } else if (section === 'nok') {
-      this.resetNextOfKinDraft();
-    } else {
-      this.resetNextOfKinResidenceDraft();
-    }
-    this.setEditing(section, false);
-  }
-
-  updatePersonalDraft<K extends keyof PersonalContactData>(key: K, value: PersonalContactData[K]): void {
-    this.personalDraft.set({ ...this.personalDraft(), [key]: value });
-  }
-
-  updateResidentialDraft<K extends keyof AddressData>(key: K, value: AddressData[K]): void {
-    this.residentialDraft.set({ ...this.residentialDraft(), [key]: value });
-  }
-
-  updateNextOfKinDraft<K extends keyof NextOfKinData>(key: K, value: NextOfKinData[K]): void {
-    this.nextOfKinDraft.set({ ...this.nextOfKinDraft(), [key]: value });
-  }
-
-  updateNextOfKinResidenceDraft<K extends keyof AddressData>(key: K, value: AddressData[K]): void {
-    this.nextOfKinResidenceDraft.set({ ...this.nextOfKinResidenceDraft(), [key]: value });
-  }
-
-  async save(section: EditableProfileSection): Promise<void> {
-    const result = await this.flow.saveProfileSection(this.buildSectionDraft(section));
-    this.messageService.add({
-      severity: result.ok ? 'success' : 'warn',
-      summary: 'Profile',
-      detail: result.message
-    });
-    if (result.ok) {
-      this.setEditing(section, false);
-    }
-  }
-
-  private buildSectionDraft(section: EditableProfileSection): ProfileSectionDraft {
-    if (section === 'personal') {
-      return { section, data: this.personalDraft() };
-    }
-    if (section === 'residential') {
-      return { section, data: this.residentialDraft() };
-    }
-    if (section === 'nok') {
-      return { section, data: this.nextOfKinDraft() };
-    }
-    return { section, data: this.nextOfKinResidenceDraft() };
   }
 
   async savePassword(): Promise<void> {
@@ -185,7 +54,7 @@ export class ReturningProfileComponent implements OnInit {
     this.isUpdatingPassword.set(false);
     this.messageService.add({
       severity: result.ok ? 'success' : 'warn',
-      summary: 'Account Settings',
+      summary: RETURNING_PROFILE_TOAST_SUMMARY.accountSettings,
       detail: result.message
     });
     if (!result.ok) {
@@ -199,4 +68,3 @@ export class ReturningProfileComponent implements OnInit {
     this.showConfirm.set(false);
   }
 }
-

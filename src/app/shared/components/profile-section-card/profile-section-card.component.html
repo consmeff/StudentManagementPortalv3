@@ -1,0 +1,72 @@
+<article class="form-card">
+  <div class="card-head">
+    <h3>{{ heading() }}</h3>
+    @if (isEditing()) {
+      <div class="card-actions">
+        <button type="button" class="mini-btn neutral" [disabled]="isSaving()" (click)="cancelEdit()">{{ labels.cancel }}</button>
+        <button type="submit" class="mini-btn primary" [attr.form]="formId()" [disabled]="isSaving()">
+          {{ isSaving() ? labels.saving : labels.save }}
+        </button>
+      </div>
+    } @else {
+      <button type="button" class="icon-edit-btn" [attr.aria-label]="editButtonLabel()" (click)="startEdit()">
+        <i class="pi pi-pencil" aria-hidden="true"></i>
+      </button>
+    }
+  </div>
+
+  @if (draft(); as currentDraft) {
+    <form class="form-grid" [id]="formId()" (ngSubmit)="save()">
+      @for (field of fields(); track field.key) {
+        <div class="form-field">
+          <label [for]="fieldInputId(field)" [class.required]="field.required">{{ field.label }}</label>
+          @if (field.inputType === inputTypes.select) {
+            <select
+              [id]="fieldInputId(field)"
+              [name]="field.key"
+              [attr.autocomplete]="field.autocomplete"
+              [attr.aria-required]="field.required ? true : null"
+              [attr.aria-invalid]="errors()[field.key] ? true : null"
+              [attr.aria-describedby]="errors()[field.key] ? fieldErrorId(field) : null"
+              [disabled]="isFieldDisabled(field, currentDraft)"
+              [ngModel]="currentDraft[field.key]"
+              (ngModelChange)="updateDraftField(field, $event)"
+            >
+              <option value="">{{ labels.selectPlaceholder }}</option>
+              @for (option of optionsFor(field, currentDraft); track option) {
+                <option [value]="option">{{ option }}</option>
+              }
+            </select>
+          } @else {
+            <input
+              [id]="fieldInputId(field)"
+              [name]="field.key"
+              [type]="field.inputType"
+              [attr.autocomplete]="field.autocomplete"
+              [attr.max]="latestAllowedDate(field)"
+              [attr.maxlength]="field.maxLength ?? null"
+              [attr.aria-required]="field.required ? true : null"
+              [attr.aria-invalid]="errors()[field.key] ? true : null"
+              [attr.aria-describedby]="errors()[field.key] ? fieldErrorId(field) : null"
+              [disabled]="isFieldDisabled(field, currentDraft)"
+              [ngModel]="currentDraft[field.key]"
+              (ngModelChange)="updateDraftField(field, $event)"
+            />
+          }
+          @if (errors()[field.key]; as errorMessage) {
+            <small class="field-error" role="alert" [id]="fieldErrorId(field)">{{ errorMessage }}</small>
+          }
+        </div>
+      }
+    </form>
+  } @else {
+    <dl class="display-grid">
+      @for (field of fields(); track field.key) {
+        <div>
+          <dt>{{ field.label }}</dt>
+          <dd>{{ displayValue(field) }}</dd>
+        </div>
+      }
+    </dl>
+  }
+</article>

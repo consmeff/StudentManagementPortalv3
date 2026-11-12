@@ -1,0 +1,14 @@
+.forms-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.unavailable-note {
+  margin: 0;
+  padding: 1rem;
+  border: 1px dashed var(--app-border);
+  border-radius: 0.95rem;
+  background: var(--app-surface);
+  color: var(--app-text-secondary);
+}

@@ -1,0 +1,43 @@
+@if (studentProfile.hasStudentRecord()) {
+  <div class="forms-stack">
+    <app-profile-section-card
+      [heading]="headings.personal"
+      [fields]="personalFields"
+      [values]="studentProfile.personalContact()"
+      [isSaving]="isSaving('personal')"
+      [saveSection]="savePersonal"
+      [loadedOptions]="personalOptions()"
+      (draftChanged)="personalDraft.set($event)"
+    ></app-profile-section-card>
+
+    <app-profile-section-card
+      [heading]="headings.residential"
+      [fields]="addressFields"
+      [values]="studentProfile.residentialAddress()"
+      [isSaving]="isSaving('residential')"
+      [saveSection]="saveResidential"
+      [loadedOptions]="residentialOptions()"
+      (draftChanged)="residentialDraft.set($event)"
+    ></app-profile-section-card>
+
+    <app-profile-section-card
+      [heading]="headings.nextOfKin"
+      [fields]="nextOfKinFields"
+      [values]="studentProfile.nextOfKin()"
+      [isSaving]="isSaving('nok')"
+      [saveSection]="saveNextOfKin"
+    ></app-profile-section-card>
+
+    <app-profile-section-card
+      [heading]="headings.nextOfKinResidence"
+      [fields]="addressFields"
+      [values]="studentProfile.nextOfKinResidence()"
+      [isSaving]="isSaving('nok-residence')"
+      [saveSection]="saveNextOfKinResidence"
+      [loadedOptions]="nextOfKinResidenceOptions()"
+      (draftChanged)="nextOfKinResidenceDraft.set($event)"
+    ></app-profile-section-card>
+  </div>
+} @else {
+  <p class="unavailable-note">{{ unavailableMessage }}</p>
+}

@@ -60,6 +60,8 @@ export class ApplicationService {
 
   private readonly studentProfileEndpoint = `${this.apiRoot}/api/v1/students/single`;
 
+  private readonly studentProfileUpdateEndpoint = `${this.apiRoot}/api/v1/students/profile`;
+
   private readonly studentHostelAllocationEndpoint = `${this.apiRoot}/api/v1/hostels/students/allocation`;
 
   private readonly hostelsEndpoint = `${this.apiRoot}/api/v1/hostels`;
@@ -121,10 +123,8 @@ export class ApplicationService {
     );
   }
 
-  updateStudentProfile(payload: StudentProfileUpdatePayload): Observable<StudentSingleResponse> {
-    return this.http.patch<unknown>(this.studentProfileEndpoint, payload).pipe(
-      map((response) => this.normalizeStudentSingleResponse(response))
-    );
+  updateStudentProfile(payload: StudentProfileUpdatePayload): Observable<unknown> {
+    return this.http.patch<unknown>(this.studentProfileUpdateEndpoint, payload);
   }
 
   getStudentDashboard(): Observable<StudentDashboardResponse> {

@@ -1,23 +1,37 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { AdmittedFlowService } from '../../admitted-flow.service';
 import { TraceabilityModule } from '../../../../shared/traceability.module';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { StatusIndicatorComponent } from '../../../../shared/components/status-indicator/status-indicator.component';
-import { FLAGGED_ADMISSION_DOCUMENTS_COPY, SUBMIT_VERIFICATION_LABELS } from '../../../../constants/admitted-profile.constants';
+import { StudentProfileDetailsComponent } from '../../../../shared/components/student-profile-details/student-profile-details.component';
+import {
+  ADMITTED_PROFILE_PAGE_COPY,
+  ADMITTED_PROFILE_TAB,
+  ADMITTED_PROFILE_TABS,
+  FLAGGED_ADMISSION_DOCUMENTS_COPY,
+  SUBMIT_VERIFICATION_LABELS
+} from '../../../../constants/admitted-profile.constants';
+import { AdmittedProfileTab } from '../../../../constants/admitted-profile.types';
 
 @Component({
   selector: 'app-admitted-profile',
   standalone: true,
-  imports: [CommonModule, TraceabilityModule, ButtonComponent, StatusIndicatorComponent],
+  imports: [CommonModule, TraceabilityModule, ButtonComponent, StatusIndicatorComponent, StudentProfileDetailsComponent],
+  providers: [MessageService],
   templateUrl: './admitted-profile.component.html',
   styleUrl: './admitted-profile.component.scss'
 })
 export class AdmittedProfileComponent implements OnInit {
-  private readonly router = inject(Router);
+  readonly tabs = ADMITTED_PROFILE_TABS;
 
-  readonly flow = inject(AdmittedFlowService);
+  readonly tabIds = ADMITTED_PROFILE_TAB;
+
+  readonly pageCopy = ADMITTED_PROFILE_PAGE_COPY;
+
+  readonly activeTab = signal<AdmittedProfileTab>(ADMITTED_PROFILE_TAB.documents);
 
   readonly flaggedDocumentsCopy = FLAGGED_ADMISSION_DOCUMENTS_COPY;
 
@@ -35,8 +49,17 @@ export class AdmittedProfileComponent implements OnInit {
     return SUBMIT_VERIFICATION_LABELS.idle;
   });
 
+  constructor(
+    private readonly router: Router,
+    readonly flow: AdmittedFlowService
+  ) {}
+
   ngOnInit(): void {
     void this.flow.loadSnapshot().then(() => this.flow.refreshProfileVerificationState());
+  }
+
+  setTab(tab: AdmittedProfileTab): void {
+    this.activeTab.set(tab);
   }
 
   goToPayment(): void {
