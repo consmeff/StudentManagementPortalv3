@@ -16,7 +16,7 @@ export type ProtectedPageFeature =
   | 'cgpaTracker'
   | 'hostel';
 
-const RETURNING_FIRST_INSTALLMENT_FEATURES: readonly ProtectedPageFeature[] = ['profile', 'courses', 'hostel'];
+const RETURNING_FIRST_INSTALLMENT_FEATURES: readonly ProtectedPageFeature[] = ['courses', 'hostel'];
 
 @Injectable({ providedIn: 'root' })
 export class NavigationAccessService {

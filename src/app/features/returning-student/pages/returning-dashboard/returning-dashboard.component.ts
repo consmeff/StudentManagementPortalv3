@@ -18,8 +18,6 @@ export class ReturningDashboardComponent implements OnInit {
 
   readonly canAccessCourses = computed(() => this.flow.canAccessCoursesModule());
 
-  readonly canAccessProfile = computed(() => this.flow.canAccessProfileModule());
-
   ngOnInit(): void {
     void Promise.allSettled([
       this.flow.loadStudentProfile(),
@@ -44,9 +42,6 @@ export class ReturningDashboardComponent implements OnInit {
   }
 
   goToProfile(): void {
-    if (!this.canAccessProfile()) {
-      return;
-    }
     void this.router.navigateByUrl('/returning/profile');
   }
 }
