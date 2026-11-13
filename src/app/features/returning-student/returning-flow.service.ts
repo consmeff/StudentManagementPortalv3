@@ -318,8 +318,6 @@ export class ReturningFlowService {
 
   readonly canAccessCoursesModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
 
-  readonly canAccessProfileModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
-
   readonly canAccessHostelModule = computed(() => this.hasPaidFirstSchoolFeeInstallment());
 
   readonly fees = signal<FeeItem[]>([]);

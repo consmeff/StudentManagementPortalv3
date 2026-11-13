@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-dashboard/returning-dashboard.component.ts": {
-    "mtime": 1787340568.5297258,
-    "ast_hash": "ad99e58907b2bf3a9efa39449ef4c226",
+    "mtime": 1794597802.7722409,
+    "ast_hash": "4206e7b80a1d8c540c7a423fad378dd2",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-hostel/returning-hostel.component.ts": {
@@ -275,8 +275,8 @@
     "semantic_hash": "a191450ecd4a0d11d64b31a7146bd350"
   },
   "src/app/features/returning-student/returning-flow.service.ts": {
-    "mtime": 1794431137.8155143,
-    "ast_hash": "7d4e64574a67529e7ee9d815a7a84cb2",
+    "mtime": 1794597800.973481,
+    "ast_hash": "bdd84ba5bc7d9b6554d312ee15b515e1",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/returning-student.routes.ts": {
@@ -475,9 +475,9 @@
     "semantic_hash": "7a1f1bdcc64385179f90282bc1c255a6"
   },
   "src/app/services/navigation-access.service.ts": {
-    "mtime": 1780583955.3120785,
-    "ast_hash": "a8a7267bdde8f6057cf7685a0d8203e3",
-    "semantic_hash": "a8a7267bdde8f6057cf7685a0d8203e3"
+    "mtime": 1794597800.0769012,
+    "ast_hash": "7a76c7859ce8e67f6c84a21190ad9237",
+    "semantic_hash": ""
   },
   "src/app/services/payment-workflow.service.ts": {
     "mtime": 1780222869.2841828,
@@ -780,8 +780,8 @@
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-dashboard/returning-dashboard.component.html": {
-    "mtime": 1787340568.52873,
-    "ast_hash": "d6887c464dc75ae969518919ad9098b9",
+    "mtime": 1794597803.6795733,
+    "ast_hash": "0381e92d3a3668ed2f02d07b203db9cd",
     "semantic_hash": ""
   },
   "src/app/features/returning-student/pages/returning-hostel/returning-hostel.component.html": {
